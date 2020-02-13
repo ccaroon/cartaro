@@ -19,7 +19,7 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "cartaro",
+    "productName": "Cartaro",
     "appId": "org.caroon.cartaro",
     "directories": {
       "output": "build"
