@@ -54,11 +54,14 @@
   },
   "dependencies": {
     "axios": "^0.19.0",
-    "vue": "^2.5.16",
+    "vue": "^2.6.11",
     "vue-electron": "^1.0.6",
-    "vue-router": "^3.0.1",
-    "vuex": "^3.0.1",
-    "vuex-electron": "^1.0.0"
+    "vuex-electron": "^1.0.0",
+    "@mdi/font": "^4.9.95",
+    "moment": "^2.22.2",
+    "vue-router": "^3.0.2",
+    "vuetify": "^2.2.0",
+    "vuex": "^3.1.2"
   },
   "devDependencies": {
     "ajv": "^6.5.0",

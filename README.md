@@ -13,6 +13,8 @@ Esperanto for Chronicle. Ĉartaro is a journal or chronicle of your work.
 * Flask
 * TinyDB
 
+## Developer / Build Notes
+...
 
 ## Tools
 [Image Converter](https://anyconv.com/png-to-icns-converter/)

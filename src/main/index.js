@@ -22,9 +22,11 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 563,
+    width: 1280,
+    height: 928,
+    minWidth: 900,
+    minHeight: 600,
     useContentSize: true,
-    width: 1000,
     webPreferences: {
       nodeIntegration: true
       // preload: path.join(app.getAppPath(), 'main.js')
