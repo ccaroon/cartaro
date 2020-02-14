@@ -1,12 +1,14 @@
 <template>
-  <div id="app">
-    <router-view></router-view>
-  </div>
+  <v-app id="app">
+    <v-content container--fluid>
+      <router-view></router-view>
+    </v-content>
+  </v-app>
 </template>
 
 <script>
   export default {
-    name: 'cartaro'
+    name: 'Cartaro'
   }
 </script>
 
