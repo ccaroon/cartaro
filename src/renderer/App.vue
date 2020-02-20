@@ -1,17 +1,24 @@
 <template>
   <v-app id="app">
     <v-content container--fluid>
+      <About></About>
       <router-view></router-view>
     </v-content>
   </v-app>
 </template>
 
 <script>
-  export default {
-    name: 'Cartaro'
-  }
-</script>
+import About from './components/About'
 
-<style>
-  /* CSS */
-</style>
+const { ipcRenderer } = require('electron')
+
+export default {
+  name: 'Cartaro',
+  components: { About },
+  mounted () {
+    ipcRenderer.on('menu-view-main', (event, arg) => {
+      this.$router.push('/')
+    })
+  }
+}
+</script>

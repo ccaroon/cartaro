@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import { app, Menu, BrowserWindow } from 'electron'
 
 const path = require('path')
 
@@ -17,6 +17,87 @@ const winURL = process.env.NODE_ENV === 'development'
   ? 'http://localhost:9080'
   : `file://${__dirname}/index.html`
 
+function createMenu () {
+  var mainMetaKey = process.platform === 'darwin' ? 'Cmd' : 'Ctrl'
+  // -------------
+  var aboutSubMenu = {
+    label: 'About Ĉartaro',
+    accelerator: mainMetaKey + '+?',
+    click: () => BrowserWindow.getFocusedWindow().webContents.send('menu-help-about')
+  }
+
+  // var settingsSubMenu = {
+  //   label: process.platform === 'darwin' ? 'Preferences...' : 'Settings...',
+  //   accelerator: mainMetaKey + '+,',
+  //   click: () => BrowserWindow.getFocusedWindow().webContents.send('menu-settings')
+  // }
+
+  const template = [
+    // 0
+    {
+      label: 'View',
+      submenu: [
+        {
+          label: 'Main',
+          accelerator: mainMetaKey + '+H',
+          click: () => BrowserWindow.getFocusedWindow().webContents.send('menu-view-main')
+        }
+      ]
+    },
+    // 1
+    {
+      role: 'window',
+      submenu: [
+        { role: 'minimize' }
+      ]
+    },
+    // 2
+    {
+      role: 'help',
+      submenu: [
+        {
+          label: 'View on GitHub',
+          click () { require('electron').shell.openExternal('https://github.com/ccaroon/cartaro') }
+        }
+      ]
+    }
+  ]
+
+  if (process.platform === 'darwin') {
+    // Add Apple Menu
+    template.unshift({
+      label: 'Apple Menu',
+      submenu: [
+        aboutSubMenu,
+        { type: 'separator' },
+        // settingsSubMenu,
+        { type: 'separator' },
+        { role: 'quit' }
+      ]
+    })
+  } else {
+    // Add About to help menu
+    template[2].submenu = template[2].submenu.concat([
+      { type: 'separator' },
+      aboutSubMenu
+    ])
+
+    // Add File Menu
+    template.unshift({
+      label: 'File',
+      submenu: [
+        // settingsSubMenu,
+        { type: 'separator' },
+        { role: 'quit' }
+      ]
+    })
+  }
+
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
+  // -------------
+}
+
 function createWindow () {
   /**
    * Initial window options
@@ -32,6 +113,8 @@ function createWindow () {
       // preload: path.join(app.getAppPath(), 'main.js')
     }
   })
+
+  createMenu()
 
   mainWindow.loadURL(winURL)
 
@@ -79,6 +162,7 @@ app.on('window-all-closed', () => {
 })
 
 app.on('activate', () => {
+  createMenu()
   if (mainWindow === null) {
     createWindow()
   }
