@@ -12,7 +12,7 @@ if (process.env.NODE_ENV !== 'development') {
   global.__static = path.join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
-let mainWindow
+let mainWindow, backendServer
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
@@ -35,17 +35,47 @@ function createWindow () {
 
   mainWindow.loadURL(winURL)
 
+  // ---------------------------------------------------------------------------
+  // SEE: https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
+  // ---------------------------------------------------------------------------
+
+  // var serverPath = path.join(__dirname, '/server')
+  var serverPath = '/Users/ccaroon/src/github/cartaro/server'
+  var cmd = './server.sh'
+  // var args = ['run', '-p 4242']
+  // var env = {
+  //   FLASK_APP: 'cartaro-server.py'
+  // }
+  backendServer = require('child_process').spawn(
+    cmd,
+    null,
+    { cwd: serverPath }
+  )
+  console.log(`Server PID: [${backendServer.pid}]`)
+
+  backendServer.stdout.on('data', function (data) {
+    console.log(`[STDOUT:${new Date().toLocaleString()}]\n${data.toString('utf8')}`)
+  })
+
+  backendServer.stderr.on('data', function (data) {
+    console.log(`[STDERR:${new Date().toLocaleString()}]\n${data.toString('utf8')}`)
+  })
+
+  backendServer.on('error', function (err) {
+    console.log(`[ERROR:${new Date().toLocaleString()}]\n${err.toString('utf8')}`)
+  })
+
   mainWindow.on('closed', () => {
     mainWindow = null
+    backendServer.kill()
   })
 }
 
 app.on('ready', createWindow)
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  backendServer.kill()
+  app.quit()
 })
 
 app.on('activate', () => {
@@ -53,23 +83,3 @@ app.on('activate', () => {
     createWindow()
   }
 })
-
-/**
- * Auto Updater
- *
- * Uncomment the following code below and install `electron-updater` to
- * support auto updating. Code Signing with a valid certificate is required.
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
- */
-
-/*
-import { autoUpdater } from 'electron-updater'
-
-autoUpdater.on('update-downloaded', () => {
-  autoUpdater.quitAndInstall()
-})
-
-app.on('ready', () => {
-  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
-})
- */

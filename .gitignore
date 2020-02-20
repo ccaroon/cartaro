@@ -10,3 +10,5 @@ thumbs.db
 !.gitkeep
 venv/
 *.pyc
+server/server.log
+server/server.pid
