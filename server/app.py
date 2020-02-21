@@ -1,16 +1,9 @@
-#!/bin/env python
-from flask import Flask
-app = Flask(__name__)
+#!/usr/bin/env python
+import os
+from server import app
+import server.controller.hello
 
-# TODO: Need to handle SIGTERM?
 # TODO: logging
-
-@app.route('/')
-def hello_world():
-    return {
-        "name": "Craig",
-        "age": 42
-    }
 
 @app.after_request
 def set_headers(resp):

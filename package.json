@@ -4,7 +4,7 @@
   "codename": "Here Be Dragons",
   "author": "Craig N. Caroon",
   "description": "Work Journal/Chronicler",
-  "license": null,
+  "license": "",
   "main": "./dist/electron/main.js",
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",

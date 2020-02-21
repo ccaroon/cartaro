@@ -2,6 +2,7 @@
 
 import { app, Menu, BrowserWindow } from 'electron'
 
+const fs = require('fs')
 const path = require('path')
 
 /**
@@ -16,6 +17,15 @@ let mainWindow, backendServer
 const winURL = process.env.NODE_ENV === 'development'
   ? 'http://localhost:9080'
   : `file://${__dirname}/index.html`
+
+const docPath = path.join(app.getPath('documents'), 'Cartaro')
+
+function initApp () {
+  // Create data directory
+  if (!fs.existsSync(docPath)) {
+    fs.mkdirSync(docPath, '0750')
+  }
+}
 
 function createMenu () {
   var mainMetaKey = process.platform === 'darwin' ? 'Cmd' : 'Ctrl'
@@ -126,13 +136,13 @@ function createWindow () {
   var serverPath = '/Users/ccaroon/src/github/cartaro/server'
   var cmd = './server.sh'
   // var args = ['run', '-p 4242']
-  // var env = {
-  //   FLASK_APP: 'cartaro-server.py'
-  // }
+  var env = {
+    CARTARO_DOC_PATH: docPath
+  }
   backendServer = require('child_process').spawn(
     cmd,
     null,
-    { cwd: serverPath }
+    { cwd: serverPath, env: env }
   )
   console.log(`Server PID: [${backendServer.pid}]`)
 
@@ -154,7 +164,10 @@ function createWindow () {
   })
 }
 
-app.on('ready', createWindow)
+app.on('ready', () => {
+  initApp()
+  createWindow()
+})
 
 app.on('window-all-closed', () => {
   backendServer.kill()

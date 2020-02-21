@@ -13,3 +13,4 @@ venv/
 server/server.log
 server/server.pid
 yarn-error.log
+.vscode/

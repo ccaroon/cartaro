@@ -12,7 +12,7 @@
           </v-col>
         </v-row>
         <v-row class="black light-green--text">
-          <v-col cols="auto">{{ thing1.name }} - {{ thing1.age }}</v-col>
+          <v-col cols="auto">{{ data.msg }}</v-col>
         </v-row>
       </v-container>
     </v-responsive>
@@ -32,13 +32,13 @@ export default {
       var self = this
       this.$http.get('http://127.0.0.1:4242')
         .then(resp => {
-          self.thing1 = resp.data
+          self.data = resp.data
         })
     }
   },
   data () {
     return {
-      thing1: {}
+      data: {}
     }
   }
 }
