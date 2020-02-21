@@ -30,7 +30,7 @@ export default {
   methods: {
     getStuff: function () {
       var self = this
-      this.$http.get('http://127.0.0.1:4242')
+      this.$http.get('http://127.0.0.1:4242/hello')
         .then(resp => {
           self.data = resp.data
         })

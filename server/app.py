@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 import os
 from server import app
-import server.controller.hello
+
+from server.controller.hello import hello
+from server.controller.notes import notes
+
+app.register_blueprint(hello, url_prefix="/hello")
+app.register_blueprint(notes, url_prefix="/notes")
 
 # TODO: logging
 
