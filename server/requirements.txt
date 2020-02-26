@@ -1,2 +1,7 @@
+arrow
 flask
 tinydb
+
+# Dev
+nose
+coverage
