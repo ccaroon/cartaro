@@ -8,9 +8,9 @@ from server.model.base import Base
 # class for testing purposes.
 # ------------------------------------------------------------------------------
 class DropDaBase(Base):
-    def __init__(self, id=None, name=None, decibels=0):
+    def __init__(self, id=None, **kwargs):
         super().__init__(id)
-        self._instantiate(name=name, decibels=decibels)
+        self._instantiate(kwargs)
 
     @property
     def state(self):
@@ -22,7 +22,7 @@ class DropDaBase(Base):
         else:
             self.__state = 0
 
-    def _instantiate(self, **data):
+    def _instantiate(self, data):
         self.name = data.get('name', None)
         self.decibels = data.get('decibels', 0)
         self.__state = data.get('state', 0)
@@ -44,10 +44,10 @@ class BaseTest(unittest.TestCase):
             obj = Base()
 
         with self.assertRaisesRegex(NotImplementedError, "_instantiate is an Abstract Method and must be overridden"):
-            Base._instantiate({})
+            Base._instantiate(None, {})
 
         with self.assertRaisesRegex(NotImplementedError, "_for_json is an Abstract Method and must be overridden"):
-            Base._for_json({})
+            Base._for_json(None)
 
     def test_id(self):
         # Valid

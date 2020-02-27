@@ -1,11 +1,11 @@
 from .base import Base
 
 class Note(Base):
-    def __init__(self, id=None, title=None, content=None):
+    def __init__(self, id=None, **kwargs):
         super().__init__(id)
-        self._instantiate(title=title, content=content)
+        self._instantiate(kwargs)
 
-    def _instantiate(self, **data):
+    def _instantiate(self, data):
         self.title = data.get('title', None)
         self.content = data.get('content', None)
         self.is_favorite = data.get('is_favorite', False)

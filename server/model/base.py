@@ -23,7 +23,7 @@ class Base(ABC):
     __DATABASE = None
 
     def __init__(self, id=None):
-        self.__base_instantiate(id=id)
+        self.__base_instantiate({'id': id})
         self.__open_db()
 
     @classmethod
@@ -38,7 +38,7 @@ class Base(ABC):
 
             cls.__DATABASE = TinyDB(F"{doc_dir}/{db_name}.json")
 
-    def __base_instantiate(self, **data):
+    def __base_instantiate(self, data):
         self.__id = data.get('id', None)
 
         # Datetimes are assumed to be in UTC epoch format
@@ -54,7 +54,7 @@ class Base(ABC):
         self.__deleted_at = arrow.get(datetime.fromtimestamp(deleted_at), tz) if deleted_at else None
 
     @abstractmethod
-    def _instantiate(self, **data):
+    def _instantiate(self, data):
         raise NotImplementedError("_instantiate is an Abstract Method and must be overridden")
 
     @property
@@ -83,8 +83,8 @@ class Base(ABC):
 
             if data:
                 data['id'] = data.doc_id
-                self.__base_instantiate(**data)
-                self._instantiate(**data)
+                self.__base_instantiate(data)
+                self._instantiate(data)
             else:
                 raise ValueError(F"Record Not Found: [{self.id}]")
         else:
