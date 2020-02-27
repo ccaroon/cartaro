@@ -17,7 +17,7 @@ cover:
 dev:
 	. ./venv/bin/activate; \
 	CARTARO_DOC_PATH=${HOME}/Documents/Cartaro \
-	CARTARO_ENV=dev
+	CARTARO_ENV=dev       \
 	FLASK_ENV=development \
 	flask run -p 4242
 
