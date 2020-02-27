@@ -3,8 +3,9 @@ import json
 import os
 
 from abc import ABC, abstractmethod
+from datetime import datetime
 from tinydb import TinyDB, Query
-
+import tinydb.operations as tyops
 # ------------------------------------------------------------------------------
 # Configure JSONEncoder to look for "to_json" method when serializing classes
 # ------------------------------------------------------------------------------
@@ -19,30 +20,42 @@ from tinydb import TinyDB, Query
 #     metadata: db = {"1": { rec1 }, "2": { rec2 }, ...  }
 # ------------------------------------------------------------------------------
 class Base(ABC):
+    __DATABASE = None
+
     def __init__(self, id=None):
         self.__base_instantiate(id=id)
-        
-        # Construct DB name
-        db_name = type(self).__name__
-        env = os.environ.get("CARTARO_ENV", "dev")
-        if (env != "prod"):
-            db_name += F"-{env}"
+        self.__open_db()
 
-        doc_dir = os.environ.get("CARTARO_DOC_PATH", ".")
-        # TODO: DB should be a CLASS property
-        self.__db_path = F"{doc_dir}/{db_name}.json"
-        self.__db = TinyDB(self.__db_path)
+    @classmethod
+    def __open_db(cls):
+        if not cls.__DATABASE:
+            env = os.environ.get("CARTARO_ENV", "dev")
+            doc_dir = os.environ.get("CARTARO_DOC_PATH", ".")
+            
+            db_name = cls.__name__
+            if (env != "prod"):
+                db_name += F"-{env}"
+
+            cls.__DATABASE = TinyDB(F"{doc_dir}/{db_name}.json")
 
     def __base_instantiate(self, **data):
         self.__id = data.get('id', None)
 
-        self.__created_at = data.get('created_at', None)
-        self.__updated_at = data.get('updated_at', None)
-        self.__deleted_at = data.get('deleted_at', None)
+        # Datetimes are assumed to be in UTC epoch format
+        created_at = data.get('created_at', None)
+        updated_at = data.get('updated_at', None)
+        deleted_at = data.get('deleted_at', None)
+
+        # Convert UTC timestamps to TZ specific Arrow instances
+        # TODO: Don't hard-code TZ
+        tz = 'US/Eastern'
+        self.__created_at = arrow.get(datetime.fromtimestamp(created_at), tz) if created_at else None
+        self.__updated_at = arrow.get(datetime.fromtimestamp(updated_at), tz) if updated_at else None
+        self.__deleted_at = arrow.get(datetime.fromtimestamp(deleted_at), tz) if deleted_at else None
 
     @abstractmethod
     def _instantiate(self, **data):
-        pass
+        raise NotImplementedError("_instantiate is an Abstract Method and must be overridden")
 
     @property
     def id(self):
@@ -66,7 +79,7 @@ class Base(ABC):
 
     def load(self):
         if self.id:
-            data = self.__db.get(doc_id=self.id)
+            data = self.__DATABASE.get(doc_id=self.id)
 
             if data:
                 data['id'] = data.doc_id
@@ -80,24 +93,37 @@ class Base(ABC):
     def save(self):
         now = arrow.now()
 
+        if self.deleted_at:
+            raise RuntimeError(F"Can't Save ... Object deleted [{self.deleted_at.humanize()}].")
+
         if self.id:
             self.__updated_at = now
-            self.__db.update(self.to_json(), doc_ids=[self.id])
+            self.__DATABASE.update(self.for_json(), doc_ids=[self.id])
         else:
             self.__created_at = now
-            self.__id = self.__db.insert(self.to_json())
+            self.__id = self.__DATABASE.insert(self.for_json())
 
-    # TODO: Support *marked deletion*
-    def delete(self):
+    def delete(self, safe=False):
         if self.id:
-            Obj = Query()
-            self.__db.remove(Obj.id == self.id)
+            now = arrow.now()
+            self.__deleted_at = now
+            
+            if safe:
+                # Mark as deleted by setting the `deleted_at` date instead of
+                # actually removing the record.
+                self.__DATABASE.update(tyops.set('deleted_at', self.__deleted_at.timestamp), doc_ids=[self.id])
+            else:
+                self.__DATABASE.remove(doc_ids=[self.id])
+
             self.__id = None
         else:
             raise ValueError(F"Valid Object ID required for deletion: [{self.id}]")
 
-    # TODO: make abstract
-    def to_json(self):
+    @abstractmethod
+    def _for_json(self):
+        raise NotImplementedError("_for_json is an Abstract Method and must be overridden")
+
+    def _base_for_json(self):
         return {
             # "id": self.id,
             "created_at": self.created_at.timestamp if self.created_at else None,
@@ -105,9 +131,14 @@ class Base(ABC):
             "deleted_at": self.deleted_at.timestamp if self.deleted_at else None
         }
 
-    @classmethod
-    def find(cls, **kwargs):
-        pass
+    def for_json(self):
+        data = self._base_for_json()
+        data.update(self._for_json())
+        return data
+
+    # @classmethod
+    # def find(cls, **kwargs):
+    #     pass
 
 
 

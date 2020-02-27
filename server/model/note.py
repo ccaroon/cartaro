@@ -23,12 +23,10 @@ class Note(Base):
     def decrypt(self):
         self.__is_encrypted = False
 
-    def to_json(self):
-        data = super().to_json()
-        data.update({
+    def _for_json(self):
+        return {
             "title": self.title,
             "content": self.content,
             "is_favorite": self.is_favorite,
             "is_encrypted": self.__is_encrypted
-        })
-        return (data)
+        }
