@@ -78,6 +78,23 @@ class BaseTest(unittest.TestCase):
         obj = DropDaBase(id=False)
         self.assertIsNone(obj.id)
 
+    def test_for_json(self):
+        obj = DropDaBase(id=42, name="Flux", decibels=120)
+        
+        # With ID
+        data = obj.for_json()
+        self.assertIsNotNone(obj.id)
+        self.assertEqual(obj.id, data['id'])
+        self.assertEqual(obj.name, data['name'])
+        self.assertEqual(obj.decibels, data['decibels'])
+
+        # W/O ID
+        data = obj.for_json(omit_id=True)
+        self.assertIsNotNone(obj.id)
+        self.assertIsNone(data.get('id', None), None)
+        self.assertEqual(obj.name, data['name'])
+        self.assertEqual(obj.decibels, data['decibels'])
+
     def test_save(self):
         # Create
         obj = DropDaBase(name="Flux", decibels=120)

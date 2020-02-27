@@ -12,7 +12,7 @@
           </v-col>
         </v-row>
         <v-row class="black light-green--text">
-          <v-col cols="auto">{{ data.msg }}</v-col>
+          <v-col cols="auto">{{ data.id }} - {{ data.title }} - {{ data.content }}</v-col>
         </v-row>
       </v-container>
     </v-responsive>
@@ -30,7 +30,7 @@ export default {
   methods: {
     getStuff: function () {
       var self = this
-      this.$http.get('http://127.0.0.1:4242/hello')
+      this.$http.get('http://127.0.0.1:4242/notes/1')
         .then(resp => {
           self.data = resp.data
         })

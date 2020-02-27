@@ -18,6 +18,7 @@ import tinydb.operations as tyops
 # IMPORTANT NOTES:
 # 1. `id` is not stored in the database as part of the record. It is "external"
 #     metadata: db = {"1": { rec1 }, "2": { rec2 }, ...  }
+# 2. Datetime fields are assumed to be Arrow instances in code and epoch timestamps when serialized.
 # ------------------------------------------------------------------------------
 class Base(ABC):
     __DATABASE = None
@@ -98,10 +99,10 @@ class Base(ABC):
 
         if self.id:
             self.__updated_at = now
-            self.__DATABASE.update(self.for_json(), doc_ids=[self.id])
+            self.__DATABASE.update(self.for_json(omit_id=True), doc_ids=[self.id])
         else:
             self.__created_at = now
-            self.__id = self.__DATABASE.insert(self.for_json())
+            self.__id = self.__DATABASE.insert(self.for_json(omit_id=True))
 
     def delete(self, safe=False):
         if self.id:
@@ -123,16 +124,19 @@ class Base(ABC):
     def _for_json(self):
         raise NotImplementedError("_for_json is an Abstract Method and must be overridden")
 
-    def _base_for_json(self):
-        return {
-            # "id": self.id,
+    def _base_for_json(self, omit_id=False):
+        data = {
             "created_at": self.created_at.timestamp if self.created_at else None,
             "updated_at": self.updated_at.timestamp if self.updated_at else None,
             "deleted_at": self.deleted_at.timestamp if self.deleted_at else None
         }
+        if not omit_id:
+            data['id'] = self.id
 
-    def for_json(self):
-        data = self._base_for_json()
+        return data
+
+    def for_json(self, omit_id=False):
+        data = self._base_for_json(omit_id)
         data.update(self._for_json())
         return data
 
