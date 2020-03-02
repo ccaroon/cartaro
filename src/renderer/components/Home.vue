@@ -1,22 +1,14 @@
 <template>
-  <div>
-    <v-responsive>
-      <v-container>
-        <v-row align="center" class="blue-grey lighten-1">
-          <v-col cols="auto">
-            <img src="@/assets/logo.png" />
-          </v-col>
-          <v-col cols="auto">
-            <p class="display-4">Ĉartaro</p>
-            <p class="subtitle-1">Job Journal</p>
-          </v-col>
-        </v-row>
-        <v-row class="black light-green--text">
-          <v-col cols="auto">{{ data.id }} - {{ data.title }} - {{ data.content }}</v-col>
-        </v-row>
-      </v-container>
-    </v-responsive>
-  </div>
+  <v-container>
+    <v-row justify="center">
+      <v-col cols="auto">
+        <img src="@/assets/logo.png" />
+      </v-col>
+    </v-row>
+    <v-row class="black light-green--text">
+      <v-col cols="auto">{{ data.id }} - {{ data.title }} - {{ data.content }}</v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
