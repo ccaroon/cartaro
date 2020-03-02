@@ -108,37 +108,18 @@ function createMenu () {
   // -------------
 }
 
-function createWindow () {
-  /**
-   * Initial window options
-   */
-  mainWindow = new BrowserWindow({
-    width: 1280,
-    height: 928,
-    minWidth: 900,
-    minHeight: 600,
-    useContentSize: true,
-    webPreferences: {
-      nodeIntegration: true
-      // preload: path.join(app.getAppPath(), 'main.js')
-    }
-  })
-
-  createMenu()
-
-  mainWindow.loadURL(winURL)
-
-  // ---------------------------------------------------------------------------
-  // SEE: https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
-  // ---------------------------------------------------------------------------
-
-  // var serverPath = path.join(__dirname, '/server')
-  var serverPath = '/Users/ccaroon/src/github/cartaro/server'
+// ---------------------------------------------------------------------------
+// SEE: https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
+// ---------------------------------------------------------------------------
+function initServer () {
+  var serverPath = path.resolve(path.join(__dirname, '../../server'))
   var cmd = './server.sh'
-  // var args = ['run', '-p 4242']
   var env = {
-    CARTARO_DOC_PATH: docPath
+    FLASK_ENV: process.env.NODE_ENV,
+    CARTARO_DOC_PATH: docPath,
+    CARTARO_ENV: process.env.NODE_ENV === 'development' ? 'dev' : 'prod'
   }
+
   backendServer = require('child_process').spawn(
     cmd,
     null,
@@ -164,9 +145,33 @@ function createWindow () {
   })
 }
 
+function createWindow () {
+  /**
+   * Initial window options
+   */
+  mainWindow = new BrowserWindow({
+    width: 1280,
+    height: 928,
+    minWidth: 900,
+    minHeight: 600,
+    useContentSize: true,
+    webPreferences: {
+      nodeIntegration: true
+      // preload: path.join(app.getAppPath(), 'main.js')
+    }
+  })
+
+  createMenu()
+
+  mainWindow.loadURL(winURL)
+}
+
 app.on('ready', () => {
   initApp()
   createWindow()
+
+  // MUST be done *after* createWindow b/c it depends on `mainWindow`
+  initServer()
 })
 
 app.on('window-all-closed', () => {
