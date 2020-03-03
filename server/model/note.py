@@ -1,4 +1,5 @@
 from .base import Base
+from server.utils.crypto import Crypto
 
 class Note(Base):
     def __init__(self, id=None, **kwargs):
@@ -15,13 +16,27 @@ class Note(Base):
     def is_encrypted(self):
         return self.__is_encrypted
 
-    # TODO: implement
-    def encrypt(self):
-        self.__is_encrypted = True
+    def encrypt(self, passwd):
+        orig_content = self.content
+        try:
+            cryer = Crypto(passwd)
+            self.content = cryer.encrypt(orig_content)
+            self.__is_encrypted = True
+        except Exception as e:
+            self.__is_encrypted = False
+            self.content = orig_content
+            raise RuntimeError(F"Failed to encrypt: {e}")
 
-    # TODO: implement
-    def decrypt(self):
-        self.__is_encrypted = False
+    def decrypt(self, passwd):
+        orig_content = self.content
+        try:
+            cryer = Crypto(passwd)
+            self.content = cryer.decrypt(self.content)
+            self.__is_encrypted = False
+        except Exception as e:
+            self.__is_encrypted = True
+            self.content = orig_content
+            raise RuntimeError(F"Failed to decrypt: {e}")
 
     def _for_json(self):
         return {
