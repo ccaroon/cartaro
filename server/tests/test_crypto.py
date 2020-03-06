@@ -1,6 +1,6 @@
 import unittest
 
-from server.utils.crypto import Crypto
+from cartaro.utils.crypto import Crypto
 class CryptoTest(unittest.TestCase):
 
     def setUp(self):

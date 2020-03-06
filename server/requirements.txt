@@ -4,5 +4,6 @@ flask
 tinydb
 
 # Dev
-nose
 coverage
+faker
+nose

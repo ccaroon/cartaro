@@ -1,10 +1,10 @@
 import arrow
 import unittest
 
-from server.model.base import Base
+from cartaro.model.base import Base
 
 # ------------------------------------------------------------------------------
-# Since server.model.base.Base is an Abstract Class we have to create a concrete
+# Since cartaro.model.base.Base is an Abstract Class we have to create a concrete
 # class for testing purposes.
 # ------------------------------------------------------------------------------
 class DropDaBase(Base):

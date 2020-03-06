@@ -12,17 +12,19 @@ cover:
 			--cover-html \
 			--cover-inclusive \
 			--cover-xml \
-			--cover-package server
+			--cover-package cartaro
 
 dev:
 	. ./venv/bin/activate; \
 	CARTARO_DOC_PATH=${HOME}/Documents/Cartaro \
 	CARTARO_ENV=dev       \
 	FLASK_ENV=development \
+	FLASK_APP=cartaro     \
 	flask run -p 4242
 
 clean:
 	rm -f `find . -name "*.pyc"`
 	rm -f tests/tmp/*.json
+	rm -rf .coverage coverage.xml cover/
 
 .PHONY: test cover dev clean

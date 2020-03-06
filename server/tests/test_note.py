@@ -1,6 +1,6 @@
 import unittest
 
-from server.model.note import Note
+from cartaro.model.note import Note
 class NoteTest(unittest.TestCase):
 
     def setUp(self):

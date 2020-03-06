@@ -1,5 +1,5 @@
 from .base import Base
-from server.utils.crypto import Crypto
+from cartaro.utils.crypto import Crypto
 
 class Note(Base):
     def __init__(self, id=None, **kwargs):
@@ -36,7 +36,7 @@ class Note(Base):
         except Exception as e:
             self.__is_encrypted = True
             self.content = orig_content
-            raise RuntimeError(F"Failed to decrypt: {e}")
+            raise RuntimeError(F"Failed to decrypt: <{e}>")
 
     def _for_json(self):
         return {
