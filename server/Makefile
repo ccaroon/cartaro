@@ -1,12 +1,12 @@
 test:
 	CARTARO_ENV=test \
 	CARTARO_DOC_PATH=tests/tmp \
-	nosetests -v -s tests/
+	nosetests -v -s tests/*
 
 cover:
 	CARTARO_ENV=test \
 	CARTARO_DOC_PATH=tests/tmp \
-	nosetests -v -s tests/ \
+	nosetests -v -s tests/* \
 			--with-coverage \
 			--cover-erase \
 			--cover-html \
