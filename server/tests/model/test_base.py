@@ -80,7 +80,7 @@ class BaseTest(unittest.TestCase):
 
     def test_for_json(self):
         obj = DropDaBase(id=42, name="Flux", decibels=120)
-        
+
         # With ID
         data = obj.for_json()
         self.assertIsNotNone(obj.id)
@@ -102,13 +102,13 @@ class BaseTest(unittest.TestCase):
         self.assertIsNone(obj.created_at)
         self.assertIsNone(obj.updated_at)
         self.assertIsNone(obj.deleted_at)
-        
+
         obj.save()
         self.assertIsNotNone(obj.id)
         self.assertIsNotNone(obj.created_at)
         self.assertIsNone(obj.updated_at)
         self.assertIsNone(obj.deleted_at)
-        
+
         now = arrow.now().timestamp
         self.assertTrue(now-5 <= obj.created_at.timestamp <= now)
 
@@ -117,7 +117,7 @@ class BaseTest(unittest.TestCase):
         created = obj.created_at
         obj.name = "DJ Magic Mike"
         obj.decibels = 180
-        
+
         obj.save()
 
         self.assertIsNotNone(obj.id)
@@ -133,7 +133,7 @@ class BaseTest(unittest.TestCase):
         # Success
         obj = DropDaBase(name="The Punkins'", decibels=120)
         obj.analyze()
-        
+
         obj.save()
         self.assertIsNotNone(obj.id)
         self.assertEquals(obj.state, 808)
@@ -162,7 +162,7 @@ class BaseTest(unittest.TestCase):
 
     def test_delete_safe(self):
         obj = DropDaBase(name="Silly Putty")
-        
+
         obj.save()
         self.assertIsNotNone(obj.id)
         self.assertIsNotNone(obj.created_at)
@@ -194,7 +194,7 @@ class BaseTest(unittest.TestCase):
 
     def test_delete(self):
         obj = DropDaBase(name="Flutterby")
-        
+
         obj.save()
         self.assertIsNotNone(obj.id)
         self.assertIsNotNone(obj.created_at)
@@ -206,7 +206,7 @@ class BaseTest(unittest.TestCase):
         obj.delete()
         self.assertIsNone(obj.id)
         self.assertIsNotNone(obj.deleted_at)
-        
+
         now = arrow.now().timestamp
         self.assertTrue(now-5 <= obj.deleted_at.timestamp <= now)
 
@@ -224,14 +224,8 @@ class BaseTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, F"Record Not Found: \[{obj_id}\]"):
             obj2.load()
 
+    def test_delete_nonexistent(self):
+        obj = DropDaBase(id=77777, name="Infected")
 
-
-
-
-
-
-
-
-
-
-#
+        with self.assertRaisesRegex(ValueError, F"Record Not Found: \[{obj.id}\]"):
+            obj.delete()

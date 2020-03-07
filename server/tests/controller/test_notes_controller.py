@@ -8,33 +8,14 @@ class NotesControllerTest(unittest.TestCase):
 
     FAKER = faker.Faker()
 
-    def setUp(self):        
+    def setUp(self):
         # New Note for testing
         self.note = Note(title=self.FAKER.name(), content=self.FAKER.text())
         self.note.save()
-        
+
         # Setup Flask Testing
         cartaro.flask_app.config['TESTING'] = True
         self.client = cartaro.flask_app.test_client()
-
-    def test_retrieve(self):
-        # Normal
-        r = self.client.get(F'/notes/{self.note.id}')
-        self.assertEqual(r.status_code, 200)
-        
-        note = r.get_json()
-        self.assertIsNone(note.get('error', None))
-        
-        self.assertEqual(note.get('title', None), self.note.title)
-        self.assertEqual(note.get('content', None), self.note.content)
-
-        # Non-existent note
-        r = self.client.get('/notes/9999999')
-        self.assertEqual(r.status_code, 404)
-        
-        note = r.get_json()
-        self.assertIsNotNone(note.get('error', None))
-        self.assertRegexpMatches(note['error'], "Not Found")
 
     def test_create(self):
         data = {
@@ -58,6 +39,24 @@ class NotesControllerTest(unittest.TestCase):
         self.assertEqual(note['content'], data['content'])
         self.assertEqual(note['is_favorite'], data['is_favorite'])
 
+    def test_retrieve(self):
+        # Normal
+        r = self.client.get(F'/notes/{self.note.id}')
+        self.assertEqual(r.status_code, 200)
+
+        note = r.get_json()
+        self.assertIsNone(note.get('error', None))
+
+        self.assertEqual(note.get('title', None), self.note.title)
+        self.assertEqual(note.get('content', None), self.note.content)
+
+        # Non-existent note
+        r = self.client.get('/notes/9999999')
+        self.assertEqual(r.status_code, 404)
+
+        note = r.get_json()
+        self.assertIsNotNone(note.get('error', None))
+        self.assertRegexpMatches(note['error'], "Not Found")
 
     def test_update(self):
         data = {
@@ -89,15 +88,38 @@ class NotesControllerTest(unittest.TestCase):
         self.assertIsNotNone(r_data.get('error', None))
         self.assertRegexpMatches(r_data['error'], "Not Found")
 
+    def test_delete(self):
+        note = Note(title=self.FAKER.name(), content=self.FAKER.text())
+        note.save()
 
+        # Safe Delete
+        r = self.client.delete(F"/notes/{note.id}", json={'safe': True})
+        self.assertEqual(r.status_code, 200)
 
+        r_data = r.get_json()
+        self.assertIsNotNone(r_data.get('id', None))
+        self.assertEqual(note.id, r_data.get('id', None))
 
+        del_note = Note(id=note.id)
+        del_note.load()
+        self.assertIsNotNone(del_note.deleted_at)
 
+        # Real Delete
+        r = self.client.delete(F"/notes/{note.id}")
+        self.assertEqual(r.status_code, 200)
 
+        r_data = r.get_json()
+        self.assertIsNotNone(r_data.get('id', None))
+        self.assertEqual(note.id, r_data.get('id', None))
 
+        del_note = Note(id=note.id)
+        with self.assertRaisesRegex(ValueError, F'Record Not Found: \[{note.id}\]'):
+            del_note.load()
 
+        # Non-existent
+        r = self.client.delete("/notes/777777")
+        self.assertEqual(r.status_code, 404)
 
-
-
-
-# 
+        r_data = r.get_json()
+        self.assertIsNotNone(r_data.get('error', None))
+        self.assertRegexpMatches(r_data['error'], "Not Found")

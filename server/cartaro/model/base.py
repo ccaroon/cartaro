@@ -11,7 +11,7 @@ import tinydb.operations as tyops
 # ------------------------------------------------------------------------------
 # def __class_encoder(self, obj):
 #     return getattr(obj.__class__, "to_json", __class_encoder.default)(obj)
-# 
+#
 # __class_encoder.default = json.JSONEncoder().default
 # json.JSONEncoder.default = __class_encoder
 # ------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ class Base(ABC):
         if not cls.__DATABASE:
             env = os.environ.get("CARTARO_ENV", "dev")
             doc_dir = os.environ.get("CARTARO_DOC_PATH", ".")
-            
+
             db_name = cls.__name__
             if (env != "prod"):
                 db_name += F"-{env}"
@@ -108,15 +108,18 @@ class Base(ABC):
         if self.id:
             now = arrow.now()
             self.__deleted_at = now
-            
-            if safe:
-                # Mark as deleted by setting the `deleted_at` date instead of
-                # actually removing the record.
-                self.__DATABASE.update(tyops.set('deleted_at', self.__deleted_at.timestamp), doc_ids=[self.id])
-            else:
-                self.__DATABASE.remove(doc_ids=[self.id])
 
-            self.__id = None
+            try:
+                if safe:
+                    # Mark as deleted by setting the `deleted_at` date instead of
+                    # actually removing the record.
+                    self.__DATABASE.update(tyops.set('deleted_at', self.__deleted_at.timestamp), doc_ids=[self.id])
+                else:
+                    self.__DATABASE.remove(doc_ids=[self.id])
+
+                self.__id = None
+            except KeyError as ke:
+                raise ValueError(F"Record Not Found: [{self.id}]")
         else:
             raise ValueError(F"Valid Object ID required for deletion: [{self.id}]")
 
@@ -150,4 +153,4 @@ class Base(ABC):
 
 
 
-# 
+#
