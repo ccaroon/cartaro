@@ -1,9 +1,9 @@
 <template>
   <v-app>
-    <v-app-bar app dense fixed dark clipped-left>
+    <!-- <v-app-bar app dense fixed dark clipped-left>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>Ĉartaro - {{ pageName }}</v-toolbar-title>
-    </v-app-bar>
+    </v-app-bar>-->
 
     <v-navigation-drawer v-model="drawer" app dark mini-variant clipped>
       <v-list dense>
@@ -48,7 +48,7 @@ export default {
   },
 
   data: () => ({
-    drawer: false,
+    drawer: true,
     about: false,
     pageName: 'Home',
     menu: [
