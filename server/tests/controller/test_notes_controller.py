@@ -58,6 +58,48 @@ class NotesControllerTest(unittest.TestCase):
         self.assertIsNotNone(note.get('error', None))
         self.assertRegexpMatches(note['error'], "Not Found")
 
+    def test_retrieve_all(self):
+        # Create a bunch of notes
+        for i in range(0, 50):
+            note = Note(title=self.FAKER.name(), content=self.FAKER.text())
+            note.save()
+
+        # Default: page 1, pp 25
+        r = self.client.get('/notes/')
+        self.assertEqual(r.status_code, 200)
+
+        notes = r.get_json()
+        self.assertIsInstance(notes, list)
+        self.assertEqual(len(notes), 25)
+
+        # Default: page 1, pp 10
+        r = self.client.get('/notes/?pp=10')
+        self.assertEqual(r.status_code, 200)
+
+        notes = r.get_json()
+        self.assertIsInstance(notes, list)
+        self.assertEqual(len(notes), 10)
+
+        # Save to compare below
+        note_1 = notes[0]
+        note_10 = notes[9]
+        
+        # Default: page 3, pp 10
+        r = self.client.get('/notes/?page=3&pp=10')
+        self.assertEqual(r.status_code, 200)
+
+        notes = r.get_json()
+        self.assertIsInstance(notes, list)
+        self.assertEqual(len(notes), 10)
+        self.assertNotEqual(notes[0]['id'], note_1['id'])
+        self.assertNotEqual(notes[9]['id'], note_10['id'])
+
+        # Bad page specifier - str instead of int
+        r = self.client.get('/notes/?page=one')
+        data = r.get_json()
+        self.assertEqual(r.status_code, 500)
+        self.assertRegexpMatches(data['error'], "invalid literal for int\(\) with base 10: 'one'")
+
     def test_update(self):
         data = {
             'title': self.FAKER.name(),

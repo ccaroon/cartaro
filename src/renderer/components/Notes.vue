@@ -13,11 +13,16 @@
       <!-- <v-spacer></v-spacer> -->
     </v-app-bar>
     <NotesNewEdit v-model="showNewEdit"></NotesNewEdit>
-    <v-row justify="center">
-      <v-col cols="auto">
-        <v-icon size="256">mdi-note</v-icon>
-      </v-col>
-    </v-row>
+    <v-list dense>
+      <v-list-item v-for="note in notes" :key="note.id" @click>
+        <v-list-item-avatar>
+          <v-icon color="yellow">mdi-star</v-icon>
+        </v-list-item-avatar>
+        <v-list-item-content>
+          <v-list-item-text>{{ note.title }}</v-list-item-text>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
   </v-container>
 </template>
 
@@ -28,16 +33,28 @@ export default {
   name: 'notes-main',
   components: { NotesNewEdit },
   mounted: function () {
+    this.load()
   },
 
   methods: {
-    // create: function () {
-    //   this.showNewEdit = true
-    // }
+    load: function () {
+      var self = this
+      // TODO: Pagination
+      // TODO: Don't load `content`
+      this.$http.get('http://127.0.0.1:4242/notes/')
+        .then(resp => {
+          self.notes = resp.data
+          console.log(self.notes)
+        })
+        .catch(err => {
+          self.errorMsg = err
+        })
+    }
   },
 
   data () {
     return {
+      notes: [],
       showNewEdit: false
     }
   }

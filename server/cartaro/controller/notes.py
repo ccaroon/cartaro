@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from cartaro.model.note import Note
 
 notes = Blueprint('notes', __name__)
@@ -24,7 +24,7 @@ def create():
             'error': str(e)
         }
 
-    return resp, status
+    return jsonify(resp), status
 
 @notes.route('/<int:id>', methods=['GET'])
 def retrieve(id):
@@ -34,7 +34,7 @@ def retrieve(id):
     status = 200
     try:
         note.load()
-        resp = note.for_json()
+        resp = note
     except Exception as e:
         if "Record Not Found" in str(e):
             status = 404
@@ -44,7 +44,29 @@ def retrieve(id):
             "error": str(e)
         }
 
-    return resp, status
+    return jsonify(resp), status
+
+@notes.route('/', methods=['GET'])
+def retrieve_all():
+    resp = None
+    status = 200
+
+    try:
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('pp', 25))
+
+        offset = (page - 1) * per_page
+        count  = per_page
+
+        notes = Note.fetch(offset, count)
+        resp = notes
+    except Exception as e:
+        status = 500
+        resp = {
+            "error": str(e)
+        }
+
+    return jsonify(resp), status
 
 @notes.route('/<int:id>', methods=['PUT'])
 def update(id):
@@ -63,7 +85,7 @@ def update(id):
 
         note.save()
 
-        resp = note.for_json()
+        resp = note
     except Exception as e:
         if "Record Not Found" in str(e):
             status = 404
@@ -73,7 +95,7 @@ def update(id):
             "error": str(e)
         }
 
-    return resp, status
+    return jsonify(resp), status
 
 @notes.route('/<int:id>', methods=['DELETE'])
 def delete(id):
@@ -98,4 +120,4 @@ def delete(id):
             "error": str(e)
         }
 
-    return resp, status
+    return jsonify(resp), status

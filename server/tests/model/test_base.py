@@ -27,6 +27,10 @@ class DropDaBase(Base):
         self.decibels = data.get('decibels', 0)
         self.__state = data.get('state', 0)
 
+    @classmethod
+    def purge(cls):
+        cls._DATABASE.purge()
+
     def _for_json(self):
         return {
             "name": self.name,
@@ -229,3 +233,64 @@ class BaseTest(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, F"Record Not Found: \[{obj.id}\]"):
             obj.delete()
+
+    def test_fetch(self):
+        # Delete all records
+        DropDaBase.purge()
+
+        # Create a bunch of new records
+        record_count = 50
+        for i in range(0, record_count):
+            d = DropDaBase(name=F"Instance #{i+1}", state=i%2)
+            d.save()
+
+        # Load All
+        objs = DropDaBase.fetch()
+        self.assertEqual(len(objs), record_count)
+        self.assertIsInstance(objs[0], DropDaBase)
+        self.assertEqual(objs[49].id, 50)
+
+        # Limit - First 5
+        offset = 0
+        count = 5
+        objs = DropDaBase.fetch(offset, count)
+        self.assertEqual(len(objs), count)
+        for i in range(1, count):
+            self.assertEqual(objs[i-1].id, i + offset)
+
+        # Limit - Second 5
+        offset = 5
+        count = 5
+        objs = DropDaBase.fetch(offset, count)
+        self.assertEqual(len(objs), count)
+        for i in range(1, count):
+            self.assertEqual(objs[i-1].id, i + offset)
+
+        # Limit - Last 2
+        count = 2
+        offset = record_count - count
+        objs = DropDaBase.fetch(offset, count)
+        self.assertEqual(len(objs), count)
+        self.assertEqual(objs[0].id, 49)
+        self.assertEqual(objs[1].id, 50)
+
+        # Limit - Last 5
+        offset = record_count - 5
+        objs = DropDaBase.fetch(offset)
+        self.assertEqual(len(objs), 5)
+        self.assertEqual(objs[0].id, 46)
+        self.assertEqual(objs[1].id, 47)
+        self.assertEqual(objs[2].id, 48)
+        self.assertEqual(objs[3].id, 49)
+        self.assertEqual(objs[4].id, 50)
+
+
+
+
+
+
+
+
+
+
+# 

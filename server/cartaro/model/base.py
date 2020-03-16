@@ -1,4 +1,5 @@
 import arrow
+import itertools
 import json
 import os
 
@@ -7,13 +8,13 @@ from datetime import datetime
 from tinydb import TinyDB, Query
 import tinydb.operations as tyops
 # ------------------------------------------------------------------------------
-# Configure JSONEncoder to look for "to_json" method when serializing classes
+# Configure JSONEncoder to look for "for_json" method when serializing classes
 # ------------------------------------------------------------------------------
-# def __class_encoder(self, obj):
-#     return getattr(obj.__class__, "to_json", __class_encoder.default)(obj)
-#
-# __class_encoder.default = json.JSONEncoder().default
-# json.JSONEncoder.default = __class_encoder
+def __class_encoder(self, obj):
+    return getattr(obj.__class__, "for_json", __class_encoder.default)(obj)
+
+__class_encoder.default = json.JSONEncoder().default
+json.JSONEncoder.default = __class_encoder
 # ------------------------------------------------------------------------------
 # IMPORTANT NOTES:
 # 1. `id` is not stored in the database as part of the record. It is "external"
@@ -21,7 +22,7 @@ import tinydb.operations as tyops
 # 2. Datetime fields are assumed to be Arrow instances in code and epoch timestamps when serialized.
 # ------------------------------------------------------------------------------
 class Base(ABC):
-    __DATABASE = None
+    _DATABASE = None
 
     def __init__(self, id=None):
         self.__base_instantiate({'id': id})
@@ -29,7 +30,7 @@ class Base(ABC):
 
     @classmethod
     def __open_db(cls):
-        if not cls.__DATABASE:
+        if not cls._DATABASE:
             env = os.environ.get("CARTARO_ENV", "dev")
             doc_dir = os.environ.get("CARTARO_DOC_PATH", ".")
 
@@ -37,7 +38,7 @@ class Base(ABC):
             if (env != "prod"):
                 db_name += F"-{env}"
 
-            cls.__DATABASE = TinyDB(F"{doc_dir}/{db_name}.json")
+            cls._DATABASE = TinyDB(F"{doc_dir}/{db_name}.json")
 
     def __base_instantiate(self, data):
         self.__id = data.get('id', None)
@@ -80,7 +81,7 @@ class Base(ABC):
 
     def load(self):
         if self.id:
-            data = self.__DATABASE.get(doc_id=self.id)
+            data = self._DATABASE.get(doc_id=self.id)
 
             if data:
                 data['id'] = data.doc_id
@@ -99,10 +100,10 @@ class Base(ABC):
 
         if self.id:
             self.__updated_at = now
-            self.__DATABASE.update(self.for_json(omit_id=True), doc_ids=[self.id])
+            self._DATABASE.update(self.for_json(omit_id=True), doc_ids=[self.id])
         else:
             self.__created_at = now
-            self.__id = self.__DATABASE.insert(self.for_json(omit_id=True))
+            self.__id = self._DATABASE.insert(self.for_json(omit_id=True))
 
     def delete(self, safe=False):
         if self.id:
@@ -113,9 +114,9 @@ class Base(ABC):
                 if safe:
                     # Mark as deleted by setting the `deleted_at` date instead of
                     # actually removing the record.
-                    self.__DATABASE.update(tyops.set('deleted_at', self.__deleted_at.timestamp), doc_ids=[self.id])
+                    self._DATABASE.update(tyops.set('deleted_at', self.__deleted_at.timestamp), doc_ids=[self.id])
                 else:
-                    self.__DATABASE.remove(doc_ids=[self.id])
+                    self._DATABASE.remove(doc_ids=[self.id])
 
                 self.__id = None
             except KeyError as ke:
@@ -142,6 +143,28 @@ class Base(ABC):
         data = self._base_for_json(omit_id)
         data.update(self._for_json())
         return data
+
+    @classmethod
+    def fetch(cls, offset=0, count=None):
+        docs = []
+        
+        # Want ALL docs
+        if offset == 0 and count is None:
+            docs = cls._DATABASE.all()
+        else:
+            if count is None:
+                end = None
+            else:
+                end = offset + count
+
+            db_iter = iter(cls._DATABASE)
+            docs = itertools.islice(db_iter, offset, end)
+
+        objs = []
+        for doc in docs:
+            objs.append(cls(doc.doc_id, **doc))
+
+        return objs
 
     # @classmethod
     # def find(cls, **kwargs):
