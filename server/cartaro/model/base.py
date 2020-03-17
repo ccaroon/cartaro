@@ -22,16 +22,15 @@ json.JSONEncoder.default = __class_encoder
 # 2. Datetime fields are assumed to be Arrow instances in code and epoch timestamps when serialized.
 # ------------------------------------------------------------------------------
 class Base(ABC):
-    _DATABASE = None
+    __DATABASE = None
 
     def __init__(self, id=None, **kwargs):
         kwargs['id'] = id
         self.__base_instantiate(kwargs)
-        self.__open_db()
 
     @classmethod
-    def __open_db(cls):
-        if not cls._DATABASE:
+    def _database(cls):
+        if not cls.__DATABASE:
             env = os.environ.get("CARTARO_ENV", "dev")
             doc_dir = os.environ.get("CARTARO_DOC_PATH", ".")
 
@@ -39,7 +38,9 @@ class Base(ABC):
             if (env != "prod"):
                 db_name += F"-{env}"
 
-            cls._DATABASE = TinyDB(F"{doc_dir}/{db_name}.json")
+            cls.__DATABASE = TinyDB(F"{doc_dir}/{db_name}.json")
+
+        return cls.__DATABASE
 
     def __base_instantiate(self, data):
         self.__id = data.get('id', None)
@@ -82,7 +83,7 @@ class Base(ABC):
 
     def load(self):
         if self.id:
-            data = self._DATABASE.get(doc_id=self.id)
+            data = self._database().get(doc_id=self.id)
 
             if data:
                 data['id'] = data.doc_id
@@ -101,10 +102,10 @@ class Base(ABC):
 
         if self.id:
             self.__updated_at = now
-            self._DATABASE.update(self.for_json(omit_id=True), doc_ids=[self.id])
+            self._database().update(self.for_json(omit_id=True), doc_ids=[self.id])
         else:
             self.__created_at = now
-            self.__id = self._DATABASE.insert(self.for_json(omit_id=True))
+            self.__id = self._database().insert(self.for_json(omit_id=True))
 
     def delete(self, safe=False):
         if self.id:
@@ -115,9 +116,9 @@ class Base(ABC):
                 if safe:
                     # Mark as deleted by setting the `deleted_at` date instead of
                     # actually removing the record.
-                    self._DATABASE.update(tyops.set('deleted_at', self.__deleted_at.timestamp), doc_ids=[self.id])
+                    self._database().update(tyops.set('deleted_at', self.__deleted_at.timestamp), doc_ids=[self.id])
                 else:
-                    self._DATABASE.remove(doc_ids=[self.id])
+                    self._database().remove(doc_ids=[self.id])
 
                 self.__id = None
             except KeyError as ke:
@@ -151,14 +152,14 @@ class Base(ABC):
         
         # Want ALL docs
         if offset == 0 and count is None:
-            docs = cls._DATABASE.all()
+            docs = cls._database().all()
         else:
             if count is None:
                 end = None
             else:
                 end = offset + count
 
-            db_iter = iter(cls._DATABASE)
+            db_iter = iter(cls._database())
             docs = itertools.islice(db_iter, offset, end)
 
         objs = []

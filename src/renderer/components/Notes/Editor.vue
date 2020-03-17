@@ -54,9 +54,6 @@ export default {
       if (this.$refs.noteForm.validate()) {
         this.$http.post('http://127.0.0.1:4242/notes/', this.note)
           .then(resp => {
-            var id = resp.data.id
-            console.log(id)
-
             self.cleanup()
             self.close()
           })
@@ -69,7 +66,6 @@ export default {
     },
 
     cleanup: function () {
-      // this.note = {}
       this.errorMsg = null
     },
 
@@ -81,11 +77,6 @@ export default {
 
   data () {
     return {
-      // note: {
-      //   // title: null,
-      //   // content: null,
-      //   // isFavorite: false
-      // },
       errorMsg: null,
       rules: {
         title: [

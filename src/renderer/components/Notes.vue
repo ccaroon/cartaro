@@ -61,7 +61,7 @@ export default {
           self.notes = resp.data
         })
         .catch(err => {
-          self.errorMsg = err
+          console.log(`${err.response.status} - ${err.response.data.error}`)
         })
     },
 
@@ -86,7 +86,7 @@ export default {
             self.load()
           })
           .catch(err => {
-            self.errorMsg = err
+            console.log(`${err.response.status} - ${err.response.data.error}`)
           })
       }
     },

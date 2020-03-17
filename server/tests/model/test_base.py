@@ -29,7 +29,7 @@ class DropDaBase(Base):
 
     @classmethod
     def purge(cls):
-        cls._DATABASE.purge()
+        cls._database().purge()
 
     def _for_json(self):
         return {
