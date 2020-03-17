@@ -3,7 +3,7 @@ from cartaro.utils.crypto import Crypto
 
 class Note(Base):
     def __init__(self, id=None, **kwargs):
-        super().__init__(id)
+        super().__init__(id=id, **kwargs)
         self._instantiate(kwargs)
 
     def _instantiate(self, data):

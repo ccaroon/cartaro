@@ -6,7 +6,7 @@
       </v-col>
     </v-row>
     <v-row class="black light-green--text">
-      <v-col cols="auto">{{ data.id }} - {{ data.title }} - {{ data.content }}</v-col>
+      <v-col cols="auto">{{ msg }}</v-col>
     </v-row>
   </v-container>
 </template>
@@ -15,22 +15,16 @@
 export default {
   name: 'home',
   components: { },
+
   mounted: function () {
-    this.getStuff()
   },
 
   methods: {
-    getStuff: function () {
-      var self = this
-      this.$http.get('http://127.0.0.1:4242/notes/1')
-        .then(resp => {
-          self.data = resp.data
-        })
-    }
   },
+
   data () {
     return {
-      data: {}
+      msg: 'Here Be Dragons!'
     }
   }
 }

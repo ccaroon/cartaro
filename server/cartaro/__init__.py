@@ -25,7 +25,7 @@ flask_app.register_blueprint(notes, url_prefix="/notes")
 @flask_app.after_request
 def set_headers(resp):
     resp.headers['Access-Control-Allow-Origin'] = '*'
-    resp.headers['Access-Control-Allow-Methods'] = "GET,HEAD,POST,PUT"
+    resp.headers['Access-Control-Allow-Methods'] = "GET,HEAD,POST,PUT,DELETE"
     resp.headers['Access-Control-Allow-Headers'] = 'content-type'
 
     return resp

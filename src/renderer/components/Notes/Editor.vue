@@ -2,7 +2,7 @@
   <v-dialog v-model="value" persistent max-width="75%" max-height="75%">
     <v-card>
       <v-card-title>
-        <span class="headline">New Note</span>
+        <span class="headline">Note Editor</span>
       </v-card-title>
       <v-card-text>
         <v-form ref="noteForm">
@@ -24,7 +24,7 @@
             </v-row>
             <v-row>
               <v-col cols="3">
-                <v-checkbox v-model="note.isFavorite" label="Favorite"></v-checkbox>
+                <v-checkbox v-model="note.is_favorite" label="Favorite"></v-checkbox>
               </v-col>
             </v-row>
           </v-container>
@@ -43,9 +43,9 @@
 
 <script>
 export default {
-  name: 'notes-new-edit',
+  name: 'notes-editor',
   components: { },
-  props: ['value'],
+  props: ['note', 'value'],
 
   methods: {
     save: function () {
@@ -68,27 +68,24 @@ export default {
       }
     },
 
-    load: function () {
-
-    },
-
     cleanup: function () {
-      this.note = {}
+      // this.note = {}
       this.errorMsg = null
     },
 
     close: function () {
-      this.$emit('input', false)
+      // this.$emit('input', false)
+      this.$emit('close')
     }
   },
 
   data () {
     return {
-      note: {
-        // title: null,
-        // content: null,
-        // isFavorite: false
-      },
+      // note: {
+      //   // title: null,
+      //   // content: null,
+      //   // isFavorite: false
+      // },
       errorMsg: null,
       rules: {
         title: [

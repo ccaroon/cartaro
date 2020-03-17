@@ -24,8 +24,9 @@ json.JSONEncoder.default = __class_encoder
 class Base(ABC):
     _DATABASE = None
 
-    def __init__(self, id=None):
-        self.__base_instantiate({'id': id})
+    def __init__(self, id=None, **kwargs):
+        kwargs['id'] = id
+        self.__base_instantiate(kwargs)
         self.__open_db()
 
     @classmethod
@@ -162,7 +163,7 @@ class Base(ABC):
 
         objs = []
         for doc in docs:
-            objs.append(cls(doc.doc_id, **doc))
+            objs.append(cls(id=doc.doc_id, **doc))
 
         return objs
 
