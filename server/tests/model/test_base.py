@@ -1,4 +1,5 @@
 import arrow
+import random
 import unittest
 
 from cartaro.model.base import Base
@@ -284,7 +285,19 @@ class BaseTest(unittest.TestCase):
         self.assertEqual(objs[3].id, 49)
         self.assertEqual(objs[4].id, 50)
 
+    def test_count(self):
+        # Delete all records
+        DropDaBase.purge()
 
+        # Create a bunch of new records
+        record_count = random.randint(1, 100)
+        for i in range(0, record_count):
+            d = DropDaBase(name=F"Instance #{i+1}", state=i%2)
+            d.save()
+
+        count = DropDaBase.count()
+        self.assertIsNotNone(count)
+        self.assertEqual(count, record_count)
 
 
 

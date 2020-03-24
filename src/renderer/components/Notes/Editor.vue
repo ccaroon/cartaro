@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="value" persistent max-width="75%" max-height="75%">
+  <v-dialog v-model="value" persistent max-width="75%" max-height="90%">
     <v-card>
       <v-card-title>
         <span class="headline">Note Editor</span>
@@ -19,7 +19,13 @@
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-textarea label="Content" outlined v-model="note.content" :rules="rules.content"></v-textarea>
+                <v-textarea
+                  label="Content"
+                  rows="17"
+                  outlined
+                  v-model="note.content"
+                  :rules="rules.content"
+                ></v-textarea>
               </v-col>
             </v-row>
             <v-row>

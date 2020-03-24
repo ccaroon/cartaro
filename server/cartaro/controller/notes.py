@@ -53,13 +53,19 @@ def retrieve_all():
 
     try:
         page = int(request.args.get('page', 1))
-        per_page = int(request.args.get('pp', 25))
+        per_page = int(request.args.get('pp', 10))
 
         offset = (page - 1) * per_page
-        count  = per_page
 
-        notes = Note.fetch(offset, count)
-        resp = notes
+        notes = Note.fetch(offset, per_page)
+        num_notes = Note.count()
+
+        resp = {
+            'total': num_notes,
+            'page': page,
+            'per_page': per_page,
+            'notes': notes
+        }
     except Exception as e:
         status = 500
         resp = {
@@ -121,3 +127,44 @@ def delete(id):
         }
 
     return jsonify(resp), status
+
+# ------------------------------------------------------------------------------
+# CLI commands
+# ------------------------------------------------------------------------------
+import click
+import faker
+FAKER = faker.Faker()
+
+@notes.cli.command('bulk-create')
+@click.option('-c', '--count', default=25)
+def create(count):
+    """Create a bunch of fake notes in the database"""
+
+    for i in range(0, count):
+        note = Note(
+            title=FAKER.sentence(),
+            content='\n'.join(FAKER.paragraphs(nb=5)),
+            is_favorite=FAKER.boolean(chance_of_getting_true=25)
+        )
+        note.save()
+
+        print(F"Created {i+1}/{count}", end='\r')
+
+    print("\nDone.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 

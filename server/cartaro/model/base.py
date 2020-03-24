@@ -168,6 +168,10 @@ class Base(ABC):
 
         return objs
 
+    @classmethod
+    def count(cls):
+        return len(cls._database())
+
     # @classmethod
     # def find(cls, **kwargs):
     #     pass

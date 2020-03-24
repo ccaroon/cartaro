@@ -4,13 +4,30 @@
       <v-app-bar-nav-icon></v-app-bar-nav-icon>
       <v-toolbar-title>Ĉartaro - Notes</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-toolbar-items>
-        <v-btn icon @click.stop="edit({})">
-          <v-icon>mdi-file-document</v-icon>
-        </v-btn>
-        <v-text-field dense solo clearable placeholder="Search..." prepend-inner-icon="mdi-magnify"></v-text-field>
-      </v-toolbar-items>
-      <!-- <v-spacer></v-spacer> -->
+      <v-row no-gutters align="center">
+        <v-col cols="1">
+          <v-toolbar-items>
+            <v-btn icon @click.stop="edit({})">
+              <v-icon>mdi-file-document</v-icon>
+            </v-btn>
+          </v-toolbar-items>
+        </v-col>
+        <v-col cols="8">
+          <v-toolbar-items>
+            <v-pagination
+              v-model="page"
+              :length="Math.ceil(totalNotes/perPage)"
+              total-visible="10"
+              @input="load"
+            ></v-pagination>
+          </v-toolbar-items>
+        </v-col>
+        <v-col>
+          <v-toolbar-items>
+            <v-text-field dense clearable placeholder="Search..." prepend-inner-icon="mdi-magnify"></v-text-field>
+          </v-toolbar-items>
+        </v-col>
+      </v-row>
     </v-app-bar>
     <NotesEditor v-model="showEditor" v-bind:note="note" v-on:close="closeEditor"></NotesEditor>
     <NotesViewer v-model="showViewer" v-bind:note="note" v-on:close="closeViewer"></NotesViewer>
@@ -56,9 +73,10 @@ export default {
     load: function () {
       var self = this
 
-      this.$http.get('http://127.0.0.1:4242/notes/')
+      this.$http.get(`http://127.0.0.1:4242/notes/?page=${self.page}&pp=${self.perPage}`)
         .then(resp => {
-          self.notes = resp.data
+          self.totalNotes = resp.data.total
+          self.notes = resp.data.notes
         })
         .catch(err => {
           console.log(`${err.response.status} - ${err.response.data.error}`)
@@ -114,6 +132,9 @@ export default {
     return {
       note: {},
       notes: [],
+      page: 1,
+      perPage: 15,
+      totalNotes: 0,
       showEditor: false,
       showViewer: false,
       format: Format

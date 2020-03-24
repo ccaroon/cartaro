@@ -20,9 +20,12 @@
       <router-view></router-view>
     </v-content>
 
-    <v-footer app fixed dark>
-      <span>&copy; 2020</span>
-    </v-footer>
+    <!-- <v-footer app fixed padless dark>
+      <v-col class="text-center" cols="12">
+        &copy; 2020 - {{ new Date().getFullYear() }} —
+        Craig N. Caroon
+      </v-col>
+    </v-footer>-->
   </v-app>
 </template>
 

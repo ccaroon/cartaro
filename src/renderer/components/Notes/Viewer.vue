@@ -11,7 +11,7 @@
       <v-card-text
         v-html="md.render(note.content || '')"
         class="body-1 pt-3"
-        style="height: 600px;"
+        style="height: 750px;"
       ></v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -38,6 +38,7 @@ export default {
 
   data () {
     return {
+      // TODO: move to Vue instance like $http
       md: new MarkdownIt().use(MDEmoji)
     }
   }

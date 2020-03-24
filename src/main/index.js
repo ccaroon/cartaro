@@ -45,6 +45,19 @@ function createMenu () {
   const template = [
     // 0
     {
+      label: 'Edit',
+      submenu: [
+        { label: 'Undo', accelerator: 'CmdOrCtrl+Z', selector: 'undo:' },
+        { label: 'Redo', accelerator: 'Shift+CmdOrCtrl+Z', selector: 'redo:' },
+        { type: 'separator' },
+        { label: 'Cut', accelerator: 'CmdOrCtrl+X', selector: 'cut:' },
+        { label: 'Copy', accelerator: 'CmdOrCtrl+C', selector: 'copy:' },
+        { label: 'Paste', accelerator: 'CmdOrCtrl+V', selector: 'paste:' },
+        { label: 'Select All', accelerator: 'CmdOrCtrl+A', selector: 'selectAll:' }
+      ]
+    },
+    // 1
+    {
       label: 'View',
       submenu: [
         {
@@ -54,14 +67,14 @@ function createMenu () {
         }
       ]
     },
-    // 1
+    // 2
     {
       role: 'window',
       submenu: [
         { role: 'minimize' }
       ]
     },
-    // 2
+    // 3
     {
       role: 'help',
       submenu: [
@@ -87,7 +100,7 @@ function createMenu () {
     })
   } else {
     // Add About to help menu
-    template[2].submenu = template[2].submenu.concat([
+    template[3].submenu = template[3].submenu.concat([
       { type: 'separator' },
       aboutSubMenu
     ])
@@ -151,7 +164,7 @@ function createWindow () {
    */
   mainWindow = new BrowserWindow({
     width: 1280,
-    height: 928,
+    height: 1000,
     minWidth: 900,
     minHeight: 600,
     useContentSize: true,

@@ -64,21 +64,31 @@ class NotesControllerTest(unittest.TestCase):
             note = Note(title=self.FAKER.name(), content=self.FAKER.text())
             note.save()
 
-        # Default: page 1, pp 25
+        # Page 1, Default PP
         r = self.client.get('/notes/')
         self.assertEqual(r.status_code, 200)
 
-        notes = r.get_json()
-        self.assertIsInstance(notes, list)
-        self.assertEqual(len(notes), 25)
+        data = r.get_json()
+        self.assertEqual(data['page'], 1)
+        self.assertEqual(data['per_page'], 10)
+        self.assertGreaterEqual(data['total'], 50)
 
-        # Default: page 1, pp 10
-        r = self.client.get('/notes/?pp=10')
-        self.assertEqual(r.status_code, 200)
-
-        notes = r.get_json()
+        notes = data['notes']
         self.assertIsInstance(notes, list)
         self.assertEqual(len(notes), 10)
+
+        # Page 1, 25 PP
+        r = self.client.get('/notes/?pp=25')
+        self.assertEqual(r.status_code, 200)
+
+        data = r.get_json()
+        self.assertEqual(data['page'], 1)
+        self.assertEqual(data['per_page'], 25)
+        self.assertGreaterEqual(data['total'], 50)
+
+        notes = data['notes']
+        self.assertIsInstance(notes, list)
+        self.assertEqual(len(notes), 25)
 
         # Save to compare below
         note_1 = notes[0]
@@ -88,7 +98,12 @@ class NotesControllerTest(unittest.TestCase):
         r = self.client.get('/notes/?page=3&pp=10')
         self.assertEqual(r.status_code, 200)
 
-        notes = r.get_json()
+        data = r.get_json()
+        self.assertEqual(data['page'], 3)
+        self.assertEqual(data['per_page'], 10)
+        self.assertGreaterEqual(data['total'], 50)
+
+        notes = data['notes']
         self.assertIsInstance(notes, list)
         self.assertEqual(len(notes), 10)
         self.assertNotEqual(notes[0]['id'], note_1['id'])
