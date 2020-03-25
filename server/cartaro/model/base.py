@@ -172,10 +172,33 @@ class Base(ABC):
     def count(cls):
         return len(cls._database())
 
-    # @classmethod
-    # def find(cls, **kwargs):
-    #     pass
+    # NOTE:
+    # Currently only supports searching string fields
+    # TODO:
+    # - intelligent searching based on type
+    @classmethod
+    def find(cls, op="or", **kwargs):
+        query_parts = []
+        query_builder = Query()
+        
+        for (field, value) in kwargs.items():
+            query_parts.append(query_builder[field].search(value))
 
+        query = query_parts[0]
+        if op == "or":
+            for qp in query_parts:
+                query |= qp
+        elif op == "and":
+            for qp in query_parts:
+                query &= qp
+
+        docs = cls._database().search(query)
+
+        objs = []
+        for doc in docs:
+            objs.append(cls(id=doc.doc_id, **doc))
+
+        return objs
 
 
 

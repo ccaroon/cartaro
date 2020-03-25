@@ -8,25 +8,16 @@ from cartaro.model.base import Base
 # Since cartaro.model.base.Base is an Abstract Class we have to create a concrete
 # class for testing purposes.
 # ------------------------------------------------------------------------------
-class DropDaBase(Base):
+class Ticket(Base):
     def __init__(self, id=None, **kwargs):
         super().__init__(id)
         self._instantiate(kwargs)
 
-    @property
-    def state(self):
-        return self.__state
-
-    def analyze(self):
-        if self.decibels >= 120:
-            self.__state = 808
-        else:
-            self.__state = 0
-
     def _instantiate(self, data):
         self.name = data.get('name', None)
-        self.decibels = data.get('decibels', 0)
-        self.__state = data.get('state', 0)
+        self.desc = data.get('desc', None)
+        self.use_count = data.get('use_count', 0)
+        self.active = data.get('active', True)
 
     @classmethod
     def purge(cls):
@@ -35,14 +26,16 @@ class DropDaBase(Base):
     def _for_json(self):
         return {
             "name": self.name,
-            "decibels": self.decibels,
-            "state": self.state
+            "desc": self.desc,
+            "use_count": self.use_count,
+            "active": self.active
         }
 # ------------------------------------------------------------------------------
 class BaseTest(unittest.TestCase):
 
     def setUp(self):
-        pass
+        # Delete all records
+        Ticket.purge()
 
     def test_abstractness(self):
         with self.assertRaisesRegex(TypeError, "Can't instantiate abstract class Base with abstract methods"):
@@ -56,53 +49,55 @@ class BaseTest(unittest.TestCase):
 
     def test_id(self):
         # Valid
-        obj = DropDaBase(id=42)
+        obj = Ticket(id=42)
         self.assertIsNotNone(obj.id)
 
         # Invalid - Not an INT
-        obj = DropDaBase(id=42.7)
+        obj = Ticket(id=42.7)
         self.assertIsNone(obj.id)
 
         # Invalid - Not an INT
-        obj = DropDaBase(id="77")
+        obj = Ticket(id="77")
         self.assertIsNone(obj.id)
 
         # Invalid - Zero (0)
-        obj = DropDaBase(id=0)
+        obj = Ticket(id=0)
         self.assertIsNone(obj.id)
 
         # Invalid - falsy
-        obj = DropDaBase(id=False)
+        obj = Ticket(id=False)
         self.assertIsNone(obj.id)
 
         # Invalid - falsy
-        obj = DropDaBase(id="")
+        obj = Ticket(id="")
         self.assertIsNone(obj.id)
 
         # Invalid - True (Not an INT)
-        obj = DropDaBase(id=False)
+        obj = Ticket(id=False)
         self.assertIsNone(obj.id)
 
     def test_for_json(self):
-        obj = DropDaBase(id=42, name="Flux", decibels=120)
+        obj = Ticket(id=42, name="Water Usage", desc="Turn off the water", active=False)
 
         # With ID
         data = obj.for_json()
         self.assertIsNotNone(obj.id)
         self.assertEqual(obj.id, data['id'])
         self.assertEqual(obj.name, data['name'])
-        self.assertEqual(obj.decibels, data['decibels'])
+        self.assertEqual(obj.desc, data['desc'])
+        self.assertEqual(obj.active, data['active'])
 
         # W/O ID
         data = obj.for_json(omit_id=True)
         self.assertIsNotNone(obj.id)
         self.assertIsNone(data.get('id', None), None)
         self.assertEqual(obj.name, data['name'])
-        self.assertEqual(obj.decibels, data['decibels'])
+        self.assertEqual(obj.desc, data['desc'])
+        self.assertEqual(obj.active, data['active'])
 
     def test_save(self):
         # Create
-        obj = DropDaBase(name="Flux", decibels=120)
+        obj = Ticket(name="Grow Veges", desc="Plant a garden. Eat it's bounty.")
         self.assertIsNone(obj.id)
         self.assertIsNone(obj.created_at)
         self.assertIsNone(obj.updated_at)
@@ -120,8 +115,8 @@ class BaseTest(unittest.TestCase):
         # Update
         id = obj.id
         created = obj.created_at
-        obj.name = "DJ Magic Mike"
-        obj.decibels = 180
+        obj.name = "Buy Local Produce"
+        obj.desc = "You don't have to grow; Buy Local!!"
 
         obj.save()
 
@@ -136,37 +131,33 @@ class BaseTest(unittest.TestCase):
 
     def test_load(self):
         # Success
-        obj = DropDaBase(name="The Punkins'", decibels=120)
-        obj.analyze()
+        obj = Ticket(name="Smile", desc="Brush your teeth. Keep them pearlies white.")
 
         obj.save()
         self.assertIsNotNone(obj.id)
-        self.assertEquals(obj.state, 808)
 
-        obj2 = DropDaBase(id=obj.id)
+        obj2 = Ticket(id=obj.id)
         self.assertIsNone(obj2.name)
-        self.assertEquals(obj2.decibels, 0)
-        self.assertEquals(obj2.state, 0)
 
         obj2.load()
         self.assertEquals(obj2.id, obj.id)
         self.assertEquals(obj2.name, obj.name)
-        self.assertEquals(obj2.decibels, obj.decibels)
-        self.assertEquals(obj2.state, obj.state)
+        self.assertEquals(obj2.desc, obj.desc)
+        self.assertEquals(obj2.active, obj.active)
         self.assertEqual(type(obj2.created_at), arrow.Arrow)
 
         # Fail - Bad ID
-        obj = DropDaBase(id="cupcake")
+        obj = Ticket(id="cupcake")
         with self.assertRaisesRegex(ValueError, 'Valid Object ID required for loading'):
             obj.load()
 
         # Fail - No record with ID
-        obj = DropDaBase(id=999999999)
+        obj = Ticket(id=999999999)
         with self.assertRaisesRegex(ValueError, 'Record Not Found: \[999999999\]'):
             obj.load()
 
     def test_delete_safe(self):
-        obj = DropDaBase(name="Silly Putty")
+        obj = Ticket(name="Silly Putty", desc="All work and no play makes Jack a dull boy.")
 
         obj.save()
         self.assertIsNotNone(obj.id)
@@ -192,13 +183,13 @@ class BaseTest(unittest.TestCase):
             obj.delete()
 
         # Should still be able to load it via a new instance
-        obj2 = DropDaBase(id=obj_id)
+        obj2 = Ticket(id=obj_id)
         obj2.load()
         self.assertEqual(obj2.name, obj.name)
         self.assertIsNotNone(obj2.deleted_at)
 
     def test_delete(self):
-        obj = DropDaBase(name="Flutterby")
+        obj = Ticket(name="Flutterby", desc="Start a butterfly collection.")
 
         obj.save()
         self.assertIsNotNone(obj.id)
@@ -225,36 +216,33 @@ class BaseTest(unittest.TestCase):
             obj.delete()
 
         # Should NOT be able to load it
-        obj2 = DropDaBase(id=obj_id)
+        obj2 = Ticket(id=obj_id)
         with self.assertRaisesRegex(ValueError, F"Record Not Found: \[{obj_id}\]"):
             obj2.load()
 
     def test_delete_nonexistent(self):
-        obj = DropDaBase(id=77777, name="Infected")
+        obj = Ticket(id=77777, name="No Running", desc="Fix the toilet. It's running.")
 
         with self.assertRaisesRegex(ValueError, F"Record Not Found: \[{obj.id}\]"):
             obj.delete()
 
     def test_fetch(self):
-        # Delete all records
-        DropDaBase.purge()
-
         # Create a bunch of new records
         record_count = 50
         for i in range(0, record_count):
-            d = DropDaBase(name=F"Instance #{i+1}", state=i%2)
+            d = Ticket(name=F"Ticket #{i+1}", desc=F"Step #{i}")
             d.save()
 
         # Load All
-        objs = DropDaBase.fetch()
+        objs = Ticket.fetch()
         self.assertEqual(len(objs), record_count)
-        self.assertIsInstance(objs[0], DropDaBase)
+        self.assertIsInstance(objs[0], Ticket)
         self.assertEqual(objs[49].id, 50)
 
         # Limit - First 5
         offset = 0
         count = 5
-        objs = DropDaBase.fetch(offset, count)
+        objs = Ticket.fetch(offset, count)
         self.assertEqual(len(objs), count)
         for i in range(1, count):
             self.assertEqual(objs[i-1].id, i + offset)
@@ -262,7 +250,7 @@ class BaseTest(unittest.TestCase):
         # Limit - Second 5
         offset = 5
         count = 5
-        objs = DropDaBase.fetch(offset, count)
+        objs = Ticket.fetch(offset, count)
         self.assertEqual(len(objs), count)
         for i in range(1, count):
             self.assertEqual(objs[i-1].id, i + offset)
@@ -270,14 +258,14 @@ class BaseTest(unittest.TestCase):
         # Limit - Last 2
         count = 2
         offset = record_count - count
-        objs = DropDaBase.fetch(offset, count)
+        objs = Ticket.fetch(offset, count)
         self.assertEqual(len(objs), count)
         self.assertEqual(objs[0].id, 49)
         self.assertEqual(objs[1].id, 50)
 
         # Limit - Last 5
         offset = record_count - 5
-        objs = DropDaBase.fetch(offset)
+        objs = Ticket.fetch(offset)
         self.assertEqual(len(objs), 5)
         self.assertEqual(objs[0].id, 46)
         self.assertEqual(objs[1].id, 47)
@@ -286,18 +274,62 @@ class BaseTest(unittest.TestCase):
         self.assertEqual(objs[4].id, 50)
 
     def test_count(self):
-        # Delete all records
-        DropDaBase.purge()
-
         # Create a bunch of new records
         record_count = random.randint(1, 100)
         for i in range(0, record_count):
-            d = DropDaBase(name=F"Instance #{i+1}", state=i%2)
+            d = Ticket(name=F"Ticket #{i+1}", desc=F"{i} / {record_count}")
             d.save()
 
-        count = DropDaBase.count()
+        count = Ticket.count()
         self.assertIsNotNone(count)
         self.assertEqual(count, record_count)
+
+    def test_find(self):
+        # Create a couple objs
+        obj1 = Ticket(name="Xenomorph - 42", desc="Weyland-Yutani Specimen #42")
+        obj1.save()
+
+        obj2 = Ticket(name="Xenomorph - 88", desc="Weyland-Yutani Specimen #88")
+        obj2.save()
+
+        obj3 = Ticket(name="BOB - ID#7", desc="Marathon - Born on Board - #7")
+        obj3.save()
+
+        # Find #1 - OR
+        things = Ticket.find(name="Xeno|BOB")
+        self.assertEquals(len(things), 3)
+
+        self.assertEqual(things[0].id, obj1.id)
+        self.assertEqual(things[0].name, obj1.name)
+
+        self.assertEqual(things[1].id, obj2.id)
+        self.assertEqual(things[1].name, obj2.name)
+
+        self.assertEqual(things[2].id, obj3.id)
+        self.assertEqual(things[2].name, obj3.name)
+
+        # Find #2 - OR
+        things = Ticket.find(name="88", desc="Born on Board")
+        self.assertEquals(len(things), 2)
+
+        self.assertEqual(things[0].id, obj2.id)
+        self.assertEqual(things[0].name, obj2.name)
+
+        self.assertEqual(things[1].id, obj3.id)
+        self.assertEqual(things[1].name, obj3.name)
+
+        # Find #3 - AND - 0 hits
+        things = Ticket.find("and", name="BOB", desc="Green Suit Scaredie Cats")
+        self.assertEquals(len(things), 0)
+
+        # Find #4 - AND
+        things = Ticket.find("and", name="Xeno", desc="Specimen #88")
+        self.assertEquals(len(things), 1)
+
+        self.assertEqual(things[0].id, obj2.id)
+        self.assertEqual(things[0].name, obj2.name)
+
+
 
 
 
