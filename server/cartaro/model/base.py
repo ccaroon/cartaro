@@ -2,6 +2,7 @@ import arrow
 import itertools
 import json
 import os
+import re
 
 from abc import ABC, abstractmethod
 from datetime import datetime
@@ -182,7 +183,7 @@ class Base(ABC):
         query_builder = Query()
         
         for (field, value) in kwargs.items():
-            query_parts.append(query_builder[field].search(value))
+            query_parts.append(query_builder[field].search(value, flags=re.IGNORECASE))
 
         query = query_parts[0]
         if op == "or":
