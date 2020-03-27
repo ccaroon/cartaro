@@ -47,18 +47,28 @@ def retrieve(id):
     return jsonify(resp), status
 
 @notes.route('/', methods=['GET'])
-def retrieve_all():
+def find():
     resp = None
     status = 200
 
     try:
-        page = int(request.args.get('page', 1))
-        per_page = int(request.args.get('pp', 10))
+        query_string = request.args.copy()
 
+        page     = int(query_string.pop('page', 1))
+        per_page = int(query_string.pop('pp', 10))
+
+        num_notes = None
+        notes = None
         offset = (page - 1) * per_page
-
-        notes = Note.fetch(offset, per_page)
-        num_notes = Note.count()
+        if not query_string:
+            notes = Note.fetch(offset, per_page)
+            num_notes = Note.count()
+        else:
+            notes = Note.find(**query_string)
+            num_notes = len(notes)
+            # s = slice(offset, offset + per_page)
+            if num_notes > per_page:
+                notes = notes[offset:offset + per_page]
 
         resp = {
             'total': num_notes,

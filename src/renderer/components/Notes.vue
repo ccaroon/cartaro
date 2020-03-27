@@ -24,7 +24,15 @@
         </v-col>
         <v-col>
           <v-toolbar-items>
-            <v-text-field dense clearable placeholder="Search..." prepend-inner-icon="mdi-magnify"></v-text-field>
+            <v-text-field
+              v-model="searchText"
+              dense
+              clearable
+              placeholder="Search..."
+              prepend-inner-icon="mdi-magnify"
+              @click:clear="clearSearch"
+              @keyup.enter="search()"
+            ></v-text-field>
           </v-toolbar-items>
         </v-col>
       </v-row>
@@ -72,8 +80,18 @@ export default {
   methods: {
     load: function () {
       var self = this
+      var qs = `page=${self.page}&pp=${self.perPage}`
 
-      this.$http.get(`http://127.0.0.1:4242/notes/?page=${self.page}&pp=${self.perPage}`)
+      if (this.searchText) {
+        var parts = this.searchText.split(':', 2)
+        if (parts.length === 2) {
+          qs += `&${parts[0].trim()}=${parts[1].trim()}`
+        } else {
+          qs += `&title=${this.searchText}&content=${this.searchText}`
+        }
+      }
+
+      this.$http.get(`http://127.0.0.1:4242/notes/?${qs}`)
         .then(resp => {
           self.totalNotes = resp.data.total
           self.notes = resp.data.notes
@@ -125,6 +143,21 @@ export default {
         color = Constants.COLORS.GREY_ALT
       }
       return color
+    },
+
+    search: function () {
+      if (this.searchText) {
+        this.page = 1
+        this.load()
+      }
+    },
+
+    clearSearch: function () {
+      if (this.searchText) {
+        this.page = 1
+        this.searchText = null
+        this.load()
+      }
     }
   },
 
@@ -137,7 +170,8 @@ export default {
       totalNotes: 0,
       showEditor: false,
       showViewer: false,
-      format: Format
+      format: Format,
+      searchText: null
     }
   }
 }

@@ -8,6 +8,11 @@ class NotesControllerTest(unittest.TestCase):
 
     FAKER = faker.Faker()
 
+    def __gen_notes(self, count, ts='', cs=''):
+        for i in range(0, count):
+            note = Note(title=F"{self.FAKER.name()} - {ts}", content=F"{self.FAKER.text()} - {cs}")
+            note.save()
+
     def setUp(self):
         # New Note for testing
         self.note = Note(title=self.FAKER.name(), content=self.FAKER.text())
@@ -58,11 +63,9 @@ class NotesControllerTest(unittest.TestCase):
         self.assertIsNotNone(note.get('error', None))
         self.assertRegexpMatches(note['error'], "Not Found")
 
-    def test_retrieve_all(self):
+    def test_find_pagination(self):
         # Create a bunch of notes
-        for i in range(0, 50):
-            note = Note(title=self.FAKER.name(), content=self.FAKER.text())
-            note.save()
+        self.__gen_notes(50)
 
         # Page 1, Default PP
         r = self.client.get('/notes/')
@@ -114,6 +117,63 @@ class NotesControllerTest(unittest.TestCase):
         data = r.get_json()
         self.assertEqual(r.status_code, 500)
         self.assertRegexpMatches(data['error'], "invalid literal for int\(\) with base 10: 'one'")
+
+    def test_find_search(self):
+        self.__gen_notes(15)
+        self.__gen_notes(8, ts="Astrium")
+        self.__gen_notes(7, cs="Xenomorph")
+
+        # Single Param Search - 1
+        r = self.client.get('/notes/?title=Astrium')
+        self.assertEqual(r.status_code, 200)
+
+        data = r.get_json()
+        self.assertEqual(data['page'], 1)
+        self.assertEqual(data['per_page'], 10)
+        self.assertEqual(data['total'], 8)
+
+        notes = data['notes']
+        self.assertIsInstance(notes, list)
+        self.assertEqual(len(notes), 8)
+
+        # Single Param Search - 2
+        r = self.client.get('/notes/?content=Xenomorph')
+        self.assertEqual(r.status_code, 200)
+
+        data = r.get_json()
+        self.assertEqual(data['page'], 1)
+        self.assertEqual(data['per_page'], 10)
+        self.assertEqual(data['total'], 7)
+
+        notes = data['notes']
+        self.assertIsInstance(notes, list)
+        self.assertEqual(len(notes), 7)
+
+        # Mult Param Search - 1
+        r = self.client.get('/notes/?title=Astrium&content=Xenomorph&pp=25')
+        self.assertEqual(r.status_code, 200)
+
+        data = r.get_json()
+        self.assertEqual(data['page'], 1)
+        self.assertEqual(data['per_page'], 25)
+        self.assertEqual(data['total'], 15)
+
+        notes = data['notes']
+        self.assertIsInstance(notes, list)
+        self.assertEqual(len(notes), 15)
+
+        # Mult Param Search - 2
+        r = self.client.get('/notes/?title=Astrium&content=Xenomorph&page=2&pp=12')
+        self.assertEqual(r.status_code, 200)
+
+        data = r.get_json()
+        self.assertEqual(data['page'], 2)
+        self.assertEqual(data['per_page'], 12)
+        self.assertEqual(data['total'], 15)
+
+        notes = data['notes']
+        self.assertIsInstance(notes, list)
+        self.assertEqual(len(notes), 3)
 
     def test_update(self):
         data = {
