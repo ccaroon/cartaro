@@ -210,7 +210,7 @@ class NotesControllerTest(unittest.TestCase):
         note.save()
 
         # Safe Delete
-        r = self.client.delete(F"/notes/{note.id}", json={'safe': True})
+        r = self.client.delete(F"/notes/{note.id}?safe=1")
         self.assertEqual(r.status_code, 200)
 
         r_data = r.get_json()

@@ -119,10 +119,10 @@ def delete(id):
     status = 200
 
     try:
-        data = request.json or {}
-
+        safe_del = request.args.get('safe', False)
+        
         note = Note(id=id)
-        note.delete(safe=data.get('safe', False))
+        note.delete(safe=safe_del)
 
         resp = {
             'id': id

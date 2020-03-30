@@ -45,7 +45,10 @@
           <v-icon :color="note.is_favorite ? 'yellow' : ''">mdi-star</v-icon>
         </v-list-item-avatar>
         <v-list-item-content @click="view(note)">
-          <v-list-item-title class="subtitle-1">{{ note.title }}</v-list-item-title>
+          <v-list-item-title class="subtitle-1" v-if="note.deleted_at === null">{{ note.title }}</v-list-item-title>
+          <v-list-item-title class="subtitle-1" v-else>
+            <del>{{ note.title }}</del>
+          </v-list-item-title>
           <v-list-item-subtitle>{{ note.created_at ? format.formatDateTime(note.created_at*1000) : '--'}}</v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-action>
@@ -117,7 +120,7 @@ export default {
       var doDelete = confirm(`Delete "${note.title}"?`)
 
       if (doDelete) {
-        this.$http.delete(`http://127.0.0.1:4242/notes/${note.id}`)
+        this.$http.delete(`http://127.0.0.1:4242/notes/${note.id}?safe=1`)
           .then(resp => {
             self.load()
           })
