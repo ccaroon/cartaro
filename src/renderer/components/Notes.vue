@@ -49,7 +49,17 @@
           <v-list-item-title class="subtitle-1" v-else>
             <del>{{ note.title }}</del>
           </v-list-item-title>
-          <v-list-item-subtitle>{{ note.created_at ? format.formatDateTime(note.created_at*1000) : '--'}}</v-list-item-subtitle>
+          <v-list-item-subtitle>
+            {{ note.created_at ? format.formatDateTime(note.created_at*1000) : '--'}}
+            <v-chip
+              x-small
+              label
+              class="mr-1 float-right"
+              :color="rowColor(idx+1)"
+              v-for="(tag,tgIdx) in note.tags"
+              :key="tgIdx"
+            >{{ tag }}</v-chip>
+          </v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-action>
           <v-btn icon outlined @click="edit(note)">

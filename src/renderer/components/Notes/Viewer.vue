@@ -6,6 +6,8 @@
         &nbsp;
         <v-divider vertical inset></v-divider>&nbsp;
         <v-icon :color="note.is_favorite ? 'yellow' : ''">mdi-star</v-icon>
+        <v-divider vertical inset></v-divider>&nbsp;
+        <v-chip small label class="mr-1" v-for="(tag,idx) in note.tags" :key="idx">{{ tag }}</v-chip>
       </v-card-title>
       <v-divider></v-divider>
       <v-card-text
