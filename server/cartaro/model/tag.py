@@ -1,9 +1,6 @@
 from .base import Base
 
 class Tag(Base):
-
-    _TAGGABLE = False
-
     def __init__(self, id=None, **kwargs):
         super().__init__(id=id, **kwargs)
         self._instantiate(kwargs)

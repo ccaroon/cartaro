@@ -8,8 +8,6 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from tinydb import TinyDB, Query
 import tinydb.operations as tyops
-
-import cartaro.model
 # ------------------------------------------------------------------------------
 # Configure JSONEncoder to look for "for_json" method when serializing classes
 # ------------------------------------------------------------------------------
@@ -26,10 +24,6 @@ json.JSONEncoder.default = __class_encoder
 # ------------------------------------------------------------------------------
 class Base(ABC):
     __DATABASE = None
-    
-    # All sub-classes are taggable by default. 
-    # Override in base class and set to False to disable tagging.
-    _TAGGABLE = True
 
     def __init__(self, id=None, **kwargs):
         kwargs['id'] = id
@@ -55,22 +49,6 @@ class Base(ABC):
     def deleted_at(self):
         return self.__deleted_at
 
-    @property
-    def tags(self):
-        return self.__tags
-    
-    def tag(self, tag):
-        if isinstance(tag, str):
-            self.__tags.add(cartaro.model.tag.Tag(name=tag))
-        else:
-            self.__tags.add(tag)
-
-    def remove_tag(self, tag):
-        if isinstance(tag, str):
-            self.__tags.remove(cartaro.model.tag.Tag(name=tag))
-        else:
-            self.__tags.remove(tag)
-
     @classmethod
     def _database(cls):
         if not cls.__DATABASE:
@@ -89,14 +67,6 @@ class Base(ABC):
         self.__id = data.get('id', None)
 
         # Shared Attributes
-        ## Tags
-        self.__tags = None
-        if self._TAGGABLE:
-            self.__tags = set()
-            tag_data = data.get('tags', [])
-            for name in tag_data:
-                self.tag(name)
-
         ## Timestamps
         created_at = data.get('created_at', None)
         updated_at = data.get('updated_at', None)
@@ -173,10 +143,6 @@ class Base(ABC):
 
         if not omit_id:
             data['id'] = self.id
-
-        if self._TAGGABLE:
-            # Store Tags that are part of the Object as strings only
-            data["tags"] = [str(tag) for tag in self.tags]
 
         return data
 

@@ -27,11 +27,3 @@ class TagTest(unittest.TestCase):
         tag2 = Tag(name=self.tag.name)
 
         self.assertEqual(self.tag, tag2)
-
-    # def test_tagability(self):
-    #     # Tags should not be taggable
-    #     self.tag.tag("fish")
-
-
-    #     # from db
-    #     # ...

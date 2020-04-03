@@ -1,7 +1,8 @@
 from .base import Base
+from .taggable import Taggable
 from cartaro.utils.crypto import Crypto
 
-class Note(Base):
+class Note(Base, Taggable):
     def __init__(self, id=None, **kwargs):
         super().__init__(id=id, **kwargs)
         self._instantiate(kwargs)
@@ -11,6 +12,8 @@ class Note(Base):
         self.content = data.get('content', None)
         self.is_favorite = data.get('is_favorite', False)
         self.__is_encrypted = data.get('is_encrypted', False)
+
+        self._taggable_instantiate(data.get("tags", []))
 
     @property
     def is_encrypted(self):
@@ -39,9 +42,20 @@ class Note(Base):
             raise RuntimeError(F"Failed to decrypt: <{e}>")
 
     def _for_json(self):
-        return {
+        data = {
             "title": self.title,
             "content": self.content,
             "is_favorite": self.is_favorite,
             "is_encrypted": self.__is_encrypted
         }
+        data.update(self._taggable_for_json())
+        
+        return data
+
+
+
+
+
+
+
+# 

@@ -1,6 +1,7 @@
 import unittest
 
 from cartaro.model.note import Note
+from cartaro.model.tag import Tag
 class NoteTest(unittest.TestCase):
 
     def setUp(self):
@@ -70,3 +71,36 @@ class NoteTest(unittest.TestCase):
 
         self.assertTrue(self.note.is_encrypted)
         self.assertNotEqual(self.note.content, orig_content)
+
+    def test_tagging(self):
+        self.assertIsNotNone(self.note.tags)
+        self.assertIsInstance(self.note.tags, set)
+        self.assertEqual(len(self.note.tags), 0)
+
+        self.note.tag("Hello")
+        self.note.tag("World")
+        self.assertEqual(len(self.note.tags), 2)
+        self.assertIsInstance(list(self.note.tags)[0], Tag)
+
+        self.note.save()
+
+        note2 = Note(id=self.note.id)
+        note2.load()
+        self.assertIsNotNone(note2.tags)
+        self.assertIsInstance(note2.tags, set)
+        self.assertEqual(len(note2.tags), 2)
+        self.assertIsInstance(list(note2.tags)[0], Tag)
+
+        self.assertTrue(Tag(name="Hello") in note2.tags)
+
+
+
+
+
+
+
+
+
+
+
+# 
