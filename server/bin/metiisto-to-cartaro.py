@@ -59,7 +59,7 @@ class DataConverter:
                 if note_id not in tags:
                     tags[note_id] = []
 
-                tags[note_id].append(row[1])
+                tags[note_id].append(row[1].lower())
 
         count = 0
         obj_cursor.execute(obj_sql)
@@ -76,8 +76,11 @@ class DataConverter:
                 elif name.startswith('is_'):
                     value = True if raw_value else False
                 
+                transformer = self.opts.get(F"{name}_transformer", None)
+                if transformer:
+                    value = transformer(value)
+                
                 record[name] = value
-                # print(record)
 
             if self.opts.get("has_tags", False):
                 record['tags'] = tags.get(obj_id, [])
@@ -102,7 +105,8 @@ CONVERSION_MAP = {
         'metiisto': ['name'],
         'cartaro':  ['name'],
         'options': {
-            'has_datestamps': False
+            'has_datestamps': False,
+            'name_transformer': lambda input: input.lower()
         }
     },
 }

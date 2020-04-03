@@ -185,9 +185,13 @@ class Base(ABC):
     def find(cls, op="or", **kwargs):
         query_parts = []
         query_builder = Query()
-        
+
         for (field, value) in kwargs.items():
-            query_parts.append(query_builder[field].search(value, flags=re.IGNORECASE))
+            if field == 'tags':
+                tags = value.replace(" ", "").split(',')
+                query_parts.append(query_builder['tags'].any(tags))
+            else:
+                query_parts.append(query_builder[field].search(value, flags=re.IGNORECASE))
 
         query = query_parts[0]
         if op == "or":

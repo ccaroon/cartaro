@@ -105,6 +105,27 @@ class TaggableTest(unittest.TestCase):
         
         self.assertCountEqual(comment.tags, comment2.tags)
 
+    def test_search_by_tag(self):
+        for i in range(0, 10):
+            comment = Comment(name=F"User {i}", message=F"Foo Bar {i}", tags=[F"Anonymous", F"Tag{i}", F"Tag{i*i}"])
+            comment.save()
+        
+        comment = Comment(
+            name="John Titor",
+            message="I am from the future. I can prove it.",
+            tags=['Steins;Gate', 'WW III', 'Future']
+        )
+        comment.save()
+
+        results = Comment.find(tags="Anonymous")
+        self.assertEqual(len(results), 10)
+
+        results = Comment.find(tags="Future")
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].id, comment.id)
+        self.assertEqual(results[0].name, "John Titor")
+        self.assertTrue(Tag(name="Steins;Gate") in results[0].tags)
+
     def test_errors(self):
         comment = Comment(name="Darth Vader", comment="I find your lack of faith disturbing.")
         
