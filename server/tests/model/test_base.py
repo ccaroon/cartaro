@@ -3,14 +3,14 @@ import random
 import unittest
 
 from cartaro.model.base import Base
-
+from cartaro.model.tag import Tag
 # ------------------------------------------------------------------------------
 # Since cartaro.model.base.Base is an Abstract Class we have to create a concrete
 # class for testing purposes.
 # ------------------------------------------------------------------------------
 class Ticket(Base):
     def __init__(self, id=None, **kwargs):
-        super().__init__(id)
+        super().__init__(id=id, **kwargs)
         self._instantiate(kwargs)
 
     def _instantiate(self, data):
@@ -329,6 +329,74 @@ class BaseTest(unittest.TestCase):
         self.assertEqual(things[0].id, obj2.id)
         self.assertEqual(things[0].name, obj2.name)
 
+    def test_tagging_basics(self):
+        ticket = Ticket(name="Fix Telephone", desc="The phone is borked!")
+
+        #  No tags yet
+        self.assertIsInstance(ticket.tags, set)
+        self.assertEqual(len(ticket.tags), 0)
+
+        # Add a tag
+        ticket.tag("Urgent")
+        self.assertIsInstance(ticket.tags, set)
+        self.assertEqual(len(ticket.tags), 1)
+        self.assertIsInstance(list(ticket.tags)[0], Tag)
+
+        # Add the same tag == no change
+        ticket.tag("Urgent")
+        self.assertIsInstance(ticket.tags, set)
+        self.assertEqual(len(ticket.tags), 1)
+        self.assertIsInstance(list(ticket.tags)[0], Tag)
+
+        # Add a few more tags
+        ticket.tag("Phone") # Add by string
+        ticket.tag("CommErr") # Add by string
+        ticket.tag(Tag(name="Slang")) # Add by Tag class
+        self.assertEqual(len(ticket.tags), 4)
+        self.assertTrue(Tag(name="CommErr") in ticket.tags)
+
+        # Remove one - by string
+        ticket.remove_tag("Slang")
+        self.assertEqual(len(ticket.tags), 3)
+        self.assertFalse(Tag(name="Slang") in ticket.tags)
+
+        # Remove another - by Tag
+        ticket.remove_tag(Tag(name="Phone"))
+        self.assertEqual(len(ticket.tags), 2)
+        self.assertFalse(Tag(name="Phone") in ticket.tags)
+
+        # Add tags at instance creation
+        ticket2 = Ticket(
+            name="Dirty Mouse",
+            desc="My mouse is dirty. It won't move.",
+            tags=['mouse', 'devices', 'accessories']
+        )
+
+        self.assertIsInstance(ticket2.tags, set)
+        self.assertEqual(len(ticket2.tags), 3)
+        self.assertIsInstance(list(ticket.tags)[0], Tag)
+
+    def test_tagging_advanced(self):
+        ticket = Ticket(
+            name="Reactor Core Meltdown",
+            desc="Abandon Ship!!!",
+            tags=["Super Urgent", "Death", "So long and thanks for all the fish"]
+        )
+
+        self.assertIsInstance(ticket.tags, set)
+        self.assertEqual(len(ticket.tags), 3)
+
+        ticket.save()
+        self.assertIsNotNone(ticket.id)
+        self.assertEqual(len(ticket.tags), 3)
+        self.assertIsInstance(ticket.tags, set)
+
+        ticket2 = Ticket(id=ticket.id)
+        ticket2.load()
+        self.assertIsInstance(ticket2.tags, set)
+        self.assertIsInstance(list(ticket2.tags)[0], Tag)
+        
+        self.assertCountEqual(ticket.tags, ticket2.tags)
 
 
 

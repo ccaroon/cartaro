@@ -8,6 +8,8 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from tinydb import TinyDB, Query
 import tinydb.operations as tyops
+
+import cartaro.model
 # ------------------------------------------------------------------------------
 # Configure JSONEncoder to look for "for_json" method when serializing classes
 # ------------------------------------------------------------------------------
@@ -24,43 +26,14 @@ json.JSONEncoder.default = __class_encoder
 # ------------------------------------------------------------------------------
 class Base(ABC):
     __DATABASE = None
+    
+    # All sub-classes are taggable by default. 
+    # Override in base class and set to False to disable tagging.
+    _TAGGABLE = True
 
     def __init__(self, id=None, **kwargs):
         kwargs['id'] = id
         self.__base_instantiate(kwargs)
-
-    @classmethod
-    def _database(cls):
-        if not cls.__DATABASE:
-            env = os.environ.get("CARTARO_ENV", "dev")
-            doc_dir = os.environ.get("CARTARO_DOC_PATH", ".")
-
-            db_name = cls.__name__
-            if (env != "prod"):
-                db_name += F"-{env}"
-
-            cls.__DATABASE = TinyDB(F"{doc_dir}/{db_name}.json")
-
-        return cls.__DATABASE
-
-    def __base_instantiate(self, data):
-        self.__id = data.get('id', None)
-
-        # Datetimes are assumed to be in UTC epoch format
-        created_at = data.get('created_at', None)
-        updated_at = data.get('updated_at', None)
-        deleted_at = data.get('deleted_at', None)
-
-        # Convert UTC timestamps to TZ specific Arrow instances
-        # TODO: Don't hard-code TZ
-        tz = 'US/Eastern'
-        self.__created_at = arrow.get(datetime.fromtimestamp(created_at), tz) if created_at else None
-        self.__updated_at = arrow.get(datetime.fromtimestamp(updated_at), tz) if updated_at else None
-        self.__deleted_at = arrow.get(datetime.fromtimestamp(deleted_at), tz) if deleted_at else None
-
-    @abstractmethod
-    def _instantiate(self, data):
-        raise NotImplementedError("_instantiate is an Abstract Method and must be overridden")
 
     @property
     def id(self):
@@ -81,6 +54,66 @@ class Base(ABC):
     @property
     def deleted_at(self):
         return self.__deleted_at
+
+    @property
+    def tags(self):
+        return self.__tags
+    
+    def tag(self, tag):
+        if isinstance(tag, str):
+            self.__tags.add(cartaro.model.tag.Tag(name=tag))
+        else:
+            self.__tags.add(tag)
+
+    def remove_tag(self, tag):
+        if isinstance(tag, str):
+            self.__tags.remove(cartaro.model.tag.Tag(name=tag))
+        else:
+            self.__tags.remove(tag)
+
+    @classmethod
+    def _database(cls):
+        if not cls.__DATABASE:
+            env = os.environ.get("CARTARO_ENV", "dev")
+            doc_dir = os.environ.get("CARTARO_DOC_PATH", ".")
+
+            db_name = cls.__name__
+            if (env != "prod"):
+                db_name += F"-{env}"
+
+            cls.__DATABASE = TinyDB(F"{doc_dir}/{db_name}.json")
+
+        return cls.__DATABASE
+
+    def __base_instantiate(self, data):
+        self.__id = data.get('id', None)
+
+        # Shared Attributes
+        ## Tags
+        self.__tags = None
+        if self._TAGGABLE:
+            self.__tags = set()
+            tag_data = data.get('tags', [])
+            for name in tag_data:
+                self.tag(name)
+
+        ## Timestamps
+        created_at = data.get('created_at', None)
+        updated_at = data.get('updated_at', None)
+        deleted_at = data.get('deleted_at', None)
+
+        # Datetimes are assumed to be in UTC epoch format
+        # Convert UTC timestamps to TZ specific Arrow instances
+        # NOTE: ^^^^^ is that true? ^^^^^
+        # TODO: Don't hard-code TZ
+        tz = 'US/Eastern'
+        self.__created_at = arrow.get(datetime.fromtimestamp(created_at), tz) if created_at else None
+        self.__updated_at = arrow.get(datetime.fromtimestamp(updated_at), tz) if updated_at else None
+        self.__deleted_at = arrow.get(datetime.fromtimestamp(deleted_at), tz) if deleted_at else None
+
+    @abstractmethod
+    def _instantiate(self, data):
+        raise NotImplementedError("_instantiate is an Abstract Method and must be overridden")
 
     def load(self):
         if self.id:
@@ -137,8 +170,13 @@ class Base(ABC):
             "updated_at": self.updated_at.timestamp if self.updated_at else None,
             "deleted_at": self.deleted_at.timestamp if self.deleted_at else None
         }
+
         if not omit_id:
             data['id'] = self.id
+
+        if self._TAGGABLE:
+            # Store Tags that are part of the Object as strings only
+            data["tags"] = [str(tag) for tag in self.tags]
 
         return data
 
