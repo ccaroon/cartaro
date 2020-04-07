@@ -2,7 +2,12 @@
 ################################################################################
 import arrow
 import mysql.connector
+import sys
 from tinydb import TinyDB
+
+# In case some Cartaro Code is *needed*
+sys.path.append(".")
+from cartaro.model.tag import Tag
 ################################################################################
 class DataConverter:
     # m_fields and c_fields are lists; **must** be of equal length
@@ -59,7 +64,7 @@ class DataConverter:
                 if note_id not in tags:
                     tags[note_id] = []
 
-                tags[note_id].append(row[1].lower())
+                tags[note_id].append(Tag.normalize(row[1]))
 
         count = 0
         obj_cursor.execute(obj_sql)
@@ -84,13 +89,26 @@ class DataConverter:
 
             if self.opts.get("has_tags", False):
                 record['tags'] = tags.get(obj_id, [])
-            
+
+            # Metiisto side does not have TS, Added `created_at` to Cartaro data
+            if not self.opts.get('has_datestamps', True):
+                record['created_at'] = arrow.now().timestamp
+                record['updated_at'] = None
+                record['deleted_at'] = None
+
             self.cartaro.insert(record)
             count += 1
             print(F"{self.table_name.capitalize()} - {count}", end="\r")
 
         print(F"     => Converted {count} records.")
 
+################################################################################
+# options
+#   * has_tags: Does the object in Metiisto have associated tags?
+#   * tag_class: If YES to above, what's the object Metiisto class name (Metiisto::XYZZY)
+#   * has_datestampes: Does the object in Metiisto have date/time stamps?
+#       - If False, Cartaro object WILL have datestamps & 'created_at' will be NOW.
+#   * XYZZY_transformer: For field 'XYZZY', run this function to transform it to Cartaro
 ################################################################################
 CONVERSION_MAP = {
     "notes": {
@@ -106,7 +124,7 @@ CONVERSION_MAP = {
         'cartaro':  ['name'],
         'options': {
             'has_datestamps': False,
-            'name_transformer': lambda input: input.lower()
+            'name_transformer': lambda name: Tag.normalize(name)
         }
     },
 }

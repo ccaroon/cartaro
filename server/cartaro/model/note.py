@@ -2,7 +2,7 @@ from .base import Base
 from .taggable import Taggable
 from cartaro.utils.crypto import Crypto
 
-class Note(Base, Taggable):
+class Note(Taggable, Base):
     def __init__(self, id=None, **kwargs):
         super().__init__(id=id, **kwargs)
         self._instantiate(kwargs)

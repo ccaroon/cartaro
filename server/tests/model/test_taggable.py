@@ -1,4 +1,5 @@
 import unittest
+import random
 
 from cartaro.model.base import Base
 from cartaro.model.taggable import Taggable
@@ -8,7 +9,7 @@ from cartaro.model.tag import Tag
 # Since cartaro.model.base.Base is an Abstract Class we have to create a concrete
 # class for testing purposes.
 # ------------------------------------------------------------------------------
-class Comment(Base, Taggable):
+class Comment(Taggable, Base):
     def __init__(self, id=None, **kwargs):
         super().__init__(id=id, **kwargs)
         self._instantiate(kwargs)
@@ -117,10 +118,10 @@ class TaggableTest(unittest.TestCase):
         )
         comment.save()
 
-        results = Comment.find(tags="Anonymous")
+        results = Comment.find(tags="anonymous")
         self.assertEqual(len(results), 10)
 
-        results = Comment.find(tags="Future")
+        results = Comment.find(tags="future")
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0].id, comment.id)
         self.assertEqual(results[0].name, "John Titor")
@@ -134,6 +135,35 @@ class TaggableTest(unittest.TestCase):
 
         with self.assertRaisesRegex(TypeError, "'tag' must be of type `str` or `Tag`"):
             comment.remove_tag(['this', 'that'])
+
+    def test_tag_management(self):
+        # Adding a new tag to an object (& saving) should also update the Tags db
+        tags = [F'star wars {random.randint(0,9999)}', F'trapped {random.randint(0,9999)}']
+        comment = Comment(
+            name="Luke Skywalker", 
+            comment="There's something alive in here!"
+        )
+        comment.save()
+
+        comment2 = Comment(id=comment.id)
+        comment2.load()
+        self.assertEqual(len(comment2.tags), 0)
+
+        for tag in tags:
+            # Tag does not exist in Tag DB
+            self.assertFalse(Tag.exists(tag), tag)
+            # Add to object
+            comment2.tag(tag)
+
+        comment2.save()
+        self.assertEqual(len(comment2.tags), len(tags))
+        
+        for tag in tags:
+            # Tag should now exist in Tag db
+            self.assertTrue(Tag.exists(tag), tag)
+
+
+
 
 
 

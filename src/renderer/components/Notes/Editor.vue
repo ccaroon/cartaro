@@ -8,13 +8,16 @@
         <v-form ref="noteForm">
           <v-container>
             <v-row>
-              <v-col cols="12">
+              <v-col cols="10">
                 <v-text-field
                   label="Title"
                   v-model="note.title"
                   outlined
                   :rules="rules.title"
                 >{{ note.title }}</v-text-field>
+              </v-col>
+              <v-col cols="2">
+                <v-checkbox v-model="note.is_favorite" label="Favorite"></v-checkbox>
               </v-col>
             </v-row>
             <v-row>
@@ -29,8 +32,26 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="3">
-                <v-checkbox v-model="note.is_favorite" label="Favorite"></v-checkbox>
+              <v-col>
+                <v-combobox
+                  v-model="note.tags"
+                  :items="allTags"
+                  label="Tags"
+                  outlined
+                  multiple
+                  dense
+                >
+                  <template v-slot:selection="{ attrs, item, select, selected }">
+                    <v-chip
+                      v-bind="attrs"
+                      :input-value="selected"
+                      close
+                      small
+                      @click="select"
+                      @click:close="removeTag(item)"
+                    >{{ item }}</v-chip>
+                  </template>
+                </v-combobox>
               </v-col>
             </v-row>
           </v-container>
@@ -53,7 +74,23 @@ export default {
   components: { },
   props: ['note', 'value'],
 
+  mounted: function () {
+    this.loadTags()
+  },
+
   methods: {
+    loadTags: function () {
+      var self = this
+
+      this.$http.get(`http://127.0.0.1:4242/tags/`)
+        .then(resp => {
+          self.allTags = resp.data.tags.map(tag => tag.name)
+        })
+        .catch(err => {
+          console.log(`${err.response.status} - ${err.response.data.error}`)
+        })
+    },
+
     save: function () {
       var self = this
 
@@ -78,11 +115,18 @@ export default {
     close: function () {
       // this.$emit('input', false)
       this.$emit('close')
+    },
+
+    removeTag: function (tag) {
+      var index = this.note.tags.indexOf(tag)
+      this.note.tags.splice(index, 1)
     }
+
   },
 
   data () {
     return {
+      allTags: [],
       errorMsg: null,
       rules: {
         title: [

@@ -11,6 +11,8 @@ def find():
     try:
         query_string = request.args.copy()
         
+        # page  = int(query_string.pop('page', 1))
+
         tags = None
         if not query_string:
             tags = Tag.fetch()

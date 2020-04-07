@@ -40,7 +40,7 @@ class TagsControllerTest(unittest.TestCase):
         self.assertEqual(len(tags), 8)
 
         #  Search - 2
-        r = self.client.get('/tags/?name=Hello .* World')
+        r = self.client.get('/tags/?name=Hello.*world')
         self.assertEqual(r.status_code, 200)
 
         data = r.get_json()

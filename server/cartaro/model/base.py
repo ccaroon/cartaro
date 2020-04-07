@@ -1,4 +1,5 @@
 import arrow
+import inflect
 import itertools
 import json
 import os
@@ -52,10 +53,12 @@ class Base(ABC):
     @classmethod
     def _database(cls):
         if not cls.__DATABASE:
+            inflector = inflect.engine()
+
             env = os.environ.get("CARTARO_ENV", "dev")
             doc_dir = os.environ.get("CARTARO_DOC_PATH", ".")
 
-            db_name = cls.__name__
+            db_name = inflector.plural(cls.__name__)
             if (env != "prod"):
                 db_name += F"-{env}"
 
@@ -98,18 +101,31 @@ class Base(ABC):
         else:
             raise ValueError(F"Valid Object ID required for loading: [{self.id}]")
 
+    def _pre_save(self):
+        pass
+
+    def _post_save(self):
+        pass
+
     def save(self):
         now = arrow.now()
 
         if self.deleted_at:
             raise RuntimeError(F"Can't Save ... Object deleted [{self.deleted_at.humanize()}].")
 
+        # Pre Save
+        self._pre_save()
+
+        # Save
         if self.id:
             self.__updated_at = now
             self._database().update(self.for_json(omit_id=True), doc_ids=[self.id])
         else:
             self.__created_at = now
             self.__id = self._database().insert(self.for_json(omit_id=True))
+
+        # Post Save
+        self._post_save()
 
     def delete(self, safe=False):
         if self.id:
@@ -188,6 +204,7 @@ class Base(ABC):
 
         for (field, value) in kwargs.items():
             if field == 'tags':
+                # NOTE: Does not normalize tags for searching
                 tags = value.replace(" ", "").split(',')
                 query_parts.append(query_builder['tags'].any(tags))
             else:

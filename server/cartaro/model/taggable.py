@@ -21,6 +21,11 @@ class Taggable:
         else:
             raise TypeError("'tag' must be of type `str` or `Tag`")
 
+    def _post_save(self):
+        for tag in self.__tags:
+            if not Tag.exists(tag.name):
+                tag.save()
+
     def _taggable_instantiate(self, tag_list):
         self.__tags = set()
         for name in tag_list:
