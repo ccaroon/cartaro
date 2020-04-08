@@ -25,6 +25,7 @@
         <v-col>
           <v-toolbar-items>
             <v-text-field
+              ref="searchBox"
               v-model="searchText"
               dense
               clearable
@@ -32,6 +33,7 @@
               prepend-inner-icon="mdi-magnify"
               @click:clear="clearSearch"
               @keyup.enter="search()"
+              @keyup.esc="clearSearch()"
             ></v-text-field>
           </v-toolbar-items>
         </v-col>
@@ -77,6 +79,8 @@
 </template>
 
 <script>
+import Mousetrap from 'mousetrap'
+
 import Constants from '../lib/Constants'
 import Format from '../lib/Format'
 
@@ -87,10 +91,25 @@ export default {
   name: 'notes-main',
   components: { NotesEditor, NotesViewer },
   mounted: function () {
+    this.bindShortcutKeys()
     this.load()
   },
 
   methods: {
+    bindShortcutKeys: function () {
+      var self = this
+
+      Mousetrap.bind(['ctrl+n', 'command+n'], () => {
+        self.edit({})
+        return false
+      })
+
+      Mousetrap.bind(['ctrl+f', 'command+f'], () => {
+        self.$refs.searchBox.focus()
+        return false
+      })
+    },
+
     load: function () {
       var self = this
       var qs = `page=${self.page}&pp=${self.perPage}`
@@ -171,6 +190,8 @@ export default {
         this.searchText = null
         this.load()
       }
+
+      this.$refs.searchBox.blur()
     }
   },
 
