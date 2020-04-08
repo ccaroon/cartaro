@@ -22,16 +22,19 @@ class Taggable:
             raise TypeError("'tag' must be of type `str` or `Tag`")
 
     def _post_save(self):
+        # Add all new tags to Tag DB
         for tag in self.__tags:
             if not Tag.exists(tag.name):
                 tag.save()
 
-    def _taggable_instantiate(self, tag_list):
+    def _unserialize(self, data):
+        tag_list = data.get("tags", [])
+        
         self.__tags = set()
         for name in tag_list:
             self.tag(name)
 
-    def _taggable_for_json(self):
+    def _serialize(self):
         # Store Tags that are part of the Object as strings only
         return {
             "tags": [str(tag) for tag in self.tags]

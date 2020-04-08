@@ -10,10 +10,10 @@ from datetime import datetime
 from tinydb import TinyDB, Query
 import tinydb.operations as tyops
 # ------------------------------------------------------------------------------
-# Configure JSONEncoder to look for "for_json" method when serializing classes
+# Configure JSONEncoder to look for "serialize" method when serializing classes
 # ------------------------------------------------------------------------------
 def __class_encoder(self, obj):
-    return getattr(obj.__class__, "for_json", __class_encoder.default)(obj)
+    return getattr(obj.__class__, "serialize", __class_encoder.default)(obj)
 
 __class_encoder.default = json.JSONEncoder().default
 json.JSONEncoder.default = __class_encoder
@@ -28,7 +28,8 @@ class Base(ABC):
 
     def __init__(self, id=None, **kwargs):
         kwargs['id'] = id
-        self.__base_instantiate(kwargs)
+        self.__unserialize(kwargs)
+        self._unserialize(kwargs)
 
     @property
     def id(self):
@@ -66,7 +67,8 @@ class Base(ABC):
 
         return cls.__DATABASE
 
-    def __base_instantiate(self, data):
+    # Private: Unserialize shared data in this (Base) class
+    def __unserialize(self, data):
         self.__id = data.get('id', None)
 
         # Shared Attributes
@@ -84,9 +86,10 @@ class Base(ABC):
         self.__updated_at = arrow.get(datetime.fromtimestamp(updated_at), tz) if updated_at else None
         self.__deleted_at = arrow.get(datetime.fromtimestamp(deleted_at), tz) if deleted_at else None
 
+    # Protected: Sub-classes *must* define how to unserialize themselves.
     @abstractmethod
-    def _instantiate(self, data):
-        raise NotImplementedError("_instantiate is an Abstract Method and must be overridden")
+    def _unserialize(self, data):
+        raise NotImplementedError("_unserialize is an Abstract Method and must be overridden")
 
     def load(self):
         if self.id:
@@ -94,8 +97,8 @@ class Base(ABC):
 
             if data:
                 data['id'] = data.doc_id
-                self.__base_instantiate(data)
-                self._instantiate(data)
+                self.__unserialize(data)
+                self._unserialize(data)
             else:
                 raise ValueError(F"Record Not Found: [{self.id}]")
         else:
@@ -119,10 +122,10 @@ class Base(ABC):
         # Save
         if self.id:
             self.__updated_at = now
-            self._database().update(self.for_json(omit_id=True), doc_ids=[self.id])
+            self._database().update(self.serialize(omit_id=True), doc_ids=[self.id])
         else:
             self.__created_at = now
-            self.__id = self._database().insert(self.for_json(omit_id=True))
+            self.__id = self._database().insert(self.serialize(omit_id=True))
 
         # Post Save
         self._post_save()
@@ -146,11 +149,8 @@ class Base(ABC):
         else:
             raise ValueError(F"Valid Object ID required for deletion: [{self.id}]")
 
-    @abstractmethod
-    def _for_json(self):
-        raise NotImplementedError("_for_json is an Abstract Method and must be overridden")
-
-    def _base_for_json(self, omit_id=False):
+    # Private: Serialize shared data in this (Base) class
+    def __serialize(self, omit_id=False):
         data = {
             "created_at": self.created_at.timestamp if self.created_at else None,
             "updated_at": self.updated_at.timestamp if self.updated_at else None,
@@ -162,9 +162,14 @@ class Base(ABC):
 
         return data
 
-    def for_json(self, omit_id=False):
-        data = self._base_for_json(omit_id)
-        data.update(self._for_json())
+    # Protected: Sub-classes *must* define how to serialize themselves.
+    @abstractmethod
+    def _serialize(self):
+        raise NotImplementedError("_serialize is an Abstract Method and must be overridden")
+    
+    def serialize(self, omit_id=False):
+        data = self.__serialize(omit_id)
+        data.update(self._serialize())
         return data
 
     @classmethod

@@ -6,7 +6,6 @@ from .base import Base
 class Tag(Base):
     def __init__(self, id=None, **kwargs):
         super().__init__(id=id, **kwargs)
-        self._instantiate(kwargs)
 
     @property
     def name(self):
@@ -25,14 +24,14 @@ class Tag(Base):
     def exists(cls, name):
         return cls._database().contains(where('name') == cls.normalize(name))
 
-    def _instantiate(self, data):
+    def _unserialize(self, data):
         self.__name = None
         
         tmp_name = data.get('name', None)
         if tmp_name:
             self.__name = self.normalize(tmp_name)
 
-    def _for_json(self):
+    def _serialize(self):
         return {
             "name": self.name
         }

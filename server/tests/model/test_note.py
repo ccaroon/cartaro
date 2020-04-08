@@ -7,8 +7,8 @@ class NoteTest(unittest.TestCase):
     def setUp(self):
         self.note = Note(title="Say Hi", content="Hello, World!")
 
-    def test_for_json(self):
-        data = self.note.for_json()
+    def test_serialize(self):
+        data = self.note.serialize()
 
         self.assertEqual(self.note.title, data['title'])
         self.assertEqual(self.note.content, data['content'])

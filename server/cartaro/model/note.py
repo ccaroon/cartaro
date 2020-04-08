@@ -5,15 +5,15 @@ from cartaro.utils.crypto import Crypto
 class Note(Taggable, Base):
     def __init__(self, id=None, **kwargs):
         super().__init__(id=id, **kwargs)
-        self._instantiate(kwargs)
 
-    def _instantiate(self, data):
+    def _unserialize(self, data):
         self.title = data.get('title', None)
         self.content = data.get('content', None)
         self.is_favorite = data.get('is_favorite', False)
         self.__is_encrypted = data.get('is_encrypted', False)
 
-        self._taggable_instantiate(data.get("tags", []))
+        # Tags
+        super()._unserialize(data)
 
     @property
     def is_encrypted(self):
@@ -41,14 +41,15 @@ class Note(Taggable, Base):
             self.content = orig_content
             raise RuntimeError(F"Failed to decrypt: <{e}>")
 
-    def _for_json(self):
+    def _serialize(self):
         data = {
             "title": self.title,
             "content": self.content,
             "is_favorite": self.is_favorite,
             "is_encrypted": self.__is_encrypted
         }
-        data.update(self._taggable_for_json())
+        # Tags
+        data.update(super()._serialize())
         
         return data
 

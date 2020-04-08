@@ -10,9 +10,8 @@ from cartaro.model.base import Base
 class Ticket(Base):
     def __init__(self, id=None, **kwargs):
         super().__init__(id=id, **kwargs)
-        self._instantiate(kwargs)
 
-    def _instantiate(self, data):
+    def _unserialize(self, data):
         self.name = data.get('name', None)
         self.desc = data.get('desc', None)
         self.use_count = data.get('use_count', 0)
@@ -22,7 +21,7 @@ class Ticket(Base):
     def purge(cls):
         cls._database().purge()
 
-    def _for_json(self):
+    def _serialize(self):
         data =  {
             "name": self.name,
             "desc": self.desc,
@@ -41,11 +40,11 @@ class BaseTest(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, "Can't instantiate abstract class Base with abstract methods"):
             obj = Base()
 
-        with self.assertRaisesRegex(NotImplementedError, "_instantiate is an Abstract Method and must be overridden"):
-            Base._instantiate(None, {})
+        with self.assertRaisesRegex(NotImplementedError, "_unserialize is an Abstract Method and must be overridden"):
+            Base._unserialize(None, {})
 
-        with self.assertRaisesRegex(NotImplementedError, "_for_json is an Abstract Method and must be overridden"):
-            Base._for_json(None)
+        with self.assertRaisesRegex(NotImplementedError, "_serialize is an Abstract Method and must be overridden"):
+            Base._serialize(None)
 
     def test_id(self):
         # Valid
@@ -76,11 +75,11 @@ class BaseTest(unittest.TestCase):
         obj = Ticket(id=False)
         self.assertIsNone(obj.id)
 
-    def test_for_json(self):
+    def test_serialize(self):
         obj = Ticket(id=42, name="Water Usage", desc="Turn off the water", active=False)
 
         # With ID
-        data = obj.for_json()
+        data = obj.serialize()
         self.assertIsNotNone(obj.id)
         self.assertEqual(obj.id, data['id'])
         self.assertEqual(obj.name, data['name'])
@@ -88,7 +87,7 @@ class BaseTest(unittest.TestCase):
         self.assertEqual(obj.active, data['active'])
 
         # W/O ID
-        data = obj.for_json(omit_id=True)
+        data = obj.serialize(omit_id=True)
         self.assertIsNotNone(obj.id)
         self.assertIsNone(data.get('id', None), None)
         self.assertEqual(obj.name, data['name'])

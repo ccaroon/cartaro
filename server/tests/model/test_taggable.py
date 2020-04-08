@@ -12,23 +12,24 @@ from cartaro.model.tag import Tag
 class Comment(Taggable, Base):
     def __init__(self, id=None, **kwargs):
         super().__init__(id=id, **kwargs)
-        self._instantiate(kwargs)
 
-    def _instantiate(self, data):
+    def _unserialize(self, data):
         self.name = data.get('name', None)
         self.message = data.get('message', None)
-        self._taggable_instantiate(data.get("tags", []))
+        
+        # Tags
+        super()._unserialize(data)
 
     @classmethod
     def purge(cls):
         cls._database().purge()
 
-    def _for_json(self):
+    def _serialize(self):
         data =  {
             "name": self.name,
             "message": self.message,
         }
-        data.update(self._taggable_for_json())
+        data.update(super()._serialize())
         return data
 # ------------------------------------------------------------------------------
 class TaggableTest(unittest.TestCase):

@@ -11,8 +11,8 @@ class TagTest(unittest.TestCase):
         tag = Tag(name="Hack-A-Thon 2020")
         self.assertEqual(tag.name, "hack-a-thon-2020")
 
-    def test_for_json(self):
-        data = self.tag.for_json()
+    def test_serialize(self):
+        data = self.tag.serialize()
 
         self.assertEqual(self.tag.name, data['name'])
 
