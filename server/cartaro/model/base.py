@@ -24,6 +24,9 @@ json.JSONEncoder.default = __class_encoder
 # 2. Datetime fields are assumed to be Arrow instances in code and epoch timestamps when serialized.
 # ------------------------------------------------------------------------------
 class Base(ABC):
+    # TODO: Don't hard-code TZ
+    TIMEZONE = 'US/Eastern'
+    
     __DATABASE = None
 
     def __init__(self, id=None, **kwargs):
@@ -67,24 +70,22 @@ class Base(ABC):
 
         return cls.__DATABASE
 
+    def _epoch_to_date_obj(self, ts):
+        # Datetimes are assumed to be in UTC epoch format
+        # Convert UTC timestamps to TZ specific Arrow instances
+        # NOTE: ^^^^^ is that true? ^^^^^
+        date_obj = arrow.get(datetime.fromtimestamp(ts), Base.TIMEZONE) if ts else None
+        return date_obj
+
     # Private: Unserialize shared data in this (Base) class
     def __unserialize(self, data):
         self.__id = data.get('id', None)
 
         # Shared Attributes
         ## Timestamps
-        created_at = data.get('created_at', None)
-        updated_at = data.get('updated_at', None)
-        deleted_at = data.get('deleted_at', None)
-
-        # Datetimes are assumed to be in UTC epoch format
-        # Convert UTC timestamps to TZ specific Arrow instances
-        # NOTE: ^^^^^ is that true? ^^^^^
-        # TODO: Don't hard-code TZ
-        tz = 'US/Eastern'
-        self.__created_at = arrow.get(datetime.fromtimestamp(created_at), tz) if created_at else None
-        self.__updated_at = arrow.get(datetime.fromtimestamp(updated_at), tz) if updated_at else None
-        self.__deleted_at = arrow.get(datetime.fromtimestamp(deleted_at), tz) if deleted_at else None
+        self.__created_at = self._epoch_to_date_obj(data.get('created_at', None))
+        self.__updated_at = self._epoch_to_date_obj(data.get('updated_at', None))
+        self.__deleted_at = self._epoch_to_date_obj(data.get('deleted_at', None))
 
     # Protected: Sub-classes *must* define how to unserialize themselves.
     @abstractmethod
