@@ -49,6 +49,8 @@ class DataConverter:
         # Fetch Metiisto data
         fld_str = ",".join(self.m_fields)
         obj_sql = F"select id,{fld_str} from {self.table_name} order by id"
+        if self.opts.get('limit', None):
+            obj_sql += F" limit {self.opts['limit']}"
         print(F"     => {obj_sql}")
         
         tags = {}
@@ -92,7 +94,7 @@ class DataConverter:
 
             # Metiisto side does not have TS, Added `created_at` to Cartaro data
             if not self.opts.get('has_datestamps', True):
-                record['created_at'] = arrow.now().timestamp
+                record['created_at'] = record['created_at'] if 'created_at' in record else arrow.now().timestamp 
                 record['updated_at'] = None
                 record['deleted_at'] = None
 
@@ -110,7 +112,31 @@ class DataConverter:
 #       - If False, Cartaro object WILL have datestamps & 'created_at' will be NOW.
 #   * XYZZY_transformer: For field 'XYZZY', run this function to transform it to Cartaro
 ################################################################################
+# --- TRANSFORMERS ---
+#     that are more that 1 liners
+# entries.ticket_link
+def tf_ticket_link(t_num):
+    link = None
+    if t_num:
+        jira = "https://jira.office.webassign.net"
+        if t_num.startswith('DO-') or t_num.startswith('CJ'):
+            jira = "https://jira.cengage.com"
+        
+        link = F"{jira}/browse/{t_num}"
+        
+    return link
+################################################################################
 CONVERSION_MAP = {
+    "entries": {
+        'metiisto': ['task_date', 'ticket_num',  'subject', 'description', 'category', 'entry_date'],
+        'cartaro':  ['logged_at', 'ticket_link', 'subject', 'content',     'category', 'created_at'],
+        'options': {
+            'has_datestamps': False,
+            'has_tags': True,
+            'tag_class': "Metiisto::Entry",
+            'ticket_link_transformer': tf_ticket_link
+        }
+    },
     "notes": {
         'metiisto': ['title', 'body',    'is_favorite', 'is_encrypted'],
         'cartaro':  ['title', 'content', 'is_favorite', 'is_encrypted'],
@@ -134,12 +160,16 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Convert Data from Metiisto to Cartaro')
     parser.add_argument('table', type=str, help='Name of the data table')
+    parser.add_argument('--limit', type=int, help='Only convert `limit` records.')
     args = parser.parse_args()
 
     data = CONVERSION_MAP.get(args.table, None)
+    options = data.get("options", {})
+    if args.limit:
+        options['limit'] = args.limit
 
     if data:
-        converter = DataConverter(args.table, data['metiisto'], data['cartaro'], data.get("options", {}))
+        converter = DataConverter(args.table, data['metiisto'], data['cartaro'], options)
         converter.convert()
     else:
         print(F"No data conversion implemeted for data table '{args.table}'.")
