@@ -2,7 +2,6 @@ import arrow
 
 from .base import Base
 from .taggable import Taggable
-from .ticket import Ticket
 
 class LogEntry(Taggable, Base):
     # CATEGORIES = {
@@ -28,15 +27,16 @@ class LogEntry(Taggable, Base):
         self.subject = data.get('subject', None)
         self.content = data.get('content', None)
         self.category = data.get('category', None)
-        
-        # Related Ticket, such as Jira
-        ticket = data.get('ticket', None)
-        if isinstance(ticket, dict):
-            self.ticket = Ticket(**ticket)
-        elif isinstance(ticket, Ticket) or ticket == None:
-            self.ticket = ticket
-        else:
-            raise TypeError("'ticket' must be of type `Ticket`, `dict` or `None`.")
+
+        self.ticket_link = data.get('ticket_link', None)
+        # # Related Ticket, such as Jira
+        # ticket = data.get('ticket', None)
+        # if isinstance(ticket, dict):
+        #     self.ticket = Ticket(**ticket)
+        # elif isinstance(ticket, Ticket) or ticket == None:
+        #     self.ticket = ticket
+        # else:
+        #     raise TypeError("'ticket' must be of type `Ticket`, `dict` or `None`.")
 
         # Tags
         super()._unserialize(data)
@@ -47,7 +47,7 @@ class LogEntry(Taggable, Base):
             "subject": self.subject,
             "content": self.content,
             "category": self.category,
-            "ticket": self.ticket.serialize()
+            "ticket_link": self.ticket_link
         }
         
         # Tags
