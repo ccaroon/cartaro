@@ -11,12 +11,16 @@ from cartaro.model.tag import Tag
 # ------------------------------------------------------------------------------
 class Comment(Taggable, Base):
     def __init__(self, id=None, **kwargs):
+        self.name = None
+        self.message = None
+
         super().__init__(id=id, **kwargs)
 
-    def _unserialize(self, data):
-        self.name = data.get('name', None)
-        self.message = data.get('message', None)
-        
+    def update(self, data):
+        self.name = data.get('name', self.name)
+        self.message = data.get('message', self.message)
+
+    def _post_unserialize(self, data):
         # Tags
         super()._unserialize(data)
 

@@ -12,6 +12,12 @@ class LogEntry(Taggable, Base):
     # }
 
     def __init__(self, id=None, **kwargs):
+        self.logged_at = arrow.now().timestamp
+        self.subject = None
+        self.content = None
+        self.category = None
+        self.ticket_link = None
+
         super().__init__(id=id, **kwargs)
 
     @property
@@ -22,13 +28,13 @@ class LogEntry(Taggable, Base):
     def logged_at(self, ts):
         self.__logged_at = self._epoch_to_date_obj(ts)
 
-    def _unserialize(self, data):
-        self.logged_at = data.get('logged_at', arrow.now().timestamp)
-        self.subject = data.get('subject', None)
-        self.content = data.get('content', None)
-        self.category = data.get('category', None)
+    def update(self, data):
+        self.logged_at = data.get('logged_at', self.logged_at.timestamp)
+        self.subject = data.get('subject', self.subject)
+        self.content = data.get('content', self.content)
+        self.category = data.get('category', self.category)
 
-        self.ticket_link = data.get('ticket_link', None)
+        self.ticket_link = data.get('ticket_link', self.ticket_link)
         # # Related Ticket, such as Jira
         # ticket = data.get('ticket', None)
         # if isinstance(ticket, dict):
@@ -38,6 +44,7 @@ class LogEntry(Taggable, Base):
         # else:
         #     raise TypeError("'ticket' must be of type `Ticket`, `dict` or `None`.")
 
+    def _post_unserialize(self, data):
         # Tags
         super()._unserialize(data)
 

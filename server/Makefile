@@ -6,7 +6,7 @@ test:
 test1:
 	CARTARO_ENV=test \
 	CARTARO_DOC_PATH=tests/tmp \
-	nosetests -v -s tests/model/test_base.py -m test_load
+	nosetests -v -s tests/controller/test_base_controller.py 
 
 cover:
 	CARTARO_ENV=test \

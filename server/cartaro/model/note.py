@@ -4,17 +4,13 @@ from cartaro.utils.crypto import Crypto
 
 class Note(Taggable, Base):
     def __init__(self, id=None, **kwargs):
+        self.title = None
+        self.content = None
+        self.is_favorite = False
+        self.__is_encrypted = False
+        
         super().__init__(id=id, **kwargs)
-
-    def _unserialize(self, data):
-        self.title = data.get('title', None)
-        self.content = data.get('content', None)
-        self.is_favorite = data.get('is_favorite', False)
-        self.__is_encrypted = data.get('is_encrypted', False)
-
-        # Tags
-        super()._unserialize(data)
-
+    
     @property
     def is_encrypted(self):
         return self.__is_encrypted
@@ -42,19 +38,26 @@ class Note(Taggable, Base):
             raise RuntimeError(F"Failed to decrypt: <{e}>")
 
     def _serialize(self):
-        data = {
-            "title": self.title,
-            "content": self.content,
-            "is_favorite": self.is_favorite,
-            "is_encrypted": self.__is_encrypted
+        data =  {
+            'title': self.title,
+            'content': self.content,
+            'is_favorite': self.is_favorite,
+            'is_encrypted': self.__is_encrypted,
         }
+
         # Tags
         data.update(super()._serialize())
-        
+
         return data
 
+    def update(self, data):
+        self.title = data.get('title', self.title)
+        self.content = data.get('content', self.content)
+        self.is_favorite = data.get('is_favorite', self.is_favorite)
 
-
+    def _post_unserialize(self, data):
+        self.__is_encrypted = data.get('is_encrypted', False)
+        super()._unserialize(data)
 
 
 

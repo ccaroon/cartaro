@@ -1,7 +1,7 @@
 arrow
 cryptography
 flask
-inflect
+inflector
 tinydb
 
 # Dev
