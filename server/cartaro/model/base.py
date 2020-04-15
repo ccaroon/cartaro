@@ -1,5 +1,5 @@
 import arrow
-import inflect
+import inflector
 import itertools
 import json
 import os
@@ -32,7 +32,6 @@ class Base(ABC):
     def __init__(self, id=None, **kwargs):
         kwargs['id'] = id
         self.__unserialize(kwargs)
-        self._unserialize(kwargs)
 
     @property
     def id(self):
@@ -57,12 +56,12 @@ class Base(ABC):
     @classmethod
     def _database(cls):
         if not cls.__DATABASE:
-            inflector = inflect.engine()
+            inflect = inflector.Inflector()
 
             env = os.environ.get("CARTARO_ENV", "dev")
             doc_dir = os.environ.get("CARTARO_DOC_PATH", ".")
 
-            db_name = inflector.plural(cls.__name__)
+            db_name = inflect.pluralize(cls.__name__)
             if (env != "prod"):
                 db_name += F"-{env}"
 
@@ -77,21 +76,6 @@ class Base(ABC):
         date_obj = arrow.get(datetime.fromtimestamp(ts), Base.TIMEZONE) if ts else None
         return date_obj
 
-    # Private: Unserialize shared data in this (Base) class
-    def __unserialize(self, data):
-        self.__id = data.get('id', None)
-
-        # Shared Attributes
-        ## Timestamps
-        self.__created_at = self._epoch_to_date_obj(data.get('created_at', None))
-        self.__updated_at = self._epoch_to_date_obj(data.get('updated_at', None))
-        self.__deleted_at = self._epoch_to_date_obj(data.get('deleted_at', None))
-
-    # Protected: Sub-classes *must* define how to unserialize themselves.
-    @abstractmethod
-    def _unserialize(self, data):
-        raise NotImplementedError("_unserialize is an Abstract Method and must be overridden")
-
     def load(self):
         if self.id:
             data = self._database().get(doc_id=self.id)
@@ -99,16 +83,12 @@ class Base(ABC):
             if data:
                 data['id'] = data.doc_id
                 self.__unserialize(data)
-                self._unserialize(data)
             else:
                 raise ValueError(F"Record Not Found: [{self.id}]")
         else:
             raise ValueError(F"Valid Object ID required for loading: [{self.id}]")
 
     def _pre_save(self):
-        pass
-
-    def _post_save(self):
         pass
 
     def save(self):
@@ -131,6 +111,9 @@ class Base(ABC):
         # Post Save
         self._post_save()
 
+    def _post_save(self):
+        pass
+
     def delete(self, safe=False):
         if self.id:
             now = arrow.now()
@@ -150,8 +133,13 @@ class Base(ABC):
         else:
             raise ValueError(F"Valid Object ID required for deletion: [{self.id}]")
 
-    # Private: Serialize shared data in this (Base) class
-    def __serialize(self, omit_id=False):
+    @abstractmethod
+    def _serialize(self):
+        raise NotImplementedError("_serialize is an Abstract Method and must be overridden")
+
+
+    def serialize(self, omit_id=False):
+        # Shared Fields
         data = {
             "created_at": self.created_at.timestamp if self.created_at else None,
             "updated_at": self.updated_at.timestamp if self.updated_at else None,
@@ -161,17 +149,31 @@ class Base(ABC):
         if not omit_id:
             data['id'] = self.id
 
+        data.update(self._serialize())
+        
         return data
 
-    # Protected: Sub-classes *must* define how to serialize themselves.
     @abstractmethod
-    def _serialize(self):
-        raise NotImplementedError("_serialize is an Abstract Method and must be overridden")
-    
-    def serialize(self, omit_id=False):
-        data = self.__serialize(omit_id)
-        data.update(self._serialize())
-        return data
+    def update(self, date):
+        raise NotImplementedError("update is an Abstract Method and must be overridden")
+
+    def __unserialize(self, data):
+        # Shared Attributes
+        ## ID
+        self.__id = data.get('id', None)
+
+        ## Timestamps
+        self.__created_at = self._epoch_to_date_obj(data.get('created_at', None))
+        self.__updated_at = self._epoch_to_date_obj(data.get('updated_at', None))
+        self.__deleted_at = self._epoch_to_date_obj(data.get('deleted_at', None))
+
+        # Model Specific
+        self.update(data)
+
+        self._post_unserialize(data)
+
+    def _post_unserialize(self, data):
+        pass
 
     @classmethod
     def fetch(cls, offset=0, count=None):

@@ -5,11 +5,16 @@ from .base import Base
 
 class Tag(Base):
     def __init__(self, id=None, **kwargs):
+        self.__name = None
+
         super().__init__(id=id, **kwargs)
 
     @property
     def name(self):
         return self.__name
+
+    def update(self, data):
+        pass
 
     @classmethod
     def normalize(cls, name):
@@ -24,17 +29,15 @@ class Tag(Base):
     def exists(cls, name):
         return cls._database().contains(where('name') == cls.normalize(name))
 
-    def _unserialize(self, data):
-        self.__name = None
-        
+    def _serialize(self):
+        return {
+            'name': self.name
+        }
+
+    def _post_unserialize(self, data):
         tmp_name = data.get('name', None)
         if tmp_name:
             self.__name = self.normalize(tmp_name)
-
-    def _serialize(self):
-        return {
-            "name": self.name
-        }
 
     def __eq__(self, other_tag):
         return self.name == other_tag.name

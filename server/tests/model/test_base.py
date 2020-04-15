@@ -7,28 +7,33 @@ from cartaro.model.base import Base
 # Since cartaro.model.base.Base is an Abstract Class we have to create a concrete
 # class for testing purposes.
 # ------------------------------------------------------------------------------
-class Ticket(Base):
+class Ticket(Base):    
     def __init__(self, id=None, **kwargs):
-        super().__init__(id=id, **kwargs)
+        self.name = None
+        self.desc = None
+        self.use_count = 0
+        self.active = False
 
-    def _unserialize(self, data):
-        self.name = data.get('name', None)
-        self.desc = data.get('desc', None)
-        self.use_count = data.get('use_count', 0)
-        self.active = data.get('active', True)
+        super().__init__(id=id, **kwargs)
 
     @classmethod
     def purge(cls):
         cls._database().purge()
+    
+    def update(self, data):
+        self.name = data.get('name', self.name)
+        self.desc = data.get('desc', self.desc)
+        self.use_count = data.get('use_count', self.use_count)
+        self.active = data.get('active', self.active)
 
     def _serialize(self):
-        data =  {
-            "name": self.name,
-            "desc": self.desc,
-            "use_count": self.use_count,
-            "active": self.active
+        return {
+            'name': self.name,
+            'desc': self.desc,
+            'use_count': self.use_count,
+            'active': self.active
         }
-        return data
+
 # ------------------------------------------------------------------------------
 class BaseTest(unittest.TestCase):
 
@@ -40,8 +45,8 @@ class BaseTest(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, "Can't instantiate abstract class Base with abstract methods"):
             obj = Base()
 
-        with self.assertRaisesRegex(NotImplementedError, "_unserialize is an Abstract Method and must be overridden"):
-            Base._unserialize(None, {})
+        with self.assertRaisesRegex(NotImplementedError, "update is an Abstract Method and must be overridden"):
+            Base.update(None, {})
 
         with self.assertRaisesRegex(NotImplementedError, "_serialize is an Abstract Method and must be overridden"):
             Base._serialize(None)
