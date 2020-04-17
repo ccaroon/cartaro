@@ -70,7 +70,7 @@
 
 <script>
 export default {
-  name: 'notes-editor',
+  name: 'note-editor',
   components: { },
   props: ['note', 'value'],
 

@@ -2,7 +2,7 @@
   <v-container>
     <v-app-bar app dense fixed dark clipped-left>
       <v-app-bar-nav-icon></v-app-bar-nav-icon>
-      <v-toolbar-title>Ĉartaro - Notes</v-toolbar-title>
+      <v-toolbar-title>Ĉartaro - Log Entries</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-row no-gutters align="center">
         <v-col cols="1">
@@ -16,7 +16,7 @@
           <v-toolbar-items>
             <v-pagination
               v-model="page"
-              :length="Math.ceil(totalNotes/perPage)"
+              :length="Math.ceil(totalEntries/perPage)"
               total-visible="10"
               @input="load"
             ></v-pagination>
@@ -39,37 +39,42 @@
         </v-col>
       </v-row>
     </v-app-bar>
-    <NoteEditor v-model="showEditor" v-bind:note="note" v-on:close="closeEditor"></NoteEditor>
-    <NoteViewer v-model="showViewer" v-bind:note="note" v-on:close="closeViewer"></NoteViewer>
+    <LogEntryEditor v-model="showEditor" v-bind:logEntry="logEntry" v-on:close="closeEditor"></LogEntryEditor>
+    <LogEntryViewer v-model="showViewer" v-bind:logEntry="logEntry" v-on:close="closeViewer"></LogEntryViewer>
     <v-list dense>
-      <v-list-item v-for="(note,idx) in notes" :key="note.id" :class="rowColor(idx)" @click>
-        <v-list-item-avatar>
-          <v-icon :color="note.is_favorite ? 'yellow' : ''">mdi-star</v-icon>
-        </v-list-item-avatar>
-        <v-list-item-content @click="view(note)">
-          <v-list-item-title class="subtitle-1" v-if="note.deleted_at === null">{{ note.title }}</v-list-item-title>
+      <v-list-item
+        v-for="(logEntry,idx) in logEntries"
+        :key="logEntry.id"
+        :class="rowColor(idx)"
+        @click
+      >
+        <v-list-item-content @click="view(logEntry)">
+          <v-list-item-title
+            class="subtitle-1"
+            v-if="logEntry.deleted_at === null"
+          >{{ logEntry.subject }}</v-list-item-title>
           <v-list-item-title class="subtitle-1" v-else>
-            <del>{{ note.title }}</del>
+            <del>{{ logEntry.subject }}</del>
           </v-list-item-title>
           <v-list-item-subtitle>
-            {{ note.created_at ? format.formatDateTime(note.created_at*1000) : '--'}}
+            {{ logEntry.category }} | {{ logEntry.logged_at ? format.formatDate(logEntry.logged_at*1000) : '--'}}
             <v-chip
               x-small
               label
               class="mr-1 float-right"
               :color="rowColor(idx+1)"
-              v-for="(tag,tgIdx) in note.tags"
+              v-for="(tag,tgIdx) in logEntry.tags"
               :key="tgIdx"
             >{{ tag }}</v-chip>
           </v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-action>
-          <v-btn icon outlined @click="edit(note)">
+          <v-btn icon outlined @click="edit(logEntry)">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-list-item-action>
         <v-list-item-action>
-          <v-btn icon outlined @click="remove(note)">
+          <v-btn icon outlined @click="remove(logEntry)">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
         </v-list-item-action>
@@ -77,19 +82,18 @@
     </v-list>
   </v-container>
 </template>
-
 <script>
 import Mousetrap from 'mousetrap'
 
 import Constants from '../lib/Constants'
 import Format from '../lib/Format'
 
-import NoteEditor from './Notes/Editor'
-import NoteViewer from './Notes/Viewer'
+import LogEntryEditor from './LogEntries/Editor'
+import LogEntryViewer from './LogEntries/Viewer'
 
 export default {
-  name: 'notes-main',
-  components: { NoteEditor, NoteViewer },
+  name: 'log_entries-main',
+  components: { LogEntryEditor, LogEntryViewer },
   mounted: function () {
     this.bindShortcutKeys()
     this.load()
@@ -119,37 +123,37 @@ export default {
         if (parts.length === 2) {
           qs += `&${parts[0].trim()}=${parts[1].trim()}`
         } else {
-          qs += `&title=${this.searchText}&content=${this.searchText}`
+          qs += `&subject=${this.searchText}&content=${this.searchText}`
         }
       }
 
-      this.$http.get(`http://127.0.0.1:4242/notes/?${qs}`)
+      this.$http.get(`http://127.0.0.1:4242/log_entries/?${qs}`)
         .then(resp => {
-          self.totalNotes = resp.data.total
-          self.notes = resp.data.notes
+          self.totalEntries = resp.data.total
+          self.logEntries = resp.data.log_entries
         })
         .catch(err => {
           console.log(`${err.response.status} - ${err.response.data.error}`)
         })
     },
 
-    view: function (note) {
-      this.note = note
+    view: function (logEntry) {
+      this.logEntry = logEntry
       this.showViewer = true
     },
 
-    edit: function (note) {
-      this.note = note
+    edit: function (logEntry) {
+      this.logEntry = logEntry
       this.showEditor = true
     },
 
-    remove: function (note) {
+    remove: function (logEntry) {
       var self = this
 
-      var doDelete = confirm(`Delete "${note.title}"?`)
+      var doDelete = confirm(`Delete "${logEntry.subject}"?`)
 
       if (doDelete) {
-        this.$http.delete(`http://127.0.0.1:4242/notes/${note.id}?safe=1`)
+        this.$http.delete(`http://127.0.0.1:4242/log_entries/${logEntry.id}?safe=1`)
           .then(resp => {
             self.load()
           })
@@ -197,11 +201,11 @@ export default {
 
   data () {
     return {
-      note: {},
-      notes: [],
+      logEntry: {},
+      logEntries: [],
       page: 1,
       perPage: 15,
-      totalNotes: 0,
+      totalEntries: 0,
       showEditor: false,
       showViewer: false,
       format: Format,

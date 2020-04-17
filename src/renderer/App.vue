@@ -57,7 +57,7 @@ export default {
     menu: [
       { name: 'Home', path: '/', icon: 'mdi-home' },
       { name: 'Notes', path: '/notes', icon: 'mdi-note-multiple' },
-      { name: 'Secrets', path: '/secrets', icon: 'mdi-lock' }
+      { name: 'LogEntries', path: '/log_entries', icon: 'mdi-book-open-variant' }
     ]
   })
 }
