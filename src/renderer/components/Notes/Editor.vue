@@ -13,6 +13,7 @@
                   label="Title"
                   v-model="note.title"
                   outlined
+                  hide-details
                   :rules="rules.title"
                 >{{ note.title }}</v-text-field>
               </v-col>
@@ -26,6 +27,7 @@
                   label="Content"
                   rows="17"
                   outlined
+                  hide-details
                   v-model="note.content"
                   :rules="rules.content"
                 ></v-textarea>
@@ -40,6 +42,7 @@
                   outlined
                   multiple
                   dense
+                  hide-details
                 >
                   <template v-slot:selection="{ attrs, item, select, selected }">
                     <v-chip
@@ -97,7 +100,6 @@ export default {
       if (this.$refs.noteForm.validate()) {
         this.$http.post('http://127.0.0.1:4242/notes/', this.note)
           .then(resp => {
-            self.cleanup()
             self.close()
           })
           .catch(err => {
@@ -110,10 +112,12 @@ export default {
 
     cleanup: function () {
       this.errorMsg = null
+      this.$refs.noteForm.resetValidation()
     },
 
     close: function () {
       // this.$emit('input', false)
+      this.cleanup()
       this.$emit('close')
     },
 

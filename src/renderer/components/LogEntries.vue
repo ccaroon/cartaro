@@ -7,7 +7,7 @@
       <v-row no-gutters align="center">
         <v-col cols="1">
           <v-toolbar-items>
-            <v-btn icon @click.stop="edit({})">
+            <v-btn icon @click.stop="newEntry()">
               <v-icon>mdi-file-document</v-icon>
             </v-btn>
           </v-toolbar-items>
@@ -83,6 +83,7 @@
   </v-container>
 </template>
 <script>
+import Moment from 'moment'
 import Mousetrap from 'mousetrap'
 
 import Constants from '../lib/Constants'
@@ -92,7 +93,7 @@ import LogEntryEditor from './LogEntries/Editor'
 import LogEntryViewer from './LogEntries/Viewer'
 
 export default {
-  name: 'log_entries-main',
+  name: 'logEntries-main',
   components: { LogEntryEditor, LogEntryViewer },
   mounted: function () {
     this.bindShortcutKeys()
@@ -140,6 +141,12 @@ export default {
     view: function (logEntry) {
       this.logEntry = logEntry
       this.showViewer = true
+    },
+
+    newEntry: function () {
+      this.edit({
+        logged_at: Moment().unix()
+      })
     },
 
     edit: function (logEntry) {
