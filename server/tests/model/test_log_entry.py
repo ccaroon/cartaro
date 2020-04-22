@@ -9,7 +9,7 @@ class LogEntryTest(unittest.TestCase):
 
     def setUp(self):
         self.entry = LogEntry(
-            logged_at=datetime.datetime.now().timestamp(),
+            logged_at=arrow.now(),
             subject="Just Another Day",
             content="Just another day at sea. Lost. Hopeless.",
             category="Mourning Update",
@@ -38,3 +38,20 @@ class LogEntryTest(unittest.TestCase):
         self.assertEqual(self.entry.content, data['content'])
         self.assertEqual(self.entry.category, data['category'])
         self.assertEqual(self.entry.ticket_link, data['ticket_link'])
+
+    def test_logged_at(self):
+        self.entry.logged_at = 1
+        self.assertIsInstance(self.entry.logged_at, arrow.Arrow)
+
+        self.entry.logged_at = arrow.now()
+        self.assertIsInstance(self.entry.logged_at, arrow.Arrow)
+
+        with self.assertRaisesRegex(TypeError, 'must be of type INT or Arrow'):
+            self.entry.logged_at = "now"
+
+
+
+
+
+
+    # 

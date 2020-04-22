@@ -8,26 +8,20 @@ from tinydb import TinyDB
 # In case some Cartaro Code is *needed*
 sys.path.append(".")
 from cartaro.model.tag import Tag
+from cartaro.model.work_day import WorkDay
 ################################################################################
 class DataConverter:
-    # m_fields and c_fields are lists; **must** be of equal length
-    # m fields map into c fields
-    def __init__(self, table_name, m_fields, c_fields, options):
-        self.table_name = table_name.lower()
+    def __init__(self, m_cfg, c_cfg, options):
+        self.m_cfg = m_cfg
+        self.c_cfg = c_cfg
         self.opts = options
         
-        if len(m_fields) != len(c_fields):
+        if len(m_cfg['fields']) != len(c_cfg['fields']):
             raise ValueError()
-        
-        # Metiisto Field Names
-        self.m_fields = m_fields
-        
-        # Cartar Field Names
-        self.c_fields = c_fields
 
         if self.opts.get('has_datestamps', True):
-            self.m_fields.extend(['created_date', 'updated_date', 'deleted_date'])
-            self.c_fields.extend(['created_at',   'updated_at',   'deleted_at'])
+            self.m_cfg['fields'].extend(['created_date', 'updated_date', 'deleted_date'])
+            self.c_cfg['fields'].extend(['created_at',   'updated_at',   'deleted_at'])
 
         # Connect to MySQL DB
         self.metiisto = mysql.connector.connect(
@@ -39,16 +33,16 @@ class DataConverter:
         )
 
         # Connect to / Create TinyDB
-        self.cartaro = TinyDB(F"./{self.table_name.capitalize()}.json")
+        self.cartaro = TinyDB(F"./{self.c_cfg['name']}-dev.json")
         self.cartaro.purge()
 
     def convert(self):
-        print(F"--- Begin Data Conversion for '{self.table_name}' ---")
+        print(F"--- Converting Metiisto/{self.m_cfg['name']} to Cartaro/{self.c_cfg['name']} ---")
         obj_cursor = self.metiisto.cursor()
 
         # Fetch Metiisto data
-        fld_str = ",".join(self.m_fields)
-        obj_sql = F"select id,{fld_str} from {self.table_name} order by id"
+        fld_str = ",".join(self.m_cfg['fields'])
+        obj_sql = F"select id,{fld_str} from {self.m_cfg['name']} order by id"
         if self.opts.get('limit', None):
             obj_sql += F" limit {self.opts['limit']}"
         print(F"     => {obj_sql}")
@@ -74,7 +68,7 @@ class DataConverter:
             record = {}
             obj_id = row[0]
             # row[0] == DB `id`, skip for mapping
-            mapping = zip(self.c_fields, row[1:])
+            mapping = zip(self.c_cfg['fields'], row[1:])
             for (name, raw_value) in mapping:
                 value = raw_value
                 if raw_value and name.endswith('_at'):
@@ -87,6 +81,7 @@ class DataConverter:
                 if transformer:
                     value = transformer(value)
                 
+                # print(F"{name} == {value} - {type(value)}")
                 record[name] = value
 
             if self.opts.get("has_tags", False):
@@ -100,7 +95,7 @@ class DataConverter:
 
             self.cartaro.insert(record)
             count += 1
-            print(F"{self.table_name.capitalize()} - {count}", end="\r")
+            print(F"{self.m_cfg['name']} - {count}", end="\r")
 
         print(F"     => Converted {count} records.")
 
@@ -115,7 +110,7 @@ class DataConverter:
 # --- TRANSFORMERS ---
 #     that are more that 1 liners
 # entries.ticket_link
-def tf_ticket_link(t_num):
+def xform_entries_ticket_link(t_num):
     link = None
     if t_num:
         jira = "https://jira.office.webassign.net"
@@ -125,52 +120,110 @@ def tf_ticket_link(t_num):
         link = F"{jira}/browse/{t_num}"
         
     return link
+
+# 0 - normal
+# 1 - sick day
+# 10 - holiday
+# 100 - vacation/pto
+def xform_work_day_type(value):
+    type = WorkDay.TYPE_NORMAL
+
+    if value == 1:
+        type = WorkDay.TYPE_SICK
+    elif value == 10:
+        type = WorkDay.TYPE_HOLIDAY
+    elif value == 100:
+        type = WorkDay.TYPE_PTO
+
+    return type
 ################################################################################
 CONVERSION_MAP = {
     "entries": {
-        'metiisto': ['task_date', 'ticket_num',  'subject', 'description', 'category', 'entry_date'],
-        'cartaro':  ['logged_at', 'ticket_link', 'subject', 'content',     'category', 'created_at'],
+        'metiisto': {
+            'name': "entries",
+            'fields': ['task_date', 'ticket_num',  'subject', 'description', 'category', 'entry_date'],
+        },
+        'cartaro':  {
+            'name': 'LogEntries',
+            'fields': ['logged_at', 'ticket_link', 'subject', 'content',     'category', 'created_at'],
+        },
         'options': {
             'has_datestamps': False,
             'has_tags': True,
             'tag_class': "Metiisto::Entry",
-            'ticket_link_transformer': tf_ticket_link
+            'ticket_link_transformer': xform_entries_ticket_link
         }
     },
     "notes": {
-        'metiisto': ['title', 'body',    'is_favorite', 'is_encrypted'],
-        'cartaro':  ['title', 'content', 'is_favorite', 'is_encrypted'],
+        'metiisto': {
+            'name': 'notes',
+            'fields': ['title', 'body',    'is_favorite', 'is_encrypted']
+        },
+        'cartaro':  {
+            'name': 'Notes',
+            'fields': ['title', 'content', 'is_favorite', 'is_encrypted']
+        },
         'options': {
             'has_tags': True,
             'tag_class': "Metiisto::Note"
         }
     },
     "tags": {
-        'metiisto': ['name'],
-        'cartaro':  ['name'],
+        'metiisto': {
+            'name': 'tags',
+            'fields': ['name']
+        },
+        'cartaro': {
+            'name': 'Tags',
+            'fields': ['name']
+        },
         'options': {
             'has_datestamps': False,
             'name_transformer': lambda name: Tag.normalize(name)
         }
     },
+    "work_days": {
+        'metiisto': {
+            'name': 'work_days',
+            'fields': ['work_date', 'time_in', 'time_out', 'note', 'is_vacation*100+is_holiday*10+is_sick_day as type'],
+        },
+        'cartaro':  {
+            'name': 'WorkDays',
+            'fields': ['date',      'time_in', 'time_out', 'note', 'type'],
+        },
+        'options': {
+            'has_datestamps': False,
+            'date_transformer': lambda date_str: arrow.get(date_str, 'US/Eastern').timestamp,
+            'time_in_transformer': lambda delta:  str(delta)[:4] if len(str(delta)) == 7 else str(delta)[:5],
+            'time_out_transformer': lambda delta: str(delta)[:4] if len(str(delta)) == 7 else str(delta)[:5],
+            'type_transformer': xform_work_day_type
+        }
+    }
 }
+################################################################################
+def do_conversion(data, args):
+    if data:
+        options = data.get("options", {})
+        if args.limit:
+            options['limit'] = args.limit
+        
+        converter = DataConverter(data['metiisto'], data['cartaro'], options)
+        converter.convert()
+    else:
+        print(F"No data conversion implemeted for '{args.what}' data.")
 ################################################################################
 if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description='Convert Data from Metiisto to Cartaro')
-    parser.add_argument('table', type=str, help='Name of the data table')
+    parser.add_argument('what', type=str, help='What data to convert')
     parser.add_argument('--limit', type=int, help='Only convert `limit` records.')
     args = parser.parse_args()
 
-    data = CONVERSION_MAP.get(args.table, None)
-    options = data.get("options", {})
-    if args.limit:
-        options['limit'] = args.limit
-
-    if data:
-        converter = DataConverter(args.table, data['metiisto'], data['cartaro'], options)
-        converter.convert()
+    if args.what == "all":
+        for what, data in CONVERSION_MAP.items():
+            do_conversion(data, args)
     else:
-        print(F"No data conversion implemeted for data table '{args.table}'.")
+        data = CONVERSION_MAP.get(args.what, None)
+        do_conversion(data, args)
 ################################################################################

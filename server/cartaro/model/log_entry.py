@@ -25,11 +25,16 @@ class LogEntry(Taggable, Base):
         return self.__logged_at
 
     @logged_at.setter
-    def logged_at(self, ts):
-        self.__logged_at = self._epoch_to_date_obj(ts)
+    def logged_at(self, new_date):
+        if isinstance(new_date, arrow.Arrow):
+            self.__logged_at = new_date
+        elif isinstance(new_date, int):
+            self.__logged_at = self._epoch_to_date_obj(new_date)
+        else:
+            raise TypeError("'logged_at' must be of type INT or Arrow")
 
     def update(self, data):
-        self.logged_at = data.get('logged_at', self.logged_at.timestamp)
+        self.logged_at = data.get('logged_at', self.logged_at)
         self.subject = data.get('subject', self.subject)
         self.content = data.get('content', self.content)
         self.category = data.get('category', self.category)
