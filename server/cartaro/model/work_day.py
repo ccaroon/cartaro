@@ -1,5 +1,7 @@
 import arrow
 
+from tinydb import Query
+
 from .base import Base
 from .taggable import Taggable
 
@@ -24,7 +26,7 @@ class WorkDay(Taggable, Base):
 
     @date.setter
     def date(self, new_date):
-        if isinstance(new_date, arrow.Arrow):
+        if isinstance(new_date, arrow.Arrow) or new_date is None:
             self.__date = new_date
         elif isinstance(new_date, int):
             self.__date = self._epoch_to_date_obj(new_date)
@@ -55,3 +57,43 @@ class WorkDay(Taggable, Base):
         data.update(super()._serialize())
 
         return data
+
+    @classmethod
+    def range(cls, start, end=None, days=None):
+        start_date = start
+        end_date = end
+        
+        if not isinstance(start, arrow.Arrow):
+            start_date = arrow.get(start)
+
+        if end and not isinstance(end, arrow.Arrow):
+            end_date = arrow.get(end)
+
+        if days:
+            if days > 0:
+                end_date = start_date.shift(days=days)
+            elif days < 0:
+                end_date = start_date
+                start_date = end_date.shift(days=days)
+
+        db = cls._database()
+
+        # print(F"S{start_date} -- E{end_date}")
+
+        Day = Query()
+        docs = db.search(Day.date.test(lambda value, s, e: s <= value <= e, start_date.timestamp, end_date.timestamp))
+
+        work_days = []
+        for doc in docs:
+            work_days.append(cls(id=doc.doc_id, **doc))
+
+        return work_days
+
+
+
+
+
+
+
+
+# 

@@ -13,10 +13,6 @@ class Snippet(cartaro.model.base.Base):
         self.title = data.get('title', self.title)
         self.content = data.get('content', self.content)
 
-    @classmethod
-    def purge(cls):
-        cls._database().purge()
-
     def _serialize(self):
         data =  {
             "title": self.title,

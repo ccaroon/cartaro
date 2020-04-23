@@ -15,10 +15,6 @@ class Ticket(Base):
         self.active = False
 
         super().__init__(id=id, **kwargs)
-
-    @classmethod
-    def purge(cls):
-        cls._database().purge()
     
     def update(self, data):
         self.name = data.get('name', self.name)

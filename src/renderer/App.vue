@@ -57,6 +57,7 @@ export default {
     menu: [
       { name: 'Home', path: '/', icon: 'mdi-home' },
       { name: 'LogEntries', path: '/log_entries', icon: 'mdi-book-open-variant' },
+      { name: 'WorkDays', path: '/work_days', icon: 'mdi-calendar-clock' },
       { name: 'Notes', path: '/notes', icon: 'mdi-note-multiple' }
     ]
   })

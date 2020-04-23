@@ -24,10 +24,6 @@ class Comment(Taggable, Base):
         # Tags
         super()._unserialize(data)
 
-    @classmethod
-    def purge(cls):
-        cls._database().purge()
-
     def _serialize(self):
         data =  {
             "name": self.name,

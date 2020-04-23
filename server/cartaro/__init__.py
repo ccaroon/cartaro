@@ -17,10 +17,12 @@ flask_app.config['DOC_PATH'] = doc_path
 from cartaro.controller.log_entries import log_entries
 from cartaro.controller.notes import notes
 from cartaro.controller.tags import tags
+from cartaro.controller.work_days import work_days
 
 flask_app.register_blueprint(log_entries, url_prefix="/log_entries")
 flask_app.register_blueprint(notes, url_prefix="/notes")
 flask_app.register_blueprint(tags, url_prefix="/tags")
+flask_app.register_blueprint(work_days, url_prefix="/work_days")
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------

@@ -198,6 +198,10 @@ class Base(ABC):
         return objs
 
     @classmethod
+    def purge(cls):
+        cls._database().purge()
+
+    @classmethod
     def count(cls):
         return len(cls._database())
 

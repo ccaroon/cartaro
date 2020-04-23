@@ -21,6 +21,11 @@ export default new Router({
       component: require('@/components/Notes').default
     },
     {
+      path: '/work_days',
+      name: 'work_days',
+      component: require('@/components/WorkDays').default
+    },
+    {
       path: '*',
       redirect: '/'
     }
