@@ -7,7 +7,7 @@
       <v-col cols="1">
         <v-toolbar-items>
           <v-btn icon @click.stop="newItem()">
-            <v-icon>mdi-file-document</v-icon>
+            <v-icon>{{ newIcon || 'mdi-file-document' }}</v-icon>
           </v-btn>
         </v-toolbar-items>
       </v-col>
@@ -38,7 +38,7 @@
 export default {
   name: 'shared-app-bar',
   components: {},
-  props: ['name', 'numPages', 'newItem', 'refresh'],
+  props: ['name', 'numPages', 'newItem', 'newIcon', 'refresh'],
 
   methods: {
     search: function () {

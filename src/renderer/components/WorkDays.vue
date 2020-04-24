@@ -3,17 +3,13 @@
     <AppBar
       v-bind:name="'Work Days'"
       v-bind:numPages="Math.ceil(totalWeeks/perPage)"
-      v-bind:newItem="newEntry"
+      v-bind:newItem="newWeek"
+      v-bind:newIcon="'mdi-calendar-plus'"
       v-bind:refresh="refresh"
     ></AppBar>
     <v-list dense>
-      <v-list-item
-        v-for="(workDay,idx) in workDays"
-        :key="workDay.id"
-        :class="rowColor(idx)"
-        @click
-      >
-        <v-list-item-content @click="view(workDay)">
+      <v-list-item v-for="(workDay,idx) in workDays" :key="workDay.id" :class="rowColor(idx)">
+        <v-list-item-content>
           <v-list-item-title
             class="subtitle-1"
             v-if="workDay.deleted_at === null"
@@ -26,7 +22,7 @@
             <Tags v-bind:tags="workDay.tags" v-bind:color="rowColor(idx+1)"></Tags>
           </v-list-item-subtitle>
         </v-list-item-content>
-        <v-row dense>
+        <v-row dense align="center" justify="space-around">
           <v-col cols="2">
             <v-menu
               ref="timeInPicker"
@@ -73,8 +69,31 @@
               <v-time-picker v-model="workDay.time_out" color="red" ampm-in-title scrollable></v-time-picker>
             </v-menu>
           </v-col>
-          <v-col cols="6">{{ workDay.note }}</v-col>
-          <v-col cols="2">{{ workDay.type }}</v-col>
+          <v-col cols="2">
+            <v-btn-toggle v-model="workDay.type" dense rounded mandatory>
+              <v-btn icon value="normal">
+                <v-icon>mdi-calendar</v-icon>
+              </v-btn>
+              <v-btn icon value="holiday">
+                <v-icon>mdi-flag-variant</v-icon>
+              </v-btn>
+              <v-btn icon value="pto">
+                <v-icon>mdi-island</v-icon>
+              </v-btn>
+              <v-btn icon value="sick">
+                <v-icon>mdi-hospital-box</v-icon>
+              </v-btn>
+            </v-btn-toggle>
+          </v-col>
+          <v-col cols="6" full-width @click="editNote(idx)">
+            <v-text-field
+              v-model="workDay.note"
+              @keyup.enter="saveNote(idx)"
+              placeholder="Note"
+              autofocus
+              :disabled="!showEditNote[idx]"
+            ></v-text-field>
+          </v-col>
         </v-row>
         <Actions v-bind:actions="{remove: remove}" v-bind:item="workDay"></Actions>
       </v-list-item>
@@ -106,7 +125,7 @@ export default {
       var self = this
 
       Mousetrap.bind(['ctrl+n', 'command+n'], () => {
-        self.edit({})
+        self.newWeek()
         return false
       })
 
@@ -114,6 +133,17 @@ export default {
         self.$refs.searchBox.focus()
         return false
       })
+    },
+
+    editNote: function (idx) {
+      // Have to use $set() instead of array[index] = value b/c of
+      // https://vuejs.org/v2/guide/reactivity.html#For-Arrays
+      this.$set(this.showEditNote, idx, true)
+    },
+
+    saveNote: function (idx) {
+      alert(`Save: ${idx}`)
+      this.$set(this.showEditNote, idx, false)
     },
 
     displayName: function (workDay) {
@@ -175,10 +205,8 @@ export default {
     //   this.showViewer = true
     // },
 
-    newEntry: function () {
-      this.edit({
-        logged_at: Moment().unix()
-      })
+    newWeek: function () {
+      alert('Add Week')
     },
 
     // edit: function (workDay) {
@@ -234,7 +262,8 @@ export default {
       format: Format,
       searchText: null,
       showTimeInMenu: [],
-      showTimeOutMenu: []
+      showTimeOutMenu: [],
+      showEditNote: []
     }
   }
 }
