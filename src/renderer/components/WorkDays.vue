@@ -44,6 +44,19 @@
                 ></v-text-field>
               </template>
               <v-time-picker v-model="workDay.time_in" color="green" ampm-in-title scrollable></v-time-picker>
+              <v-row dense align="center" justify="space-around">
+                <v-col cols="2">
+                  <v-btn
+                    color="green"
+                    small
+                    rounded
+                    @click="save(workDay); $set(showTimeInMenu, idx, false)"
+                  >OK</v-btn>
+                </v-col>
+                <v-col cols="3">
+                  <v-btn color="red" text @click="$set(showTimeInMenu, idx, false)">Cancel</v-btn>
+                </v-col>
+              </v-row>
             </v-menu>
           </v-col>
           <v-col cols="2">
@@ -67,10 +80,23 @@
                 ></v-text-field>
               </template>
               <v-time-picker v-model="workDay.time_out" color="red" ampm-in-title scrollable></v-time-picker>
+              <v-row dense align="center" justify="space-around">
+                <v-col cols="2">
+                  <v-btn
+                    color="green"
+                    small
+                    rounded
+                    @click="save(workDay); $set(showTimeOutMenu, idx, false)"
+                  >OK</v-btn>
+                </v-col>
+                <v-col cols="3">
+                  <v-btn color="red" text @click="$set(showTimeOutMenu, idx, false)">Cancel</v-btn>
+                </v-col>
+              </v-row>
             </v-menu>
           </v-col>
           <v-col cols="2">
-            <v-btn-toggle v-model="workDay.type" dense rounded mandatory>
+            <v-btn-toggle v-model="workDay.type" dense rounded mandatory @change="save(workDay)">
               <v-btn icon value="normal">
                 <v-icon>mdi-calendar</v-icon>
               </v-btn>
@@ -85,13 +111,12 @@
               </v-btn>
             </v-btn-toggle>
           </v-col>
-          <v-col cols="6" full-width @click="editNote(idx)">
+          <v-col cols="6" full-width>
             <v-text-field
               v-model="workDay.note"
-              @keyup.enter="saveNote(idx)"
               placeholder="Note"
               autofocus
-              :disabled="!showEditNote[idx]"
+              @change="save(workDay)"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -109,12 +134,11 @@ import Format from '../lib/Format'
 
 import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
-import WorkDayWeek from './WorkDays/Week'
 import Tags from './Shared/Tags'
 
 export default {
   name: 'workDays-main',
-  components: { Actions, AppBar, WorkDayWeek, Tags },
+  components: { Actions, AppBar, Tags },
   mounted: function () {
     this.bindShortcutKeys()
     this.load()
@@ -133,17 +157,6 @@ export default {
         self.$refs.searchBox.focus()
         return false
       })
-    },
-
-    editNote: function (idx) {
-      // Have to use $set() instead of array[index] = value b/c of
-      // https://vuejs.org/v2/guide/reactivity.html#For-Arrays
-      this.$set(this.showEditNote, idx, true)
-    },
-
-    saveNote: function (idx) {
-      alert(`Save: ${idx}`)
-      this.$set(this.showEditNote, idx, false)
     },
 
     displayName: function (workDay) {
@@ -200,19 +213,25 @@ export default {
         })
     },
 
-    // view: function (workDay) {
-    //   this.workDay = workDay
-    //   this.showViewer = true
-    // },
-
     newWeek: function () {
       alert('Add Week')
+      // TODO:
+      // Find Monday of current week
+      // POST to work_days 5 times to create
     },
 
-    // edit: function (workDay) {
-    //   this.workDay = workDay
-    //   this.showEditor = true
-    // },
+    save: function (workDay, dryRun = false) {
+      if (dryRun) {
+        console.log(workDay)
+      } else {
+        this.$http.put(`http://127.0.0.1:4242/work_days/${workDay.id}`, workDay)
+          .then(resp => {
+          })
+          .catch(err => {
+            console.log(`${err.response.status} - ${err.response.data.error}`)
+          })
+      }
+    },
 
     remove: function (workDay) {
       var self = this
@@ -230,19 +249,13 @@ export default {
       }
     },
 
-    // closeEditor: function () {
-    //   this.showEditor = false
-    //   this.refresh()
-    // },
-
-    // closeViewer: function () {
-    //   this.showViewer = false
-    // },
-
     rowColor: function (idx) {
+      var workDay = this.workDays[idx]
       var color = Constants.COLORS.GREY
 
-      if (idx % 2 === 0) {
+      if (workDay && Moment().isSame(Moment.unix(workDay.date), 'day')) {
+        color = Constants.COLORS.ITEM_HIGHLIGHT
+      } else if (idx % 2 === 0) {
         color = Constants.COLORS.GREY_ALT
       }
       return color
@@ -252,18 +265,14 @@ export default {
   data () {
     return {
       currWeek: Moment().startOf('week'),
-      workDay: {},
       workDays: [], // a Week
       page: 1,
       perPage: 1,
       totalWeeks: 4,
-      //   showEditor: false,
-      //   showViewer: false,
       format: Format,
       searchText: null,
       showTimeInMenu: [],
-      showTimeOutMenu: [],
-      showEditNote: []
+      showTimeOutMenu: []
     }
   }
 }

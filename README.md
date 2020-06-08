@@ -10,6 +10,10 @@ Esperanto for Chronicle. Ĉartaro is a journal or chronicle of your work.
 * VueJS
 * Vuetify
 
+### Notes
+* Needs to be run/build with NodeJS 10.x.x. NodeJS 12.x.x does not work at the
+  moment.
+
 ## Server
 Supports Python 3.6+. I use 3.8.
 

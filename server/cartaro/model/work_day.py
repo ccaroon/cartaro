@@ -7,7 +7,7 @@ from .taggable import Taggable
 
 class WorkDay(Taggable, Base):
     TYPE_NORMAL = "normal"
-    TYPE_PTO = "pto "
+    TYPE_PTO = "pto"
     TYPE_SICK = "sick"
     TYPE_HOLIDAY = "holiday"
 
@@ -88,12 +88,3 @@ class WorkDay(Taggable, Base):
             work_days.append(cls(id=doc.doc_id, **doc))
 
         return work_days
-
-
-
-
-
-
-
-
-# 
