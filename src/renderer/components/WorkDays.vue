@@ -2,7 +2,7 @@
   <v-container>
     <AppBar
       v-bind:name="'Work Days'"
-      v-bind:numPages="Math.ceil(totalWeeks/perPage)"
+      v-bind:numPages="Math.ceil(totalDays/perPage)"
       v-bind:newItem="newWeek"
       v-bind:newIcon="'mdi-calendar-plus'"
       v-bind:refresh="refresh"
@@ -136,6 +136,9 @@ import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
 import Tags from './Shared/Tags'
 
+const DAYS_PER_WEEK = 7
+const WEEKS_TO_SHOW = 5
+
 export default {
   name: 'workDays-main',
   components: { Actions, AppBar, Tags },
@@ -190,22 +193,44 @@ export default {
     },
 
     load: function () {
-      var self = this
-      // var qs = `page=${this.page}&pp=${this.perPage}`
-      var qs = `start=${this.currWeek.format('YYYY-MM-DD')}&days=7`
+      if (this.searchText) {
+        this.search()
+      } else {
+        this.loadWeek()
+      }
+    },
 
-      //   if (this.searchText) {
-      //     var parts = this.searchText.split(':', 2)
-      //     if (parts.length === 2) {
-      //       qs += `&${parts[0].trim()}=${parts[1].trim()}`
-      //     } else {
-      //       qs += `&subject=${this.searchText}&content=${this.searchText}`
-      //     }
-      //   }
+    search: function () {
+      var self = this
+      // Change number of items per page for search results
+      this.perPage = 10
+      var qs = `page=${this.page}&pp=${this.perPage}`
+
+      var parts = this.searchText.split(':', 2)
+      if (parts.length === 2) {
+        qs += `&${parts[0].trim()}=${parts[1].trim()}`
+      } else {
+        qs += `&note=${this.searchText}`
+      }
+
+      this.$http.get(`http://127.0.0.1:4242/work_days/?${qs}`)
+        .then(resp => {
+          self.totalDays = resp.data.total
+          self.workDays = resp.data.work_days
+        })
+        .catch(err => {
+          console.log(`${err.response.status} - ${err.response.data.error}`)
+        })
+    },
+
+    loadWeek: function () {
+      var self = this
+      this.perPage = DAYS_PER_WEEK
+      var qs = `start=${this.currWeek.format('YYYY-MM-DD')}&days=${DAYS_PER_WEEK}`
 
       this.$http.get(`http://127.0.0.1:4242/work_days/range?${qs}`)
         .then(resp => {
-          // self.totalWeeks = resp.data.total
+          self.totalDays = WEEKS_TO_SHOW * DAYS_PER_WEEK
           self.workDays = resp.data.work_days
         })
         .catch(err => {
@@ -264,11 +289,12 @@ export default {
 
   data () {
     return {
+      // Note: start of the week is a Sunday
       currWeek: Moment().startOf('week'),
       workDays: [], // a Week
       page: 1,
-      perPage: 1,
-      totalWeeks: 4,
+      perPage: DAYS_PER_WEEK,
+      totalDays: 0,
       format: Format,
       searchText: null,
       showTimeInMenu: [],
