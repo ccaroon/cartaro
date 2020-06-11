@@ -238,11 +238,28 @@ export default {
         })
     },
 
-    newWeek: function () {
-      alert('Add Week')
-      // TODO:
-      // Find Monday of current week
-      // POST to work_days 5 times to create
+    newDay: function (day = Moment().startOf('week').add(1, 'day')) {
+      var workDay = {
+        date: null,
+        time_in: '09:00',
+        time_out: '16:30',
+        note: null,
+        type: 'normal'
+      }
+
+      workDay.date = day.unix()
+      return this.$http.post(`http://127.0.0.1:4242/work_days/`, workDay)
+    },
+
+    newWeek: async function () {
+      // This Monday
+      var day = Moment().startOf('week').add(1, 'day')
+
+      for (let i = 1; i <= 5; i++) {
+        await this.newDay(day)
+        day.add(1, 'day')
+      }
+      this.load()
     },
 
     save: function (workDay, dryRun = false) {
@@ -264,7 +281,7 @@ export default {
       var doDelete = confirm(`Delete "${this.displayName(workDay)}"?`)
 
       if (doDelete) {
-        this.$http.delete(`http://127.0.0.1:4242/work_days/${workDay.id}?safe=1`)
+        this.$http.delete(`http://127.0.0.1:4242/work_days/${workDay.id}`)
           .then(resp => {
             self.load()
           })
