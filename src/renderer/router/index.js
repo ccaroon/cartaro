@@ -11,6 +11,11 @@ export default new Router({
       component: require('@/components/Home').default
     },
     {
+      path: '/count_downs',
+      name: 'count_downs',
+      component: require('@/components/CountDowns').default
+    },
+    {
       path: '/log_entries',
       name: 'log_entries',
       component: require('@/components/LogEntries').default

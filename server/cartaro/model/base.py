@@ -25,6 +25,7 @@ json.JSONEncoder.default = __class_encoder
 # ------------------------------------------------------------------------------
 class Base(ABC):
     # TODO: Don't hard-code TZ
+    # TOOD: Use UTC
     TIMEZONE = 'US/Eastern'
     
     __DATABASE = None
@@ -68,6 +69,20 @@ class Base(ABC):
             cls.__DATABASE = TinyDB(F"{doc_dir}/{db_name}.json")
 
         return cls.__DATABASE
+
+    def _date_setter(self, date_value, null_ok=False):
+        new_date = None
+
+        if isinstance(date_value, arrow.Arrow):
+            new_date = date_value
+        elif isinstance(date_value, int):
+            new_date = self._epoch_to_date_obj(date_value)
+        elif not date_value and null_ok:
+            new_date = None
+        else:
+            raise TypeError(F"Date must be of type INT or Arrow; Got: {type(date_value)}")
+
+        return new_date
 
     def _epoch_to_date_obj(self, ts):
         # Datetimes are assumed to be in UTC epoch format

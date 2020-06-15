@@ -138,6 +138,20 @@ def xform_work_day_type(value):
     return type
 ################################################################################
 CONVERSION_MAP = {
+    "countdowns": {
+        'metiisto': {
+            'name': "countdowns",
+            'fields': ['title', 'start_date', 'end_date'],
+        },
+        'cartaro':  {
+            'name': 'CountDowns',
+            'fields': ['name', 'start_at', 'end_at'],
+        },
+        'options': {
+            'has_datestamps': False,
+            'has_tags': False
+        }
+    },
     "entries": {
         'metiisto': {
             'name': "entries",

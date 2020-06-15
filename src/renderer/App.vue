@@ -58,7 +58,8 @@ export default {
       { name: 'Home', path: '/', icon: 'mdi-home' },
       { name: 'LogEntries', path: '/log_entries', icon: 'mdi-book-open-variant' },
       { name: 'WorkDays', path: '/work_days', icon: 'mdi-calendar-clock' },
-      { name: 'Notes', path: '/notes', icon: 'mdi-note-multiple' }
+      { name: 'Notes', path: '/notes', icon: 'mdi-note-multiple' },
+      { name: 'CountDowns', path: '/count_downs', icon: 'mdi-update' }
     ]
   })
 }
