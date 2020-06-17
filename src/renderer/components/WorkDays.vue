@@ -44,19 +44,21 @@
                 ></v-text-field>
               </template>
               <v-time-picker v-model="workDay.time_in" color="green" ampm-in-title scrollable></v-time-picker>
-              <v-row dense align="center" justify="space-around">
-                <v-col cols="2">
-                  <v-btn
-                    color="green"
-                    small
-                    rounded
-                    @click="save(workDay); $set(showTimeInMenu, idx, false)"
-                  >OK</v-btn>
-                </v-col>
-                <v-col cols="3">
-                  <v-btn color="red" text @click="$set(showTimeInMenu, idx, false)">Cancel</v-btn>
-                </v-col>
-              </v-row>
+              <v-sheet width="100%">
+                <v-row dense align="center" justify="space-around">
+                  <v-col cols="2">
+                    <v-btn
+                      color="green"
+                      small
+                      rounded
+                      @click="save(workDay); $set(showTimeInMenu, idx, false)"
+                    >OK</v-btn>
+                  </v-col>
+                  <v-col cols="3">
+                    <v-btn color="red" text @click="$set(showTimeInMenu, idx, false)">Cancel</v-btn>
+                  </v-col>
+                </v-row>
+              </v-sheet>
             </v-menu>
           </v-col>
           <v-col cols="2">
@@ -80,19 +82,21 @@
                 ></v-text-field>
               </template>
               <v-time-picker v-model="workDay.time_out" color="red" ampm-in-title scrollable></v-time-picker>
-              <v-row dense align="center" justify="space-around">
-                <v-col cols="2">
-                  <v-btn
-                    color="green"
-                    small
-                    rounded
-                    @click="save(workDay); $set(showTimeOutMenu, idx, false)"
-                  >OK</v-btn>
-                </v-col>
-                <v-col cols="3">
-                  <v-btn color="red" text @click="$set(showTimeOutMenu, idx, false)">Cancel</v-btn>
-                </v-col>
-              </v-row>
+              <v-sheet width="100%">
+                <v-row dense align="center" justify="space-around">
+                  <v-col cols="2">
+                    <v-btn
+                      color="green"
+                      small
+                      rounded
+                      @click="save(workDay); $set(showTimeOutMenu, idx, false)"
+                    >OK</v-btn>
+                  </v-col>
+                  <v-col cols="3">
+                    <v-btn color="red" text @click="$set(showTimeOutMenu, idx, false)">Cancel</v-btn>
+                  </v-col>
+                </v-row>
+              </v-sheet>
             </v-menu>
           </v-col>
           <v-col cols="2">

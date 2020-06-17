@@ -12,7 +12,7 @@ class LogEntry(Taggable, Base):
     # }
 
     def __init__(self, id=None, **kwargs):
-        self.__logged_at = arrow.now().timestamp
+        self.__logged_at = arrow.now()
         self.subject = None
         self.content = None
         self.category = None

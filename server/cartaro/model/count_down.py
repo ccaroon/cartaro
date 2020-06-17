@@ -1,9 +1,10 @@
+import arrow
 from .base import Base
 
 class CountDown(Base):
     def __init__(self, id=None, **kwargs):
         self.name     = None
-        self.__start_at = None
+        self.__start_at = arrow.now()
         self.__end_at   = None
 
         super().__init__(id=id, **kwargs)

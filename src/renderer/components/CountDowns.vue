@@ -4,7 +4,7 @@
       v-bind:name="'Countdowns'"
       v-bind:numPages="Math.ceil(totalCountDowns/perPage)"
       v-bind:newItem="newCountDown"
-      v-bind:newIcon="'mdi-update'"
+      v-bind:newIcon="'mdi-file-clock'"
       v-bind:refresh="refresh"
     ></AppBar>
     <v-list dense>
@@ -17,10 +17,10 @@
           <v-list-item-title class="subtitle-1" v-else>
             <del>{{ countDown.name }}</del>
           </v-list-item-title>
-          <v-list-item-subtitle>{{ countDown.duration }}</v-list-item-subtitle>
+          <v-list-item-subtitle>{{ humanize(countDown) }}</v-list-item-subtitle>
         </v-list-item-content>
-        <v-row dense align="center" justify="space-around">
-          <v-col cols="3">
+        <v-row dense align="center">
+          <v-col cols="4">
             <v-menu
               ref="startDatePicker"
               v-model="showStartDateMenu[idx]"
@@ -28,41 +28,41 @@
               :nudge-right="40"
               transition="scale-transition"
               offset-y
-              max-width="290px"
-              min-width="290px"
-              @click="initDate('start_at', countDown)"
             >
               <template v-slot:activator="{ on }">
                 <v-text-field
-                  v-model="dateModels['start_at'][countDown.id]"
                   label="Start"
-                  prepend-icon="mdi-clock-outline"
+                  prepend-icon="mdi-calendar-clock"
                   readonly
+                  :value="dateDisplay(countDown, 'start')"
                   v-on="on"
                 ></v-text-field>
               </template>
-              <v-date-picker
-                v-model="dateModels['start_at'][countDown.id]"
-                color="green"
-                ampm-in-title
-                scrollable
-              ></v-date-picker>
-              <v-row dense align="center" justify="space-around">
-                <v-col cols="2">
-                  <v-btn
-                    color="green"
-                    small
-                    rounded
-                    @click="saveDate('start_at', countDown); $set(showStartDateMenu, idx, false)"
-                  >OK</v-btn>
-                </v-col>
-                <v-col cols="3">
-                  <v-btn color="red" text @click="$set(showStartDateMenu, idx, false)">Cancel</v-btn>
-                </v-col>
-              </v-row>
+              <v-sheet width="100%">
+                <v-row dense align="start">
+                  <v-col cols="6">
+                    <v-date-picker v-model="countDown.startDate" color="green" flat scrollable></v-date-picker>
+                  </v-col>
+                  <v-col cols="6">
+                    <v-time-picker v-model="countDown.startTime" color="green" flat scrollable></v-time-picker>
+                  </v-col>
+                </v-row>
+                <v-row dense align="center" justify="space-around">
+                  <v-col cols="2">
+                    <v-btn
+                      rounded
+                      color="green"
+                      @click="save(countDown); $set(showStartDateMenu, idx, false)"
+                    >OK</v-btn>
+                  </v-col>
+                  <v-col cols="3">
+                    <v-btn text color="red" @click="$set(showStartDateMenu, idx, false)">Cancel</v-btn>
+                  </v-col>
+                </v-row>
+              </v-sheet>
             </v-menu>
           </v-col>
-          <v-col cols="3">
+          <v-col cols="4">
             <v-menu
               ref="endDatePicker"
               v-model="showEndDateMenu[idx]"
@@ -70,35 +70,42 @@
               :nudge-right="40"
               transition="scale-transition"
               offset-y
-              max-width="290px"
-              min-width="290px"
             >
               <template v-slot:activator="{ on }">
                 <v-text-field
-                  v-model="countDown.end_at"
                   label="End"
-                  prepend-icon="mdi-clock-outline"
+                  prepend-icon="mdi-calendar-clock"
                   readonly
+                  clearable
+                  @click:clear="clearEndDate(countDown)"
+                  :value="dateDisplay(countDown, 'end')"
                   v-on="on"
                 ></v-text-field>
               </template>
-              <v-date-picker v-model="countDown.end_at" color="red" ampm-in-title scrollable></v-date-picker>
-              <v-row dense align="center" justify="space-around">
-                <v-col cols="2">
-                  <v-btn
-                    color="green"
-                    small
-                    rounded
-                    @click="save(countDown); $set(showEndDateMenu, idx, false)"
-                  >OK</v-btn>
-                </v-col>
-                <v-col cols="3">
-                  <v-btn color="red" text @click="$set(showEndDateMenu, idx, false)">Cancel</v-btn>
-                </v-col>
-              </v-row>
+              <v-sheet width="100%">
+                <v-row dense align="start">
+                  <v-col cols="6">
+                    <v-date-picker v-model="countDown.endDate" color="red" flat scrollable></v-date-picker>
+                  </v-col>
+                  <v-col cols="6">
+                    <v-time-picker v-model="countDown.endTime" color="red" flat scrollable></v-time-picker>
+                  </v-col>
+                </v-row>
+                <v-row dense align="center" justify="space-around">
+                  <v-col cols="2">
+                    <v-btn
+                      rounded
+                      color="green"
+                      @click="save(countDown); $set(showEndDateMenu, idx, false)"
+                    >OK</v-btn>
+                  </v-col>
+                  <v-col cols="3">
+                    <v-btn text color="red" @click="$set(showEndDateMenu, idx, false)">Cancel</v-btn>
+                  </v-col>
+                </v-row>
+              </v-sheet>
             </v-menu>
           </v-col>
-          <v-col>Space For Rent</v-col>
         </v-row>
         <Actions v-bind:actions="{remove: remove}" v-bind:item="countDown"></Actions>
       </v-list-item>
@@ -122,18 +129,6 @@ export default {
     this.bindShortcutKeys()
     this.load()
   },
-
-  // computed: {
-  //   loggedAt: {
-  //     get: function () {
-  //       return Format.formatDate(this.logEntry.logged_at * 1000, 'YYYY-MM-DD')
-  //     },
-
-  //     set: function (newDate) {
-  //       this.logEntry.logged_at = Moment(newDate, 'YYYY-MM-DD').unix().utc()
-  //     }
-  //   }
-  // },
 
   methods: {
     bindShortcutKeys: function () {
@@ -181,8 +176,7 @@ export default {
           self.countDowns = resp.data.count_downs
 
           self.countDowns.forEach((cd) => {
-            self.initDate('start_at', cd)
-            self.initDate('end_at', cd)
+            self.initDate(cd)
           })
         })
         .catch(err => {
@@ -194,21 +188,73 @@ export default {
       alert('New CountDown')
     },
 
-    initDate: function (type, countDown) {
-      this.$set(this.dateModels[type], countDown.id, Format.formatDate(countDown[type] * 1000, 'YYYY-MM-DD'))
-      // this.dateModels[type][index] = Format.formatDate(countDown[type] * 1000, 'YYYY-MM-DD')
+    dateDisplay: function (countDown, type) {
+      var asString = ''
+      var dateAttr = `${type}Date`
+      var timeAttr = `${type}Time`
+
+      if (countDown[dateAttr] && countDown[timeAttr]) {
+        asString = countDown[dateAttr] + ' @ ' + countDown[timeAttr]
+      }
+
+      return asString
     },
 
-    saveDate: function (type, countDown) {
-      countDown[type] = Moment(this.dateModels[type][countDown.id], 'YYYY-MM-DD').unix()
+    humanize: function (countDown) {
+      var now = Moment()
+      var value = null
 
-      console.log(`T: ${type} | I: ${countDown.id} | V: ${countDown[type]}`)
+      if (countDown.start_at && !countDown.end_at) {
+        const start = Moment.unix(countDown.start_at)
+
+        // * Start Only: BEFORE Event -> Count Down | AFTER Event -> Count Up
+        value = start.from(now)
+      } else if (countDown.start_at && countDown.end_at) {
+        const start = Moment.unix(countDown.start_at)
+        const end = Moment.unix(countDown.end_at)
+
+        // * Start & End: BEFORE -> Count Down | DURING -> Count Up | AFTER -> Show Duration
+        if (now.isBefore(start)) {
+          // 'BEFORE --> Count DOWN'
+          value = `Starts ${start.from(now)}`
+        } else if (now.isBetween(start, end)) {
+          // 'DURING --> Count Up'
+          value = `Ends ${end.from(now)}`
+        } else {
+          // 'AFTER --> DURATION'
+          value = start.from(end, true)
+        }
+      }
+
+      return value
+    },
+
+    // Init dates for use with date-picker / time-picker
+    initDate: function (countDown) {
+      countDown.startDate = Format.formatDate(countDown.start_at * 1000, 'YYYY-MM-DD')
+      countDown.startTime = Format.formatDate(countDown.start_at * 1000, 'HH:mm')
+
+      if (countDown.end_at) {
+        countDown.endDate = Format.formatDate(countDown.end_at * 1000, 'YYYY-MM-DD')
+        countDown.endTime = Format.formatDate(countDown.end_at * 1000, 'HH:mm')
+      }
+    },
+
+    clearEndDate: function (countDown) {
+      countDown.endDate = null
+      countDown.endTime = null
 
       this.save(countDown)
     },
 
     save: function (countDown) {
-      console.log(countDown)
+      countDown.start_at = Moment(`${countDown.startDate} ${countDown.startTime}`, 'YYYY-MM-DD HH:mm:ss').unix()
+
+      if (countDown.endDate && countDown.endTime) {
+        countDown.end_at = Moment(`${countDown.endDate} ${countDown.endTime}`, 'YYYY-MM-DD HH:mm:ss').unix()
+      } else {
+        countDown.end_at = null
+      }
 
       this.$http.put(`http://127.0.0.1:4242/count_downs/${countDown.id}`, countDown)
         .then(resp => {})
@@ -246,17 +292,25 @@ export default {
 
   data () {
     return {
-      countDown: {},
       countDowns: [],
       page: 1,
       perPage: 15,
       totalCountDowns: 0,
       format: Format,
       searchText: null,
-      dateModels: { start_at: [], end_at: [] },
       showStartDateMenu: [],
-      showEndDateMenu: []
+      showStartTimeMenu: [],
+      showEndDateMenu: [],
+      showEndTimeMenu: []
     }
   }
 }
 </script>
+<style lang="sass" scoped>
+// ** Not Working **
+// I want to make the time-picker heading height shorter
+// Cannot get any SASS for time-picker to work here.
+// *****************
+// $time-picker-title-color: #00f
+// $time-picker-title-btn-height: 25px !default
+</style>
