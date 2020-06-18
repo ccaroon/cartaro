@@ -10,12 +10,15 @@
     <v-list dense>
       <v-list-item v-for="(countDown,idx) in countDowns" :key="countDown.id" :class="rowColor(idx)">
         <v-list-item-content>
-          <v-list-item-title
-            class="subtitle-1"
-            v-if="countDown.deleted_at === null"
-          >{{ countDown.name }}</v-list-item-title>
-          <v-list-item-title class="subtitle-1" v-else>
-            <del>{{ countDown.name }}</del>
+          <v-list-item-title>
+            <v-text-field
+              v-model="countDown.name"
+              placeholder="Name"
+              dense
+              single-line
+              autofocus
+              @change="save(countDown)"
+            ></v-text-field>
           </v-list-item-title>
           <v-list-item-subtitle>{{ humanize(countDown) }}</v-list-item-subtitle>
         </v-list-item-content>
@@ -39,7 +42,7 @@
                 ></v-text-field>
               </template>
               <v-sheet width="100%">
-                <v-row dense align="start">
+                <v-row dense align="end">
                   <v-col cols="6">
                     <v-date-picker v-model="countDown.startDate" color="green" flat scrollable></v-date-picker>
                   </v-col>
@@ -47,8 +50,8 @@
                     <v-time-picker v-model="countDown.startTime" color="green" flat scrollable></v-time-picker>
                   </v-col>
                 </v-row>
-                <v-row dense align="center" justify="space-around">
-                  <v-col cols="2">
+                <v-row dense align="center" justify="center">
+                  <v-col cols="3">
                     <v-btn
                       rounded
                       color="green"
@@ -56,7 +59,18 @@
                     >OK</v-btn>
                   </v-col>
                   <v-col cols="3">
-                    <v-btn text color="red" @click="$set(showStartDateMenu, idx, false)">Cancel</v-btn>
+                    <v-btn
+                      rounded
+                      color="blue"
+                      @click="countDown.startDate = format.formatDate(Date.now(), 'YYYY-MM-DD')"
+                    >Today</v-btn>
+                  </v-col>
+                  <v-col cols="3">
+                    <v-btn
+                      text
+                      color="red"
+                      @click="initDate(countDown); $set(showStartDateMenu, idx, false)"
+                    >Cancel</v-btn>
                   </v-col>
                 </v-row>
               </v-sheet>
@@ -83,7 +97,7 @@
                 ></v-text-field>
               </template>
               <v-sheet width="100%">
-                <v-row dense align="start">
+                <v-row dense align="end">
                   <v-col cols="6">
                     <v-date-picker v-model="countDown.endDate" color="red" flat scrollable></v-date-picker>
                   </v-col>
@@ -91,8 +105,8 @@
                     <v-time-picker v-model="countDown.endTime" color="red" flat scrollable></v-time-picker>
                   </v-col>
                 </v-row>
-                <v-row dense align="center" justify="space-around">
-                  <v-col cols="2">
+                <v-row dense align="center" justify="center">
+                  <v-col cols="3">
                     <v-btn
                       rounded
                       color="green"
@@ -100,7 +114,18 @@
                     >OK</v-btn>
                   </v-col>
                   <v-col cols="3">
-                    <v-btn text color="red" @click="$set(showEndDateMenu, idx, false)">Cancel</v-btn>
+                    <v-btn
+                      rounded
+                      color="blue"
+                      @click="countDown.endDate = format.formatDate(Date.now(), 'YYYY-MM-DD')"
+                    >Today</v-btn>
+                  </v-col>
+                  <v-col cols="3">
+                    <v-btn
+                      text
+                      color="red"
+                      @click="initDate(countDown); $set(showEndDateMenu, idx, false)"
+                    >Cancel</v-btn>
                   </v-col>
                 </v-row>
               </v-sheet>
@@ -135,7 +160,7 @@ export default {
       var self = this
 
       Mousetrap.bind(['ctrl+n', 'command+n'], () => {
-        self.newWeek()
+        self.newCountDown()
         return false
       })
 
@@ -159,7 +184,7 @@ export default {
 
     load: function () {
       var self = this
-      var qs = `page=${this.page}&pp=${this.perPage}`
+      var qs = `page=${this.page}&pp=${this.perPage}&sort_by=start_at`
 
       if (this.searchText) {
         var parts = this.searchText.split(':', 2)
@@ -185,7 +210,20 @@ export default {
     },
 
     newCountDown: function () {
-      alert('New CountDown')
+      var countDown = {
+        name: '** NEW COUNTDOWN **',
+        // Set Date to something early so it appears at the top of the list
+        start_at: Moment('1971-01-01').unix(),
+        end_at: null
+      }
+
+      this.$http.post(`http://127.0.0.1:4242/count_downs/`, countDown)
+        .then(resp => {
+          this.load()
+        })
+        .catch(err => {
+          console.log(`Error creating CountDown: ${err}`)
+        })
     },
 
     dateDisplay: function (countDown, type) {
@@ -231,13 +269,18 @@ export default {
 
     // Init dates for use with date-picker / time-picker
     initDate: function (countDown) {
-      countDown.startDate = Format.formatDate(countDown.start_at * 1000, 'YYYY-MM-DD')
-      countDown.startTime = Format.formatDate(countDown.start_at * 1000, 'HH:mm')
+      this.$set(countDown, 'startDate', Format.formatDate(countDown.start_at * 1000, 'YYYY-MM-DD'))
+      this.$set(countDown, 'startTime', Format.formatDate(countDown.start_at * 1000, 'HH:mm'))
 
+      var endDate = null
+      var endTime = null
       if (countDown.end_at) {
-        countDown.endDate = Format.formatDate(countDown.end_at * 1000, 'YYYY-MM-DD')
-        countDown.endTime = Format.formatDate(countDown.end_at * 1000, 'HH:mm')
+        endDate = Format.formatDate(countDown.end_at * 1000, 'YYYY-MM-DD')
+        endTime = Format.formatDate(countDown.end_at * 1000, 'HH:mm')
       }
+
+      this.$set(countDown, 'endDate', endDate)
+      this.$set(countDown, 'endTime', endTime)
     },
 
     clearEndDate: function (countDown) {
@@ -248,6 +291,7 @@ export default {
     },
 
     save: function (countDown) {
+      var self = this
       countDown.start_at = Moment(`${countDown.startDate} ${countDown.startTime}`, 'YYYY-MM-DD HH:mm:ss').unix()
 
       if (countDown.endDate && countDown.endTime) {
@@ -257,7 +301,9 @@ export default {
       }
 
       this.$http.put(`http://127.0.0.1:4242/count_downs/${countDown.id}`, countDown)
-        .then(resp => {})
+        .then(resp => {
+          self.load()
+        })
         .catch(err => {
           console.log(`${err.response.status} - ${err.response.data.error}`)
         })
@@ -294,7 +340,7 @@ export default {
     return {
       countDowns: [],
       page: 1,
-      perPage: 15,
+      perPage: 11,
       totalCountDowns: 0,
       format: Format,
       searchText: null,

@@ -54,15 +54,16 @@ def create_controller(controller_name, Model):
 
             page     = int(query_string.pop('page', 1))
             per_page = int(query_string.pop('pp', 10))
+            sort_by  = query_string.pop('sort_by', None)
 
             num_objs = None
             objs = None
             offset = (page - 1) * per_page
             if not query_string:
-                objs = Model.fetch(offset, per_page)
+                objs = Model.fetch(offset, per_page, sort_by=sort_by)
                 num_objs = Model.count()
             else:
-                objs = Model.find(**query_string)
+                objs = Model.find(sort_by=sort_by, **query_string)
                 num_objs = len(objs)
                 # s = slice(offset, offset + per_page)
                 if num_objs > per_page:

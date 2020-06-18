@@ -191,19 +191,22 @@ class Base(ABC):
         pass
 
     @classmethod
-    def fetch(cls, offset=0, count=None):
-        docs = []
-        
+    def fetch(cls, offset=0, count=None, sort_by=None):
+        docs = cls._database().all()
+        if sort_by:
+            docs.sort(key=lambda o: o[sort_by])
+
         # Want ALL docs
+        # TODO: Invert this condition and remove the else
         if offset == 0 and count is None:
-            docs = cls._database().all()
+            pass
         else:
             if count is None:
                 end = None
             else:
                 end = offset + count
 
-            db_iter = iter(cls._database())
+            db_iter = iter(docs)
             docs = itertools.islice(db_iter, offset, end)
 
         objs = []
@@ -225,7 +228,7 @@ class Base(ABC):
     # TODO:
     # - intelligent searching based on type
     @classmethod
-    def find(cls, op="or", **kwargs):
+    def find(cls, op="or", sort_by=None, **kwargs):
         query_parts = []
         query_builder = Query()
 
@@ -250,6 +253,9 @@ class Base(ABC):
         objs = []
         for doc in docs:
             objs.append(cls(id=doc.doc_id, **doc))
+
+        if sort_by:
+            objs.sort(key=lambda o: getattr(o, sort_by))
 
         return objs
 
