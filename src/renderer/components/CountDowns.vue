@@ -163,11 +163,6 @@ export default {
         self.newCountDown()
         return false
       })
-
-      Mousetrap.bind(['ctrl+f', 'command+f'], () => {
-        self.$refs.searchBox.focus()
-        return false
-      })
     },
 
     refresh: function (page = null, searchText = '') {

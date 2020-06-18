@@ -159,11 +159,6 @@ export default {
         self.newWeek()
         return false
       })
-
-      Mousetrap.bind(['ctrl+f', 'command+f'], () => {
-        self.$refs.searchBox.focus()
-        return false
-      })
     },
 
     displayName: function (workDay) {

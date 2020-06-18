@@ -35,10 +35,16 @@
   </v-app-bar>
 </template>
 <script>
+import Mousetrap from 'mousetrap'
+
 export default {
   name: 'shared-app-bar',
   components: {},
   props: ['name', 'numPages', 'newItem', 'newIcon', 'refresh'],
+
+  mounted: function () {
+    this.bindShortcutKeys()
+  },
 
   methods: {
     search: function () {
@@ -46,6 +52,15 @@ export default {
         this.page = 1
         this.refresh(this.page, this.searchText)
       }
+    },
+
+    bindShortcutKeys: function () {
+      var self = this
+
+      Mousetrap.bind(['ctrl+f', 'command+f'], () => {
+        self.$refs.searchBox.focus()
+        return false
+      })
     },
 
     clearSearch: function () {
