@@ -59,7 +59,7 @@ export default {
       var self = this
 
       Mousetrap.bind(['ctrl+n', 'command+n'], () => {
-        self.edit({})
+        self.newEntry()
         return false
       })
     },
