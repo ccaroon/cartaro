@@ -136,6 +136,23 @@ def xform_work_day_type(value):
         type = WorkDay.TYPE_PTO
 
     return type
+
+def xform_todos_repeat_duration(value):
+    repeat = 0
+
+    if value:
+        (count, unit) = value.split()
+        count = int(count)
+        if unit == 'day':
+            repeat = count * 1
+        elif unit == 'week':
+            repeat = count * 7
+        elif unit == 'month':
+            repeat = count * 30
+        elif unit == 'year':
+            repeat = count * 365
+
+    return repeat
 ################################################################################
 CONVERSION_MAP = {
     "countdowns": {
@@ -211,6 +228,22 @@ CONVERSION_MAP = {
             'time_in_transformer': lambda delta:  str(delta)[:4] if len(str(delta)) == 7 else str(delta)[:5],
             'time_out_transformer': lambda delta: str(delta)[:4] if len(str(delta)) == 7 else str(delta)[:5],
             'type_transformer': xform_work_day_type
+        }
+    },
+    'todos': {
+        'metiisto': {
+            'name': "todos",
+            'fields': ['title', 'description', 'priority', 'completed', 'completed_date', 'due_date', 'repeat_duration'],
+        },
+        'cartaro':  {
+            'name': 'Todos',
+            'fields': ['title', 'description', 'priority', 'is_complete', 'completed_at', 'due_at', 'repeat'],
+        },
+        'options': {
+            'has_datestamps': False,
+            'has_tags': True,
+            'tag_class': "Metiisto::Todo",
+            'repeat_transformer': xform_todos_repeat_duration
         }
     }
 }
