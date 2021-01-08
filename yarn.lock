@@ -619,15 +619,15 @@ __metadata:
     node-loader: ^0.6.0
     node-sass: ^4.14.1
     sass-loader: ^8.0.2
-    style-loader: ^1.2.1
+    style-loader: ^1.3.0
     url-loader: ^3.0.0
     vue: ^2.6.12
     vue-electron: ^1.0.6
     vue-html-loader: ^1.2.4
-    vue-loader: ^15.9.2
-    vue-router: ^3.3.2
-    vue-style-loader: ^4.1.0
-    vue-template-compiler: ^2.5.16
+    vue-loader: ^15.9.6
+    vue-router: ^3.4.9
+    vue-style-loader: ^4.1.2
+    vue-template-compiler: ^2.6.12
     vuetify: ^2.4.2
     vuex: ^3.6.0
     vuex-electron: ^1.0.3
@@ -11056,7 +11056,7 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"style-loader@npm:^1.2.1":
+"style-loader@npm:^1.3.0":
   version: 1.3.0
   resolution: "style-loader@npm:1.3.0"
   dependencies:
@@ -11878,7 +11878,7 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"vue-loader@npm:^15.9.2":
+"vue-loader@npm:^15.9.6":
   version: 15.9.6
   resolution: "vue-loader@npm:15.9.6"
   dependencies:
@@ -11899,14 +11899,14 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"vue-router@npm:^3.3.2":
+"vue-router@npm:^3.4.9":
   version: 3.4.9
   resolution: "vue-router@npm:3.4.9"
   checksum: eaacc4d5019428fd04ce7a31f8709f35cd0f26f2408445d1d2e6298508a6710a0ca7c3607080bbe10c5708e4ce0c00840f56f6097842494b43612561c42a8e54
   languageName: node
   linkType: hard
 
-"vue-style-loader@npm:^4.1.0":
+"vue-style-loader@npm:^4.1.0, vue-style-loader@npm:^4.1.2":
   version: 4.1.2
   resolution: "vue-style-loader@npm:4.1.2"
   dependencies:
@@ -11916,7 +11916,7 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"vue-template-compiler@npm:^2.5.16":
+"vue-template-compiler@npm:^2.6.12":
   version: 2.6.12
   resolution: "vue-template-compiler@npm:2.6.12"
   dependencies:
