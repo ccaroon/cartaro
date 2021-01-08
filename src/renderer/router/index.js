@@ -26,6 +26,11 @@ export default new Router({
       component: require('@/components/Notes').default
     },
     {
+      path: '/todos',
+      name: 'todos',
+      component: require('@/components/Todos').default
+    },
+    {
       path: '/work_days',
       name: 'work_days',
       component: require('@/components/WorkDays').default

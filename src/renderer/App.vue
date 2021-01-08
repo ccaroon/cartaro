@@ -7,7 +7,11 @@
 
     <v-navigation-drawer v-model="drawer" app dark mini-variant clipped>
       <v-list dense>
-        <v-list-item v-for="(page, index) in menu" @click="goTo(page)" :key="index">
+        <v-list-item
+          v-for="(page, index) in menu"
+          @click="goTo(page)"
+          :key="index"
+        >
           <v-list-item-action>
             <v-icon>{{ page.icon }}</v-icon>
           </v-list-item-action>
@@ -59,6 +63,7 @@ export default {
       { name: 'LogEntries', path: '/log_entries', icon: 'mdi-book-open-variant' },
       { name: 'WorkDays', path: '/work_days', icon: 'mdi-calendar-clock' },
       { name: 'Notes', path: '/notes', icon: 'mdi-note-multiple' },
+      { name: 'Todos', path: '/todos', icon: 'mdi-clipboard-list-outline' },
       { name: 'CountDowns', path: '/count_downs', icon: 'mdi-update' }
     ]
   })

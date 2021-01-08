@@ -30,6 +30,11 @@ class Base(ABC):
     
     __DATABASE = None
 
+    __DEFAULT_SORT_VALUE = {
+        int: 0,
+        str: ''
+    }
+
     def __init__(self, id=None, **kwargs):
         kwargs['id'] = id
         self.__unserialize(kwargs)
@@ -191,10 +196,28 @@ class Base(ABC):
         pass
 
     @classmethod
+    # Used by methods that sort a list of doc/objs
+    # Some model fields can be Null (None) and the list
+    # sort() method (python) does not like to compare NoneType
+    # to int or str, etc. 
+    # This method attempts to find the field type by finding the first
+    # non-None value and inspecting it.
+    # The we can look-up a valid default value to use in sorting.
+    def __model_attr_type(cls, attr_name, objs):
+        attr_type = None
+        for obj in objs:
+            if obj[attr_name] is not None:
+                attr_type = type(obj[attr_name])
+                break
+        
+        return attr_type
+
+    @classmethod
     def fetch(cls, offset=0, count=None, sort_by=None):
         docs = cls._database().all()
         if sort_by:
-            docs.sort(key=lambda o: o[sort_by])
+            attr_type = cls.__model_attr_type(sort_by, docs)
+            docs.sort(key=lambda o: cls.__DEFAULT_SORT_VALUE[attr_type] if o[sort_by] == None else o[sort_by])
 
         # Want ALL docs
         # TODO: Invert this condition and remove the else
@@ -255,7 +278,8 @@ class Base(ABC):
             objs.append(cls(id=doc.doc_id, **doc))
 
         if sort_by:
-            objs.sort(key=lambda o: getattr(o, sort_by))
+            attr_type = cls.__model_attr_type(sort_by, docs)
+            objs.sort(key=lambda o: cls.__DEFAULT_SORT_VALUE[attr_type] if getattr(o, sort_by) == None else getattr(o, sort_by))
 
         return objs
 
