@@ -18,12 +18,14 @@ from cartaro.controller.count_downs import count_downs
 from cartaro.controller.log_entries import log_entries
 from cartaro.controller.notes import notes
 from cartaro.controller.tags import tags
+from cartaro.controller.todos import todos
 from cartaro.controller.work_days import work_days
 
 flask_app.register_blueprint(count_downs, url_prefix="/count_downs")
 flask_app.register_blueprint(log_entries, url_prefix="/log_entries")
 flask_app.register_blueprint(notes, url_prefix="/notes")
 flask_app.register_blueprint(tags, url_prefix="/tags")
+flask_app.register_blueprint(todos, url_prefix="/todos")
 flask_app.register_blueprint(work_days, url_prefix="/work_days")
 # ------------------------------------------------------------------------------
 
