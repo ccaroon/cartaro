@@ -27,7 +27,7 @@ class Base(ABC):
     # TODO: Don't hard-code TZ
     # TOOD: Use UTC
     TIMEZONE = 'US/Eastern'
-    
+
     __DATABASE = None
 
     __DEFAULT_SORT_VALUE = {
@@ -170,7 +170,7 @@ class Base(ABC):
             data['id'] = self.id
 
         data.update(self._serialize())
-        
+
         return data
 
     @abstractmethod
@@ -199,7 +199,7 @@ class Base(ABC):
     # Used by methods that sort a list of doc/objs
     # Some model fields can be Null (None) and the list
     # sort() method (python) does not like to compare NoneType
-    # to int or str, etc. 
+    # to int or str, etc.
     # This method attempts to find the field type by finding the first
     # non-None value and inspecting it.
     # The we can look-up a valid default value to use in sorting.
@@ -209,7 +209,7 @@ class Base(ABC):
             if obj[attr_name] is not None:
                 attr_type = type(obj[attr_name])
                 break
-        
+
         return attr_type
 
     @classmethod
@@ -240,7 +240,7 @@ class Base(ABC):
 
     @classmethod
     def purge(cls):
-        cls._database().purge()
+        cls._database().truncate()
 
     @classmethod
     def count(cls):
