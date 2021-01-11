@@ -13,100 +13,32 @@
         :key="todo.id"
         :class="rowColor(idx)"
       >
+        <v-list-item-avatar>
+          <v-icon :color="priorityColor(todo.priority)"
+            >mdi-numeric-{{ todo.priority }}-circle</v-icon
+          >
+        </v-list-item-avatar>
+        <v-list-item-avatar>
+          <v-icon :color="todo.is_complete ? 'green' : ''"
+            >mdi-checkbox-{{ todo.is_complete ? "marked" : "blank" }}</v-icon
+          >
+        </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title>
-            <v-text-field
-              v-model="todo.title"
-              placeholder="Title"
-              dense
-              single-line
-              autofocus
-              @change="save(todo)"
-            ></v-text-field>
+            {{ todo.title }}
           </v-list-item-title>
-          <v-list-item-subtitle>{{ humanize(todo) }}</v-list-item-subtitle>
+          <v-list-item-subtitle>
+            {{ humanize(todo) }}
+            <Tags
+              v-bind:tags="todo.tags"
+              v-bind:color="rowColor(idx + 1)"
+            ></Tags>
+          </v-list-item-subtitle>
+          <!-- description -->
         </v-list-item-content>
-        <v-row dense align="center">
-          <v-col cols="4">
-            <v-menu
-              ref="dueDatePicker"
-              v-model="showDueDateMenu[idx]"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  label="Due"
-                  prepend-icon="mdi-calendar-clock"
-                  readonly
-                  :value="dateDisplay(todo, 'due')"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-sheet width="100%">
-                <v-row dense align="end">
-                  <v-col cols="6">
-                    <v-date-picker
-                      v-model="todo.dueDate"
-                      color="green"
-                      flat
-                      scrollable
-                    ></v-date-picker>
-                  </v-col>
-                  <v-col cols="6">
-                    <v-time-picker
-                      v-model="todo.dueTime"
-                      color="green"
-                      flat
-                      scrollable
-                    ></v-time-picker>
-                  </v-col>
-                </v-row>
-                <v-row dense align="center" justify="center">
-                  <v-col cols="3">
-                    <v-btn
-                      rounded
-                      color="green"
-                      @click="
-                        save(todo);
-                        $set(showDueDateMenu, idx, false);
-                      "
-                      >OK</v-btn
-                    >
-                  </v-col>
-                  <v-col cols="3">
-                    <v-btn
-                      rounded
-                      color="blue"
-                      @click="
-                        todo.dueDate = format.formatDate(
-                          Date.now(),
-                          'YYYY-MM-DD'
-                        )
-                      "
-                      >Today</v-btn
-                    >
-                  </v-col>
-                  <v-col cols="3">
-                    <v-btn
-                      text
-                      color="red"
-                      @click="
-                        initDate(todo);
-                        $set(showDueDateMenu, idx, false);
-                      "
-                      >Cancel</v-btn
-                    >
-                  </v-col>
-                </v-row>
-              </v-sheet>
-            </v-menu>
-          </v-col>
-        </v-row>
+
         <Actions
-          v-bind:actions="{ remove: remove }"
+          v-bind:actions="{ edit: edit, remove: remove }"
           v-bind:item="todo"
         ></Actions>
       </v-list-item>
@@ -122,10 +54,11 @@ import Format from '../lib/Format'
 
 import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
+import Tags from './Shared/Tags'
 
 export default {
   name: 'todos-main',
-  components: { Actions, AppBar },
+  components: { Actions, AppBar, Tags },
   mounted: function () {
     this.bindShortcutKeys()
     this.load()
@@ -155,7 +88,7 @@ export default {
 
     load: function () {
       var self = this
-      var qs = `page=${this.page}&pp=${this.perPage}&sort_by=due_at`
+      var qs = `page=${this.page}&pp=${this.perPage}&sort_by=is_complete,priority,due_at`
 
       if (this.searchText) {
         var parts = this.searchText.split(':', 2)
@@ -196,6 +129,25 @@ export default {
       //     .catch(err => {
       //       console.log(`Error creating CountDown: ${err}`)
       //     })
+    },
+
+    edit: function (todo) {
+      alert(`Edit: ${todo.title}`)
+    },
+
+    priorityColor: function (priority) {
+      var colors = ['black',
+        'red',
+        'orange',
+        'yellow darken-1',
+        'green',
+        'blue',
+        'indigo',
+        'violet',
+        'grey',
+        'black'
+      ]
+      return colors[priority]
     },
 
     dateDisplay: function (todo) {
