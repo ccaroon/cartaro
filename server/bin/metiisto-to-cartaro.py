@@ -34,7 +34,7 @@ class DataConverter:
 
         # Connect to / Create TinyDB
         self.cartaro = TinyDB(F"./{self.c_cfg['name']}-dev.json")
-        self.cartaro.purge()
+        self.cartaro.truncate()
 
     def convert(self):
         print(F"--- Converting Metiisto/{self.m_cfg['name']} to Cartaro/{self.c_cfg['name']} ---")
@@ -153,6 +153,9 @@ def xform_todos_repeat_duration(value):
             repeat = count * 365
 
     return repeat
+
+def xform_todos_priority(value):
+    return 9 if value > 9 else value
 ################################################################################
 CONVERSION_MAP = {
     "countdowns": {
@@ -243,7 +246,8 @@ CONVERSION_MAP = {
             'has_datestamps': False,
             'has_tags': True,
             'tag_class': "Metiisto::Todo",
-            'repeat_transformer': xform_todos_repeat_duration
+            'repeat_transformer': xform_todos_repeat_duration,
+            'priority_transformer': xform_todos_priority
         }
     }
 }

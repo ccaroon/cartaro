@@ -1,10 +1,10 @@
-arrow
-cryptography
-flask
-inflector
-tinydb
+arrow ~= 0.17.0
+cryptography ~= 3.3.1
+flask ~= 1.1.2
+inflector ~= 3.0.1
+tinydb ~= 4.3.0
 
 # Dev
 coverage
-faker
+faker ~= 4.2.0
 nose

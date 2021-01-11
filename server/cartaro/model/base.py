@@ -9,6 +9,8 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from tinydb import TinyDB, Query
 import tinydb.operations as tyops
+
+from cartaro.utils.util import Util
 # ------------------------------------------------------------------------------
 # Configure JSONEncoder to look for "serialize" method when serializing classes
 # ------------------------------------------------------------------------------
@@ -29,11 +31,6 @@ class Base(ABC):
     TIMEZONE = 'US/Eastern'
 
     __DATABASE = None
-
-    __DEFAULT_SORT_VALUE = {
-        int: 0,
-        str: ''
-    }
 
     def __init__(self, id=None, **kwargs):
         kwargs['id'] = id
@@ -196,28 +193,10 @@ class Base(ABC):
         pass
 
     @classmethod
-    # Used by methods that sort a list of doc/objs
-    # Some model fields can be Null (None) and the list
-    # sort() method (python) does not like to compare NoneType
-    # to int or str, etc.
-    # This method attempts to find the field type by finding the first
-    # non-None value and inspecting it.
-    # The we can look-up a valid default value to use in sorting.
-    def __model_attr_type(cls, attr_name, objs):
-        attr_type = None
-        for obj in objs:
-            if obj[attr_name] is not None:
-                attr_type = type(obj[attr_name])
-                break
-
-        return attr_type
-
-    @classmethod
     def fetch(cls, offset=0, count=None, sort_by=None):
         docs = cls._database().all()
         if sort_by:
-            attr_type = cls.__model_attr_type(sort_by, docs)
-            docs.sort(key=lambda o: cls.__DEFAULT_SORT_VALUE[attr_type] if o[sort_by] == None else o[sort_by])
+            docs = Util.sort(docs, sort_by.split(','))
 
         # Want ALL docs
         # TODO: Invert this condition and remove the else
@@ -246,10 +225,6 @@ class Base(ABC):
     def count(cls):
         return len(cls._database())
 
-    # NOTE:
-    # Currently only supports searching string fields
-    # TODO:
-    # - intelligent searching based on type
     @classmethod
     def find(cls, op="or", sort_by=None, **kwargs):
         query_parts = []
@@ -261,7 +236,23 @@ class Base(ABC):
                 tags = value.replace(" ", "").split(',')
                 query_parts.append(query_builder['tags'].any(tags))
             else:
-                query_parts.append(query_builder[field].search(value, flags=re.IGNORECASE))
+                # Can search in boolean, int and string fields
+                test_value = value
+                if re.match("(true|false)", value, flags=re.IGNORECASE):
+                    test_value = True if value.lower() == 'true' else False
+                    query_parts.append(query_builder[field] == test_value)
+                elif value.isdecimal():
+                    test_value = int(value)
+                    query_parts.append(query_builder[field] == test_value)
+                else:
+                    # Assume value is a string
+                    query_parts.append(
+                        query_builder[field].search(
+                            test_value, 
+                            flags=re.IGNORECASE
+                        )
+                    )
+                
 
         query = query_parts[0]
         if op == "or":
@@ -272,14 +263,14 @@ class Base(ABC):
                 query &= qp
 
         docs = cls._database().search(query)
+        if sort_by:
+            docs = Util.sort(docs, sort_by.split(','))
+            # attr_type = cls.__model_attr_type(sort_by, docs)
+            # objs.sort(key=lambda o: cls.__DEFAULT_SORT_VALUE[attr_type] if getattr(o, sort_by) == None else getattr(o, sort_by))
 
         objs = []
         for doc in docs:
             objs.append(cls(id=doc.doc_id, **doc))
-
-        if sort_by:
-            attr_type = cls.__model_attr_type(sort_by, docs)
-            objs.sort(key=lambda o: cls.__DEFAULT_SORT_VALUE[attr_type] if getattr(o, sort_by) == None else getattr(o, sort_by))
 
         return objs
 

@@ -309,7 +309,7 @@ class BaseTest(unittest.TestCase):
         self.assertEqual(things[2].name, obj3.name)
 
         # Find #2 - OR
-        things = Ticket.find(name="88", desc="Born on Board")
+        things = Ticket.find(name="- 88", desc="Born on Board")
         self.assertEquals(len(things), 2)
 
         self.assertEqual(things[0].id, obj2.id)
