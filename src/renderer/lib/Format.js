@@ -15,6 +15,26 @@ export default {
 
   monthNumberToName: function (monthNumber) {
     return (Moment().month(monthNumber).format('MMMM'))
+  },
+
+  humanizeDate: function (date, defMsg = 'N/A') {
+    var now = Moment()
+    var value = defMsg
+
+    if (date != null) {
+      value = Moment.unix(date).from(now)
+    }
+    return value
+  },
+
+  humanizeDays: function (days) {
+    const aDate = Moment().add(days, 'days')
+    // humanDays = `${days} days`
+
+    // if (days >= 7 && days < 30) {
+    //   humanDays = `${days / 7} weeks`
+    // }
+    return aDate.fromNow(true)
   }
 
 }

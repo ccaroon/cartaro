@@ -1,10 +1,12 @@
 import sys
+
 class Util:
 
     __DEFAULT_SORT_VALUE = {
         int: sys.maxsize * -1,
         str: '',
-        bool: False
+        bool: False,
+        'none': None
     }
 
     @classmethod
@@ -17,18 +19,22 @@ class Util:
     def __model_attr_type(cls, names, objs):
         types = []
         for attr in names:
+            attr_type = 'none'
             for obj in objs:
                 if obj[attr] is not None:
-                    types.append(type(obj[attr]))
+                    attr_type = type(obj[attr])
                     break
 
+            types.append(attr_type)
+        
         return types
 
     @classmethod
     def sort(cls, items, fields, reverse=False):
         types = cls.__model_attr_type(fields, items)
         def key_smith(o):
-            return [cls.__DEFAULT_SORT_VALUE[types[i]] if o[f] == None else o[f] for i,f in enumerate(fields)]
+            key_ring = [cls.__DEFAULT_SORT_VALUE[types[i]] if o[f] == None else o[f] for i,f in enumerate(fields)]
+            return key_ring
 
         # In Place
         # items.sort(key=key_smith)

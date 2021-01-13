@@ -33,7 +33,7 @@ class DataConverter:
         )
 
         # Connect to / Create TinyDB
-        self.cartaro = TinyDB(F"./{self.c_cfg['name']}-dev.json")
+        self.cartaro = TinyDB(F"{options.get('out_dir', '.')}/{self.c_cfg['name']}-dev.json")
         self.cartaro.truncate()
 
     def convert(self):
@@ -255,13 +255,14 @@ CONVERSION_MAP = {
 def do_conversion(data, args):
     if data:
         options = data.get("options", {})
+        options['out_dir'] = args.out_dir
         if args.limit:
             options['limit'] = args.limit
-        
+
         converter = DataConverter(data['metiisto'], data['cartaro'], options)
         converter.convert()
     else:
-        print(F"No data conversion implemeted for '{args.what}' data.")
+        print(F"No data conversion implemented for '{args.what}' data.")
 ################################################################################
 if __name__ == "__main__":
     import argparse
@@ -269,6 +270,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Convert Data from Metiisto to Cartaro')
     parser.add_argument('what', type=str, help='What data to convert')
     parser.add_argument('--limit', type=int, help='Only convert `limit` records.')
+    parser.add_argument('--out-dir', type=str, default=".", help='Output directory to write DB files to.')
     args = parser.parse_args()
 
     if args.what == "all":

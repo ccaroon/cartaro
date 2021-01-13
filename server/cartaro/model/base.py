@@ -252,7 +252,6 @@ class Base(ABC):
                             flags=re.IGNORECASE
                         )
                     )
-                
 
         query = query_parts[0]
         if op == "or":
@@ -265,8 +264,6 @@ class Base(ABC):
         docs = cls._database().search(query)
         if sort_by:
             docs = Util.sort(docs, sort_by.split(','))
-            # attr_type = cls.__model_attr_type(sort_by, docs)
-            # objs.sort(key=lambda o: cls.__DEFAULT_SORT_VALUE[attr_type] if getattr(o, sort_by) == None else getattr(o, sort_by))
 
         objs = []
         for doc in docs:

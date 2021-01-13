@@ -2,15 +2,23 @@
   <v-container>
     <AppBar
       v-bind:name="'Log Entries'"
-      v-bind:numPages="Math.ceil(totalEntries/perPage)"
+      v-bind:numPages="Math.ceil(totalEntries / perPage)"
       v-bind:newItem="newEntry"
       v-bind:refresh="refresh"
     ></AppBar>
-    <LogEntryEditor v-model="showEditor" v-bind:logEntry="logEntry" v-on:close="closeEditor"></LogEntryEditor>
-    <LogEntryViewer v-model="showViewer" v-bind:logEntry="logEntry" v-on:close="closeViewer"></LogEntryViewer>
+    <LogEntryEditor
+      v-model="showEditor"
+      v-bind:logEntry="logEntry"
+      v-on:close="closeEditor"
+    ></LogEntryEditor>
+    <LogEntryViewer
+      v-model="showViewer"
+      v-bind:logEntry="logEntry"
+      v-on:close="closeViewer"
+    ></LogEntryViewer>
     <v-list dense>
       <v-list-item
-        v-for="(logEntry,idx) in logEntries"
+        v-for="(logEntry, idx) in logEntries"
         :key="logEntry.id"
         :class="rowColor(idx)"
         @click
@@ -19,16 +27,28 @@
           <v-list-item-title
             class="subtitle-1"
             v-if="logEntry.deleted_at === null"
-          >{{ logEntry.subject }}</v-list-item-title>
+            >{{ logEntry.subject }}</v-list-item-title
+          >
           <v-list-item-title class="subtitle-1" v-else>
             <del>{{ logEntry.subject }}</del>
           </v-list-item-title>
           <v-list-item-subtitle>
-            {{ logEntry.category }} | {{ logEntry.logged_at ? format.formatDate(logEntry.logged_at*1000) : '--'}}
-            <Tags v-bind:tags="logEntry.tags" v-bind:color="rowColor(idx+1)"></Tags>
+            {{ logEntry.category }} |
+            {{
+              logEntry.logged_at
+                ? format.formatDate(logEntry.logged_at * 1000)
+                : "--"
+            }}
+            <Tags
+              v-bind:tags="logEntry.tags"
+              v-bind:color="rowColor(idx + 1)"
+            ></Tags>
           </v-list-item-subtitle>
         </v-list-item-content>
-        <Actions v-bind:actions="{edit: edit, remove: remove}" v-bind:item="logEntry"></Actions>
+        <Actions
+          v-bind:actions="{ edit: edit, remove: remove }"
+          v-bind:item="logEntry"
+        ></Actions>
       </v-list-item>
     </v-list>
   </v-container>
@@ -78,7 +98,7 @@ export default {
 
     load: function () {
       var self = this
-      var qs = `page=${this.page}&pp=${this.perPage}`
+      var qs = `page=${this.page}&pp=${this.perPage}&sort_by=logged_at`
 
       if (this.searchText) {
         var parts = this.searchText.split(':', 2)

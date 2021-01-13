@@ -7,11 +7,24 @@
       v-bind:newIcon="'mdi-file-check-outline'"
       v-bind:refresh="refresh"
     ></AppBar>
+    <TodoEditor
+      v-model="showEditor"
+      v-bind:todo="todo"
+      v-bind:priorityColor="priorityColor"
+      v-on:close="closeEditor"
+    ></TodoEditor>
+    <TodoViewer
+      v-model="showViewer"
+      v-bind:todo="todo"
+      v-bind:priorityColor="priorityColor"
+      v-on:close="closeViewer"
+    ></TodoViewer>
     <v-list dense>
       <v-list-item
         v-for="(todo, idx) in todos"
         :key="todo.id"
-        :class="rowColor(idx)"
+        :class="rowColor(idx, todo)"
+        @click
       >
         <v-list-item-avatar>
           <v-icon :color="priorityColor(todo.priority)"
@@ -19,16 +32,35 @@
           >
         </v-list-item-avatar>
         <v-list-item-avatar>
-          <v-icon :color="todo.is_complete ? 'green' : ''"
+          <v-icon
+            :color="todo.is_complete ? 'green' : ''"
+            @click="toggleCompleted(todo)"
             >mdi-checkbox-{{ todo.is_complete ? "marked" : "blank" }}</v-icon
           >
         </v-list-item-avatar>
-        <v-list-item-content>
+        <v-list-item-content @click="view(todo)">
           <v-list-item-title>
             {{ todo.title }}
           </v-list-item-title>
           <v-list-item-subtitle>
-            {{ humanize(todo) }}
+            <template v-if="todo.is_complete">
+              Completed {{ format.humanizeDate(todo.completed_at) }} ({{
+                format.formatDateTime(todo.completed_at * 1000)
+              }})
+            </template>
+            <template v-else>
+              <span v-if="todo.due_at"
+                >Due {{ format.humanizeDate(todo.due_at) }} ({{
+                  format.formatDateTime(todo.due_at * 1000)
+                }})</span
+              >
+              <span v-else>No Due Date</span>
+            </template>
+            <v-divider vertical inset></v-divider>
+            <template v-if="todo.repeat > 0">
+              <v-icon>mdi-calendar-refresh</v-icon>
+              Every {{ format.humanizeDays(todo.repeat) }}
+            </template>
             <Tags
               v-bind:tags="todo.tags"
               v-bind:color="rowColor(idx + 1)"
@@ -54,11 +86,13 @@ import Format from '../lib/Format'
 
 import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
+import TodoEditor from './Todos/Editor'
+import TodoViewer from './Todos/Viewer'
 import Tags from './Shared/Tags'
 
 export default {
   name: 'todos-main',
-  components: { Actions, AppBar, Tags },
+  components: { Actions, AppBar, TodoEditor, TodoViewer, Tags },
   mounted: function () {
     this.bindShortcutKeys()
     this.load()
@@ -97,6 +131,8 @@ export default {
         } else {
           qs += `&title=${this.searchText}`
         }
+      } else {
+        qs += '&is_complete=false'
       }
 
       this.$http.get(`http://127.0.0.1:4242/todos/?${qs}`)
@@ -104,35 +140,77 @@ export default {
           self.totalTodos = resp.data.total
           self.todos = resp.data.todos
 
-          self.todos.forEach((cd) => {
-            self.initDate(cd)
-          })
+          // self.todos.forEach((cd) => {
+          //   self.initDate(cd)
+          // })
         })
         .catch(err => {
           console.log(`${err.response.status} - ${err.response.data.error}`)
+          // console.log(err)
         })
     },
 
-    newTodo: function () {
-      alert('newTodo')
-      //   var todo = {
-      //     name: '** NEW COUNTDOWN **',
-      //     // Set Date to something early so it appears at the top of the list
-      //     start_at: Moment('1971-01-01').unix(),
-      //     end_at: null
-      //   }
+    view: function (todo) {
+      this.todo = todo
+      this.showViewer = true
+    },
 
-      //   this.$http.post(`http://127.0.0.1:4242/todos/`, todo)
-      //     .then(resp => {
-      //       this.load()
-      //     })
-      //     .catch(err => {
-      //       console.log(`Error creating CountDown: ${err}`)
-      //     })
+    newTodo: function () {
+      this.edit({})
     },
 
     edit: function (todo) {
+      // this.todo = todo
+      // this.showEditor = true
       alert(`Edit: ${todo.title}`)
+    },
+
+    closeEditor: function () {
+      this.showEditor = false
+      this.refresh()
+    },
+
+    closeViewer: function () {
+      this.showViewer = false
+    },
+
+    markUncomplete: function (todo) {
+      if (todo.repeat > 0) {
+        alert('Cannot Mark Repeatable Todos as Uncompleted.')
+      } else {
+        todo.is_complete = false
+        todo.completed_at = null
+        this.save(todo)
+      }
+    },
+
+    markComplete: function (todo) {
+      var self = this
+      var promise = Promise.resolve(true)
+
+      if (todo.repeat > 0) {
+        // clone original todo
+        var newTodo = Object.assign({}, todo)
+        delete newTodo.id
+        newTodo.due_at = Moment(todo.due_at * 1000).add(todo.repeat, 'days').unix()
+        promise = Promise.resolve(self.save(newTodo, false))
+      }
+
+      promise.then(dontCare => {
+        todo.is_complete = true
+        todo.completed_at = Moment().unix()
+        self.save(todo)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+
+    toggleCompleted: function (todo) {
+      if (todo.is_complete) {
+        this.markUncomplete(todo)
+      } else {
+        this.markComplete(todo)
+      }
     },
 
     priorityColor: function (priority) {
@@ -151,7 +229,7 @@ export default {
     },
 
     dateDisplay: function (todo) {
-      var asString = 'N/A'
+      var asString = 'No Due Date'
 
       if (todo.due_at != null) {
         asString = Format.formatDateTime(todo.due_at * 1000)
@@ -159,38 +237,40 @@ export default {
       return asString
     },
 
-    humanize: function (todo) {
-      var now = Moment()
-      var value = 'n/a'
-      const due = Moment.unix(todo.due_at)
-
-      if (todo.due_at != null) {
-        value = due.from(now)
-      }
-      return value
-    },
-
-    // Init dates for use with date-picker / time-picker
-    initDate: function (todo) {
-      this.$set(todo, 'dueAt', Format.formatDate(todo.due_at * 1000, 'YYYY-MM-DD'))
-    },
+    // // Init dates for use with date-picker / time-picker
+    // initDate: function (todo) {
+    //   this.$set(todo, 'dueAt', Format.formatDate(todo.due_at * 1000, 'YYYY-MM-DD'))
+    // },
 
     clearDueDate: function (todo) {
       todo.due_at = null
       this.save(todo)
     },
 
-    save: function (todo) {
+    save: function (todo, resolve = true) {
       var self = this
-      todo.due_at = Moment(`${todo.dueDate} ${todo.dueTime}`, 'YYYY-MM-DD HH:mm:ss').unix()
+      // todo.due_at = Moment(`${todo.dueDate} ${todo.dueTime}`, 'YYYY-MM-DD HH:mm:ss').unix()
 
-      this.$http.put(`http://127.0.0.1:4242/todos/${todo.id}`, todo)
-        .then(resp => {
-          self.load()
-        })
-        .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
-        })
+      var request = null
+      if (todo.id) {
+        console.log(`put - ${todo.id}`)
+        request = this.$http.put(`http://127.0.0.1:4242/todos/${todo.id}`, todo)
+      } else {
+        console.log('post')
+        request = this.$http.post('http://127.0.0.1:4242/todos/', todo)
+      }
+
+      if (resolve) {
+        request
+          .then(resp => {
+            self.load()
+          })
+          .catch(err => {
+            console.log(`${err.response.status} - ${err.response.data.error}`)
+          })
+      }
+
+      return request
     },
 
     remove: function (todo) {
@@ -209,11 +289,31 @@ export default {
       }
     },
 
-    rowColor: function (idx) {
-      var color = Constants.COLORS.GREY
+    rowColor: function (idx, todo) {
+      var colors = {
+        default: [Constants.COLORS.GREY, Constants.COLORS.GREY_ALT],
+        dueSoon: ['yellow lighten-2', 'yellow lighten-4'],
+        overdue: ['red lighten-2', 'red lighten-4']
+      }
+      var colorKey = 'default'
+      var color = null
 
+      if (todo) {
+        const now = Moment()
+        const due = Moment.unix(todo.due_at)
+
+        if (!todo.is_complete && todo.due_at) {
+          if (due < now) {
+            colorKey = 'overdue'
+          } else if (due < now.add(7, 'days')) {
+            colorKey = 'dueSoon'
+          }
+        }
+      }
+
+      color = colors[colorKey][0]
       if (idx % 2 === 0) {
-        color = Constants.COLORS.GREY_ALT
+        color = colors[colorKey][1]
       }
 
       return color
@@ -222,14 +322,15 @@ export default {
 
   data () {
     return {
+      todo: {},
       todos: [],
       page: 1,
-      perPage: 11,
+      perPage: 15,
       totalTodos: 0,
       format: Format,
       searchText: null,
-      showDueDateMenu: [],
-      showDueTimeMenu: []
+      showViewer: false,
+      showEditor: false
     }
   }
 }
