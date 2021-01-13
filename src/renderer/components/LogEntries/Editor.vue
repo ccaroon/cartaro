@@ -28,7 +28,11 @@
                       v-on="on"
                     ></v-text-field>
                   </template>
-                  <v-date-picker v-model="loggedAt" no-title scrollable></v-date-picker>
+                  <v-date-picker
+                    v-model="loggedAt"
+                    no-title
+                    scrollable
+                  ></v-date-picker>
                 </v-menu>
               </v-col>
               <v-col>
@@ -39,12 +43,18 @@
                   dense
                   hide-details
                   :rules="rules.subject"
-                >{{ logEntry.subject }}</v-text-field>
+                  >{{ logEntry.subject }}</v-text-field
+                >
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="6">
-                <v-btn-toggle v-model="logEntry.category" dense rounded mandatory>
+                <v-btn-toggle
+                  v-model="logEntry.category"
+                  dense
+                  rounded
+                  mandatory
+                >
                   <v-btn value="Meeting">Meeting</v-btn>
                   <v-btn value="Ticket">Ticket</v-btn>
                   <v-btn value="Operational">Operational</v-btn>
@@ -86,7 +96,9 @@
                   dense
                   hide-details
                 >
-                  <template v-slot:selection="{ attrs, item, select, selected }">
+                  <template
+                    v-slot:selection="{ attrs, item, select, selected }"
+                  >
                     <v-chip
                       v-bind="attrs"
                       :input-value="selected"
@@ -94,7 +106,8 @@
                       small
                       @click="select"
                       @click:close="removeTag(item)"
-                    >{{ item }}</v-chip>
+                      >{{ item }}</v-chip
+                    >
                   </template>
                 </v-combobox>
               </v-col>
@@ -104,7 +117,9 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-alert v-show="errorMsg" dense color="error">{{ this.errorMsg }}</v-alert>
+        <v-alert v-show="errorMsg" dense color="error">{{
+          this.errorMsg
+        }}</v-alert>
         <v-spacer></v-spacer>
         <v-btn color="success" @click="save()">Save</v-btn>
         <v-btn color="red" text @click="close()">Close</v-btn>
@@ -205,7 +220,7 @@ export default {
       errorMsg: null,
       rules: {
         subject: [
-          subject => !!subject || 'Title is required'
+          subject => !!subject || 'Subject is required'
         ],
         content: [
           content => !!content || 'Content is required'

@@ -11,10 +11,15 @@ const constants = {
     GREY: 'grey lighten-2',
     GREY_ALT: 'grey lighten-4',
 
-    PROGRESS_GOOD: 'green accent-1',
-    PROGRESS_WARN: 'yellow accent-1',
-    PROGRESS_BULLSEYE: 'green accent-3',
-    PROGRESS_DANGER: 'red accent-2'
+    PRIORITY_1: 'red',
+    PRIORITY_2: 'orange',
+    PRIORITY_3: 'yellow darken-1',
+    PRIORITY_4: 'green',
+    PRIORITY_5: 'blue',
+    PRIORITY_6: 'indigo',
+    PRIORITY_7: 'purple',
+    PRIORITY_8: 'blue-grey',
+    PRIORITY_9: 'black'
   },
 
   FORMATS: {

@@ -160,9 +160,8 @@ export default {
     },
 
     edit: function (todo) {
-      // this.todo = todo
-      // this.showEditor = true
-      alert(`Edit: ${todo.title}`)
+      this.todo = todo
+      this.showEditor = true
     },
 
     closeEditor: function () {
@@ -214,18 +213,8 @@ export default {
     },
 
     priorityColor: function (priority) {
-      var colors = ['black',
-        'red',
-        'orange',
-        'yellow darken-1',
-        'green',
-        'blue',
-        'indigo',
-        'violet',
-        'grey',
-        'black'
-      ]
-      return colors[priority]
+      var key = `PRIORITY_${priority}`
+      return Constants.COLORS[key]
     },
 
     dateDisplay: function (todo) {
@@ -249,14 +238,11 @@ export default {
 
     save: function (todo, resolve = true) {
       var self = this
-      // todo.due_at = Moment(`${todo.dueDate} ${todo.dueTime}`, 'YYYY-MM-DD HH:mm:ss').unix()
 
       var request = null
       if (todo.id) {
-        console.log(`put - ${todo.id}`)
         request = this.$http.put(`http://127.0.0.1:4242/todos/${todo.id}`, todo)
       } else {
-        console.log('post')
         request = this.$http.post('http://127.0.0.1:4242/todos/', todo)
       }
 
