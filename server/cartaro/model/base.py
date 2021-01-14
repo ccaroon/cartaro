@@ -195,8 +195,9 @@ class Base(ABC):
     @classmethod
     def fetch(cls, offset=0, count=None, sort_by=None):
         docs = cls._database().all()
+        # sort_by: attr1,attr2,attr3:asc|desc
         if sort_by:
-            docs = Util.sort(docs, sort_by.split(','))
+            docs = Util.sort(docs, sort_by)
 
         # Want ALL docs
         # TODO: Invert this condition and remove the else
@@ -263,7 +264,8 @@ class Base(ABC):
 
         docs = cls._database().search(query)
         if sort_by:
-            docs = Util.sort(docs, sort_by.split(','))
+            # sort_by: attr1,attr2,attr3:asc|desc
+            docs = Util.sort(docs, sort_by)
 
         objs = []
         for doc in docs:

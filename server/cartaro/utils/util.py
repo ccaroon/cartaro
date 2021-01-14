@@ -30,10 +30,18 @@ class Util:
         return types
 
     @classmethod
-    def sort(cls, items, fields, reverse=False):
-        types = cls.__model_attr_type(fields, items)
+    def sort(cls, items, sort_desc):
+        reverse = False
+        sort_flds = sort_desc
+        if ':' in sort_desc:
+            (sort_flds, sort_dir) = sort_desc.split(':', 2)
+            reverse = True if sort_dir == 'desc' else False
+
+        sort_attrs = sort_flds.split(',')
+
+        types = cls.__model_attr_type(sort_attrs, items)
         def key_smith(o):
-            key_ring = [cls.__DEFAULT_SORT_VALUE[types[i]] if o[f] == None else o[f] for i,f in enumerate(fields)]
+            key_ring = [cls.__DEFAULT_SORT_VALUE[types[i]] if o[f] == None else o[f] for i,f in enumerate(sort_attrs)]
             return key_ring
 
         # In Place

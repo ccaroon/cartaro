@@ -122,7 +122,7 @@ export default {
 
     load: function () {
       var self = this
-      var qs = `page=${this.page}&pp=${this.perPage}&sort_by=is_complete,priority,due_at`
+      var qs = `page=${this.page}&pp=${this.perPage}&sort_by=due_at,priority,is_complete`
 
       if (this.searchText) {
         var parts = this.searchText.split(':', 2)
@@ -139,14 +139,9 @@ export default {
         .then(resp => {
           self.totalTodos = resp.data.total
           self.todos = resp.data.todos
-
-          // self.todos.forEach((cd) => {
-          //   self.initDate(cd)
-          // })
         })
         .catch(err => {
           console.log(`${err.response.status} - ${err.response.data.error}`)
-          // console.log(err)
         })
     },
 

@@ -23,11 +23,26 @@ class UtilTest(unittest.TestCase):
         
         self.assertEqual(len(data), count)
         
-        sorted_data = Util.sort(data, ['name'])
+        sorted_data = Util.sort(data, 'name')
         self.assertEqual(len(sorted_data), count)
 
         for i in range(count-1):
             self.assertLessEqual(
+                sorted_data[i].get('name'),
+                sorted_data[i+1].get('name') 
+            )
+
+    def test_sort_desc(self):
+        count = 5
+        data = [self.__random_obj() for i in range(count)]
+        
+        self.assertEqual(len(data), count)
+        
+        sorted_data = Util.sort(data, 'name:desc')
+        self.assertEqual(len(sorted_data), count)
+
+        for i in range(count-1):
+            self.assertGreaterEqual(
                 sorted_data[i].get('name'),
                 sorted_data[i+1].get('name') 
             )
@@ -45,7 +60,7 @@ class UtilTest(unittest.TestCase):
 
         self.assertEqual(len(data), count)
         
-        sorted_data = Util.sort(data, ['age', 'name'])
+        sorted_data = Util.sort(data, 'age,name')
         self.assertEqual(len(sorted_data), count)
 
         # Overall by age
@@ -72,7 +87,7 @@ class UtilTest(unittest.TestCase):
         # None vs String
         data[count-1]['name'] = None
 
-        sorted_data = Util.sort(data, ['name'])
+        sorted_data = Util.sort(data, 'name')
         self.assertEqual(len(sorted_data), count)
 
         # None should sort to beginning
@@ -89,7 +104,7 @@ class UtilTest(unittest.TestCase):
         data = [self.__random_obj() for i in range(count)]
         data[count-1]['age'] = None
 
-        sorted_data = Util.sort(data, ['age'])
+        sorted_data = Util.sort(data, 'age')
         self.assertEqual(len(sorted_data), count)
 
         # None should sort to beginning
