@@ -126,7 +126,62 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col>Due Date Picker</v-col>
+              <v-col cols="3">
+                <v-menu
+                  ref="datePicker"
+                  v-model="showDateMenu"
+                  :close-on-content-click="true"
+                  transition="scale-transition"
+                  offset-y
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      v-model="dueDate"
+                      label="Due Date"
+                      readonly
+                      outlined
+                      dense
+                      hide-details
+                      clearable
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="dueDate"
+                    no-title
+                    scrollable
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col cols="3">
+                <v-menu
+                  ref="timeInPicker"
+                  v-model="showTimeMenu"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      v-model="dueTime"
+                      label="Due Time"
+                      readonly
+                      outlined
+                      dense
+                      hide-details
+                      clearable
+                      :disabled="!todo.due_at"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-time-picker
+                    v-model="dueTime"
+                    ampm-in-title
+                    landscape
+                    scrollable
+                  ></v-time-picker>
+                </v-menu>
+              </v-col>
               <v-col>
                 <v-card>
                   <v-card-title>Repeat - Every {{ repeat }} Days</v-card-title>
@@ -137,6 +192,7 @@
                       label="Days"
                       thumb-size="24"
                       thumb-label="always"
+                      :disabled="!todo.due_at"
                     >
                       <template v-slot:prepend>
                         <v-icon color="red" @click="decRepeat">
@@ -157,7 +213,10 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="blue" @click="save(true)" :disabled="todo.is_complete"
+        <v-btn
+          color="blue"
+          @click="save(true)"
+          :disabled="todo.is_complete || todo.repeat > 0"
           >Mark Complete</v-btn
         >
         <v-spacer></v-spacer>
@@ -182,6 +241,16 @@ export default {
   components: { },
   props: ['todo', 'value'],
 
+  updated: function () {
+    if (this.todo.due_at) {
+      this.dueDate = Format.formatDate(this.todo.due_at * 1000, 'YYYY-MM-DD')
+      this.dueTime = Format.formatDate(this.todo.due_at * 1000, 'HH:mm')
+    } else {
+      this.dueDate = null
+      this.dueTime = null
+    }
+  },
+
   mounted: function () {
     this.loadTags()
   },
@@ -203,15 +272,6 @@ export default {
         this.todo.repeat = parseInt(newPri)
       }
     }
-    // dueAt: {
-    //   get: function () {
-    //     return Format.formatDate(this.todo.due_at * 1000, 'YYYY-MM-DD')
-    //   },
-
-    //   set: function (newDate) {
-    //     this.todo.due_at = Moment(newDate, 'YYYY-MM-DD').unix()
-    //   }
-    // }
   },
 
   methods: {
@@ -232,7 +292,8 @@ export default {
 
       if (this.$refs.todoForm.validate()) {
         // TODO: handle repeating todos
-        if (markComplete) {
+        // ...for now, just don't for repeating todos ...
+        if (markComplete && this.todo.repeat === 0) {
           this.todo.is_complete = true
           this.todo.completed_at = Moment().unix()
         }
@@ -274,10 +335,31 @@ export default {
 
   },
 
+  watch: {
+    dueDate: function (newDate) {
+      if (newDate) {
+        var dt = this.dueTime ? this.dueTime : '00:00'
+        this.todo.due_at = Moment(`${newDate} ${dt}`, 'YYYY-MM-DD HH:mm').unix()
+      } else {
+        this.todo.repeat = 0
+        this.todo.due_at = null
+      }
+    },
+    dueTime: function (newTime) {
+      if (newTime) {
+        this.todo.due_at = Moment(`${this.dueDate} ${newTime}`, 'YYYY-MM-DD HH:mm').unix()
+      } else {
+        this.todo.due_at = Moment(`${this.dueDate} 00:00`, 'YYYY-MM-DD HH:mm').unix()
+      }
+    }
+  },
+
   data () {
     return {
       showDateMenu: false,
-      // repeatMultiplier: 1,
+      showTimeMenu: false,
+      dueDate: null,
+      dueTime: null,
       allTags: [],
       errorMsg: null,
       constants: Constants,
@@ -285,9 +367,6 @@ export default {
       rules: {
         title: [
           title => !!title || 'Title is required'
-        ],
-        content: [
-          content => !!content || 'Content is required'
         ]
       }
     }

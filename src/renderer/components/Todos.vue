@@ -156,7 +156,10 @@ export default {
     },
 
     newTodo: function () {
-      this.edit({})
+      this.edit({
+        priority: 1,
+        repeat: 0
+      })
     },
 
     edit: function (todo) {
