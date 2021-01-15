@@ -12,6 +12,11 @@ flask_app.config['DOC_PATH'] = doc_path
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
+# Special Model Init
+# ------------------------------------------------------------------------------
+from cartaro.model.secret import Secret
+Secret.ENCRYPTION_KEY = flask_app.config.get('server:encryption_key')
+# ------------------------------------------------------------------------------
 # Blueprint (controller) Registration
 # ------------------------------------------------------------------------------
 from cartaro.controller.count_downs import count_downs

@@ -4,7 +4,8 @@ from cartaro.model.secret import Secret
 class SecretTest(unittest.TestCase):
 
     def setUp(self):
-        pass
+        self.encryption_key = '0000000'
+        Secret.ENCRYPTION_KEY = self.encryption_key
 
     def test_construction(self):
         # Set secret 'data' directly

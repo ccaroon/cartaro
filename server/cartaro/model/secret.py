@@ -1,11 +1,13 @@
 from .base import Base
 from .taggable import Taggable
+from cartaro.utils.crypto import Crypto
 
 class Secret(Taggable, Base):
 
     TYPE_USER_PASS  = 'user-pass'
     TYPE_TOKEN      = 'token'
     TYPE_KEY_SECRET = 'key-secret'
+    ENCRYPTION_KEY  = None
 
     TEMPLATES = {
         TYPE_USER_PASS: {
@@ -28,6 +30,12 @@ class Secret(Taggable, Base):
         self.type = None
         self.data = None
         self.note = None
+
+        # TODO: Find a better way to manage encryption key???
+        if not self.ENCRYPTION_KEY:
+            raise Exception("Secret - Encryption Key not set.")
+
+        self.__cryer = Crypto(self.ENCRYPTION_KEY)
 
         super().__init__(id=id, **kwargs)
 
@@ -52,9 +60,14 @@ class Secret(Taggable, Base):
             'system': self.system,
             'sub_system': self.sub_system,
             'type': self.type,
-            'data': self.data,
+            # 'data': self.data,
             'note': self.note
         }
+
+        enc_data = self.data.copy()
+        for attr in enc_data.keys():
+            enc_data[attr] = self.__cryer.encrypt(enc_data[attr])
+        self.data = enc_data
 
         # Tags
         data.update(super()._serialize())
@@ -69,9 +82,19 @@ class Secret(Taggable, Base):
         self.data = data.get('data', self.data)
         self.note = data.get('note', self.note)
 
+        # TODO: decrypt here .. but how to tell if is encrypted?
+
         if self.data is None:
             self.data = Secret.forge(self.type, **data)
 
     def _post_unserialize(self, data):
+
+        
         # Tags
         super()._unserialize(data)
+
+
+
+
+
+# 
