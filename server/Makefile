@@ -3,15 +3,26 @@ test:
 	CARTARO_DOC_PATH=tests/tmp \
 	nosetests -v -s tests/*
 
-test1:
+test-file:
 	CARTARO_ENV=test \
 	CARTARO_DOC_PATH=tests/tmp \
-	nosetests -v -s tests/controller/test_base_controller.py 
+	nosetests -v -s tests $(FILE)
 
 cover:
 	CARTARO_ENV=test \
 	CARTARO_DOC_PATH=tests/tmp \
 	nosetests -v -s tests/* \
+			--with-coverage \
+			--cover-erase \
+			--cover-html \
+			--cover-inclusive \
+			--cover-xml \
+			--cover-package cartaro
+
+cover-file:
+	CARTARO_ENV=test \
+	CARTARO_DOC_PATH=tests/tmp \
+	nosetests -v -s tests $(FILE) \
 			--with-coverage \
 			--cover-erase \
 			--cover-html \

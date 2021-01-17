@@ -1,11 +1,20 @@
+import json
 import unittest
 
 from cartaro.model.secret import Secret
+from cartaro.utils.crypto import Crypto
 class SecretTest(unittest.TestCase):
 
     def setUp(self):
         self.encryption_key = '0000000'
         Secret.ENCRYPTION_KEY = self.encryption_key
+        self.crypto = Crypto(self.encryption_key)
+
+    def test_missing_encryption_key(self):
+        Secret.ENCRYPTION_KEY = None
+
+        with self.assertRaisesRegex(Exception, "Secret - Encryption Key not set"):
+            secret = Secret(name="bad wolf")
 
     def test_construction(self):
         # Set secret 'data' directly
@@ -81,6 +90,47 @@ class SecretTest(unittest.TestCase):
                 password="h0lyc0W"
             )
 
+    def test_encryption(self):
+        Secret.purge()
+
+        stype = Secret.TYPE_USER_PASS
+        username = 'rufus42'
+        password = 'y5kqyRrPXUUjS4DM'
+        secret = Secret(
+            name="My Email Account",
+            system="email.com",
+            sub_system="UI",
+            type=stype,
+            data={'username': username, 'password': password},
+            note="Personal Email **ONLY**"
+        )
+
+        self.assertEqual(secret.data['username'], username)
+        self.assertEqual(secret.data['password'], password)
+
+        secret.save()
+
+        with open('tests/tmp/Secrets-test.json') as file:
+            raw_data = json.load(file).get('_default', {}).get('1', {}).get('data')
+
+        self.assertNotEqual(raw_data['username'], secret.data['username'])
+        self.assertNotEqual(raw_data['password'], secret.data['password'])
+
+        self.assertEqual(self.crypto.decrypt(raw_data['username']), secret.data['username'])
+        self.assertEqual(self.crypto.decrypt(raw_data['password']), secret.data['password'])
+
+        self.assertEqual(secret.data['username'], username)
+        self.assertEqual(secret.data['password'], password)
+
+        # Load and check stuff
+        secret2 = Secret(id=1)
+        secret2.load()
+
+        self.assertEqual(secret2.type, stype)
+        self.assertEqual(secret2.data['username'], username)
+        self.assertEqual(secret2.data['password'], password)
+
+
     def test_serialize(self):
         # set data directly
         secret = Secret(
@@ -91,7 +141,7 @@ class SecretTest(unittest.TestCase):
             data={'username': 'rufus42', 'password': 'y5kqyRrPXUUjS4DM'},
             note="Personal Email **ONLY**"
         )
-        
+
         data = secret.serialize()
 
         self.assertEqual(secret.name, "My Email Account")
@@ -108,11 +158,11 @@ class SecretTest(unittest.TestCase):
             system="email.com",
             sub_system="UI",
             type=Secret.TYPE_USER_PASS,
-            username='rufus007', 
+            username='rufus007',
             password='y5kqyRrXPXUUjS4DM',
             note="Personal Email **ONLY**"
         )
-        
+
         data = secret.serialize()
 
         self.assertEqual(secret.name, "My Email Account")
