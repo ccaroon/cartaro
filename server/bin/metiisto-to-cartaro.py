@@ -2,11 +2,13 @@
 ################################################################################
 import arrow
 import mysql.connector
+import pprint
 import sys
 from tinydb import TinyDB
 
 # In case some Cartaro Code is *needed*
 sys.path.append(".")
+from cartaro.model.secret import Secret
 from cartaro.model.tag import Tag
 from cartaro.model.work_day import WorkDay
 ################################################################################
@@ -15,13 +17,20 @@ class DataConverter:
         self.m_cfg = m_cfg
         self.c_cfg = c_cfg
         self.opts = options
-        
+
         if len(m_cfg['fields']) != len(c_cfg['fields']):
             raise ValueError()
 
         if self.opts.get('has_datestamps', True):
-            self.m_cfg['fields'].extend(['created_date', 'updated_date', 'deleted_date'])
-            self.c_cfg['fields'].extend(['created_at',   'updated_at',   'deleted_at'])
+            datestamps = self.opts.get('datestamps', ['created', 'updated', 'deleted'])
+            m_dstamps = []
+            c_dstamps = []
+            for ds_name in datestamps:
+                m_dstamps.append(F"{ds_name}_date")
+                c_dstamps.append(F"{ds_name}_at")
+
+            self.m_cfg['fields'].extend(m_dstamps)
+            self.c_cfg['fields'].extend(c_dstamps)
 
         # Connect to MySQL DB
         self.metiisto = mysql.connector.connect(
@@ -46,7 +55,7 @@ class DataConverter:
         if self.opts.get('limit', None):
             obj_sql += F" limit {self.opts['limit']}"
         print(F"     => {obj_sql}")
-        
+
         tags = {}
         if self.opts.get("has_tags", False):
             tag_class = self.opts['tag_class']
@@ -67,6 +76,10 @@ class DataConverter:
         for row in obj_cursor:
             record = {}
             obj_id = row[0]
+
+            if self.opts.get('view_row', False):
+                pprint.pprint(row, indent=2)
+
             # row[0] == DB `id`, skip for mapping
             mapping = zip(self.c_cfg['fields'], row[1:])
             for (name, raw_value) in mapping:
@@ -76,11 +89,11 @@ class DataConverter:
                     value = date.timestamp
                 elif name.startswith('is_'):
                     value = True if raw_value else False
-                
+
                 transformer = self.opts.get(F"{name}_transformer", None)
                 if transformer:
-                    value = transformer(value)
-                
+                    value = transformer(value, record=record)
+
                 # print(F"{name} == {value} - {type(value)}")
                 record[name] = value
 
@@ -89,7 +102,7 @@ class DataConverter:
 
             # Metiisto side does not have TS, Added `created_at` to Cartaro data
             if not self.opts.get('has_datestamps', True):
-                record['created_at'] = record['created_at'] if 'created_at' in record else arrow.now().timestamp 
+                record['created_at'] = record['created_at'] if 'created_at' in record else arrow.now().timestamp
                 record['updated_at'] = None
                 record['deleted_at'] = None
 
@@ -110,22 +123,22 @@ class DataConverter:
 # --- TRANSFORMERS ---
 #     that are more that 1 liners
 # entries.ticket_link
-def xform_entries_ticket_link(t_num):
+def xform_entries_ticket_link(t_num, record={}):
     link = None
     if t_num:
         jira = "https://jira.office.webassign.net"
         if t_num.startswith('DO-') or t_num.startswith('CJ'):
             jira = "https://jira.cengage.com"
-        
+
         link = F"{jira}/browse/{t_num}"
-        
+
     return link
 
 # 0 - normal
 # 1 - sick day
 # 10 - holiday
 # 100 - vacation/pto
-def xform_work_day_type(value):
+def xform_work_day_type(value, record={}):
     type = WorkDay.TYPE_NORMAL
 
     if value == 1:
@@ -137,7 +150,8 @@ def xform_work_day_type(value):
 
     return type
 
-def xform_todos_repeat_duration(value):
+# todos
+def xform_todos_repeat_duration(value, record={}):
     repeat = 0
 
     if value:
@@ -154,8 +168,47 @@ def xform_todos_repeat_duration(value):
 
     return repeat
 
-def xform_todos_priority(value):
+def xform_todos_priority(value, record={}):
     return 9 if value > 9 else value
+
+# secrets
+def xform_secret_system(value, record={}):
+    return input(F"System({value}): ")
+
+def xform_secret_subsystem(value, record={}):
+    return input(F"Sub-system({value}): ")
+
+def xform_secret_type(value, record={}):
+    options = []
+    for stype in Secret.TEMPLATES.keys():
+        options.append(stype)
+
+    opt = None
+    while opt is None or opt > len(options):
+        for i, stype in enumerate(options):
+            print(F"{i}: {stype}")
+
+        opt = int(input(F"Type({value}): "))
+
+    return options[opt]
+
+def xform_secret_data(value, record={}):
+    old_data = value.split(':', 2)
+    new_data = Secret.TEMPLATES[record['type']].copy()
+    if record['type'] == Secret.TYPE_USER_PASS:
+        new_data['username'] = old_data[0]
+        new_data['password'] = old_data[1]
+    elif record['type'] == Secret.TYPE_TOKEN:
+        new_data['token'] = old_data[1] if old_data[1] else old_data[0]
+    elif record['type'] == Secret.TYPE_KEY_SECRET:
+        new_data['key'] = old_data[0]
+        new_data['secret'] = old_data[1]
+
+    return Secret.forge(record['type'], **new_data)
+
+def xform_secret_note(value, record):
+    print("-------------------------------------------------------")
+    return value
 ################################################################################
 CONVERSION_MAP = {
     "countdowns": {
@@ -248,6 +301,27 @@ CONVERSION_MAP = {
             'tag_class': "Metiisto::Todo",
             'repeat_transformer': xform_todos_repeat_duration,
             'priority_transformer': xform_todos_priority
+        }
+    },
+    'secrets': {
+        'metiisto': {
+            'name': "secrets",
+            'fields': ['category', 'category', 'category',   'concat(username, ":", password)', 'concat(username, ":", password)','note'],
+        },
+        'cartaro':  {
+            'name': 'Secrets',
+            'fields': ['name',     'system',   'sub_system', 'type',  'data', 'note'],
+        },
+        'options': {
+            'view_row': True,
+            'has_datestamps': True,
+            'datestamps': ['created', 'updated'],
+            'has_tags': False,
+            'system_transformer': xform_secret_system,
+            'sub_system_transformer': xform_secret_subsystem,
+            'type_transformer': xform_secret_type,
+            'data_transformer': xform_secret_data,
+            'note_transformer': xform_secret_note
         }
     }
 }

@@ -8,3 +8,5 @@ tinydb ~= 4.3.0
 coverage
 faker ~= 4.2.0
 nose
+# For the data converter
+mysql-connector-python ~= 8.0.22
