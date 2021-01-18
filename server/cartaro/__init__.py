@@ -7,21 +7,27 @@ from flask import Flask
 flask_app = Flask(__name__)
 
 doc_path = os.environ.get('CARTARO_DOC_PATH', '.')
+# NOTE: Top-level keys in CartaroCfg.json MUST be UPPERCASE for Flask to store them
+# TODO: Make use of config.py, somehow, for the SERVER part of the config
 flask_app.config.from_json(F"{doc_path}/CartaroCfg.json", silent=True)
 flask_app.config['DOC_PATH'] = doc_path
+
+# import pprint
+# pprint.pprint(flask_app.config)
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 # Special Model Init
 # ------------------------------------------------------------------------------
 from cartaro.model.secret import Secret
-Secret.ENCRYPTION_KEY = flask_app.config.get('server:encryption_key')
+Secret.ENCRYPTION_KEY = flask_app.config['CARTARO_SERVER'].get('encryption_key')
 # ------------------------------------------------------------------------------
 # Blueprint (controller) Registration
 # ------------------------------------------------------------------------------
 from cartaro.controller.count_downs import count_downs
 from cartaro.controller.log_entries import log_entries
 from cartaro.controller.notes import notes
+from cartaro.controller.secrets import secrets
 from cartaro.controller.tags import tags
 from cartaro.controller.todos import todos
 from cartaro.controller.work_days import work_days
@@ -29,6 +35,7 @@ from cartaro.controller.work_days import work_days
 flask_app.register_blueprint(count_downs, url_prefix="/count_downs")
 flask_app.register_blueprint(log_entries, url_prefix="/log_entries")
 flask_app.register_blueprint(notes, url_prefix="/notes")
+flask_app.register_blueprint(secrets, url_prefix="/secrets")
 flask_app.register_blueprint(tags, url_prefix="/tags")
 flask_app.register_blueprint(todos, url_prefix="/todos")
 flask_app.register_blueprint(work_days, url_prefix="/work_days")
