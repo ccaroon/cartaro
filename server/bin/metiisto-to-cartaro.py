@@ -77,8 +77,10 @@ class DataConverter:
             record = {}
             obj_id = row[0]
 
-            if self.opts.get('view_row', False):
+            if self.opts.get('interactive', False):
+                print("-------------------------------------------------------")
                 pprint.pprint(row, indent=2)
+                print("-------------------------------------------------------")
 
             # row[0] == DB `id`, skip for mapping
             mapping = zip(self.c_cfg['fields'], row[1:])
@@ -92,7 +94,7 @@ class DataConverter:
 
                 transformer = self.opts.get(F"{name}_transformer", None)
                 if transformer:
-                    value = transformer(value, record=record)
+                    value = transformer(value, record=record, interactive=self.opts.get('interactive'))
 
                 # print(F"{name} == {value} - {type(value)}")
                 record[name] = value
@@ -123,7 +125,7 @@ class DataConverter:
 # --- TRANSFORMERS ---
 #     that are more that 1 liners
 # entries.ticket_link
-def xform_entries_ticket_link(t_num, record={}):
+def xform_entries_ticket_link(t_num, **kwargs):
     link = None
     if t_num:
         jira = "https://jira.office.webassign.net"
@@ -138,7 +140,7 @@ def xform_entries_ticket_link(t_num, record={}):
 # 1 - sick day
 # 10 - holiday
 # 100 - vacation/pto
-def xform_work_day_type(value, record={}):
+def xform_work_day_type(value, **kwargs):
     type = WorkDay.TYPE_NORMAL
 
     if value == 1:
@@ -151,7 +153,7 @@ def xform_work_day_type(value, record={}):
     return type
 
 # todos
-def xform_todos_repeat_duration(value, record={}):
+def xform_todos_repeat_duration(value, **kwargs):
     repeat = 0
 
     if value:
@@ -168,33 +170,48 @@ def xform_todos_repeat_duration(value, record={}):
 
     return repeat
 
-def xform_todos_priority(value, record={}):
+def xform_todos_priority(value, **kwargs):
     return 9 if value > 9 else value
 
 # secrets
-def xform_secret_system(value, record={}):
-    return input(F"System({value}): ")
+def xform_secret_system(value, **kwargs):
+    new_value = value
+    if kwargs.get('interactive', False):
+        new_value = input(F"System({value}): ")
 
-def xform_secret_subsystem(value, record={}):
-    return input(F"Sub-system({value}): ")
+    return new_value
 
-def xform_secret_type(value, record={}):
-    options = []
-    for stype in Secret.TEMPLATES.keys():
-        options.append(stype)
+def xform_secret_subsystem(value, **kwargs):
+    new_value = value
+    if kwargs.get('interactive', False):
+        new_value = input(F"Sub-system({value}): ")
 
-    opt = None
-    while opt is None or opt > len(options):
-        for i, stype in enumerate(options):
-            print(F"{i}: {stype}")
+    return new_value
 
-        opt = int(input(F"Type({value}): "))
+def xform_secret_type(value, **kwargs):
+    new_value = Secret.TYPE_USER_PASS
 
-    return options[opt]
+    if kwargs.get('interactive', False):
+        options = []
+        for stype in Secret.TEMPLATES.keys():
+            options.append(stype)
 
-def xform_secret_data(value, record={}):
+        opt = None
+        while opt is None or opt > len(options):
+            for i, stype in enumerate(options):
+                print(F"{i}: {stype}")
+
+            opt = int(input(F"Type({value}): "))
+
+        new_value = options[opt]
+
+    return new_value
+
+def xform_secret_data(value, **kwargs):
+    record = kwargs.get('record', {})
     old_data = value.split(':', 2)
     new_data = Secret.TEMPLATES[record['type']].copy()
+
     if record['type'] == Secret.TYPE_USER_PASS:
         new_data['username'] = old_data[0]
         new_data['password'] = old_data[1]
@@ -206,9 +223,8 @@ def xform_secret_data(value, record={}):
 
     return Secret.forge(record['type'], **new_data)
 
-def xform_secret_note(value, record):
-    print("-------------------------------------------------------")
-    return value
+def xform_secret_is_encrypted(value, **kwargs):
+    return True if value else False
 ################################################################################
 CONVERSION_MAP = {
     "countdowns": {
@@ -306,14 +322,16 @@ CONVERSION_MAP = {
     'secrets': {
         'metiisto': {
             'name': "secrets",
-            'fields': ['category', 'category', 'category',   'concat(username, ":", password)', 'concat(username, ":", password)','note'],
+            'fields': ['category', 'category', 'category',   'concat(username, ":", password)', 'concat(username, ":", password)','note', 'false'],
         },
         'cartaro':  {
             'name': 'Secrets',
-            'fields': ['name',     'system',   'sub_system', 'type',  'data', 'note'],
+            'fields': ['name',     'system',   'sub_system', 'type',  'data', 'note', '__encrypted'],
         },
+        # TODO:
+        #   - encrypt the data
+        #   - convert using "real" encryption key
         'options': {
-            'view_row': True,
             'has_datestamps': True,
             'datestamps': ['created', 'updated'],
             'has_tags': False,
@@ -321,7 +339,7 @@ CONVERSION_MAP = {
             'sub_system_transformer': xform_secret_subsystem,
             'type_transformer': xform_secret_type,
             'data_transformer': xform_secret_data,
-            'note_transformer': xform_secret_note
+            '__encrypted_transformer': xform_secret_is_encrypted
         }
     }
 }
@@ -329,9 +347,8 @@ CONVERSION_MAP = {
 def do_conversion(data, args):
     if data:
         options = data.get("options", {})
-        options['out_dir'] = args.out_dir
-        if args.limit:
-            options['limit'] = args.limit
+        for opt, value in vars(args).items():
+            options[opt] = value
 
         converter = DataConverter(data['metiisto'], data['cartaro'], options)
         converter.convert()
@@ -343,8 +360,9 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Convert Data from Metiisto to Cartaro')
     parser.add_argument('what', type=str, help='What data to convert')
-    parser.add_argument('--limit', type=int, help='Only convert `limit` records.')
-    parser.add_argument('--out-dir', type=str, default=".", help='Output directory to write DB files to.')
+    parser.add_argument('--limit', '-l', type=int, help='Only convert `limit` records.')
+    parser.add_argument('--interactive', '-i', action='store_true', help='Enable user interaction.')
+    parser.add_argument('--out-dir', '-o', type=str, default=".", help='Output directory to write DB files to.')
     args = parser.parse_args()
 
     if args.what == "all":
