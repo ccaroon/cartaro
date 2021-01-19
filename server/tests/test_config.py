@@ -8,7 +8,7 @@ class ConfigTest(unittest.TestCase):
 
     def test_basic(self):
         self.assertIsInstance(self.config, Config)
-        self.assertEqual(self.config.get('server:encryption_key'), '0000000')
+        self.assertEqual(self.config.get('CARTARO_SERVER:encryption_key'), '0000000')
 
     
 

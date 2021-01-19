@@ -1,6 +1,6 @@
 {
-    "server": {
+    "CARTARO_SERVER": {
         "encryption_key": "0000000"
     },
-    "gui": {}
+    "CARTARO_UI": {}
 }

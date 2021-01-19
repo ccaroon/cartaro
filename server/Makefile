@@ -1,16 +1,19 @@
 test:
 	CARTARO_ENV=test \
 	CARTARO_DOC_PATH=tests/tmp \
+	CARTARO_CFG_PATH=../tests/data \
 	nosetests -v -s tests/*
 
 test-file:
 	CARTARO_ENV=test \
 	CARTARO_DOC_PATH=tests/tmp \
+	CARTARO_CFG_PATH=../tests/data \
 	nosetests -v -s tests $(FILE)
 
 cover:
 	CARTARO_ENV=test \
 	CARTARO_DOC_PATH=tests/tmp \
+	CARTARO_CFG_PATH=../tests/data \
 	nosetests -v -s tests/* \
 			--with-coverage \
 			--cover-erase \
@@ -22,6 +25,7 @@ cover:
 cover-file:
 	CARTARO_ENV=test \
 	CARTARO_DOC_PATH=tests/tmp \
+	CARTARO_CFG_PATH=../tests/data \
 	nosetests -v -s tests $(FILE) \
 			--with-coverage \
 			--cover-erase \
@@ -36,7 +40,7 @@ dev:
 	CARTARO_ENV=dev       \
 	FLASK_ENV=development \
 	FLASK_APP=cartaro     \
-	flask run -p 4242
+	flask run -p 7777
 
 clean:
 	rm -f `find . -name "*.pyc"`

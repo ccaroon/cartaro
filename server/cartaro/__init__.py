@@ -7,9 +7,10 @@ from flask import Flask
 flask_app = Flask(__name__)
 
 doc_path = os.environ.get('CARTARO_DOC_PATH', '.')
+cfg_path = os.environ.get('CARTARO_CFG_PATH', doc_path)
 # NOTE: Top-level keys in CartaroCfg.json MUST be UPPERCASE for Flask to store them
 # TODO: Make use of config.py, somehow, for the SERVER part of the config
-flask_app.config.from_json(F"{doc_path}/CartaroCfg.json", silent=True)
+flask_app.config.from_json(F"{cfg_path}/CartaroCfg.json", silent=True)
 flask_app.config['DOC_PATH'] = doc_path
 
 # import pprint
@@ -20,7 +21,7 @@ flask_app.config['DOC_PATH'] = doc_path
 # Special Model Init
 # ------------------------------------------------------------------------------
 from cartaro.model.secret import Secret
-Secret.ENCRYPTION_KEY = flask_app.config['CARTARO_SERVER'].get('encryption_key')
+Secret.ENCRYPTION_KEY = flask_app.config.get('CARTARO_SERVER', {}).get('encryption_key')
 # ------------------------------------------------------------------------------
 # Blueprint (controller) Registration
 # ------------------------------------------------------------------------------
