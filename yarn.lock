@@ -608,6 +608,7 @@ __metadata:
     eslint-plugin-node: ^11.1.0
     eslint-plugin-promise: ^4.2.1
     eslint-plugin-standard: ^4.1.0
+    fernet: ^0.3.1
     file-loader: 1.1.11
     html-webpack-plugin: ^3.2.0
     markdown-it: ^12.0.4
@@ -3700,6 +3701,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"crypto-js@npm:~3.1.2-1":
+  version: 3.1.8
+  resolution: "crypto-js@npm:3.1.8"
+  checksum: 38abe9ec1be6debc1fb02b2ec735bf7c77d3bdb8fcad7a0206503d7170898e82685dbd64262d33a1605dfdb74941206a1aa5dba8715b0c427c12b1e949548d61
+  languageName: node
+  linkType: hard
+
 "crypto-random-string@npm:^2.0.0":
   version: 2.0.0
   resolution: "crypto-random-string@npm:2.0.0"
@@ -5228,6 +5236,16 @@ __metadata:
   dependencies:
     pend: ~1.2.0
   checksum: ec759b16aea613f79540b450ffc278dcb927dccf55c89a364b68547441bec776d637f0a53aee9c9c70683406e4fc4b3aff29b1732bb388f9fa6ba200e8a79caa
+  languageName: node
+  linkType: hard
+
+"fernet@npm:^0.3.1":
+  version: 0.3.1
+  resolution: "fernet@npm:0.3.1"
+  dependencies:
+    crypto-js: ~3.1.2-1
+    urlsafe-base64: 1.0.0
+  checksum: 1d8687ec1043f61ddb47b507123d64477179656d20b75e4d20462586e9fe4ed7b50f68caf1fbecc3caaa489d91d81b1cf89eb7a540638fc419b18483771d8546
   languageName: node
   linkType: hard
 
@@ -11734,6 +11752,13 @@ fsevents@~2.3.1:
     punycode: 1.3.2
     querystring: 0.2.0
   checksum: 537f785b16f873fdd2b63ccb7a61463b8e41370fdba95385b0102f3ed7b953c300d95b8755ec3b65f3e406372d47d16c3c989e196b25b70f42190da1fc36c56f
+  languageName: node
+  linkType: hard
+
+"urlsafe-base64@npm:1.0.0":
+  version: 1.0.0
+  resolution: "urlsafe-base64@npm:1.0.0"
+  checksum: 22741c2a5d1b98fce96395d0532afc4750c2a809c9f2ebc598dad64005d8e998567ba118bb57331e1fd4958311e40b98e5bf9a80dc4768e5c85bc8b2831ff325
   languageName: node
   linkType: hard
 

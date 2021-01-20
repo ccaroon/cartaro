@@ -18,9 +18,13 @@ class Crypto:
 
     @classmethod
     def __password_to_key(cls, password):
-        digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
-        digest.update(bytes(password, 'utf-8'))
-        return base64.urlsafe_b64encode(digest.finalize())
+        # digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
+        # digest.update(bytes(password, 'utf-8'))
+        # return base64.urlsafe_b64encode(digest.finalize())
+
+        padded_pwd = password.ljust(32)
+        key = base64.urlsafe_b64encode(padded_pwd.encode())
+        return key
 
     def encrypt(self, plain_text):
         cipher_text = self.__fernet.encrypt(bytes(plain_text, "utf-8"))

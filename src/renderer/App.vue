@@ -64,6 +64,7 @@ export default {
       { name: 'WorkDays', path: '/work_days', icon: 'mdi-calendar-clock' },
       { name: 'Notes', path: '/notes', icon: 'mdi-note-multiple' },
       { name: 'Todos', path: '/todos', icon: 'mdi-clipboard-list-outline' },
+      { name: 'Secrets', path: '/secrets', icon: 'mdi-lock' },
       { name: 'CountDowns', path: '/count_downs', icon: 'mdi-update' }
     ]
   })

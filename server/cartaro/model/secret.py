@@ -4,7 +4,7 @@ from cartaro.utils.crypto import Crypto
 
 class Secret(Taggable, Base):
 
-    TYPE_USER_PASS  = 'user-pass'
+    TYPE_USER_PASS  = 'username-password'
     TYPE_TOKEN      = 'token'
     TYPE_KEY_SECRET = 'key-secret'
     ENCRYPTION_KEY  = None

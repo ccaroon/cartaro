@@ -26,6 +26,11 @@ export default new Router({
       component: require('@/components/Notes').default
     },
     {
+      path: '/secrets',
+      name: 'secrets',
+      component: require('@/components/Secrets').default
+    },
+    {
       path: '/todos',
       name: 'todos',
       component: require('@/components/Todos').default

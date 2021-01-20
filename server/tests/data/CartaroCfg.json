@@ -1,6 +1,5 @@
 {
-    "CARTARO_SERVER": {
-        "encryption_key": "0000000"
-    },
-    "CARTARO_UI": {}
+    "CARTARO": {
+        "encryption_password": "42"
+    }
 }
