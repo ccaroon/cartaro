@@ -26,6 +26,16 @@ const constants = {
     entryDate: 'YYYY-MM-DD'
   },
 
+  ICONS: {
+    secrets: {
+      token: 'currency-usd-circle',
+      username: 'account',
+      password: 'shield-account',
+      key: 'key',
+      secret: 'eye-off'
+    }
+  },
+
   MONTHS: [
     { text: 'January', value: 1, icon: 'mdi-snowflake' },
     { text: 'February', value: 2, icon: 'mdi-snowman' },

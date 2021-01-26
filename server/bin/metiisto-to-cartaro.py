@@ -177,14 +177,16 @@ def xform_todos_priority(value, **kwargs):
 def xform_secret_system(value, **kwargs):
     new_value = value
     if kwargs.get('interactive', False):
-        new_value = input(F"System({value}): ")
+        user_input = input(F"System({value}): ")
+        new_value = user_input if user_input else value
 
     return new_value
 
 def xform_secret_subsystem(value, **kwargs):
-    new_value = value
+    new_value = kwargs.get('record', {}).get('type', value)
     if kwargs.get('interactive', False):
-        new_value = input(F"Sub-system({value}): ")
+        user_input = input(F"Sub-System({value}): ")
+        new_value = user_input if user_input else value
 
     return new_value
 
@@ -199,9 +201,10 @@ def xform_secret_type(value, **kwargs):
         opt = None
         while opt is None or opt > len(options):
             for i, stype in enumerate(options):
-                print(F"{i}: {stype}")
+                print(F"{i} -> {stype}")
 
-            opt = int(input(F"Type({value}): "))
+            user_input = input(F"Type(0): ")
+            opt = int(user_input) if user_input else 0
 
         new_value = options[opt]
 
@@ -224,6 +227,8 @@ def xform_secret_data(value, **kwargs):
     return Secret.forge(record['type'], **new_data)
 
 def xform_secret_is_encrypted(value, **kwargs):
+    if kwargs.get('interactive', False):
+        pprint.pprint(kwargs.get('record', {}))
     return True if value else False
 ################################################################################
 CONVERSION_MAP = {
@@ -322,11 +327,27 @@ CONVERSION_MAP = {
     'secrets': {
         'metiisto': {
             'name': "secrets",
-            'fields': ['category', 'category', 'category',   'concat(username, ":", password)', 'concat(username, ":", password)','note', 'false'],
+            'fields': [
+                'category',
+                'category',
+                'null',
+                'category',
+                'concat(username, ":", password)',
+                'note',
+                'false'
+            ]
         },
         'cartaro':  {
             'name': 'Secrets',
-            'fields': ['name',     'system',   'sub_system', 'type',  'data', 'note', '__encrypted'],
+            'fields': [
+                'name',
+                'system',
+                'type',
+                'sub_system',
+                'data',
+                'note',
+                '__encrypted'
+            ],
         },
         # TODO:
         #   - encrypt the data

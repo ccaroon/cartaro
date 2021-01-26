@@ -23,13 +23,38 @@
         :class="rowColor(idx)"
         @click
       >
+        <v-list-item-avatar>
+          <v-icon
+            :color="secret.__encrypted ? 'red' : 'green'"
+            @click="secret.__encrypted = !secret.__encrypted"
+            >mdi-{{ secret.__encrypted ? "lock" : "lock-open" }}</v-icon
+          >
+        </v-list-item-avatar>
         <v-list-item-content @click="view(secret)">
-          <v-list-item-title>
-            {{ secret.name }}
+          <v-list-item-title
+            :class="
+              secret.deleted_at !== null ? 'text-decoration-line-through' : ''
+            "
+          >
+            {{ secret.name }} |
+            <span class="text-caption text--secondary"
+              >{{ secret.system }} / {{ secret.sub_system }}</span
+            >
           </v-list-item-title>
           <v-list-item-subtitle>
-            {{ secret.system }} / {{ secret.sub_system }} / {{ secret.type }}
-            <p>{{ decryptSecretData(secret) }}</p>
+            <v-row dense no-gutters>
+              <v-col
+                cols="3"
+                v-for="(val, fld) in decryptSecretData(secret)"
+                :key="fld"
+              >
+                <v-icon @click="copyToClipboard(fld.toUpperCase(), val)"
+                  >mdi-{{ constants.ICONS.secrets[fld] }}</v-icon
+                >&nbsp;
+                <template v-if="secret.__encrypted">**********</template>
+                <template v-else>{{ val }}</template>
+              </v-col>
+            </v-row>
             <Tags
               v-bind:tags="secret.tags"
               v-bind:color="rowColor(idx + 1)"
@@ -97,7 +122,7 @@ export default {
         if (parts.length === 2) {
           qs += `&${parts[0].trim()}=${parts[1].trim()}`
         } else {
-          qs += `&title=${this.searchText}&content=${this.searchText}`
+          qs += `&name=${this.searchText}&system=${this.searchText}&sub_system=${this.searchText}&note=${this.searchText}`
         }
       }
 
@@ -122,6 +147,13 @@ export default {
       return clearText
     },
 
+    copyToClipboard: function (name, data) {
+      navigator.clipboard.writeText(data)
+        .then(function () {
+          alert(`${name} Copied!`)
+        })
+    },
+
     view: function (secret) {
       this.secret = secret
       this.showViewer = true
@@ -138,11 +170,17 @@ export default {
 
     remove: function (secret) {
       var self = this
+      var safe = 1
+      var msg = `Delete "${secret.system}/${secret.sub_system}/${secret.name}"?`
 
-      var doDelete = confirm(`Delete "${secret.name}"?`)
+      if (secret.deleted_at !== null) {
+        safe = 0
+        msg = `DELETE "${secret.system}/${secret.sub_system}/${secret.name}"?`
+      }
+      var doDelete = confirm(msg)
 
       if (doDelete) {
-        this.$http.delete(`http://127.0.0.1:4242/secrets/${secret.id}?safe=1`)
+        this.$http.delete(`http://127.0.0.1:4242/secrets/${secret.id}?safe=${safe}`)
           .then(resp => {
             self.load()
           })
@@ -176,11 +214,12 @@ export default {
       secret: {},
       secrets: [],
       page: 1,
-      perPage: 15,
+      perPage: 14,
       totalSecrets: 0,
       showEditor: false,
       showViewer: false,
       format: Format,
+      constants: Constants,
       searchText: null
     }
   }

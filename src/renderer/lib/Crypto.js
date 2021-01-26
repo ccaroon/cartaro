@@ -17,7 +17,7 @@ fernet.setSecret(keyStr)
 // -----------------------------------------------------------------------------
 export default {
   decrypt: function (data) {
-    var token = new fernet.Token({ token: data })
+    var token = new fernet.Token({ token: data, ttl: 0 })
     return token.decode()
   }
 }

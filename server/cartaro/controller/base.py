@@ -116,7 +116,8 @@ def create_controller(controller_name, Model):
         status = 200
 
         try:
-            safe_del = request.args.get('safe', False)
+            # Assume 'safe' specified as 0 or 1
+            safe_del = int(request.args.get('safe', False))
             
             obj = Model(id=id)
             obj.delete(safe=safe_del)
