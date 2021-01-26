@@ -11,11 +11,12 @@
       v-bind:secret="secret"
       v-on:close="closeEditor"
     ></SecretEditor> -->
-    <!-- <SecretViewer
+    <SecretViewer
       v-model="showViewer"
       v-bind:secret="secret"
+      v-bind:decrypt="decryptSecretData"
       v-on:close="closeViewer"
-    ></SecretViewer> -->
+    ></SecretViewer>
     <v-list dense>
       <v-list-item
         v-for="(secret, idx) in secrets"
@@ -48,7 +49,8 @@
                 v-for="(val, fld) in decryptSecretData(secret)"
                 :key="fld"
               >
-                <v-icon @click="copyToClipboard(fld.toUpperCase(), val)"
+                <v-icon
+                  @click.stop="utils.copyToClipboard(fld.toUpperCase(), val)"
                   >mdi-{{ constants.ICONS.secrets[fld] }}</v-icon
                 >&nbsp;
                 <template v-if="secret.__encrypted">**********</template>
@@ -76,16 +78,17 @@ import Mousetrap from 'mousetrap'
 import Constants from '../lib/Constants'
 import Crypto from '../lib/Crypto'
 import Format from '../lib/Format'
+import Utils from '../lib/Utils'
 
 import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
 // import SecretEditor from './Secrets/Editor'
-// import SecretViewer from './Secrets/Viewer'
+import SecretViewer from './Secrets/Viewer'
 import Tags from './Shared/Tags'
 
 export default {
   name: 'secrets-main',
-  components: { Actions, AppBar, Tags },
+  components: { Actions, AppBar, SecretViewer, Tags },
   mounted: function () {
     this.bindShortcutKeys()
     this.load()
@@ -138,20 +141,16 @@ export default {
 
     decryptSecretData: function (secret) {
       var clearText = {}
-      var fields = secret.type.split('-')
 
-      fields.forEach(fld => {
-        clearText[fld] = Crypto.decrypt(secret.data[fld])
-      })
+      if (secret && secret.type) {
+        var fields = secret.type.split('-')
+
+        fields.forEach(fld => {
+          clearText[fld] = Crypto.decrypt(secret.data[fld])
+        })
+      }
 
       return clearText
-    },
-
-    copyToClipboard: function (name, data) {
-      navigator.clipboard.writeText(data)
-        .then(function () {
-          alert(`${name} Copied!`)
-        })
     },
 
     view: function (secret) {
@@ -220,6 +219,7 @@ export default {
       showViewer: false,
       format: Format,
       constants: Constants,
+      utils: Utils,
       searchText: null
     }
   }
