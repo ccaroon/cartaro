@@ -6,11 +6,12 @@
       v-bind:newItem="newSecret"
       v-bind:refresh="refresh"
     ></AppBar>
-    <!-- <SecretEditor
+    <SecretEditor
       v-model="showEditor"
       v-bind:secret="secret"
+      v-bind:decrypt="decryptSecretData"
       v-on:close="closeEditor"
-    ></SecretEditor> -->
+    ></SecretEditor>
     <SecretViewer
       v-model="showViewer"
       v-bind:secret="secret"
@@ -26,9 +27,9 @@
       >
         <v-list-item-avatar>
           <v-icon
-            :color="secret.__encrypted ? 'red' : 'green'"
-            @click="secret.__encrypted = !secret.__encrypted"
-            >mdi-{{ secret.__encrypted ? "lock" : "lock-open" }}</v-icon
+            :color="isHidden[idx] ? 'red' : 'green'"
+            @click="$set(isHidden, idx, !isHidden[idx])"
+            >mdi-{{ isHidden[idx] ? "lock" : "lock-open" }}</v-icon
           >
         </v-list-item-avatar>
         <v-list-item-content @click="view(secret)">
@@ -53,7 +54,7 @@
                   @click.stop="utils.copyToClipboard(fld.toUpperCase(), val)"
                   >mdi-{{ constants.ICONS.secrets[fld] }}</v-icon
                 >&nbsp;
-                <template v-if="secret.__encrypted">**********</template>
+                <template v-if="isHidden[idx]">**********</template>
                 <template v-else>{{ val }}</template>
               </v-col>
             </v-row>
@@ -82,13 +83,13 @@ import Utils from '../lib/Utils'
 
 import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
-// import SecretEditor from './Secrets/Editor'
+import SecretEditor from './Secrets/Editor'
 import SecretViewer from './Secrets/Viewer'
 import Tags from './Shared/Tags'
 
 export default {
   name: 'secrets-main',
-  components: { Actions, AppBar, SecretViewer, Tags },
+  components: { Actions, AppBar, SecretViewer, SecretEditor, Tags },
   mounted: function () {
     this.bindShortcutKeys()
     this.load()
@@ -133,21 +134,25 @@ export default {
         .then(resp => {
           self.totalSecrets = resp.data.total
           self.secrets = resp.data.secrets
+          self.isHidden = new Array(self.secrets.length).fill(true)
         })
         .catch(err => {
           console.log(`${err.response.status} - ${err.response.data.error}`)
         })
     },
 
-    decryptSecretData: function (secret) {
-      var clearText = {}
-
+    // Decrypt secret's data optionally storing it in the `clearText` var
+    decryptSecretData: function (secret, clearText = {}) {
       if (secret && secret.type) {
-        var fields = secret.type.split('-')
+        if (secret.__encrypted) {
+          var fields = secret.type.split('-')
 
-        fields.forEach(fld => {
-          clearText[fld] = Crypto.decrypt(secret.data[fld])
-        })
+          fields.forEach(fld => {
+            clearText[fld] = Crypto.decrypt(secret.data[fld])
+          })
+        } else {
+          clearText = secret.data
+        }
       }
 
       return clearText
@@ -208,10 +213,12 @@ export default {
     }
   },
 
+  // $set(isHidden, idx, false)
   data () {
     return {
       secret: {},
       secrets: [],
+      isHidden: [],
       page: 1,
       perPage: 14,
       totalSecrets: 0,
