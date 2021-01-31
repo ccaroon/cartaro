@@ -168,7 +168,13 @@ export default {
     },
 
     newSecret: function () {
-      this.edit({})
+      this.edit({
+        type: 'username-password',
+        data: {
+          username: '',
+          password: ''
+        }
+      })
     },
 
     edit: function (secret) {
