@@ -19,10 +19,10 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-content>
+    <v-main>
       <About />
       <router-view></router-view>
-    </v-content>
+    </v-main>
 
     <!-- <v-footer app fixed padless dark>
       <v-col class="text-center" cols="12">

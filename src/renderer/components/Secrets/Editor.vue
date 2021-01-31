@@ -52,15 +52,16 @@
                 </v-btn-toggle>
               </v-col>
             </v-row>
-            <v-row v-for="(val, fld) in decrypt(secret, secretData)" :key="fld">
+            <v-row v-for="(val, fld) in secret.data" :key="fld">
               <v-col>
                 <v-text-field
                   :label="fld"
                   :prepend-icon="'mdi-' + constants.ICONS.secrets[fld]"
-                  v-model="secretData[fld]"
+                  v-model.lazy="secret.data[fld]"
                   outlined
                   dense
                   hide-details
+                  :rules="rules.secretData"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -119,7 +120,6 @@
 </template>
 
 <script>
-// import Format from '../../lib/Format'
 import Constants from '../../lib/Constants'
 
 export default {
@@ -129,6 +129,23 @@ export default {
 
   mounted: function () {
     this.loadTags()
+  },
+
+  computed: {
+    secretType: {
+      get: function () {
+        return this.secret.type
+      },
+      set: function (newVal) {
+        this.secret.type = newVal
+        this._secretType = newVal
+        // Stub in new, empty data
+        this.secret.data = {}
+        this.secret.type.split('-').forEach(fld => {
+          this.secret.data[fld] = ''
+        })
+      }
+    }
   },
 
   methods: {
@@ -144,11 +161,16 @@ export default {
         })
     },
 
-    changeType: function (newType, oldType) {
-      if (oldType && newType) {
-        this.secret.type = newType
-        this.secretData = {}
-      }
+    validateSecretData: function () {
+      var OK = true
+      var fields = this.secret.type.split('-')
+      fields.forEach(fld => {
+        if (!this.secret.data[fld]) {
+          OK = false
+        }
+      })
+
+      return OK
     },
 
     save: function () {
@@ -156,9 +178,15 @@ export default {
 
       if (this.$refs.secretForm.validate()) {
         this.secret.__encrypted = false
-        this.secret.data = this.secretData
 
-        this.$http.post('http://127.0.0.1:4242/secrets/', this.secret)
+        var request = null
+        if (this.secret.id) {
+          request = this.$http.put(`http://127.0.0.1:4242/secrets/${this.secret.id}`, this.secret)
+        } else {
+          request = this.$http.post('http://127.0.0.1:4242/secrets/', this.secret)
+        }
+
+        request
           .then(resp => {
             self.close()
           })
@@ -188,7 +216,11 @@ export default {
   },
 
   watch: {
-    secretType: 'changeType'
+    secret: function () {
+      this._secretType = this.secret.type
+      this.secret.data = this.decrypt(this.secret)
+      this.secret.__encrypted = false
+    }
   },
 
   data () {
@@ -196,14 +228,16 @@ export default {
       allTags: [],
       constants: Constants,
       errorMsg: null,
-      secretType: null,
-      secretData: {},
+      _secretType: null,
       rules: {
         name: [
           name => !!name || 'Name is required'
         ],
         system: [
           system => !!system || 'System is required'
+        ],
+        secretData: [
+          secretData => !!this.validateSecretData(secretData) || 'Secret Data is required'
         ]
       }
     }

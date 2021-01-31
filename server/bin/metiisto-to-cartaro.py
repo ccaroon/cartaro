@@ -287,7 +287,7 @@ CONVERSION_MAP = {
         },
         'options': {
             'has_datestamps': False,
-            'name_transformer': lambda name: Tag.normalize(name)
+            'name_transformer': lambda name, **kwargs: Tag.normalize(name)
         }
     },
     "work_days": {
@@ -301,9 +301,9 @@ CONVERSION_MAP = {
         },
         'options': {
             'has_datestamps': False,
-            'date_transformer': lambda date_str: arrow.get(date_str, 'US/Eastern').timestamp,
-            'time_in_transformer': lambda delta:  str(delta)[:4] if len(str(delta)) == 7 else str(delta)[:5],
-            'time_out_transformer': lambda delta: str(delta)[:4] if len(str(delta)) == 7 else str(delta)[:5],
+            'date_transformer': lambda date_str, **kwargs: arrow.get(date_str, 'US/Eastern').timestamp,
+            'time_in_transformer': lambda delta, **kwargs:  str(delta)[:4] if len(str(delta)) == 7 else str(delta)[:5],
+            'time_out_transformer': lambda delta, **kwargs: str(delta)[:4] if len(str(delta)) == 7 else str(delta)[:5],
             'type_transformer': xform_work_day_type
         }
     },

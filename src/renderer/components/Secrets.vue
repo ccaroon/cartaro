@@ -16,6 +16,7 @@
       v-model="showViewer"
       v-bind:secret="secret"
       v-bind:decrypt="decryptSecretData"
+      v-bind:isHidden="isHidden[secret.id]"
       v-on:close="closeViewer"
     ></SecretViewer>
     <v-list dense>
@@ -27,9 +28,9 @@
       >
         <v-list-item-avatar>
           <v-icon
-            :color="isHidden[idx] ? 'red' : 'green'"
-            @click="$set(isHidden, idx, !isHidden[idx])"
-            >mdi-{{ isHidden[idx] ? "lock" : "lock-open" }}</v-icon
+            :color="isHidden[secret.id] ? 'red' : 'green'"
+            @click="$set(isHidden, secret.id, !isHidden[secret.id])"
+            >mdi-{{ isHidden[secret.id] ? "lock" : "lock-open" }}</v-icon
           >
         </v-list-item-avatar>
         <v-list-item-content @click="view(secret)">
@@ -54,7 +55,7 @@
                   @click.stop="utils.copyToClipboard(fld.toUpperCase(), val)"
                   >mdi-{{ constants.ICONS.secrets[fld] }}</v-icon
                 >&nbsp;
-                <template v-if="isHidden[idx]">**********</template>
+                <template v-if="isHidden[secret.id]">**********</template>
                 <template v-else>{{ val }}</template>
               </v-col>
             </v-row>
@@ -134,7 +135,10 @@ export default {
         .then(resp => {
           self.totalSecrets = resp.data.total
           self.secrets = resp.data.secrets
-          self.isHidden = new Array(self.secrets.length).fill(true)
+
+          self.secrets.forEach(secret => {
+            this.isHidden[secret.id] = true
+          })
         })
         .catch(err => {
           console.log(`${err.response.status} - ${err.response.data.error}`)
@@ -213,11 +217,12 @@ export default {
     }
   },
 
-  // $set(isHidden, idx, false)
   data () {
     return {
       secret: {},
       secrets: [],
+      // Using an Array and indexing by secret.id b/c Object was not
+      // trigging UI updates on changes
       isHidden: [],
       page: 1,
       perPage: 14,

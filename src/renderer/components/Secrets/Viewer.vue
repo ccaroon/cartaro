@@ -29,7 +29,7 @@
             <v-icon @click.stop="utils.copyToClipboard(fld.toUpperCase(), val)"
               >mdi-{{ constants.ICONS.secrets[fld] }}</v-icon
             >&nbsp;
-            <template v-if="hideSecret">**********</template>
+            <template v-if="hideData">**********</template>
             <template v-else>{{ val }}</template>
           </v-col>
         </v-row>
@@ -44,9 +44,9 @@
       <v-card-actions>
         <v-btn fab small
           ><v-icon
-            :color="hideSecret ? 'red' : 'green'"
-            @click="hideSecret = !hideSecret"
-            >mdi-{{ hideSecret ? "lock" : "lock-open" }}</v-icon
+            :color="hideData ? 'red' : 'green'"
+            @click="hideData = !hideData"
+            >mdi-{{ hideData ? "lock" : "lock-open" }}</v-icon
           ></v-btn
         >
         <v-spacer></v-spacer>
@@ -66,7 +66,7 @@ import MDEmoji from 'markdown-it-emoji'
 export default {
   name: 'secret-viewer',
   components: {},
-  props: ['secret', 'decrypt', 'value'],
+  props: ['secret', 'isHidden', 'decrypt', 'value'],
 
   methods: {
     formatType: function (type = ' ') {
@@ -82,12 +82,19 @@ export default {
     }
   },
 
+  watch: {
+    // Triggered when click to view a different secret
+    secret: function () {
+      this.hideData = this.isHidden
+    }
+  },
+
   data () {
     return {
       constants: Constants,
       format: Format,
       utils: Utils,
-      hideSecret: true,
+      hideData: true,
       md: new MarkdownIt().use(MDEmoji)
     }
   }
