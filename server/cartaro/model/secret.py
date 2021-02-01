@@ -114,14 +114,10 @@ class Secret(Taggable, Base):
         self.__data = data.get('data', self.__data)
         self.note = data.get('note', self.note)
         self.__encrypted = data.get('__encrypted', self.__encrypted)
+        self.tags = data.get('tags', self.tags)
 
         if self.type and self.data is None:
             self.data = Secret.forge(self.type, **data)
-
-    def _post_unserialize(self, data):
-        # Tags
-        super()._unserialize(data)
-
 
 
 

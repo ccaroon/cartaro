@@ -33,8 +33,9 @@ class LogEntry(Taggable, Base):
         self.subject = data.get('subject', self.subject)
         self.content = data.get('content', self.content)
         self.category = data.get('category', self.category)
-
         self.ticket_link = data.get('ticket_link', self.ticket_link)
+        self.tags = data.get('tags', self.tags)
+
         # # Related Ticket, such as Jira
         # ticket = data.get('ticket', None)
         # if isinstance(ticket, dict):
@@ -43,10 +44,6 @@ class LogEntry(Taggable, Base):
         #     self.ticket = ticket
         # else:
         #     raise TypeError("'ticket' must be of type `Ticket`, `dict` or `None`.")
-
-    def _post_unserialize(self, data):
-        # Tags
-        super()._unserialize(data)
 
     def _serialize(self):
         data = {

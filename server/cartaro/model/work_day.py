@@ -39,10 +39,7 @@ class WorkDay(Taggable, Base):
         self.time_out = data.get('time_out', self.time_out)
         self.note = data.get('note', self.note)
         self.type = data.get('type', self.type)
-
-    def _post_unserialize(self, data):
-        # Tags
-        super()._unserialize(data)
+        self.tags = data.get('tags', self.tags)
 
     def _serialize(self):
         data = {

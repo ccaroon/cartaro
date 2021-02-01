@@ -62,10 +62,8 @@ class Todo(Taggable, Base):
         self.repeat = data.get('repeat', self.repeat)
         self.is_complete = data.get('is_complete', self.is_complete)
         self.completed_at = data.get('completed_at', self.completed_at)
+        self.tags = data.get('tags', self.tags)
 
-    def _post_unserialize(self, data):
-        # Tags
-        super()._unserialize(data)
 
 
 

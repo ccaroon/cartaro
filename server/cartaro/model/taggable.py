@@ -1,10 +1,20 @@
 from .tag import Tag
 
 class Taggable:
+    def __init__(self, id=None, **kwargs):
+        self.__tags = set()
+        super().__init__(id=id, **kwargs)
+
     @property
     def tags(self):
         return self.__tags
     
+    @tags.setter
+    def tags(self, new_tags):
+        self.__tags = set()
+        for tag in new_tags:
+            self.tag(tag)
+
     def tag(self, tag):
         if isinstance(tag, str):
             self.__tags.add(Tag(name=tag))

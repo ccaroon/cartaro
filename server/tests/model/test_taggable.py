@@ -19,10 +19,7 @@ class Comment(Taggable, Base):
     def update(self, data):
         self.name = data.get('name', self.name)
         self.message = data.get('message', self.message)
-
-    def _post_unserialize(self, data):
-        # Tags
-        super()._unserialize(data)
+        self.tags = data.get('tags', self.tags)
 
     def _serialize(self):
         data =  {

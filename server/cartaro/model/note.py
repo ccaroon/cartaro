@@ -54,10 +54,10 @@ class Note(Taggable, Base):
         self.title = data.get('title', self.title)
         self.content = data.get('content', self.content)
         self.is_favorite = data.get('is_favorite', self.is_favorite)
-
-    def _post_unserialize(self, data):
         self.__is_encrypted = data.get('is_encrypted', False)
-        super()._unserialize(data)
+        self.tags = data.get('tags', self.tags)
+
+
 
 
 

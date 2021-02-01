@@ -12,10 +12,7 @@ class Snippet(cartaro.model.taggable.Taggable, cartaro.model.base.Base):
     def update(self, data):
         self.title = data.get('title', self.title)
         self.content = data.get('content', self.content)
-
-    def _post_unserialize(self, data):
-        # Tags
-        super()._unserialize(data)
+        self.tags = data.get('tags', self.tags)
 
     def _serialize(self):
         data =  {

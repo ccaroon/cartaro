@@ -13,8 +13,12 @@ class Tag(Base):
     def name(self):
         return self.__name
 
+    @name.setter
+    def name(self, new_name):
+        self.__name = self.normalize(new_name)
+
     def update(self, data):
-        pass
+        self.name = data.get('name', self.name)
 
     @classmethod
     def normalize(cls, name):
@@ -33,11 +37,6 @@ class Tag(Base):
         return {
             'name': self.name
         }
-
-    def _post_unserialize(self, data):
-        tmp_name = data.get('name', None)
-        if tmp_name:
-            self.__name = self.normalize(tmp_name)
 
     def __eq__(self, other_tag):
         return self.name == other_tag.name

@@ -187,11 +187,6 @@ class Base(ABC):
         # Model Specific
         self.update(data)
 
-        self._post_unserialize(data)
-
-    def _post_unserialize(self, data):
-        pass
-
     @classmethod
     def fetch(cls, offset=0, count=None, sort_by=None):
         docs = cls._database().all()

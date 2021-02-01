@@ -17,6 +17,7 @@ class TagsControllerTest(unittest.TestCase):
         # Setup Flask Testing
         cartaro.flask_app.config['TESTING'] = True
         self.client = cartaro.flask_app.test_client()
+        Tag.purge()
 
     def test_find_search(self):
         self.__gen_tags(25)
