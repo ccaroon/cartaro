@@ -298,7 +298,14 @@ export default {
           this.todo.completed_at = Moment().unix()
         }
 
-        this.$http.post('http://127.0.0.1:4242/todos/', this.todo)
+        var request = null
+        if (this.todo.id) {
+          request = this.$http.put(`http://127.0.0.1:4242/todos/${this.todo.id}`, this.todo)
+        } else {
+          request = this.$http.post('http://127.0.0.1:4242/todos/', this.todo)
+        }
+
+        request
           .then(resp => {
             self.close()
           })

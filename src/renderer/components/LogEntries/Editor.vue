@@ -184,7 +184,14 @@ export default {
       if (this.$refs.logEntryForm.validate()) {
         this.fixTicket()
 
-        this.$http.post('http://127.0.0.1:4242/log_entries/', this.logEntry)
+        var request = null
+        if (this.logEntry.id) {
+          request = this.$http.put(`http://127.0.0.1:4242/log_entries/${this.logEntry.id}`, this.logEntry)
+        } else {
+          request = this.$http.post('http://127.0.0.1:4242/log_entries/', this.logEntry)
+        }
+
+        request
           .then(resp => {
             self.close()
           })

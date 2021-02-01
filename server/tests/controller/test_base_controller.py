@@ -3,7 +3,7 @@ import cartaro
 import faker
 
 # ------------------------------------------------------------------------------
-class Snippet(cartaro.model.base.Base):
+class Snippet(cartaro.model.taggable.Taggable, cartaro.model.base.Base):
     def __init__(self, id=None, **kwargs):
         self.title = None
         self.content = None
@@ -13,11 +13,18 @@ class Snippet(cartaro.model.base.Base):
         self.title = data.get('title', self.title)
         self.content = data.get('content', self.content)
 
+    def _post_unserialize(self, data):
+        # Tags
+        super()._unserialize(data)
+
     def _serialize(self):
         data =  {
             "title": self.title,
             "content": self.content
         }
+        # Tags
+        data.update(super()._serialize())
+        
         return data
 # ------------------------------------------------------------------------------
 class BaseControllerTest(unittest.TestCase):
@@ -26,7 +33,10 @@ class BaseControllerTest(unittest.TestCase):
 
     def __gen_snippets(self, count, ts='', cs=''):
         for i in range(0, count):
-            snippet = Snippet(title=F"{self.FAKER.name()} - {ts}", content=F"{self.FAKER.text()} - {cs}")
+            snippet = Snippet(
+                title=F"{self.FAKER.name()} - {ts}", 
+                content=F"{self.FAKER.text()} - {cs}"
+            )
             snippet.save()
 
     @classmethod
@@ -39,7 +49,11 @@ class BaseControllerTest(unittest.TestCase):
     def setUp(self):
         Snippet.purge()
         # New Snippet for testing
-        self.snippet = Snippet(title=self.FAKER.name(), content=self.FAKER.text())
+        self.snippet = Snippet(
+            title=self.FAKER.name(), 
+            content=self.FAKER.text(),
+            tags=['thing-1', 'thing-2']
+        )
         self.snippet.save()
 
         self.client = cartaro.flask_app.test_client()
@@ -47,7 +61,8 @@ class BaseControllerTest(unittest.TestCase):
     def test_create(self):
         data = {
             'title': self.FAKER.name(),
-            'content': self.FAKER.text()
+            'content': self.FAKER.text(),
+            'tags': ['tag-1', 'tag-2']
         }
 
         r = self.client.post('/snippets/', json=data)
@@ -63,6 +78,9 @@ class BaseControllerTest(unittest.TestCase):
         self.assertEqual(snippet['id'], r_data['id'])
         self.assertEqual(snippet['title'], data['title'])
         self.assertEqual(snippet['content'], data['content'])
+        self.assertEqual(len(snippet['tags']), 2)
+        self.assertIn('tag-1', snippet['tags'])
+        self.assertIn('tag-2', snippet['tags'])
 
     def test_retrieve(self):
         # Normal
@@ -74,6 +92,9 @@ class BaseControllerTest(unittest.TestCase):
 
         self.assertEqual(snippet.get('title', None), self.snippet.title)
         self.assertEqual(snippet.get('content', None), self.snippet.content)
+        self.assertEqual(len(snippet['tags']), len(self.snippet.tags))
+        self.assertIn('thing-1', snippet['tags'])
+        self.assertIn('thing-2', snippet['tags'])
 
         # Non-existent snippet
         r = self.client.get('/snippets/9999999')
@@ -198,11 +219,13 @@ class BaseControllerTest(unittest.TestCase):
     def test_update(self):
         data = {
             'title': self.FAKER.name(),
-            'content': self.FAKER.text()
+            'content': self.FAKER.text(),
+            'tags': ['ghoti-1', 'ghoti-2', 'ghoti-3']
         }
 
         self.assertNotEqual(self.snippet.title, data['title'])
         self.assertNotEqual(self.snippet.content, data['content'])
+        self.assertNotEqual(self.snippet.tags, data['tags'])
 
         r = self.client.put(F"/snippets/{self.snippet.id}", json=data)
         self.assertIsNone(r.get_json().get('error', None))
@@ -212,8 +235,13 @@ class BaseControllerTest(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
 
         snippet = r.get_json()
+        self.assertEqual(snippet['id'], self.snippet.id)
         self.assertEqual(snippet['title'], data['title'])
         self.assertEqual(snippet['content'], data['content'])
+        self.assertIn(data['tags'][0], snippet['tags'])
+        self.assertIn(data['tags'][1], snippet['tags'])
+        self.assertIn(data['tags'][2], snippet['tags'])
+        self.assertEqual(len(snippet['tags']), len(data['tags']))
 
         # Update Non-Existent Snippet
         r = self.client.put("/snippets/999999999999", json={'title': 'Nothing Nobody None'})

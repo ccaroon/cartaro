@@ -2,6 +2,7 @@ import json
 import unittest
 
 from cartaro.model.secret import Secret
+from cartaro.model.tag import Tag
 from cartaro.utils.crypto import Crypto
 class SecretTest(unittest.TestCase):
 
@@ -172,3 +173,49 @@ class SecretTest(unittest.TestCase):
         self.assertEqual(secret.data['username'], "rufus007")
         self.assertEqual(secret.data['password'], "y5kqyRrXPXUUjS4DM")
         self.assertEqual(secret.note, "Personal Email **ONLY**")
+
+    def test_tagging(self):
+        # Basic instance
+        secret = Secret(
+            name="LEGO",
+            system="www.lego.com",
+            sub_system="UI",
+            type=Secret.TYPE_USER_PASS,
+            data={'username': 'hob-goblin', 'password': '0xDeadbeeF'},
+        )
+        self.assertIsNotNone(secret.tags)
+        self.assertIsInstance(secret.tags, set)
+        self.assertEqual(len(secret.tags), 0)
+
+        # Create with Tags
+        secret.tag("lego")
+        secret.tag("brick-by-brick")
+        self.assertEqual(len(secret.tags), 2)
+        self.assertIsInstance(list(secret.tags)[0], Tag)
+        secret.save()
+
+        # Retrieve has Tags
+        secret2 = Secret(id=secret.id)
+        secret2.load()
+        self.assertIsNotNone(secret2.tags)
+        self.assertIsInstance(secret2.tags, set)
+        self.assertEqual(len(secret2.tags), 2)
+        self.assertIsInstance(list(secret2.tags)[0], Tag)
+        self.assertTrue(Tag(name="lego") in secret2.tags)
+
+        # Update tags
+        secret2.tag("studs-r-us")
+        self.assertEqual(len(secret2.tags), 3)
+        self.assertIsInstance(list(secret2.tags)[2], Tag)
+
+        secret2.save()
+
+        secret3 = Secret(id=secret2.id)
+        secret3.load()
+        self.assertIsNotNone(secret3.tags)
+        self.assertIsInstance(secret3.tags, set)
+        self.assertEqual(len(secret3.tags), 3)
+
+        self.assertTrue(Tag(name="lego") in secret3.tags)
+        self.assertTrue(Tag(name="brick-by-brick") in secret3.tags)
+        self.assertTrue(Tag(name="studs-r-us") in secret3.tags)

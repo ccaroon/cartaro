@@ -15,10 +15,14 @@
                   outlined
                   hide-details
                   :rules="rules.title"
-                >{{ note.title }}</v-text-field>
+                  >{{ note.title }}</v-text-field
+                >
               </v-col>
               <v-col cols="2">
-                <v-checkbox v-model="note.is_favorite" label="Favorite"></v-checkbox>
+                <v-checkbox
+                  v-model="note.is_favorite"
+                  label="Favorite"
+                ></v-checkbox>
               </v-col>
             </v-row>
             <v-row>
@@ -44,7 +48,9 @@
                   dense
                   hide-details
                 >
-                  <template v-slot:selection="{ attrs, item, select, selected }">
+                  <template
+                    v-slot:selection="{ attrs, item, select, selected }"
+                  >
                     <v-chip
                       v-bind="attrs"
                       :input-value="selected"
@@ -52,7 +58,8 @@
                       small
                       @click="select"
                       @click:close="removeTag(item)"
-                    >{{ item }}</v-chip>
+                      >{{ item }}</v-chip
+                    >
                   </template>
                 </v-combobox>
               </v-col>
@@ -62,7 +69,9 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-alert v-show="errorMsg" dense color="error">{{ this.errorMsg }}</v-alert>
+        <v-alert v-show="errorMsg" dense color="error">{{
+          this.errorMsg
+        }}</v-alert>
         <v-spacer></v-spacer>
         <v-btn color="success" @click="save()">Save</v-btn>
         <v-btn color="red" text @click="close()">Close</v-btn>
@@ -98,7 +107,15 @@ export default {
       var self = this
 
       if (this.$refs.noteForm.validate()) {
-        this.$http.post('http://127.0.0.1:4242/notes/', this.note)
+        var request = null
+
+        if (this.note.id) {
+          request = this.$http.put(`http://127.0.0.1:4242/notes/${this.note.id}`, this.note)
+        } else {
+          request = this.$http.post('http://127.0.0.1:4242/notes/', this.note)
+        }
+
+        request
           .then(resp => {
             self.close()
           })
