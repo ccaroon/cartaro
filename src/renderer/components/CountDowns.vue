@@ -2,13 +2,17 @@
   <v-container>
     <AppBar
       v-bind:name="'Countdowns'"
-      v-bind:numPages="Math.ceil(totalCountDowns/perPage)"
+      v-bind:numPages="Math.ceil(totalCountDowns / perPage)"
       v-bind:newItem="newCountDown"
-      v-bind:newIcon="'mdi-file-clock'"
+      v-bind:newIcon="'mdi-alarm-plus'"
       v-bind:refresh="refresh"
     ></AppBar>
     <v-list dense>
-      <v-list-item v-for="(countDown,idx) in countDowns" :key="countDown.id" :class="rowColor(idx)">
+      <v-list-item
+        v-for="(countDown, idx) in countDowns"
+        :key="countDown.id"
+        :class="rowColor(idx)"
+      >
         <v-list-item-content>
           <v-list-item-title>
             <v-text-field
@@ -44,10 +48,20 @@
               <v-sheet width="100%">
                 <v-row dense align="end">
                   <v-col cols="6">
-                    <v-date-picker v-model="countDown.startDate" color="green" flat scrollable></v-date-picker>
+                    <v-date-picker
+                      v-model="countDown.startDate"
+                      color="green"
+                      flat
+                      scrollable
+                    ></v-date-picker>
                   </v-col>
                   <v-col cols="6">
-                    <v-time-picker v-model="countDown.startTime" color="green" flat scrollable></v-time-picker>
+                    <v-time-picker
+                      v-model="countDown.startTime"
+                      color="green"
+                      flat
+                      scrollable
+                    ></v-time-picker>
                   </v-col>
                 </v-row>
                 <v-row dense align="center" justify="center">
@@ -55,22 +69,36 @@
                     <v-btn
                       rounded
                       color="green"
-                      @click="save(countDown); $set(showStartDateMenu, idx, false)"
-                    >OK</v-btn>
+                      @click="
+                        save(countDown);
+                        $set(showStartDateMenu, idx, false);
+                      "
+                      >OK</v-btn
+                    >
                   </v-col>
                   <v-col cols="3">
                     <v-btn
                       rounded
                       color="blue"
-                      @click="countDown.startDate = format.formatDate(Date.now(), 'YYYY-MM-DD')"
-                    >Today</v-btn>
+                      @click="
+                        countDown.startDate = format.formatDate(
+                          Date.now(),
+                          'YYYY-MM-DD'
+                        )
+                      "
+                      >Today</v-btn
+                    >
                   </v-col>
                   <v-col cols="3">
                     <v-btn
                       text
                       color="red"
-                      @click="initDate(countDown); $set(showStartDateMenu, idx, false)"
-                    >Cancel</v-btn>
+                      @click="
+                        initDate(countDown);
+                        $set(showStartDateMenu, idx, false);
+                      "
+                      >Cancel</v-btn
+                    >
                   </v-col>
                 </v-row>
               </v-sheet>
@@ -99,10 +127,20 @@
               <v-sheet width="100%">
                 <v-row dense align="end">
                   <v-col cols="6">
-                    <v-date-picker v-model="countDown.endDate" color="red" flat scrollable></v-date-picker>
+                    <v-date-picker
+                      v-model="countDown.endDate"
+                      color="red"
+                      flat
+                      scrollable
+                    ></v-date-picker>
                   </v-col>
                   <v-col cols="6">
-                    <v-time-picker v-model="countDown.endTime" color="red" flat scrollable></v-time-picker>
+                    <v-time-picker
+                      v-model="countDown.endTime"
+                      color="red"
+                      flat
+                      scrollable
+                    ></v-time-picker>
                   </v-col>
                 </v-row>
                 <v-row dense align="center" justify="center">
@@ -110,29 +148,46 @@
                     <v-btn
                       rounded
                       color="green"
-                      @click="save(countDown); $set(showEndDateMenu, idx, false)"
-                    >OK</v-btn>
+                      @click="
+                        save(countDown);
+                        $set(showEndDateMenu, idx, false);
+                      "
+                      >OK</v-btn
+                    >
                   </v-col>
                   <v-col cols="3">
                     <v-btn
                       rounded
                       color="blue"
-                      @click="countDown.endDate = format.formatDate(Date.now(), 'YYYY-MM-DD')"
-                    >Today</v-btn>
+                      @click="
+                        countDown.endDate = format.formatDate(
+                          Date.now(),
+                          'YYYY-MM-DD'
+                        )
+                      "
+                      >Today</v-btn
+                    >
                   </v-col>
                   <v-col cols="3">
                     <v-btn
                       text
                       color="red"
-                      @click="initDate(countDown); $set(showEndDateMenu, idx, false)"
-                    >Cancel</v-btn>
+                      @click="
+                        initDate(countDown);
+                        $set(showEndDateMenu, idx, false);
+                      "
+                      >Cancel</v-btn
+                    >
                   </v-col>
                 </v-row>
               </v-sheet>
             </v-menu>
           </v-col>
         </v-row>
-        <Actions v-bind:actions="{remove: remove}" v-bind:item="countDown"></Actions>
+        <Actions
+          v-bind:actions="{ remove: remove }"
+          v-bind:item="countDown"
+        ></Actions>
       </v-list-item>
     </v-list>
   </v-container>

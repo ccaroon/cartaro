@@ -4,6 +4,7 @@
       v-bind:name="'Secrets'"
       v-bind:numPages="Math.ceil(totalSecrets / perPage)"
       v-bind:newItem="newSecret"
+      v-bind:newIcon="'mdi-lock-plus'"
       v-bind:refresh="refresh"
     ></AppBar>
     <SecretEditor

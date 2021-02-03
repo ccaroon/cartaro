@@ -2,24 +2,33 @@
   <v-container>
     <AppBar
       v-bind:name="'Work Days'"
-      v-bind:numPages="Math.ceil(totalDays/perPage)"
+      v-bind:numPages="Math.ceil(totalDays / perPage)"
       v-bind:newItem="newWeek"
       v-bind:newIcon="'mdi-calendar-plus'"
       v-bind:refresh="refresh"
     ></AppBar>
     <v-list dense>
-      <v-list-item v-for="(workDay,idx) in workDays" :key="workDay.id" :class="rowColor(idx)">
+      <v-list-item
+        v-for="(workDay, idx) in workDays"
+        :key="workDay.id"
+        :class="rowColor(idx)"
+      >
+        <v-list-item-avatar>
+          <v-icon>mdi-{{ constants.ICONS.workDays[dayName(workDay)] }}</v-icon>
+        </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title
-            class="subtitle-1"
-            v-if="workDay.deleted_at === null"
-          >{{ displayName(workDay) }}</v-list-item-title>
-          <v-list-item-title class="subtitle-1" v-else>
-            <del>{{ displayName(workDay) }}</del>
-          </v-list-item-title>
+            :class="
+              workDay.deleted_at !== null ? 'text-decoration-line-through' : ''
+            "
+            ><strong>{{ displayName(workDay) }}</strong></v-list-item-title
+          >
           <v-list-item-subtitle>
             {{ hoursWorked(workDay) }}
-            <Tags v-bind:tags="workDay.tags" v-bind:color="rowColor(idx+1)"></Tags>
+            <Tags
+              v-bind:tags="workDay.tags"
+              v-bind:color="rowColor(idx + 1)"
+            ></Tags>
           </v-list-item-subtitle>
         </v-list-item-content>
         <v-row dense align="center" justify="space-around">
@@ -43,7 +52,12 @@
                   v-on="on"
                 ></v-text-field>
               </template>
-              <v-time-picker v-model="workDay.time_in" color="green" ampm-in-title scrollable></v-time-picker>
+              <v-time-picker
+                v-model="workDay.time_in"
+                color="green"
+                ampm-in-title
+                scrollable
+              ></v-time-picker>
               <v-sheet width="100%">
                 <v-row dense align="center" justify="space-around">
                   <v-col cols="2">
@@ -51,11 +65,20 @@
                       color="green"
                       small
                       rounded
-                      @click="save(workDay); $set(showTimeInMenu, idx, false)"
-                    >OK</v-btn>
+                      @click="
+                        save(workDay);
+                        $set(showTimeInMenu, idx, false);
+                      "
+                      >OK</v-btn
+                    >
                   </v-col>
                   <v-col cols="3">
-                    <v-btn color="red" text @click="$set(showTimeInMenu, idx, false)">Cancel</v-btn>
+                    <v-btn
+                      color="red"
+                      text
+                      @click="$set(showTimeInMenu, idx, false)"
+                      >Cancel</v-btn
+                    >
                   </v-col>
                 </v-row>
               </v-sheet>
@@ -81,7 +104,12 @@
                   v-on="on"
                 ></v-text-field>
               </template>
-              <v-time-picker v-model="workDay.time_out" color="red" ampm-in-title scrollable></v-time-picker>
+              <v-time-picker
+                v-model="workDay.time_out"
+                color="red"
+                ampm-in-title
+                scrollable
+              ></v-time-picker>
               <v-sheet width="100%">
                 <v-row dense align="center" justify="space-around">
                   <v-col cols="2">
@@ -89,18 +117,33 @@
                       color="green"
                       small
                       rounded
-                      @click="save(workDay); $set(showTimeOutMenu, idx, false)"
-                    >OK</v-btn>
+                      @click="
+                        save(workDay);
+                        $set(showTimeOutMenu, idx, false);
+                      "
+                      >OK</v-btn
+                    >
                   </v-col>
                   <v-col cols="3">
-                    <v-btn color="red" text @click="$set(showTimeOutMenu, idx, false)">Cancel</v-btn>
+                    <v-btn
+                      color="red"
+                      text
+                      @click="$set(showTimeOutMenu, idx, false)"
+                      >Cancel</v-btn
+                    >
                   </v-col>
                 </v-row>
               </v-sheet>
             </v-menu>
           </v-col>
           <v-col cols="2">
-            <v-btn-toggle v-model="workDay.type" dense rounded mandatory @change="save(workDay)">
+            <v-btn-toggle
+              v-model="workDay.type"
+              dense
+              rounded
+              mandatory
+              @change="save(workDay)"
+            >
               <v-btn icon value="normal">
                 <v-icon>mdi-calendar</v-icon>
               </v-btn>
@@ -115,7 +158,7 @@
               </v-btn>
             </v-btn-toggle>
           </v-col>
-          <v-col cols="6" full-width>
+          <v-col cols="5" full-width>
             <v-text-field
               v-model="workDay.note"
               placeholder="Note"
@@ -124,7 +167,10 @@
             ></v-text-field>
           </v-col>
         </v-row>
-        <Actions v-bind:actions="{remove: remove}" v-bind:item="workDay"></Actions>
+        <Actions
+          v-bind:actions="{ remove: remove }"
+          v-bind:item="workDay"
+        ></Actions>
       </v-list-item>
     </v-list>
   </v-container>
@@ -164,6 +210,11 @@ export default {
     displayName: function (workDay) {
       var name = Format.formatDate(workDay.date * 1000, 'ddd (MMM Do, YYYY)')
       return (name)
+    },
+
+    dayName: function (workDay) {
+      var name = Format.formatDate(workDay.date * 1000, 'dddd')
+      return name
     },
 
     hoursWorked: function (workDay) {
@@ -276,11 +327,17 @@ export default {
 
     remove: function (workDay) {
       var self = this
+      var safe = 1
+      var msg = `Safe Delete "${this.displayName(workDay)}"?`
 
-      var doDelete = confirm(`Delete "${this.displayName(workDay)}"?`)
+      if (workDay.deleted_at) {
+        safe = 0
+        msg = `Delete "${this.displayName(workDay)}"?`
+      }
 
+      var doDelete = confirm(msg)
       if (doDelete) {
-        this.$http.delete(`http://127.0.0.1:4242/work_days/${workDay.id}`)
+        this.$http.delete(`http://127.0.0.1:4242/work_days/${workDay.id}?safe=${safe}`)
           .then(resp => {
             self.load()
           })
@@ -311,6 +368,7 @@ export default {
       page: 1,
       perPage: DAYS_PER_WEEK,
       totalDays: 0,
+      constants: Constants,
       format: Format,
       searchText: null,
       showTimeInMenu: [],

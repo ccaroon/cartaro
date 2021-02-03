@@ -43,7 +43,8 @@ class DataConverter:
 
         # Connect to / Create TinyDB
         self.cartaro = TinyDB(F"{options.get('out_dir', '.')}/{self.c_cfg['name']}-dev.json")
-        self.cartaro.truncate()
+        if not self.opts.get('preserve_data', False):
+            self.cartaro.truncate()
 
     def convert(self):
         print(F"--- Converting Metiisto/{self.m_cfg['name']} to Cartaro/{self.c_cfg['name']} ---")
@@ -101,6 +102,11 @@ class DataConverter:
 
             if self.opts.get("has_tags", False):
                 record['tags'] = tags.get(obj_id, [])
+
+            for tag in self.opts.get("additional_tags", []):
+                if not 'tags' in record:
+                    record['tags'] = []
+                record['tags'].append(Tag.normalize(tag))
 
             # Metiisto side does not have TS, Added `created_at` to Cartaro data
             if not self.opts.get('has_datestamps', True):
@@ -274,6 +280,22 @@ CONVERSION_MAP = {
         'options': {
             'has_tags': True,
             'tag_class': "Metiisto::Note"
+        }
+    },
+    "stickies": {
+        'metiisto': {
+            'name': 'stickies',
+            'fields': ['concat("Sticky Note #", id)', 'body', '0', '0']
+        },
+        'cartaro':  {
+            'name': 'Notes',
+            'fields': ['title', 'content', 'is_favorite', 'is_encrypted']
+        },
+        'options': {
+            'has_tags': False,
+            'datestamps': ['created', 'updated'],
+            'preserve_data': True,
+            'additional_tags': ['sticky note']
         }
     },
     "tags": {

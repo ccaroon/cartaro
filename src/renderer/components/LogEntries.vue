@@ -4,6 +4,7 @@
       v-bind:name="'Log Entries'"
       v-bind:numPages="Math.ceil(totalEntries / perPage)"
       v-bind:newItem="newEntry"
+      v-bind:newIcon="'mdi-newspaper-plus'"
       v-bind:refresh="refresh"
     ></AppBar>
     <LogEntryEditor
@@ -23,6 +24,13 @@
         :class="rowColor(idx)"
         @click
       >
+        <v-list-item-avatar>
+          <v-icon
+            >mdi-{{
+              constants.ICONS.logEntries[logEntry.category.toLowerCase()]
+            }}</v-icon
+          >
+        </v-list-item-avatar>
         <v-list-item-content @click="view(logEntry)">
           <v-list-item-title
             class="subtitle-1"
@@ -98,7 +106,7 @@ export default {
 
     load: function () {
       var self = this
-      var qs = `page=${this.page}&pp=${this.perPage}&sort_by=logged_at`
+      var qs = `page=${this.page}&pp=${this.perPage}&sort_by=logged_at:desc`
 
       if (this.searchText) {
         var parts = this.searchText.split(':', 2)
@@ -137,11 +145,17 @@ export default {
 
     remove: function (logEntry) {
       var self = this
+      var safe = 1
+      var msg = `Safe Delete "${logEntry.subject}"?`
 
-      var doDelete = confirm(`Delete "${logEntry.subject}"?`)
+      if (logEntry.deleted_at) {
+        safe = 0
+        msg = `Delete "${logEntry.subject}"?`
+      }
 
+      var doDelete = confirm(msg)
       if (doDelete) {
-        this.$http.delete(`http://127.0.0.1:4242/log_entries/${logEntry.id}?safe=1`)
+        this.$http.delete(`http://127.0.0.1:4242/log_entries/${logEntry.id}?safe=${safe}`)
           .then(resp => {
             self.load()
           })
@@ -179,6 +193,7 @@ export default {
       totalEntries: 0,
       showEditor: false,
       showViewer: false,
+      constants: Constants,
       format: Format,
       searchText: null
     }

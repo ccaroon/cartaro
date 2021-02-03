@@ -4,23 +4,39 @@
       <v-card-title>
         {{ logEntry.subject }}
         <v-spacer></v-spacer>
-        <v-chip small label class="mr-1" v-for="(tag,idx) in logEntry.tags" :key="idx">{{ tag }}</v-chip>
+        <v-chip
+          small
+          label
+          class="mr-1"
+          v-for="(tag, idx) in logEntry.tags"
+          :key="idx"
+          >{{ tag }}</v-chip
+        >
       </v-card-title>
       <v-card-subtitle>
         <template v-if="logEntry.category === 'Ticket'">
-          <span style="cursor:pointer" class="blue--text" @click="openLink(logEntry.ticket_link)">
+          <span
+            style="cursor: pointer"
+            class="blue--text"
+            @click="openLink(logEntry.ticket_link)"
+          >
             {{ logEntry.category }}
             <v-icon x-small color="blue">mdi-open-in-new</v-icon>
           </span>
         </template>
         <template v-else>{{ logEntry.category }}</template>
-        | {{ logEntry.logged_at ? format.formatDate(logEntry.logged_at*1000) : '--'}}
+        |
+        {{
+          logEntry.logged_at
+            ? format.formatDate(logEntry.logged_at * 1000)
+            : "--"
+        }}
       </v-card-subtitle>
       <v-divider></v-divider>
       <v-card-text
         v-html="md.render(logEntry.content || '')"
         class="body-1 pt-3"
-        style="height: 750px;"
+        style="height: 500px"
       ></v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>

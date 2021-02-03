@@ -7,13 +7,18 @@
       <v-col cols="1">
         <v-toolbar-items>
           <v-btn icon @click.stop="newItem()">
-            <v-icon>{{ newIcon || 'mdi-file-document' }}</v-icon>
+            <v-icon>{{ newIcon || "mdi-file-plus" }}</v-icon>
           </v-btn>
         </v-toolbar-items>
       </v-col>
       <v-col cols="8">
         <v-toolbar-items>
-          <v-pagination v-model="page" :length="numPages" total-visible="10" @input="refresh"></v-pagination>
+          <v-pagination
+            v-model="page"
+            :length="numPages"
+            total-visible="10"
+            @input="refresh"
+          ></v-pagination>
         </v-toolbar-items>
       </v-col>
       <v-col>

@@ -8,7 +8,7 @@
       </v-col>
       <v-col class="mr-1" v-if="actions.hasOwnProperty('remove')">
         <v-btn icon outlined @click="actions['remove'](item)">
-          <v-icon>mdi-delete</v-icon>
+          <v-icon :color="deleteIconColor()">mdi-delete</v-icon>
         </v-btn>
       </v-col>
     </v-row>
@@ -20,7 +20,15 @@ export default {
   components: {},
   props: ['item', 'actions'],
 
-  methods: {},
+  methods: {
+    deleteIconColor: function () {
+      var color = null
+      if (this.item['deleted_at'] && this.item.deleted_at) {
+        color = 'red'
+      }
+      return color
+    }
+  },
 
   data () {
     return {}

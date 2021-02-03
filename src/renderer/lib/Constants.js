@@ -33,6 +33,21 @@ const constants = {
       password: 'shield-account',
       key: 'key',
       secret: 'eye-off'
+    },
+    logEntries: {
+      meeting: 'calendar-star',
+      ticket: 'ticket-confirmation',
+      operational: 'cog',
+      other: 'dots-hexagon'
+    },
+    workDays: {
+      Sunday: 'record-circle-outline',
+      Monday: 'moon-waning-crescent',
+      Tuesday: 'gender-male',
+      Wednesday: 'gender-male-female-variant',
+      Thursday: 'circle-slice-8',
+      Friday: 'gender-female',
+      Saturday: 'circle-double'
     }
   },
 
