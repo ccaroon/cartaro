@@ -42,7 +42,7 @@ class WorkDayTest(unittest.TestCase):
         self.assertEqual(self.work_day.type, data['type'])
 
     def test_range(self):
-        date = arrow.get("2020-01-01")
+        date = arrow.get("2020-01-01").replace(tzinfo=WorkDay.TIMEZONE)
         for i in range(0,180):
             wd = WorkDay(
                 date=date,
@@ -59,22 +59,22 @@ class WorkDayTest(unittest.TestCase):
         day_range = WorkDay.range('2020-01-01', '2020-01-31')
         self.assertEqual(len(day_range), 31)
         self.assertIsInstance(day_range[0], WorkDay)
-        self.assertEqual(day_range[0].date.timestamp, arrow.get("2020-01-01").timestamp)
-        self.assertEqual(day_range[30].date.timestamp, arrow.get("2020-01-31").timestamp)
+        self.assertEqual(day_range[0].date.timestamp, arrow.get("2020-01-01").replace(tzinfo=WorkDay.TIMEZONE).timestamp)
+        self.assertEqual(day_range[30].date.timestamp, arrow.get("2020-01-31").replace(tzinfo=WorkDay.TIMEZONE).timestamp)
 
         # Defined range by date and delta days POSITIVE
         day_range = WorkDay.range('2020-02-19', days=+7)
         self.assertEqual(len(day_range), 8) # 8 b/c inclusive
         self.assertIsInstance(day_range[0], WorkDay)
-        self.assertEqual(day_range[0].date.timestamp, arrow.get("2020-02-19").timestamp)
-        self.assertEqual(day_range[7].date.timestamp, arrow.get("2020-02-26").timestamp)
+        self.assertEqual(day_range[0].date.timestamp, arrow.get("2020-02-19").replace(tzinfo=WorkDay.TIMEZONE).timestamp)
+        self.assertEqual(day_range[7].date.timestamp, arrow.get("2020-02-26").replace(tzinfo=WorkDay.TIMEZONE).timestamp)
 
         # Defined range by date and delta days NEGATIVE
         day_range = WorkDay.range('2020-02-19', days=-7)
         self.assertEqual(len(day_range), 8) # 8 b/c inclusive
         self.assertIsInstance(day_range[0], WorkDay)
-        self.assertEqual(day_range[0].date.timestamp, arrow.get("2020-02-12").timestamp)
-        self.assertEqual(day_range[7].date.timestamp, arrow.get("2020-02-19").timestamp)
+        self.assertEqual(day_range[0].date.timestamp, arrow.get("2020-02-12").replace(tzinfo=WorkDay.TIMEZONE).timestamp)
+        self.assertEqual(day_range[7].date.timestamp, arrow.get("2020-02-19").replace(tzinfo=WorkDay.TIMEZONE).timestamp)
 
 
 

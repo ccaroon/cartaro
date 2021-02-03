@@ -27,7 +27,6 @@ json.JSONEncoder.default = __class_encoder
 # ------------------------------------------------------------------------------
 class Base(ABC):
     # TODO: Don't hard-code TZ
-    # TOOD: Use UTC
     TIMEZONE = 'US/Eastern'
 
     __DATABASE = None
@@ -87,9 +86,7 @@ class Base(ABC):
         return new_date
 
     def _epoch_to_date_obj(self, ts):
-        # Datetimes are assumed to be in UTC epoch format
-        # Convert UTC timestamps to TZ specific Arrow instances
-        # NOTE: ^^^^^ is that true? ^^^^^
+        # Datetimes are assumed to be in `TIMEZONE` epoch format
         date_obj = arrow.get(datetime.fromtimestamp(ts), Base.TIMEZONE) if ts else None
         return date_obj
 
@@ -109,7 +106,7 @@ class Base(ABC):
         pass
 
     def save(self):
-        now = arrow.now()
+        now = arrow.now(Base.TIMEZONE)
 
         if self.deleted_at:
             raise RuntimeError(F"Can't Save ... Object deleted [{self.deleted_at.humanize()}].")
@@ -133,7 +130,7 @@ class Base(ABC):
 
     def delete(self, safe=False):
         if self.id:
-            now = arrow.now()
+            now = arrow.now(Base.TIMEZONE)
             self.__deleted_at = now
 
             try:

@@ -8,6 +8,7 @@ from tinydb import TinyDB
 
 # In case some Cartaro Code is *needed*
 sys.path.append(".")
+from cartaro.model.base import Base
 from cartaro.model.secret import Secret
 from cartaro.model.tag import Tag
 from cartaro.model.work_day import WorkDay
@@ -88,7 +89,7 @@ class DataConverter:
             for (name, raw_value) in mapping:
                 value = raw_value
                 if raw_value and name.endswith('_at'):
-                    date = arrow.get(raw_value, 'US/Eastern')
+                    date = arrow.get(raw_value, Base.TIMEZONE)
                     value = date.timestamp
                 elif name.startswith('is_'):
                     value = True if raw_value else False
@@ -110,7 +111,7 @@ class DataConverter:
 
             # Metiisto side does not have TS, Added `created_at` to Cartaro data
             if not self.opts.get('has_datestamps', True):
-                record['created_at'] = record['created_at'] if 'created_at' in record else arrow.now().timestamp
+                record['created_at'] = record['created_at'] if 'created_at' in record else arrow.now(Base.TIMEZONE).timestamp
                 record['updated_at'] = None
                 record['deleted_at'] = None
 
@@ -323,7 +324,7 @@ CONVERSION_MAP = {
         },
         'options': {
             'has_datestamps': False,
-            'date_transformer': lambda date_str, **kwargs: arrow.get(date_str, 'US/Eastern').timestamp,
+            'date_transformer': lambda date_str, **kwargs: arrow.get(date_str, Base.TIMEZONE).timestamp,
             'time_in_transformer': lambda delta, **kwargs:  str(delta)[:4] if len(str(delta)) == 7 else str(delta)[:5],
             'time_out_transformer': lambda delta, **kwargs: str(delta)[:4] if len(str(delta)) == 7 else str(delta)[:5],
             'type_transformer': xform_work_day_type

@@ -61,10 +61,10 @@ class WorkDay(Taggable, Base):
         end_date = end
         
         if not isinstance(start, arrow.Arrow):
-            start_date = arrow.get(start)
+            start_date = arrow.get(start).replace(tzinfo=cls.TIMEZONE)
 
         if end and not isinstance(end, arrow.Arrow):
-            end_date = arrow.get(end)
+            end_date = arrow.get(end).replace(tzinfo=cls.TIMEZONE)
 
         if days:
             if days > 0:
