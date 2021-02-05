@@ -196,10 +196,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mdi/font@npm:^5.8.55":
-  version: 5.8.55
-  resolution: "@mdi/font@npm:5.8.55"
-  checksum: efa9751e513fef191b930345cf720828c431fadb90e21f4130ac9bb2957dec902e7b4828625068d9723e8988a77325d967f7d19b1f575caf2d024e1cd2557495
+"@mdi/font@npm:^5.9.55":
+  version: 5.9.55
+  resolution: "@mdi/font@npm:5.9.55"
+  checksum: 6f1880b19bba583580abb23b2187fc31793efb3778f4bef304dcc61b571696e7b53dc4582e9393d033962f0b487b6f7b815208353cd236148fdc8f07d96fbd5c
   languageName: node
   linkType: hard
 
@@ -577,7 +577,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "Cartaro@workspace:."
   dependencies:
-    "@mdi/font": ^5.8.55
+    "@mdi/font": ^5.9.55
     ajv: ^6.12.6
     axios: ^0.21.1
     babel-core: ^6.26.3
@@ -626,15 +626,15 @@ __metadata:
     vue-electron: ^1.0.6
     vue-html-loader: ^1.2.4
     vue-loader: ^15.9.6
-    vue-router: ^3.4.9
+    vue-router: ^3.5.1
     vue-style-loader: ^4.1.2
     vue-template-compiler: ^2.6.12
-    vuetify: ^2.4.2
-    vuex: ^3.6.0
+    vuetify: ^2.4.3
+    vuex: ^3.6.2
     vuex-electron: ^1.0.3
-    webpack: ^4.45.0
+    webpack: ^4.46.0
     webpack-cli: ^3.3.12
-    webpack-dev-server: ^3.11.1
+    webpack-dev-server: ^3.11.2
     webpack-hot-middleware: ^2.25.0
     webpack-merge: ^4.2.2
   languageName: unknown
@@ -4503,7 +4503,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"enhanced-resolve@npm:^4.1.1, enhanced-resolve@npm:^4.3.0":
+"enhanced-resolve@npm:^4.1.1":
   version: 4.3.0
   resolution: "enhanced-resolve@npm:4.3.0"
   dependencies:
@@ -4511,6 +4511,17 @@ __metadata:
     memory-fs: ^0.5.0
     tapable: ^1.0.0
   checksum: aecdc0b2085990d84682c2ef829d0df3fe52511ac6353b2210ff138892fa36e524e117e1a534e0d5e51853cb1a9cce8941a68c81ed51a4989d2b041739aab65b
+  languageName: node
+  linkType: hard
+
+"enhanced-resolve@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "enhanced-resolve@npm:4.5.0"
+  dependencies:
+    graceful-fs: ^4.1.2
+    memory-fs: ^0.5.0
+    tapable: ^1.0.0
+  checksum: 72e679343f3ca6f2f84b1259460705fa29d46f0b806fa562db96edeb7826357a97ba9ccb61a07cdb05f51c1b4d2f5b544a2e4a6c257d7395a0c9b6e727f86d08
   languageName: node
   linkType: hard
 
@@ -11924,10 +11935,10 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"vue-router@npm:^3.4.9":
-  version: 3.4.9
-  resolution: "vue-router@npm:3.4.9"
-  checksum: eaacc4d5019428fd04ce7a31f8709f35cd0f26f2408445d1d2e6298508a6710a0ca7c3607080bbe10c5708e4ce0c00840f56f6097842494b43612561c42a8e54
+"vue-router@npm:^3.5.1":
+  version: 3.5.1
+  resolution: "vue-router@npm:3.5.1"
+  checksum: cf53dc6bdb280090831fb68d324326a5d5da3cb686c4b5a53fd1ac25294c03009442c5102ac94f82596ea9851805ba4ef796cbe734e215602adede1fb94304c7
   languageName: node
   linkType: hard
 
@@ -11965,12 +11976,12 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"vuetify@npm:^2.4.2":
-  version: 2.4.2
-  resolution: "vuetify@npm:2.4.2"
+"vuetify@npm:^2.4.3":
+  version: 2.4.3
+  resolution: "vuetify@npm:2.4.3"
   peerDependencies:
     vue: ^2.6.4
-  checksum: 5947b92c6f983eed104c535e9996b6552a8e3097b79a201456d2028a7cfe5ee2fd4c037e85b2af3f10d75186ad039d02fb12804b3adc0d75e002eef9cb5ab6ce
+  checksum: 121a409d5c39c665f0b6e5d0ee11afad4cdbc013ef840490d98f453dff850d21a6585b77cecacb5ab44db8ff65c876b12172b6a6fda592f24c47825f594cdffa
   languageName: node
   linkType: hard
 
@@ -11984,12 +11995,12 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"vuex@npm:^3.6.0":
-  version: 3.6.0
-  resolution: "vuex@npm:3.6.0"
+"vuex@npm:^3.6.2":
+  version: 3.6.2
+  resolution: "vuex@npm:3.6.2"
   peerDependencies:
     vue: ^2.0.0
-  checksum: 809226864ef4765058c6c94c731e18805fe2ce0dd176d39ded2ef48d070e957b76d62f5c823711242e3d3fb693e6fccf843745869184495b881c4c017c296e70
+  checksum: baa9a1206439520105da67f40ea8cab19ccc792e73c8e5e3a42bd424255d99a1019cc90f8cecd3aeb0c177fa9cf1ec6b907b652761e3d9f4c6471e4cc63ac00a
   languageName: node
   linkType: hard
 
@@ -12066,9 +12077,9 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"webpack-dev-server@npm:^3.11.1":
-  version: 3.11.1
-  resolution: "webpack-dev-server@npm:3.11.1"
+"webpack-dev-server@npm:^3.11.2":
+  version: 3.11.2
+  resolution: "webpack-dev-server@npm:3.11.2"
   dependencies:
     ansi-html: 0.0.7
     bonjour: ^3.5.0
@@ -12110,7 +12121,7 @@ fsevents@~2.3.1:
       optional: true
   bin:
     webpack-dev-server: bin/webpack-dev-server.js
-  checksum: ddd2212abe1065e13a6d350267e09312a41a59f08ed4ef6e34952907f8323cc35ade868b951c8acd9909406d890d65b6463a910883f89470b7d64606432a0f08
+  checksum: 6bf6803810e70f77c50b08b040aa2e8d8e844572e18ad57c624f0cda36cc316fb700a3f765401097c4088d922b41381a44760bd3ed1f196e84a97ba938513130
   languageName: node
   linkType: hard
 
@@ -12155,9 +12166,9 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"webpack@npm:^4.45.0":
-  version: 4.45.0
-  resolution: "webpack@npm:4.45.0"
+"webpack@npm:^4.46.0":
+  version: 4.46.0
+  resolution: "webpack@npm:4.46.0"
   dependencies:
     "@webassemblyjs/ast": 1.9.0
     "@webassemblyjs/helper-module-context": 1.9.0
@@ -12167,7 +12178,7 @@ fsevents@~2.3.1:
     ajv: ^6.10.2
     ajv-keywords: ^3.4.1
     chrome-trace-event: ^1.0.2
-    enhanced-resolve: ^4.3.0
+    enhanced-resolve: ^4.5.0
     eslint-scope: ^4.0.3
     json-parse-better-errors: ^1.0.2
     loader-runner: ^2.4.0
@@ -12189,7 +12200,7 @@ fsevents@~2.3.1:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 2b6aaa7ded24ecb08f4e82a6587e2d494d12ca08ce9cce19d6540a254638144b3b3c5a4607a198cd1834a8907c2cc45370e990599571980da0fcdcd7fc54942a
+  checksum: 1e3bc97c01c19e96946be044cd9e323a476844b147c270185f7224bc8e0eda91946defbc120cb262f14e517e4c3071c6c90097e1a8b71a6a7afcacf37992763f
   languageName: node
   linkType: hard
 
