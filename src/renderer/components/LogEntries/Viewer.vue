@@ -59,10 +59,34 @@ export default {
   props: ['logEntry', 'value'],
 
   methods: {
+    // openLink: function (url) {
+    //   const win = BrowserWindow.getFocusedWindow()
+    //   const view = new BrowserView()
+    //   win.setBrowserView(view)
+    //   view.setBounds({ x: 0, y: 0, width: 300, height: 300 })
+    //   view.webContents.loadURL('https://electronjs.org')
+    // },
     openLink: function (url) {
-      var win = new BrowserWindow({ width: 1200, height: 900 })
-      win.loadURL(url)
+      const main = BrowserWindow.getFocusedWindow()
+      const child = new BrowserWindow({
+        parent: main,
+        modal: true,
+        title: 'Jira',
+        fullscreenable: false,
+        webPreferences: {
+          devTools: false
+        },
+        autoHideMenuBar: true,
+        width: 1200,
+        height: 900
+      })
+
+      child.loadURL(url)
+      // child.once('ready-to-show', () => {
+      //   child.show()
+      // })
     },
+
     close: function () {
       this.$emit('close')
     }
