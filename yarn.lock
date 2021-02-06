@@ -595,7 +595,7 @@ __metadata:
     css-loader: ^3.6.0
     del: ^6.0.0
     devtron: ^1.4.0
-    electron: ^10.3.1
+    electron: ^11.2.3
     electron-builder: ^22.10.4
     electron-debug: ^3.2.0
     electron-devtools-installer: ^3.1.1
@@ -4431,16 +4431,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^10.3.1":
-  version: 10.3.2
-  resolution: "electron@npm:10.3.2"
+"electron@npm:^11.2.3":
+  version: 11.2.3
+  resolution: "electron@npm:11.2.3"
   dependencies:
     "@electron/get": ^1.0.1
     "@types/node": ^12.0.12
     extract-zip: ^1.0.3
   bin:
     electron: cli.js
-  checksum: b7d54c06cb375280ce55688acc894982752041d532f695e114c66cffd9b8028731b3f123430c51507151f0cae3e7457eeee26d7f937497d31743ea752bae3709
+  checksum: a80172bb463ca16916db7b3e5cf3d289bb0658e0279bddc5a3ae18c3985ba42578c9945fcd858986ba9275398709b4a211e8a4060deae6b124710d845809f007
   languageName: node
   linkType: hard
 
