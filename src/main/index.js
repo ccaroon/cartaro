@@ -169,7 +169,8 @@ function createWindow () {
     minHeight: 600,
     useContentSize: true,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      enableRemoteModule: true
       // preload: path.join(app.getAppPath(), 'main.js')
     }
   })
