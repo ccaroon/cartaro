@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, Menu, BrowserWindow } from 'electron'
+import { app, dialog, Menu, BrowserWindow } from 'electron'
 
 const fs = require('fs')
 const path = require('path')
@@ -125,20 +125,47 @@ function createMenu () {
 // SEE: https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
 // ---------------------------------------------------------------------------
 function initServer () {
-  var serverPath = path.resolve(path.join(__dirname, '../../server'))
-  var cmd = './server.sh'
-  var env = {
-    FLASK_ENV: process.env.NODE_ENV,
-    CARTARO_DOC_PATH: docPath,
-    CARTARO_ENV: process.env.NODE_ENV === 'development' ? 'dev' : 'prod'
+  var basePath = path.resolve(path.dirname(__dirname))
+  var cmd = './bin/python ./bin/flask run -p 4242'
+
+  var serverPath = null
+  if (basePath.match(/\/Resources/)) {
+    // Electron launched as bundled app
+    serverPath = path.join(basePath, '../../server/dist')
+  } else {
+    // Dev Mode
+    serverPath = path.join(basePath, '../server/dist')
   }
+
+  var env = {} // process.env
+  env.PYTHONPATH = serverPath
+  env.FLASK_ENV = process.env.NODE_ENV
+  env.FLASK_APP = 'cartaro'
+  env.CARTARO_DOC_PATH = docPath
+  env.CARTARO_ENV = process.env.NODE_ENV === 'development' ? 'dev' : 'prod'
 
   backendServer = require('child_process').spawn(
     cmd,
     null,
-    { cwd: serverPath, env: env }
+    { cwd: serverPath, env: env, shell: true }
   )
   console.log(`Server PID: [${backendServer.pid}]`)
+
+  if (!backendServer.pid) {
+    dialog.showMessageBoxSync(mainWindow, {
+      type: 'error',
+      title: 'Backend Server Failed to Start',
+      message: 'Backend Server Failed to Start',
+      detail: `Command: [${serverPath}/${cmd}]`
+    })
+  }
+
+  // var msg = `__dirname: ${__dirname}\n\nbasePath: ${basePath}\n\nserverPath: ${serverPath}\n\nPID: ${backendServer.pid}`
+  // dialog.showMessageBoxSync(mainWindow, {
+  //   type: 'info',
+  //   message: 'Path Information',
+  //   detail: msg
+  // })
 
   backendServer.stdout.on('data', function (data) {
     console.log(`[STDOUT:${new Date().toLocaleString()}]\n${data.toString('utf8')}`)
@@ -174,10 +201,10 @@ function createWindow () {
       // preload: path.join(app.getAppPath(), 'main.js')
     }
   })
-
   createMenu()
 
   mainWindow.loadURL(winURL)
+  // mainWindow.webContents.openDevTools()
 }
 
 app.on('ready', () => {
