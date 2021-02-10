@@ -2,6 +2,7 @@
 ################################################################################
 import arrow
 import mysql.connector
+import os
 import pprint
 import sys
 from tinydb import TinyDB
@@ -43,7 +44,9 @@ class DataConverter:
         )
 
         # Connect to / Create TinyDB
-        self.cartaro = TinyDB(F"{options.get('out_dir', '.')}/{self.c_cfg['name']}-dev.json")
+        env = os.getenv('CARTARO_ENV', 'dev')
+        db_sfx = '' if env == "prod" else F"-{env}"
+        self.cartaro = TinyDB(F"{options.get('out_dir', '.')}/{self.c_cfg['name']}{db_sfx}.json")
         if not self.opts.get('preserve_data', False):
             self.cartaro.truncate()
 

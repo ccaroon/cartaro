@@ -42,17 +42,24 @@ dev:
 	FLASK_APP=cartaro     \
 	flask run -p 7777
 
-dist:
+bin/python:
+	cp `which python` bin
+
+dist: bin/python
 	rm -rf dist/
 	pip install --target ./dist -r requirements-prod.txt
+	mkdir -p dist/bin
+	cp bin/python dist/bin
 	cp -a cartaro dist/
-	# cd package && zip -r ../asg-lm-bridge.zip * && cd ..
-	# rm -rf package/
+
+package: dist
+	cd dist && zip -r ../cartaro-server.zip * && cd ..
 
 clean:
 	rm -f `find . -name "*.pyc"`
 	rm -f tests/tmp/*.json
 	rm -rf .coverage coverage.xml cover/
 	rm -rf dist/
+	rm -f cartaro-server.zip
 
 .PHONY: dist test cover dev clean
