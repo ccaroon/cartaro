@@ -22,11 +22,15 @@
   "build": {
     "productName": "Cartaro",
     "appId": "org.caroon.cartaro",
+    "asar": true,
     "directories": {
       "output": "build"
     },
     "files": [
       "dist/electron/**/*"
+    ],
+    "extraResources": [
+      "server/dist"
     ],
     "dmg": {
       "contents": [

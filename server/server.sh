@@ -6,3 +6,5 @@ FLASK_APP=cartaro exec flask run -p 4242
 # echo $$ > server.pid
 # cat server.pid
 # echo "---==Server Started==---"
+# To run from dist dir:
+# PYTHONPATH=. FLASK_APP=cartaro CARTARO_DOC_PATH=/home/ccaroon/Documents/Cartaro ./bin/flask run -p 4242
