@@ -45,7 +45,7 @@ dev:
 bin/python:
 	cp `which python` bin
 
-dist: bin/python
+dist: bin/python requirements-prod.txt $(shell find cartaro -name "*.py")
 	rm -rf dist/
 	pip install --target ./dist -r requirements-prod.txt
 	mkdir -p dist/bin
@@ -59,7 +59,9 @@ clean:
 	rm -f `find . -name "*.pyc"`
 	rm -f tests/tmp/*.json
 	rm -rf .coverage coverage.xml cover/
-	rm -rf dist/
 	rm -f cartaro-server.zip
 
-.PHONY: dist test cover dev clean
+real-clean: clean
+	rm -rf dist/
+
+.PHONY: test test-file cover cover-file dev package clean
