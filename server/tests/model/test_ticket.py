@@ -1,5 +1,4 @@
 import unittest
-import random
 from cartaro.model.ticket import Ticket
 
 class TicketTest(unittest.TestCase):
@@ -12,8 +11,7 @@ class TicketTest(unittest.TestCase):
                 summary=F"Grok the Answer: {i*i}",
                 type="Story" if i % 3 == 0 else "Bug",
                 status="In Progress" if i % 2 == 0 else "Open",
-                link=F"https://jira.example.com/browse/CNC-{i:04}",
-                points=random.randint(1,8)
+                link=F"https://jira.example.com/browse/CNC-{i:04}"
             ))
         return tickets
 
@@ -31,10 +29,9 @@ class TicketTest(unittest.TestCase):
             self.ticket.add_sub_task(task)
 
     def test_basics(self):
-        # sub-tasks and parents
+        # sub-tasks
         self.assertEqual(len(self.ticket.sub_tasks), 5)
         self.assertIsInstance(self.ticket.sub_tasks[0], Ticket)
-        self.assertEqual(self.ticket.sub_tasks[0].parent, self.ticket)
 
     def test_serialize(self):
         data = self.ticket.serialize()
