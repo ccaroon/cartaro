@@ -27,6 +27,7 @@ Secret.ENCRYPTION_KEY = flask_app.config.get('CARTARO', {}).get('encryption_pass
 # ------------------------------------------------------------------------------
 from cartaro.controller.count_downs import count_downs
 from cartaro.controller.log_entries import log_entries
+from cartaro.controller.jira import jira
 from cartaro.controller.notes import notes
 from cartaro.controller.secrets import secrets
 from cartaro.controller.tags import tags
@@ -35,6 +36,7 @@ from cartaro.controller.work_days import work_days
 
 flask_app.register_blueprint(count_downs, url_prefix="/count_downs")
 flask_app.register_blueprint(log_entries, url_prefix="/log_entries")
+flask_app.register_blueprint(jira, url_prefix="/jira")
 flask_app.register_blueprint(notes, url_prefix="/notes")
 flask_app.register_blueprint(secrets, url_prefix="/secrets")
 flask_app.register_blueprint(tags, url_prefix="/tags")

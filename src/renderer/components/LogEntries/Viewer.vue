@@ -70,7 +70,7 @@ export default {
       const main = BrowserWindow.getFocusedWindow()
       const child = new BrowserWindow({
         parent: main,
-        modal: true,
+        // modal: true,
         title: 'Jira',
         fullscreenable: false,
         webPreferences: {
