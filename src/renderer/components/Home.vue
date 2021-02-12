@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-app-bar app dense fixed dark clipped-left>
       <v-app-bar-nav-icon></v-app-bar-nav-icon>
       <v-toolbar-title>Ĉartaro - Home</v-toolbar-title>
@@ -22,6 +22,10 @@
       <v-col>
         <Tickets></Tickets>
       </v-col>
+      <v-col><Todos></Todos></v-col>
+    </v-row>
+    <v-row>
+      <v-col><LogEntries></LogEntries></v-col>
     </v-row>
     <v-row>
       <v-col>
@@ -35,13 +39,15 @@
 import Mousetrap from 'mousetrap'
 
 import Countdowns from './Home/Countdowns'
+import LogEntries from './Home/LogEntries'
 import Tickets from './Home/Tickets'
+import Todos from './Home/Todos'
 
 import Format from '../lib/Format'
 
 export default {
   name: 'home',
-  components: { Countdowns, Tickets },
+  components: { Countdowns, LogEntries, Tickets, Todos },
 
   mounted: function () {
     this.bindShortcutKeys()

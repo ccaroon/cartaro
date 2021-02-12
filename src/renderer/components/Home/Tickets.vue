@@ -1,7 +1,12 @@
 <template>
   <v-sheet>
     <v-card>
-      <v-card-title>Tickets</v-card-title>
+      <v-card-title :class="constants.COLORS.GREY"
+        >Tickets
+        <v-btn icon x-small @click="loadTickets"
+          ><v-icon>mdi-refresh</v-icon></v-btn
+        >
+      </v-card-title>
       <v-card-text>
         <v-list dense>
           <v-list-item

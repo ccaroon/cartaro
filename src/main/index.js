@@ -129,6 +129,7 @@ function initServer () {
   var cmd = './bin/python ./bin/flask run -p 4242'
 
   var serverPath = null
+  // TODO: make case insensitive
   if (basePath.match(/\/Resources/)) {
     // Electron launched as bundled app
     serverPath = path.join(basePath, '../../server/dist')
