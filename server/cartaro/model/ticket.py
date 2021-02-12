@@ -7,7 +7,6 @@ class Ticket:
         self.link = link
         self.sub_tasks = []
 
-
     @classmethod
     def _ticket_from_jira_issue(cls, host, issue):
         fields = issue.get('fields', {})

@@ -40,6 +40,10 @@ const constants = {
       operational: 'cog',
       other: 'dots-hexagon'
     },
+    tickets: {
+      task: 'checkbox-marked',
+      story: 'bookmark'
+    },
     workDays: {
       Sunday: 'record-circle-outline',
       Monday: 'moon-waning-crescent',
