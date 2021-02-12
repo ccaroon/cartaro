@@ -47,7 +47,7 @@ class Ticket:
             "link": self.link
         }
 
-        if not kwargs.get('omit_sub_tasks', False):
+        if kwargs.get('inc_subtasks', False):
             data['sub_tasks'] = [task.serialize() for task in self.sub_tasks]
 
         return data

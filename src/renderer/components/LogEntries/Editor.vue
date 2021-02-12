@@ -61,16 +61,22 @@
                   <v-btn value="Other">Other</v-btn>
                 </v-btn-toggle>
               </v-col>
-              <v-col cols="3">
-                <v-text-field
+              <v-col cols="6">
+                <v-select
                   v-show="logEntry.category === 'Ticket'"
+                  v-model="chosenTicket"
+                  :hint="`${chosenTicket ? chosenTicket.link : ''}`"
+                  :items="jiraTickets"
+                  item-text="summary"
+                  item-value="link"
                   label="Ticket"
-                  v-model="logEntry.ticket_link"
+                  persistent-hint
                   outlined
                   dense
-                  hide-details
+                  clearable
+                  return-object
                   :rules="rules.ticket"
-                ></v-text-field>
+                ></v-select>
               </v-col>
             </v-row>
             <v-row>
@@ -133,7 +139,7 @@ import Moment from 'moment'
 import Format from '../../lib/Format'
 
 // TODO: Don't hardcode Jira Location -- Get from Configs (when they get implemented)
-const jiraBrowseURL = 'https://jira.cengage.com/browse/'
+// const jiraBrowseURL = 'https://jira.cengage.com/browse/'
 
 export default {
   name: 'logEntry-editor',
@@ -142,6 +148,7 @@ export default {
 
   mounted: function () {
     this.loadTags()
+    this.loadTickets()
   },
 
   computed: {
@@ -157,6 +164,18 @@ export default {
   },
 
   methods: {
+    loadTickets: function () {
+      var self = this
+
+      this.$http.get(`http://127.0.0.1:4242/jira/search`)
+        .then(resp => {
+          self.jiraTickets = resp.data.results
+        })
+        .catch(err => {
+          console.log(`${err.response.status} - ${err.response.data.error}`)
+        })
+    },
+
     loadTags: function () {
       var self = this
 
@@ -169,20 +188,20 @@ export default {
         })
     },
 
-    fixTicket: function () {
-      if (this.logEntry.category === 'Ticket') {
-        var ticket = this.logEntry.ticket_link.replace(jiraBrowseURL, '')
-        this.logEntry.ticket_link = `${jiraBrowseURL}${ticket}`
-      } else {
-        this.logEntry.ticket_link = null
-      }
-    },
+    // fixTicket: function () {
+    //   if (this.logEntry.category === 'Ticket') {
+    //     var ticket = this.logEntry.ticket_link.replace(jiraBrowseURL, '')
+    //     this.logEntry.ticket_link = `${jiraBrowseURL}${ticket}`
+    //   } else {
+    //     this.logEntry.ticket_link = null
+    //   }
+    // },
 
     save: function () {
       var self = this
 
       if (this.$refs.logEntryForm.validate()) {
-        this.fixTicket()
+        // this.fixTicket()
 
         var request = null
         if (this.logEntry.id) {
@@ -216,14 +235,50 @@ export default {
     removeTag: function (tag) {
       var index = this.logEntry.tags.indexOf(tag)
       this.logEntry.tags.splice(index, 1)
+    },
+
+    findTicketByLink: function (link) {
+      var foundTicket = this.jiraTickets.find(ticket =>
+        ticket.link === link
+      )
+
+      return foundTicket
     }
 
+  },
+
+  watch: {
+    logEntry: function () {
+      // Init `chosenTicket`
+      if (this.logEntry.ticket_link) {
+        this.chosenTicket = this.findTicketByLink(this.logEntry.ticket_link)
+        if (!this.chosenTicket) {
+          // Add a "fake" placeholder ticket to the list of tickets
+          this.chosenTicket = {
+            link: this.logEntry.ticket_link,
+            summary: this.logEntry.subject
+          }
+          this.jiraTickets.push(this.chosenTicket)
+        }
+      }
+    },
+    chosenTicket: function (newTicket) {
+      if (newTicket) {
+        this.logEntry.ticket_link = newTicket.link
+        this.logEntry.subject = newTicket.summary
+      } else {
+        this.logEntry.ticket_link = null
+        this.logEntry.subject = null
+      }
+    }
   },
 
   data () {
     return {
       showDateMenu: false,
       allTags: [],
+      jiraTickets: [],
+      chosenTicket: null,
       errorMsg: null,
       rules: {
         subject: [

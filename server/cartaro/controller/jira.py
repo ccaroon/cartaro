@@ -20,7 +20,7 @@ def search():
             raise Exception("Jira Connection Not Properly Configured. Missing 'host' and/or 'token'")
 
         query_string = request.args.copy()
-        search_name = query_string.pop('search', 'my_tickets')
+        search_name = query_string.pop('search', 'default')
         jira_jql = JIRA_CONFIG.get("searches", {}).get(search_name, DEFAULT_SEARCH)
 
         url = F"{host}/rest/api/2/search?jql={jira_jql}"

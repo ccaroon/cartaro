@@ -4,7 +4,7 @@
         "jira": {
             "host": "https://jira.company.com",
             "searches": {
-                "my_tickets": "project+in+(Stuff)+AND+issuetype+in+(standardIssueTypes())+AND+status+in+(Open,+%22In+Progress%22,+Reopened,+New,+Blocked,+%22In+Review%22,+%22In+QA%22)+AND+assignee+in+(currentUser())+ORDER+BY+updated+DESC"
+                "default": "project in (Stuff) AND issuetype in (standardIssueTypes()) AND assignee = currentUser() AND Sprint in openSprints()"
             },
             "token": "0xdeadbeef"
         }
