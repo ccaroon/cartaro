@@ -17,11 +17,11 @@ class TicketTest(unittest.TestCase):
 
     def setUp(self):
         sub_tasks = self._gen_ticket(5)
-        
+
         self.ticket = Ticket(
-            key="CNC-42", 
-            summary="Grok the Answer", 
-            type="Task", 
+            key="CNC-42",
+            summary="Grok the Answer",
+            type="Task",
             status="In Progress",
             link="https://jira.example.com/browse/CNC-42"
         )
@@ -34,7 +34,7 @@ class TicketTest(unittest.TestCase):
         self.assertIsInstance(self.ticket.sub_tasks[0], Ticket)
 
     def test_serialize(self):
-        data = self.ticket.serialize()
+        data = self.ticket.serialize(inc_subtasks=True)
 
         self.assertEqual(self.ticket.key, data['key'])
         self.assertEqual(self.ticket.summary, data['summary'])
@@ -56,4 +56,4 @@ class TicketTest(unittest.TestCase):
 
 
 
-# 
+#

@@ -17,6 +17,35 @@ export default {
     return (Moment().month(monthNumber).format('MMMM'))
   },
 
+  humanizeDateRange: function (startDate, endDate) {
+    var now = Moment()
+    var value = null
+
+    if (startDate && !endDate) {
+      const start = Moment.unix(startDate)
+
+      // * Start Only: BEFORE Event -> Count Down | AFTER Event -> Count Up
+      value = start.from(now)
+    } else if (startDate && endDate) {
+      const start = Moment.unix(startDate)
+      const end = Moment.unix(endDate)
+
+      // * Start & End: BEFORE -> Count Down | DURING -> Count Up | AFTER -> Show Duration
+      if (now.isBefore(start)) {
+        // 'BEFORE --> Count DOWN'
+        value = `Starts ${start.from(now)}`
+      } else if (now.isBetween(start, end)) {
+        // 'DURING --> Count Up'
+        value = `Ends ${end.from(now)}`
+      } else {
+        // 'AFTER --> DURATION'
+        value = start.from(end, true)
+      }
+    }
+
+    return value
+  },
+
   humanizeDate: function (date, defMsg = 'N/A') {
     var now = Moment()
     var value = defMsg

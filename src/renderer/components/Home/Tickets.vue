@@ -68,7 +68,7 @@ export default {
           self.tickets = resp.data.results
         })
         .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
+          self.$emit('error', 'error', `Tickets: ${err.response.status} - ${err.response.data.error.substring(0, 120)}`)
         })
     },
 

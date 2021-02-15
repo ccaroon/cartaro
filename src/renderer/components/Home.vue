@@ -20,16 +20,33 @@
     </v-app-bar>
     <v-row>
       <v-col>
-        <Tickets></Tickets>
+        <v-alert
+          v-model="showAlert"
+          colored-border
+          :type="alertType"
+          border="left"
+          dismissible
+          max-width="95%"
+          >{{ alertMsg }}</v-alert
+        >
       </v-col>
-      <v-col><Todos></Todos></v-col>
-    </v-row>
-    <v-row>
-      <v-col><LogEntries></LogEntries></v-col>
     </v-row>
     <v-row>
       <v-col>
-        <Countdowns></Countdowns>
+        <Tickets v-on:error="displayAlert"></Tickets>
+      </v-col>
+      <v-col>
+        <Todos v-on:error="displayAlert"></Todos>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <LogEntries v-on:error="displayAlert"></LogEntries>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <Countdowns v-on:error="displayAlert"></Countdowns>
       </v-col>
     </v-row>
   </v-container>
@@ -63,8 +80,13 @@ export default {
       })
     },
 
-    search: function () {
+    displayAlert: function (type, msg) {
+      this.alertType = type
+      this.alertMsg = msg
+      this.showAlert = true
     },
+
+    search: function () {},
 
     clearSearch: function () {
       if (this.searchText) {
@@ -77,6 +99,9 @@ export default {
 
   data () {
     return {
+      showAlert: false,
+      alertType: null,
+      alertMsg: null,
       searchText: null,
       format: Format
     }

@@ -13,6 +13,13 @@
         :key="countDown.id"
         :class="rowColor(idx)"
       >
+        <v-list-item-avatar>
+          <v-btn icon @click="toggleFavorite(countDown)">
+            <v-icon :color="countDown.is_favorite ? 'yellow' : ''"
+              >mdi-star</v-icon
+            >
+          </v-btn>
+        </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title>
             <v-text-field
@@ -289,32 +296,7 @@ export default {
     },
 
     humanize: function (countDown) {
-      var now = Moment()
-      var value = null
-
-      if (countDown.start_at && !countDown.end_at) {
-        const start = Moment.unix(countDown.start_at)
-
-        // * Start Only: BEFORE Event -> Count Down | AFTER Event -> Count Up
-        value = start.from(now)
-      } else if (countDown.start_at && countDown.end_at) {
-        const start = Moment.unix(countDown.start_at)
-        const end = Moment.unix(countDown.end_at)
-
-        // * Start & End: BEFORE -> Count Down | DURING -> Count Up | AFTER -> Show Duration
-        if (now.isBefore(start)) {
-          // 'BEFORE --> Count DOWN'
-          value = `Starts ${start.from(now)}`
-        } else if (now.isBetween(start, end)) {
-          // 'DURING --> Count Up'
-          value = `Ends ${end.from(now)}`
-        } else {
-          // 'AFTER --> DURATION'
-          value = start.from(end, true)
-        }
-      }
-
-      return value
+      return Format.humanizeDateRange(countDown.start_at, countDown.end_at)
     },
 
     // Init dates for use with date-picker / time-picker
@@ -337,6 +319,11 @@ export default {
       countDown.endDate = null
       countDown.endTime = null
 
+      this.save(countDown)
+    },
+
+    toggleFavorite: function (countDown) {
+      countDown.is_favorite = !countDown.is_favorite
       this.save(countDown)
     },
 

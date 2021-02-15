@@ -71,7 +71,7 @@ export default {
           self.logEntries = resp.data.log_entries
         })
         .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
+          self.$emit('error', 'error', `Log Entries: ${err.response.status} - ${err.response.data.error.substring(0, 120)}`)
         })
     }
   },

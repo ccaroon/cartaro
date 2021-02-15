@@ -245,11 +245,11 @@ CONVERSION_MAP = {
     "countdowns": {
         'metiisto': {
             'name': "countdowns",
-            'fields': ['title', 'start_date', 'end_date'],
+            'fields': ['title', 'start_date', 'end_date', 'on_homepage'],
         },
         'cartaro':  {
             'name': 'CountDowns',
-            'fields': ['name', 'start_at', 'end_at'],
+            'fields': ['name', 'start_at', 'end_at', 'is_favorite'],
         },
         'options': {
             'has_datestamps': False,
