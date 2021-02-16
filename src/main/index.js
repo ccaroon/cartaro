@@ -1,6 +1,7 @@
 'use strict'
 
 import { app, dialog, Menu, BrowserWindow } from 'electron'
+import Config from './config'
 
 const fs = require('fs')
 const path = require('path')
@@ -22,8 +23,8 @@ const docPath = path.join(app.getPath('documents'), 'Cartaro')
 
 function initApp () {
   // Create data directory
-  if (!fs.existsSync(docPath)) {
-    fs.mkdirSync(docPath, '0750')
+  if (!fs.existsSync(Config.dataPath)) {
+    fs.mkdirSync(Config.dataPath, '0750')
   }
 }
 
