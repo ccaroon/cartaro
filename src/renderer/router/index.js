@@ -11,6 +11,36 @@ export default new Router({
       component: require('@/components/Home').default
     },
     {
+      path: '/count_downs',
+      name: 'count_downs',
+      component: require('@/components/CountDowns').default
+    },
+    {
+      path: '/log_entries',
+      name: 'log_entries',
+      component: require('@/components/LogEntries').default
+    },
+    {
+      path: '/notes',
+      name: 'notes',
+      component: require('@/components/Notes').default
+    },
+    {
+      path: '/secrets',
+      name: 'secrets',
+      component: require('@/components/Secrets').default
+    },
+    {
+      path: '/todos',
+      name: 'todos',
+      component: require('@/components/Todos').default
+    },
+    {
+      path: '/work_days',
+      name: 'work_days',
+      component: require('@/components/WorkDays').default
+    },
+    {
       path: '*',
       redirect: '/'
     }

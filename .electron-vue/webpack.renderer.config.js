@@ -48,7 +48,20 @@ let rendererConfig = {
       },
       {
         test: /\.sass$/,
-        use: ['vue-style-loader', 'css-loader', 'sass-loader?indentedSyntax']
+        use: [
+          'vue-style-loader',
+          'css-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              // indentedSyntax: true,
+              // sass-loader version >= 8
+              sassOptions: {
+                indentedSyntax: true
+              }
+            }
+          }
+        ]
       },
       {
         test: /\.less$/,
@@ -121,7 +134,7 @@ let rendererConfig = {
   },
   plugins: [
     new VueLoaderPlugin(),
-    new MiniCssExtractPlugin({filename: 'styles.css'}),
+    new MiniCssExtractPlugin({ filename: 'styles.css' }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: path.resolve(__dirname, '../src/index.ejs'),

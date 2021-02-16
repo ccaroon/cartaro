@@ -1,8 +1,4 @@
 # CHANGELOG
 
-# v1.0.0 - Here Be Dragons - 2020-??-??
+# v1.0.0 - Here Be Dragons - 2021-02-16
 First release.
-
-
-# v0.0.1 - 2020-??-??
-...

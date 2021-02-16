@@ -13,3 +13,13 @@ venv/
 server/server.log
 server/server.pid
 yarn-error.log
+.vscode/
+server/.coverage
+server/cover
+server/coverage.xml
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
