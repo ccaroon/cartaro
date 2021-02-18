@@ -10,24 +10,22 @@
     <TodoEditor
       v-model="showEditor"
       v-bind:todo="todo"
-      v-bind:priorityColor="priorityColor"
       v-on:close="closeEditor"
     ></TodoEditor>
     <TodoViewer
       v-model="showViewer"
       v-bind:todo="todo"
-      v-bind:priorityColor="priorityColor"
       v-on:close="closeViewer"
     ></TodoViewer>
     <v-list dense>
       <v-list-item
         v-for="(todo, idx) in todos"
         :key="todo.id"
-        :class="rowColor(idx, todo)"
+        :class="todo.color(idx)"
         @click
       >
         <v-list-item-avatar>
-          <v-icon :color="priorityColor(todo.priority)"
+          <v-icon :color="todo.priorityColor()"
             >mdi-numeric-{{ todo.priority }}-circle</v-icon
           >
         </v-list-item-avatar>
@@ -63,10 +61,9 @@
             </template>
             <Tags
               v-bind:tags="todo.tags"
-              v-bind:color="rowColor(idx + 1)"
+              v-bind:color="utils.rowColor(idx + 1)"
             ></Tags>
           </v-list-item-subtitle>
-          <!-- description -->
         </v-list-item-content>
 
         <Actions
@@ -78,11 +75,13 @@
   </v-container>
 </template>
 <script>
-import Moment from 'moment'
 import Mousetrap from 'mousetrap'
 
-import Constants from '../lib/Constants'
+import { Todo, fetchTodos } from '../models/Todo'
+
+// import Constants from '../lib/Constants'
 import Format from '../lib/Format'
+import Utils from '../lib/Utils'
 
 import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
@@ -122,27 +121,37 @@ export default {
 
     load: function () {
       var self = this
-      var qs = `page=${this.page}&pp=${this.perPage}&sort_by=due_at,priority,is_complete`
+      var query = {
+        page: this.page,
+        pp: this.perPage,
+        sort_by: 'due_at,priority,is_complete'
+      }
 
       if (this.searchText) {
         var parts = this.searchText.split(':', 2)
         if (parts.length === 2) {
-          qs += `&${parts[0].trim()}=${parts[1].trim()}`
+          query[parts[0].trim()] = parts[1].trim()
         } else {
-          qs += `&title=${this.searchText}`
+          query.title = this.searchText
         }
       } else {
-        qs += '&is_complete=false'
+        query.is_complete = false
       }
 
-      this.$http.get(`http://127.0.0.1:4242/todos/?${qs}`)
-        .then(resp => {
-          self.totalTodos = resp.data.total
-          self.todos = resp.data.todos
-        })
-        .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
-        })
+      fetchTodos(query, {
+        onSuccess: function (todos, totalCount) {
+          self.totalTodos = totalCount
+          self.todos = todos
+        },
+        onError: null
+      })
+    },
+
+    toggleCompleted: function (todo) {
+      todo.toggleCompleted()
+      todo.save({
+        onSuccess: (resp) => { this.refresh() }
+      })
     },
 
     view: function (todo) {
@@ -151,15 +160,27 @@ export default {
     },
 
     newTodo: function () {
-      this.edit({
+      var todo = new Todo({
         priority: 1,
         repeat: 0
       })
+      this.edit(todo)
     },
 
     edit: function (todo) {
       this.todo = todo
       this.showEditor = true
+    },
+
+    remove: function (todo) {
+      var doDelete = confirm(`Delete "${todo.title}"?`)
+
+      if (doDelete) {
+        todo.delete({
+          onSuccess: (resp) => { this.refresh() },
+          onError: null
+        })
+      }
     },
 
     closeEditor: function () {
@@ -169,149 +190,18 @@ export default {
 
     closeViewer: function () {
       this.showViewer = false
-    },
-
-    markUncomplete: function (todo) {
-      if (todo.repeat > 0) {
-        alert('Cannot Mark Repeatable Todos as Uncompleted.')
-      } else {
-        todo.is_complete = false
-        todo.completed_at = null
-        this.save(todo)
-      }
-    },
-
-    markComplete: function (todo) {
-      var self = this
-      var promise = Promise.resolve(true)
-
-      if (todo.repeat > 0) {
-        // clone original todo
-        var newTodo = Object.assign({}, todo)
-        delete newTodo.id
-        newTodo.due_at = Moment(todo.due_at * 1000).add(todo.repeat, 'days').unix()
-        promise = Promise.resolve(self.save(newTodo, false))
-      }
-
-      promise.then(dontCare => {
-        todo.is_complete = true
-        todo.completed_at = Moment().unix()
-        self.save(todo)
-      }).catch(err => {
-        console.log(err)
-      })
-    },
-
-    toggleCompleted: function (todo) {
-      if (todo.is_complete) {
-        this.markUncomplete(todo)
-      } else {
-        this.markComplete(todo)
-      }
-    },
-
-    priorityColor: function (priority) {
-      var key = `PRIORITY_${priority}`
-      return Constants.COLORS[key]
-    },
-
-    dateDisplay: function (todo) {
-      var asString = 'No Due Date'
-
-      if (todo.due_at != null) {
-        asString = Format.formatDateTime(todo.due_at * 1000)
-      }
-      return asString
-    },
-
-    // // Init dates for use with date-picker / time-picker
-    // initDate: function (todo) {
-    //   this.$set(todo, 'dueAt', Format.formatDate(todo.due_at * 1000, 'YYYY-MM-DD'))
-    // },
-
-    clearDueDate: function (todo) {
-      todo.due_at = null
-      this.save(todo)
-    },
-
-    save: function (todo, resolve = true) {
-      var self = this
-
-      var request = null
-      if (todo.id) {
-        request = this.$http.put(`http://127.0.0.1:4242/todos/${todo.id}`, todo)
-      } else {
-        request = this.$http.post('http://127.0.0.1:4242/todos/', todo)
-      }
-
-      if (resolve) {
-        request
-          .then(resp => {
-            self.load()
-          })
-          .catch(err => {
-            console.log(`${err.response.status} - ${err.response.data.error}`)
-          })
-      }
-
-      return request
-    },
-
-    remove: function (todo) {
-      var self = this
-
-      var doDelete = confirm(`Delete "${todo.title}"?`)
-
-      if (doDelete) {
-        this.$http.delete(`http://127.0.0.1:4242/todos/${todo.id}`)
-          .then(resp => {
-            self.load()
-          })
-          .catch(err => {
-            console.log(`${err.response.status} - ${err.response.data.error}`)
-          })
-      }
-    },
-
-    rowColor: function (idx, todo) {
-      var colors = {
-        default: [Constants.COLORS.GREY, Constants.COLORS.GREY_ALT],
-        dueSoon: ['yellow lighten-2', 'yellow lighten-4'],
-        overdue: ['red lighten-2', 'red lighten-4']
-      }
-      var colorKey = 'default'
-      var color = null
-
-      if (todo) {
-        const now = Moment()
-        const due = Moment.unix(todo.due_at)
-
-        if (!todo.is_complete && todo.due_at) {
-          if (due < now) {
-            colorKey = 'overdue'
-          } else if (due < now.add(7, 'days')) {
-            colorKey = 'dueSoon'
-          }
-        }
-      }
-
-      color = colors[colorKey][0]
-      if (idx % 2 === 0) {
-        color = colors[colorKey][1]
-      }
-
-      return color
     }
   },
 
   data () {
     return {
-      todo: {},
+      todo: new Todo({}),
       todos: [],
       page: 1,
       perPage: 15,
       totalTodos: 0,
       format: Format,
+      utils: Utils,
       searchText: null,
       showViewer: false,
       showEditor: false

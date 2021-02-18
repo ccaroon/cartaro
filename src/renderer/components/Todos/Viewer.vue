@@ -2,7 +2,7 @@
   <v-dialog v-model="value" persistent scrollable max-width="75%">
     <v-card>
       <v-card-title>
-        <v-icon :color="priorityColor(todo.priority)"
+        <v-icon :color="todo.priorityColor()"
           >mdi-numeric-{{ todo.priority }}-circle</v-icon
         >
         {{ todo.title }}
@@ -41,7 +41,7 @@
       </v-card-subtitle>
       <v-divider></v-divider>
       <v-card-text
-        v-html="md.render(todo.description || '')"
+        v-html="$markdown.render(todo.description || '')"
         class="body-1 pt-3"
         style="height: 250px"
       ></v-card-text>
@@ -55,13 +55,11 @@
 
 <script>
 import Format from '../../lib/Format'
-import MarkdownIt from 'markdown-it'
-import MDEmoji from 'markdown-it-emoji'
 
 export default {
   name: 'todo-viewer',
   components: {},
-  props: ['todo', 'humanize', 'priorityColor', 'value'],
+  props: ['todo', 'value'],
 
   methods: {
     close: function () {
@@ -71,8 +69,6 @@ export default {
 
   data () {
     return {
-      // TODO: move to Vue instance like $http
-      md: new MarkdownIt().use(MDEmoji),
       format: Format
     }
   }
