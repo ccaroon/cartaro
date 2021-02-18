@@ -10,47 +10,46 @@
         >Log Entries
         <v-btn icon x-small @click="newEntry"><v-icon>mdi-plus</v-icon></v-btn>
       </v-card-title>
-      <v-card-text>
-        <v-list dense>
+
+      <v-virtual-scroll :items="logEntries" item-height="50" height="500">
+        <template v-slot:default="{ index, item }">
           <v-list-item
-            v-for="(entry, idx) in logEntries"
-            :key="idx"
-            :class="utils.rowColor(idx)"
-            @click="editEntry(entry)"
+            :class="rowColor(item, index)"
+            @click="editEntry(item)"
             dense
           >
             <v-list-item-icon>
               <v-btn
                 fab
                 x-small
-                v-if="entry.ticket_link"
-                @click.stop="utils.openLink('Jira', entry.ticket_link)"
+                v-if="item.ticket_link"
+                @click.stop="utils.openLink('Jira', item.ticket_link)"
               >
                 <v-icon color="grey darken-1"
                   >mdi-{{
-                    constants.ICONS.logEntries[entry.category.toLowerCase()]
+                    constants.ICONS.logEntries[item.category.toLowerCase()]
                   }}</v-icon
                 >
               </v-btn>
               <v-btn fab x-small plain v-else>
                 <v-icon
                   >mdi-{{
-                    constants.ICONS.logEntries[entry.category.toLowerCase()]
+                    constants.ICONS.logEntries[item.category.toLowerCase()]
                   }}</v-icon
                 >
               </v-btn>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
-                {{ entry.subject }}
+                {{ item.subject }}
               </v-list-item-title>
               <v-list-item-subtitle>
-                {{ format.formatDate(entry.logged_at * 1000, "ddd") }}
+                {{ format.formatDate(item.logged_at * 1000, "ddd") }}
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-        </v-list>
-      </v-card-text>
+        </template>
+      </v-virtual-scroll>
     </v-card>
   </div>
 </template>
@@ -103,6 +102,24 @@ export default {
         .catch(err => {
           self.$emit('error', 'error', `Log Entries: ${err.response.status} - ${err.response.data.error.substring(0, 120)}`)
         })
+    },
+
+    rowColor: function (entry, index) {
+      var color = Utils.rowColor(index)
+
+      if (Moment(entry.logged_at * 1000).isSame(Moment(), 'day')) {
+        color = 'light-green accent-1'
+        if (index % 2 === 1) {
+          color = 'light-green accent-2'
+        }
+      } else if (Moment(entry.logged_at * 1000).isSame(Moment(), 'week')) {
+        color = 'blue accent-1'
+        if (index % 2 === 1) {
+          color = 'blue accent-2'
+        }
+      }
+
+      return color
     }
   },
 
