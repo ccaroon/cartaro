@@ -81,6 +81,8 @@
 import Moment from 'moment'
 import Mousetrap from 'mousetrap'
 
+import Todo from '../models/Todo'
+
 import Constants from '../lib/Constants'
 import Format from '../lib/Format'
 
@@ -138,9 +140,14 @@ export default {
       this.$http.get(`http://127.0.0.1:4242/todos/?${qs}`)
         .then(resp => {
           self.totalTodos = resp.data.total
-          self.todos = resp.data.todos
+          // self.todos = resp.data.todos
+          self.todos = []
+          resp.data.todos.forEach(todo => {
+            self.todos.push(new Todo(todo))
+          })
         })
         .catch(err => {
+          // console.log(err)
           console.log(`${err.response.status} - ${err.response.data.error}`)
         })
     },
