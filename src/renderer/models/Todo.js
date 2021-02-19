@@ -20,23 +20,40 @@ Todo.prototype.markUncomplete = function () {
 }
 
 Todo.prototype.markComplete = function () {
+  var promises = []
+
   if (this.repeat > 0) {
-    var newTodo = new Todo(this)
-    delete newTodo.id
-    newTodo.due_at = Moment(this.due_at * 1000).add(this.repeat, 'days').unix()
-    newTodo.save()
+    var repeatDuper = new Promise((resolve, reject) => {
+      var newTodo = new Todo(this)
+      delete newTodo.id
+      newTodo.due_at = Moment(this.due_at * 1000).add(this.repeat, 'days').unix()
+      newTodo.save({
+        onSuccess: resolve,
+        onError: reject
+      })
+    })
+    promises.push(repeatDuper)
   }
 
-  this.is_complete = true
-  this.completed_at = Moment().unix()
+  // **MUST** come last in promises list
+  var always = new Promise((resolve) => {
+    this.is_complete = true
+    this.completed_at = Moment().unix()
+    resolve()
+  })
+  promises.push(always)
+
+  return Promise.all(promises)
 }
 
 Todo.prototype.toggleCompleted = function () {
+  var promise = new Promise((resolve) => { resolve(true) })
   if (this.is_complete) {
     this.markUncomplete()
   } else {
-    this.markComplete()
+    promise = this.markComplete()
   }
+  return promise
 }
 
 Todo.prototype.priorityColor = function () {

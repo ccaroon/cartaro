@@ -147,8 +147,8 @@ export default {
       })
     },
 
-    toggleCompleted: function (todo) {
-      todo.toggleCompleted()
+    toggleCompleted: async function (todo) {
+      await todo.toggleCompleted()
       todo.save({
         onSuccess: (resp) => { this.refresh() }
       })
