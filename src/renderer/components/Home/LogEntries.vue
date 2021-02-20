@@ -90,10 +90,8 @@ export default {
 
     loadEntries: function () {
       var self = this
-      // TODO: currently no way to search for things < or > etc.
-      // const startDate = Moment().startOf('week')
-      // const endDate = Moment().endOf('week')
-      var qs = `pp=10&sort_by=logged_at:desc`
+      const startOfWeek = Moment().startOf('week')
+      var qs = `logged_at=gte:${startOfWeek.unix()}&sort_by=logged_at:desc`
 
       this.$http.get(`http://127.0.0.1:4242/log_entries/?${qs}`)
         .then(resp => {

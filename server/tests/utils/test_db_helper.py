@@ -2,7 +2,7 @@ import faker
 import time
 import unittest
 
-from cartaro.utils.util import Util
+from cartaro.utils.db_helper import DbHelper
 class UtilTest(unittest.TestCase):
 
     FAKER = faker.Faker()
@@ -20,31 +20,31 @@ class UtilTest(unittest.TestCase):
     def test_sort_single_key(self):
         count = 5
         data = [self.__random_obj() for i in range(count)]
-        
+
         self.assertEqual(len(data), count)
-        
-        sorted_data = Util.sort(data, 'name')
+
+        sorted_data = DbHelper.sort(data, 'name')
         self.assertEqual(len(sorted_data), count)
 
         for i in range(count-1):
             self.assertLessEqual(
                 sorted_data[i].get('name'),
-                sorted_data[i+1].get('name') 
+                sorted_data[i+1].get('name')
             )
 
     def test_sort_desc(self):
         count = 5
         data = [self.__random_obj() for i in range(count)]
-        
+
         self.assertEqual(len(data), count)
-        
-        sorted_data = Util.sort(data, 'name:desc')
+
+        sorted_data = DbHelper.sort(data, 'name:desc')
         self.assertEqual(len(sorted_data), count)
 
         for i in range(count-1):
             self.assertGreaterEqual(
                 sorted_data[i].get('name'),
-                sorted_data[i+1].get('name') 
+                sorted_data[i+1].get('name')
             )
 
     def test_sort_multi_key(self):
@@ -59,15 +59,15 @@ class UtilTest(unittest.TestCase):
                 obj['age'] = 77
 
         self.assertEqual(len(data), count)
-        
-        sorted_data = Util.sort(data, 'age,name')
+
+        sorted_data = DbHelper.sort(data, 'age,name')
         self.assertEqual(len(sorted_data), count)
 
         # Overall by age
         for i in range(count-1):
             self.assertLessEqual(
                 sorted_data[i].get('age'),
-                sorted_data[i+1].get('age') 
+                sorted_data[i+1].get('age')
             )
 
         # Within same age by name
@@ -77,17 +77,17 @@ class UtilTest(unittest.TestCase):
                 self.assertEqual(sub_list[i].get('age'), age)
                 self.assertLessEqual(
                     sub_list[i].get('name'),
-                    sub_list[i+1].get('name') 
+                    sub_list[i+1].get('name')
                 )
 
     def test_sort_list_with_None(self):
         count = 5
         data = [self.__random_obj() for i in range(count)]
-        
+
         # None vs String
         data[count-1]['name'] = None
 
-        sorted_data = Util.sort(data, 'name')
+        sorted_data = DbHelper.sort(data, 'name')
         self.assertEqual(len(sorted_data), count)
 
         # None should sort to beginning
@@ -95,7 +95,7 @@ class UtilTest(unittest.TestCase):
         for i in range(1, count-1):
             self.assertLessEqual(
                 sorted_data[i].get('name'),
-                sorted_data[i+1].get('name') 
+                sorted_data[i+1].get('name')
             )
 
         # TODO: should probably test None with mult-key sort
@@ -104,7 +104,7 @@ class UtilTest(unittest.TestCase):
         data = [self.__random_obj() for i in range(count)]
         data[count-1]['age'] = None
 
-        sorted_data = Util.sort(data, 'age')
+        sorted_data = DbHelper.sort(data, 'age')
         self.assertEqual(len(sorted_data), count)
 
         # None should sort to beginning
@@ -112,7 +112,7 @@ class UtilTest(unittest.TestCase):
         for i in range(1, count-1):
             self.assertLessEqual(
                 sorted_data[i].get('age'),
-                sorted_data[i+1].get('age') 
+                sorted_data[i+1].get('age')
             )
 
 
@@ -121,4 +121,4 @@ class UtilTest(unittest.TestCase):
 
 
 
-# 
+#

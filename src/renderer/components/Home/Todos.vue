@@ -47,6 +47,8 @@
   </div>
 </template>
 <script>
+import Moment from 'moment'
+
 import Constants from '../../lib/Constants'
 import Format from '../../lib/Format'
 import Utils from '../../lib/Utils'
@@ -54,6 +56,8 @@ import Utils from '../../lib/Utils'
 import TodoEditor from '../Todos/Editor'
 
 import { Todo, fetchTodos } from '../../models/Todo'
+
+const DUE_WITHIN = 3
 
 export default {
   name: 'home-todos',
@@ -66,9 +70,17 @@ export default {
   methods: {
     load: function () {
       var self = this
+      const daysAhead = Moment().add(DUE_WITHIN, 'days')
+
+      // Todos that are:
+      // * not completed
+      //       AND
+      // * overdue or due within the next X days
       const query = {
-        sort_by: 'due_at,priority',
-        is_complete: false
+        due_at: `lte:${daysAhead.unix()}`,
+        is_complete: false,
+        op: 'and',
+        sort_by: 'due_at,priority'
       }
 
       fetchTodos(query, {
