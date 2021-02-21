@@ -38,6 +38,9 @@
       <v-col>
         <Todos v-on:error="displayAlert"></Todos>
       </v-col>
+      <v-col>
+        <Notes v-on:error="displayAlert"></Notes>
+      </v-col>
     </v-row>
     <v-row>
       <v-col>
@@ -57,6 +60,7 @@ import Mousetrap from 'mousetrap'
 
 import Countdowns from './Home/Countdowns'
 import LogEntries from './Home/LogEntries'
+import Notes from './Home/Notes'
 import Tickets from './Home/Tickets'
 import Todos from './Home/Todos'
 
@@ -64,7 +68,7 @@ import Format from '../lib/Format'
 
 export default {
   name: 'home',
-  components: { Countdowns, LogEntries, Tickets, Todos },
+  components: { Countdowns, LogEntries, Notes, Tickets, Todos },
 
   mounted: function () {
     this.bindShortcutKeys()

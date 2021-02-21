@@ -249,6 +249,8 @@ class Base(ABC):
                 elif query_value.isdecimal():
                     query_value = int(query_value)
                     query_parts.append(query_builder[field].test(DbHelper.cmp_integer, test_op, query_value))
+                elif query_value == 'null':
+                    query_parts.append(query_builder[field] == None)
                 else:
                     # Assume query_value is a string
                     query_parts.append(

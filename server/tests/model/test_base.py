@@ -374,6 +374,25 @@ class BaseTest(unittest.TestCase):
         tickets = Ticket.find(active="false")
         self.assertEquals(len(tickets), total_count - active_count)
 
+    def test_find_nulls(self):
+        total_count = random.randint(1, 100)
+        null_count = 0
+        for i in range(0, total_count):
+            desc = F"Description for {i}"
+            make_null = random.randint(0,100) % 2 == 0
+            if make_null:
+                desc = None
+                null_count += 1
+
+            d = Ticket(
+                name=F"Ticket #{i+1}",
+                desc=desc
+            )
+            d.save()
+
+        tickets = Ticket.find(desc="null")
+        self.assertEquals(len(tickets), null_count)
+
     def test_find_numerics(self):
         total_count = random.randint(1, 100)
         counts = {
