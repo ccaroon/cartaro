@@ -6,7 +6,7 @@ const constants = {
     TOOLBAR_BUTTON: 'orange lighten-2',
     TOOLBAR: 'grey darken-2',
 
-    ITEM_HIGHLIGHT: 'grey',
+    ITEM_HIGHLIGHT: 'light-green accent-1',
 
     GREY: 'grey lighten-2',
     GREY_ALT: 'grey lighten-4',
@@ -45,13 +45,10 @@ const constants = {
       story: 'bookmark'
     },
     workDays: {
-      Sunday: 'record-circle-outline',
-      Monday: 'moon-waning-crescent',
-      Tuesday: 'gender-male',
-      Wednesday: 'gender-male-female-variant',
-      Thursday: 'circle-slice-8',
-      Friday: 'gender-female',
-      Saturday: 'circle-double'
+      normal: 'calendar',
+      holiday: 'flag-variant',
+      pto: 'island',
+      sick: 'hospital-box'
     }
   },
 

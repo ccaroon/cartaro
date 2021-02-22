@@ -7,28 +7,27 @@
       v-bind:newIcon="'mdi-calendar-plus'"
       v-bind:refresh="refresh"
     ></AppBar>
-    <v-list dense>
+    <v-list>
       <v-list-item
         v-for="(workDay, idx) in workDays"
         :key="workDay.id"
         :class="rowColor(idx)"
       >
         <v-list-item-avatar>
-          <v-icon>mdi-{{ constants.ICONS.workDays[dayName(workDay)] }}</v-icon>
+          <v-icon>mdi-{{ constants.ICONS.workDays[workDay.type] }}</v-icon>
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title
             :class="
               workDay.deleted_at !== null ? 'text-decoration-line-through' : ''
             "
-            ><strong>{{ displayName(workDay) }}</strong></v-list-item-title
+            ><strong>{{ displayTitle(workDay) }}</strong></v-list-item-title
           >
           <v-list-item-subtitle>
-            {{ hoursWorked(workDay) }}
-            <Tags
-              v-bind:tags="workDay.tags"
-              v-bind:color="rowColor(idx + 1)"
-            ></Tags>
+            {{ displaySubtitle(workDay) }}
+          </v-list-item-subtitle>
+          <v-list-item-subtitle>
+            {{ displayHoursWorked(workDay) }}
           </v-list-item-subtitle>
         </v-list-item-content>
         <v-row dense align="center" justify="space-around">
@@ -142,19 +141,19 @@
               dense
               rounded
               mandatory
-              @change="save(workDay)"
+              @change="changeType(workDay)"
             >
               <v-btn icon value="normal">
-                <v-icon>mdi-calendar</v-icon>
+                <v-icon>mdi-{{ constants.ICONS.workDays.normal }}</v-icon>
               </v-btn>
               <v-btn icon value="holiday">
-                <v-icon>mdi-flag-variant</v-icon>
+                <v-icon>mdi-{{ constants.ICONS.workDays.holiday }}</v-icon>
               </v-btn>
               <v-btn icon value="pto">
-                <v-icon>mdi-island</v-icon>
+                <v-icon>mdi-{{ constants.ICONS.workDays.pto }}</v-icon>
               </v-btn>
               <v-btn icon value="sick">
-                <v-icon>mdi-hospital-box</v-icon>
+                <v-icon>mdi-{{ constants.ICONS.workDays.sick }}</v-icon>
               </v-btn>
             </v-btn-toggle>
           </v-col>
@@ -173,6 +172,13 @@
         ></Actions>
       </v-list-item>
     </v-list>
+    <v-footer absolute>
+      {{ displayWorkDates() }}
+      <v-spacer></v-spacer>
+      {{ displayYearWeek() }}
+      <v-spacer></v-spacer>
+      Hours Worked: {{ totalHours() }}
+    </v-footer>
   </v-container>
 </template>
 <script>
@@ -181,13 +187,18 @@ import Mousetrap from 'mousetrap'
 
 import Constants from '../lib/Constants'
 import Format from '../lib/Format'
+import Utils from '../lib/Utils'
 
 import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
 import Tags from './Shared/Tags'
 
+// TODO: Move consts to WorkDay model
 const DAYS_PER_WEEK = 7
 const WEEKS_TO_SHOW = 5
+
+const DEFAULT_IN = '09:00'
+const DEFAULT_OUT = '16:30'
 
 export default {
   name: 'workDays-main',
@@ -207,16 +218,49 @@ export default {
       })
     },
 
-    displayName: function (workDay) {
-      var name = Format.formatDate(workDay.date * 1000, 'ddd (MMM Do, YYYY)')
-      return (name)
+    displayTitle: function (workDay) {
+      return Format.formatDate(workDay.date * 1000, 'dddd')
     },
 
-    dayName: function (workDay) {
-      var name = Format.formatDate(workDay.date * 1000, 'dddd')
-      return name
+    displaySubtitle: function (workDay) {
+      return Format.formatDate(workDay.date * 1000, 'MMM DD, YYYY')
     },
 
+    displayHoursWorked: function (workDay) {
+      const duration = this.hoursWorked(workDay)
+      return `${duration.hours()}h ${duration.minutes()}m`
+    },
+
+    displayWorkDates: function () {
+      let dateStr = ''
+      if (this.workDays[0] && this.workDays[4]) {
+        const start = Format.formatDate(this.workDays[0].date * 1000, 'MMM DD, YYYY')
+        const end = Format.formatDate(this.workDays[4].date * 1000, 'MMM DD, YYYY')
+
+        dateStr = `${start} to ${end}`
+      }
+      return dateStr
+    },
+
+    displayYearWeek: function () {
+      let weekStr = ''
+      if (this.workDays[0]) {
+        weekStr = `Week ${Format.formatDate(this.workDays[0].date * 1000, 'WW')}`
+      }
+      return weekStr
+    },
+
+    totalHours: function () {
+      let total = 0
+      this.workDays.forEach(day => {
+        const duration = this.hoursWorked(day)
+        total += duration.asHours()
+      })
+
+      return total.toFixed(1)
+    },
+
+    // TODO: Move to WorkDay model
     hoursWorked: function (workDay) {
       var inTime = workDay.time_in.split(':')
       var dayStart = Moment(workDay.date * 1000).startOf('day').hours(inTime[0]).minutes(inTime[1])
@@ -226,7 +270,7 @@ export default {
 
       var duration = Moment.duration(dayEnd.diff(dayStart))
 
-      return `${duration.hours()}h ${duration.minutes()}m`
+      return duration
     },
 
     refresh: function (page = null, searchText = '') {
@@ -291,8 +335,8 @@ export default {
     newDay: function (day = Moment().startOf('week').add(1, 'day')) {
       var workDay = {
         date: null,
-        time_in: '09:00',
-        time_out: '16:30',
+        time_in: DEFAULT_IN,
+        time_out: DEFAULT_OUT,
         note: null,
         type: 'normal'
       }
@@ -310,6 +354,23 @@ export default {
         day.add(1, 'day')
       }
       this.load()
+    },
+
+    changeType: function (workDay) {
+      // TODO: Define type constants in WorkDay model
+      if (workDay.type !== 'normal') {
+        this.clearInOut(workDay)
+      } else {
+        workDay.time_in = DEFAULT_IN
+        workDay.time_out = DEFAULT_OUT
+      }
+
+      this.save(workDay)
+    },
+
+    clearInOut: function (workDay) {
+      workDay.time_in = '00:00'
+      workDay.time_out = '00:00'
     },
 
     save: function (workDay, dryRun = false) {
@@ -349,13 +410,12 @@ export default {
 
     rowColor: function (idx) {
       var workDay = this.workDays[idx]
-      var color = Constants.COLORS.GREY
+      let color = Utils.rowColor(idx)
 
       if (workDay && Moment().isSame(Moment.unix(workDay.date), 'day')) {
         color = Constants.COLORS.ITEM_HIGHLIGHT
-      } else if (idx % 2 === 0) {
-        color = Constants.COLORS.GREY_ALT
       }
+
       return color
     }
   },
