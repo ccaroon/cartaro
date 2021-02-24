@@ -7,7 +7,10 @@
     ></TodoEditor>
     <v-card>
       <v-card-title :class="constants.COLORS.GREY"
-        >Todo
+        >Todos
+        <v-btn icon x-small @click="refresh"
+          ><v-icon>mdi-refresh</v-icon></v-btn
+        >
         <v-btn icon x-small @click="newTodo"><v-icon>mdi-plus</v-icon></v-btn>
       </v-card-title>
 
@@ -68,6 +71,10 @@ export default {
   },
 
   methods: {
+    refresh: function () {
+      this.load()
+    },
+
     load: function () {
       var self = this
       const daysAhead = Moment().add(DUE_WITHIN, 'days')

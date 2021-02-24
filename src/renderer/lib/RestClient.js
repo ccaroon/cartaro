@@ -16,14 +16,14 @@ RestClient.prototype.update = function (obj, handlers) {
   this.__resolve(p, handlers)
 }
 
-RestClient.prototype.fetch = function (query, handlers) {
+RestClient.prototype.fetch = function (query, endpoint = '/', handlers) {
   var filters = []
   for (const [key, value] of Object.entries(query)) {
     filters.push(`${key}=${value}`)
   }
   var qs = filters.join('&')
 
-  var p = axios.get(`${BASE_URL}/${this.resource}/?${qs}`)
+  var p = axios.get(`${BASE_URL}/${this.resource}${endpoint}?${qs}`)
   this.__resolve(p, handlers)
 }
 

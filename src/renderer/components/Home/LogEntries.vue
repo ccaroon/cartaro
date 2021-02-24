@@ -110,11 +110,6 @@ export default {
         if (index % 2 === 1) {
           color = 'light-green accent-2'
         }
-      } else if (Moment(entry.logged_at * 1000).isSame(Moment(), 'week')) {
-        color = 'blue accent-1'
-        if (index % 2 === 1) {
-          color = 'blue accent-2'
-        }
       }
 
       return color

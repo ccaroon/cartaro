@@ -102,7 +102,7 @@ Todo.prototype.delete = function (handlers = {}) {
 }
 // -----------------------------------------------------------------------------
 function fetchTodos (query, handlers) {
-  CLIENT.fetch(query, {
+  CLIENT.fetch(query, '/', {
     onSuccess: (resp) => {
       var todos = []
       resp.data.todos.forEach(todo => {

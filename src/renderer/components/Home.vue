@@ -31,7 +31,10 @@
         >
       </v-col>
     </v-row>
-    <v-row>
+    <v-row dense no-gutters>
+      <WorkDays v-on:error="displayAlert"></WorkDays>
+    </v-row>
+    <v-row dense>
       <v-col>
         <Tickets v-on:error="displayAlert"></Tickets>
       </v-col>
@@ -42,7 +45,7 @@
         <Notes v-on:error="displayAlert"></Notes>
       </v-col>
     </v-row>
-    <v-row>
+    <v-row dense>
       <v-col>
         <LogEntries v-on:error="displayAlert"></LogEntries>
       </v-col>
@@ -63,12 +66,13 @@ import LogEntries from './Home/LogEntries'
 import Notes from './Home/Notes'
 import Tickets from './Home/Tickets'
 import Todos from './Home/Todos'
+import WorkDays from './Home/WorkDays'
 
 import Format from '../lib/Format'
 
 export default {
   name: 'home',
-  components: { Countdowns, LogEntries, Notes, Tickets, Todos },
+  components: { Countdowns, LogEntries, Notes, Tickets, Todos, WorkDays },
 
   mounted: function () {
     this.bindShortcutKeys()

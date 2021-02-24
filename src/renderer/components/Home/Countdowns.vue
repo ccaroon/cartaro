@@ -2,7 +2,7 @@
   <v-footer absolute padless color="white">
     <v-list dense rounded>
       <v-row dense no-gutters>
-        <v-col cols="2" v-for="(countDown, idx) in countDowns" :key="idx">
+        <v-col  v-for="(countDown, idx) in countDowns" :key="idx">
           <v-list-item dense rounded class="grey lighten-1">
             <v-list-item-content>
               <v-list-item-title>{{ countDown.name }}</v-list-item-title>

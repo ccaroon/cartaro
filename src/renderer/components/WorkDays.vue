@@ -193,6 +193,8 @@ import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
 import Tags from './Shared/Tags'
 
+import { fetchWorkDays } from '../models/WorkDay'
+
 // TODO: Move consts to WorkDay model
 const DAYS_PER_WEEK = 7
 const WEEKS_TO_SHOW = 5
@@ -227,7 +229,7 @@ export default {
     },
 
     displayHoursWorked: function (workDay) {
-      const duration = this.hoursWorked(workDay)
+      const duration = workDay.hoursWorked()
       return `${duration.hours()}h ${duration.minutes()}m`
     },
 
@@ -253,24 +255,11 @@ export default {
     totalHours: function () {
       let total = 0
       this.workDays.forEach(day => {
-        const duration = this.hoursWorked(day)
+        const duration = day.hoursWorked()
         total += duration.asHours()
       })
 
       return total.toFixed(1)
-    },
-
-    // TODO: Move to WorkDay model
-    hoursWorked: function (workDay) {
-      var inTime = workDay.time_in.split(':')
-      var dayStart = Moment(workDay.date * 1000).startOf('day').hours(inTime[0]).minutes(inTime[1])
-
-      var outTime = workDay.time_out.split(':')
-      var dayEnd = Moment(workDay.date * 1000).startOf('day').hours(outTime[0]).minutes(outTime[1])
-
-      var duration = Moment.duration(dayEnd.diff(dayStart))
-
-      return duration
     },
 
     refresh: function (page = null, searchText = '') {
@@ -296,40 +285,45 @@ export default {
 
     search: function () {
       var self = this
-      // Change number of items per page for search results
       this.perPage = 10
-      var qs = `page=${this.page}&pp=${this.perPage}`
+
+      var query = {
+        page: this.page,
+        pp: this.perPage
+      }
 
       var parts = this.searchText.split(':', 2)
       if (parts.length === 2) {
-        qs += `&${parts[0].trim()}=${parts[1].trim()}`
+        query[parts[0].trim()] = parts[1].trim()
       } else {
-        qs += `&note=${this.searchText}`
+        query.note = this.searchText
       }
 
-      this.$http.get(`http://127.0.0.1:4242/work_days/?${qs}`)
-        .then(resp => {
-          self.totalDays = resp.data.total
-          self.workDays = resp.data.work_days
-        })
-        .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
-        })
+      fetchWorkDays(query, '/', {
+        onSuccess: function (days, totalCount) {
+          self.totalDays = totalCount
+          self.workDays = days
+        },
+        onError: null
+      })
     },
 
     loadWeek: function () {
       var self = this
       this.perPage = DAYS_PER_WEEK
-      var qs = `start=${this.currWeek.format('YYYY-MM-DD')}&days=${DAYS_PER_WEEK}`
+      var query = {
+        pp: this.perPage,
+        start: this.currWeek.format('YYYY-MM-DD'),
+        days: DAYS_PER_WEEK
+      }
 
-      this.$http.get(`http://127.0.0.1:4242/work_days/range?${qs}`)
-        .then(resp => {
+      fetchWorkDays(query, '/range', {
+        onSuccess: function (days, totalCount) {
           self.totalDays = WEEKS_TO_SHOW * DAYS_PER_WEEK
-          self.workDays = resp.data.work_days
-        })
-        .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
-        })
+          self.workDays = days
+        },
+        onError: null
+      })
     },
 
     newDay: function (day = Moment().startOf('week').add(1, 'day')) {

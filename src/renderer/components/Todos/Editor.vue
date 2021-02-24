@@ -281,7 +281,7 @@ export default {
     loadTags: function () {
       var self = this
 
-      TagClient.fetch({}, {
+      TagClient.fetch({}, '/', {
         onSuccess: (resp) => {
           self.allTags = resp.data.tags.map(tag => tag.name)
         }
