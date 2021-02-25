@@ -5,18 +5,6 @@
       <v-toolbar-title>Ĉartaro - Home</v-toolbar-title>
       <v-spacer></v-spacer>
       {{ format.formatDate(Date.now(), "dddd MMM Do, YYYY") }}
-      <v-spacer></v-spacer>
-      <v-text-field
-        ref="searchBox"
-        v-model="searchText"
-        dense
-        clearable
-        placeholder="Search..."
-        prepend-inner-icon="mdi-magnify"
-        @click:clear="clearSearch"
-        @keyup.enter="search()"
-        @keyup.esc="clearSearch()"
-      ></v-text-field>
     </v-app-bar>
     <v-row>
       <v-col>

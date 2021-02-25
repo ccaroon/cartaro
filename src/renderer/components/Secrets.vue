@@ -59,11 +59,13 @@
                 <template v-if="isHidden[secret.id]">**********</template>
                 <template v-else>{{ val }}</template>
               </v-col>
+              <v-col>
+                <Tags
+                  v-bind:tags="secret.tags"
+                  v-bind:color="rowColor(idx + 1)"
+                ></Tags>
+              </v-col>
             </v-row>
-            <Tags
-              v-bind:tags="secret.tags"
-              v-bind:color="rowColor(idx + 1)"
-            ></Tags>
           </v-list-item-subtitle>
         </v-list-item-content>
         <Actions
