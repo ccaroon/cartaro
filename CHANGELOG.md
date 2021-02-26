@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## UNRELEASED: v1.2.0 - van Schagen - 2021-??-??
+### Added
+* Electron main process now logs to `DOCUMENTS/CartaroLog.json`
+  - Includes STDOUT/STDERR from backend python server process.
+
+### Changed
+...
+
+### Fixed
+...
+
+### Deprecated
+...
+
+### Removed
+...
+
+### Security
+...
+
+--------------------------------------------------------------------------------
+
 ## v1.1.0 - Scylax - 2021-02-26
 ### Added
 * Ability to rekey encrypted Secrets (`server/bin/rekey-secrets.py`)

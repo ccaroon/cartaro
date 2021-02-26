@@ -2,19 +2,12 @@
 
 import { app, dialog, Menu, BrowserWindow } from 'electron'
 import Config from './config'
+import Winston from 'winston'
 
 const PORT = 4242
 const http = require('axios')
 const fs = require('fs')
 const path = require('path')
-
-/**
- * Set `__static` path to static files in production
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
- */
-if (process.env.NODE_ENV !== 'development') {
-  global.__static = path.join(__dirname, '/static').replace(/\\/g, '\\\\')
-}
 
 let mainWindow, backendServer
 const winURL = process.env.NODE_ENV === 'development'
@@ -22,6 +15,36 @@ const winURL = process.env.NODE_ENV === 'development'
   : `file://${__dirname}/index.html`
 
 const docPath = path.join(app.getPath('documents'), 'Cartaro')
+
+const logSuffix = process.env.NODE_ENV === 'development' ? '-dev' : ''
+const logger = Winston.createLogger({
+  level: 'info',
+  format: Winston.format.combine(
+    Winston.format.timestamp({ format: 'YYYY-MM-DD@HH:mm:ss' }),
+    Winston.format.uncolorize(),
+    Winston.format.json()
+  ),
+  transports: [
+    new Winston.transports.File({
+      filename: path.join(docPath, `CartaroLog${logSuffix}.json`)
+    })
+  ]
+})
+
+/**
+ * Set `__static` path to static files in production
+ * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
+ */
+if (process.env.NODE_ENV === 'development') {
+  // Log to console when in Dev mode
+  logger.add(new Winston.transports.Console({
+    format: Winston.format.printf((info) => {
+      return `${info.level}: ${info.message}`
+    })
+  }))
+} else {
+  global.__static = path.join(__dirname, '/static').replace(/\\/g, '\\\\')
+}
 
 function initApp () {
   // Create data directory
@@ -163,18 +186,18 @@ function initServer () {
     null,
     { cwd: serverPath, env: env, shell: true }
   )
-  console.log(`Server PID: [${backendServer.pid}]`)
+  logger.info(`Server PID: [${backendServer.pid}]`)
 
   backendServer.stdout.on('data', function (data) {
-    console.log(`[STDOUT:${new Date().toLocaleString()}]\n${data.toString('utf8')}`)
+    logger.info(data.toString('utf8'))
   })
 
   backendServer.stderr.on('data', function (data) {
-    console.log(`[STDERR:${new Date().toLocaleString()}]\n${data.toString('utf8')}`)
+    logger.info(data.toString('utf8'))
   })
 
   backendServer.on('error', function (err) {
-    console.log(`[ERROR:${new Date().toLocaleString()}]\n${err.toString('utf8')}`)
+    logger.error(err.toString('utf8'))
   })
 
   backendServer.on('exit', function (code, signal) {
@@ -212,11 +235,11 @@ function serverHealthy (resolve, reject, iteration = 1) {
 
   http.get(`http://localhost:${PORT}/sys/ping`)
     .then(() => {
-      console.log(`Server Healthy After ${iteration} Tries.`)
+      logger.info(`Server Healthy After ${iteration} Tries.`)
       resolve()
     })
     .catch(() => {
-      console.log(`Health Check Failed: ${iteration}/${MAX}`)
+      logger.error(`Health Check Failed: ${iteration}/${MAX}`)
       if (iteration > MAX) {
         reject(`Server not healthy after ${MAX} tries.`)
       } else {
@@ -247,7 +270,7 @@ app.on('ready', () => {
       })
     })
     .catch(err => {
-      console.log(`Failed to start server: ${err}`)
+      logger.error(`Failed to start server: ${err}`)
       quitApp()
     })
 })
