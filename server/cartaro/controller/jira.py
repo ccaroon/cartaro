@@ -12,7 +12,7 @@ DEFAULT_SEARCH = "assignee = currentUser() AND status != Closed AND issueType in
 @jira.route('/search', methods=['GET'])
 def search():
     resp = None
-    status = 201
+    status = 200
     try:
         host = JIRA_CONFIG.get('host')
         token = JIRA_CONFIG.get('token')

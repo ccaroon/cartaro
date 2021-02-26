@@ -7,7 +7,7 @@ from cartaro.model.base import Base
 # Since cartaro.model.base.Base is an Abstract Class we have to create a concrete
 # class for testing purposes.
 # ------------------------------------------------------------------------------
-class Ticket(Base):    
+class Ticket(Base):
     def __init__(self, id=None, **kwargs):
         self.name = None
         self.desc = None
@@ -15,7 +15,7 @@ class Ticket(Base):
         self.active = False
 
         super().__init__(id=id, **kwargs)
-    
+
     def update(self, data):
         self.name = data.get('name', self.name)
         self.desc = data.get('desc', self.desc)
@@ -273,6 +273,30 @@ class BaseTest(unittest.TestCase):
         self.assertEqual(objs[3].id, 49)
         self.assertEqual(objs[4].id, 50)
 
+    def test_fetch_sort_by(self):
+        total_count = random.randint(1, 100)
+        for i in range(0, total_count):
+            d = Ticket(
+                name=F"Ticket #{i+1}",
+                desc=F"{i} / {total_count}",
+                use_count=random.randint(0,999)
+            )
+            d.save()
+
+        # Ascending
+        tickets = Ticket.fetch(sort_by="use_count:asc")
+        self.assertEquals(len(tickets), total_count)
+
+        for i in range(0,total_count-1):
+            self.assertLessEqual(tickets[i].use_count, tickets[i+1].use_count)
+
+        # Descending
+        tickets = Ticket.fetch(sort_by="use_count:desc")
+        self.assertEquals(len(tickets), total_count)
+
+        for i in range(0,total_count-1):
+            self.assertGreaterEqual(tickets[i].use_count, tickets[i+1].use_count)
+
     def test_count(self):
         # Create a bunch of new records
         record_count = random.randint(1, 100)
@@ -328,3 +352,125 @@ class BaseTest(unittest.TestCase):
 
         self.assertEqual(things[0].id, obj2.id)
         self.assertEqual(things[0].name, obj2.name)
+
+    def test_find_bools(self):
+        total_count = random.randint(1, 100)
+        active_count = 0
+        for i in range(0, total_count):
+            is_active = True if i % 2 == 0 else False
+            if is_active:
+                active_count += 1
+
+            d = Ticket(
+                name=F"Ticket #{i+1} - {is_active}",
+                desc=F"{i} / {total_count}",
+                active=is_active
+            )
+            d.save()
+
+        tickets = Ticket.find(active="true")
+        self.assertEquals(len(tickets), active_count)
+
+        tickets = Ticket.find(active="false")
+        self.assertEquals(len(tickets), total_count - active_count)
+
+    def test_find_nulls(self):
+        total_count = random.randint(1, 100)
+        null_count = 0
+        for i in range(0, total_count):
+            desc = F"Description for {i}"
+            make_null = random.randint(0,100) % 2 == 0
+            if make_null:
+                desc = None
+                null_count += 1
+
+            d = Ticket(
+                name=F"Ticket #{i+1}",
+                desc=desc
+            )
+            d.save()
+
+        tickets = Ticket.find(desc="null")
+        self.assertEquals(len(tickets), null_count)
+
+    def test_find_numerics(self):
+        total_count = random.randint(1, 100)
+        counts = {
+            'eq50': 0,
+            'gt50': 0,
+            'lt50': 0
+        }
+
+        for i in range(0, total_count):
+            use_count = random.randint(0,100)
+            if use_count == 50:
+                counts['eq50'] += 1
+            elif use_count > 50:
+                counts['gt50'] += 1
+            elif use_count < 50:
+                counts['lt50'] += 1
+
+            d = Ticket(
+                name=F"Ticket #{i+1} - {use_count}",
+                desc=F"{i} / {total_count}",
+                use_count=use_count
+            )
+            d.save()
+
+        # Equal
+        tickets = Ticket.find(use_count="50")
+        self.assertEquals(len(tickets), counts['eq50'])
+
+        # Not Equal
+        tickets = Ticket.find(use_count="ne:50")
+        self.assertEquals(len(tickets), total_count - counts['eq50'])
+
+        # Greater Than
+        tickets = Ticket.find(use_count="gt:50")
+        self.assertEquals(len(tickets), counts['gt50'])
+
+        # Greater Than Equal
+        tickets = Ticket.find(use_count="gte:50")
+        self.assertEquals(len(tickets), counts['gt50'] + counts['eq50'])
+
+        # Less Than
+        tickets = Ticket.find(use_count="lt:50")
+        self.assertEquals(len(tickets), counts['lt50'])
+
+        # Less Than Equal
+        tickets = Ticket.find(use_count="lte:50")
+        self.assertEquals(len(tickets), counts['lt50'] + counts['eq50'])
+
+    def test_find_sort_by(self):
+        total_count = random.randint(1, 100)
+        for i in range(0, total_count):
+            d = Ticket(
+                name=F"Ticket #{i+1}",
+                desc=F"{i} / {total_count}",
+                use_count=random.randint(0,999)
+            )
+            d.save()
+
+        # Ascending
+        tickets = Ticket.find(name="Ticket", sort_by="use_count:asc")
+        self.assertEquals(len(tickets), total_count)
+
+        for i in range(0,total_count-1):
+            self.assertLessEqual(tickets[i].use_count, tickets[i+1].use_count)
+
+        # Descending
+        tickets = Ticket.find(name="Ticket", sort_by="use_count:desc")
+        self.assertEquals(len(tickets), total_count)
+
+        for i in range(0,total_count-1):
+            self.assertGreaterEqual(tickets[i].use_count, tickets[i+1].use_count)
+
+
+
+
+
+
+
+
+
+    #

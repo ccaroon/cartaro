@@ -1,7 +1,10 @@
 'use strict'
 
 import { app, dialog, Menu, BrowserWindow } from 'electron'
+import Config from './config'
 
+const PORT = 4242
+const http = require('axios')
 const fs = require('fs')
 const path = require('path')
 
@@ -22,9 +25,15 @@ const docPath = path.join(app.getPath('documents'), 'Cartaro')
 
 function initApp () {
   // Create data directory
-  if (!fs.existsSync(docPath)) {
-    fs.mkdirSync(docPath, '0750')
+  if (!fs.existsSync(Config.dataPath)) {
+    fs.mkdirSync(Config.dataPath, '0750')
   }
+}
+
+function quitApp () {
+  mainWindow = null
+  backendServer.kill()
+  app.quit()
 }
 
 function createMenu () {
@@ -81,6 +90,11 @@ function createMenu () {
         {
           label: 'View on GitHub',
           click () { require('electron').shell.openExternal('https://github.com/ccaroon/cartaro') }
+        },
+        {
+          label: 'Dev Tools',
+          accelerator: mainMetaKey + '+I',
+          click: () => mainWindow.webContents.openDevTools()
         }
       ]
     }
@@ -126,7 +140,7 @@ function createMenu () {
 // ---------------------------------------------------------------------------
 function initServer () {
   var basePath = path.resolve(path.dirname(__dirname))
-  var cmd = './bin/python ./bin/flask run -p 4242'
+  var cmd = `./bin/python ./bin/flask run -p ${PORT}`
 
   var serverPath = null
   if (basePath.match(/\/Resources\//i)) {
@@ -151,22 +165,6 @@ function initServer () {
   )
   console.log(`Server PID: [${backendServer.pid}]`)
 
-  if (!backendServer.pid) {
-    dialog.showMessageBoxSync(mainWindow, {
-      type: 'error',
-      title: 'Backend Server Failed to Start',
-      message: 'Backend Server Failed to Start',
-      detail: `Command: [${serverPath}/${cmd}]`
-    })
-  }
-
-  // var msg = `__dirname: ${__dirname}\n\nbasePath: ${basePath}\n\nserverPath: ${serverPath}\n\nPID: ${backendServer.pid}`
-  // dialog.showMessageBoxSync(mainWindow, {
-  //   type: 'info',
-  //   message: 'Path Information',
-  //   detail: msg
-  // })
-
   backendServer.stdout.on('data', function (data) {
     console.log(`[STDOUT:${new Date().toLocaleString()}]\n${data.toString('utf8')}`)
   })
@@ -179,16 +177,20 @@ function initServer () {
     console.log(`[ERROR:${new Date().toLocaleString()}]\n${err.toString('utf8')}`)
   })
 
-  mainWindow.on('closed', () => {
-    mainWindow = null
-    backendServer.kill()
+  backendServer.on('exit', function (code, signal) {
+    if (code) {
+      dialog.showMessageBoxSync(null, {
+        type: 'error',
+        title: 'Backend Server Has Exited',
+        message: 'Backend Server Has Exited',
+        detail: `Exit Code: [${code}] | Signal: [${signal}]`
+      })
+      quitApp()
+    }
   })
 }
 
 function createWindow () {
-  /**
-   * Initial window options
-   */
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 1000,
@@ -198,31 +200,54 @@ function createWindow () {
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true
-      // preload: path.join(app.getAppPath(), 'main.js')
     }
   })
   createMenu()
 
   mainWindow.loadURL(winURL)
-  // mainWindow.webContents.openDevTools()
 }
+
+function serverHealthy (resolve, reject, iteration = 1) {
+  const MAX = 5
+
+  http.get(`http://localhost:${PORT}/sys/ping`)
+    .then(() => {
+      console.log(`Server Healthy After ${iteration} Tries.`)
+      resolve()
+    })
+    .catch(() => {
+      console.log(`Health Check Failed: ${iteration}/${MAX}`)
+      if (iteration > MAX) {
+        reject(`Server not healthy after ${MAX} tries.`)
+      } else {
+        setTimeout(() => {
+          serverHealthy(resolve, reject, iteration + 1)
+        }, 500)
+      }
+    })
+}
+
+app.on('window-all-closed', () => {
+  quitApp()
+})
 
 app.on('ready', () => {
   initApp()
-  createWindow()
 
-  // MUST be done *after* createWindow b/c it depends on `mainWindow`
-  initServer()
-})
+  var startServer = new Promise((resolve, reject) => {
+    initServer()
+    serverHealthy(resolve, reject)
+  })
 
-app.on('window-all-closed', () => {
-  backendServer.kill()
-  app.quit()
-})
-
-app.on('activate', () => {
-  createMenu()
-  if (mainWindow === null) {
-    createWindow()
-  }
+  startServer
+    .then(() => {
+      createWindow()
+      mainWindow.on('closed', () => {
+        quitApp()
+      })
+    })
+    .catch(err => {
+      console.log(`Failed to start server: ${err}`)
+      quitApp()
+    })
 })

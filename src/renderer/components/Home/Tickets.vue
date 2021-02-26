@@ -7,43 +7,37 @@
           ><v-icon>mdi-refresh</v-icon></v-btn
         >
       </v-card-title>
-      <v-card-text>
-        <v-list dense>
-          <v-list-item
-            v-for="(ticket, idx) in tickets"
-            :key="ticket.key"
-            :class="utils.rowColor(idx)"
-            dense
-          >
+
+      <v-virtual-scroll :items="tickets" item-height="40" height="180">
+        <template v-slot:default="{ index, item }">
+          <v-list-item :class="utils.rowColor(index)" dense>
             <v-list-item-icon>
-              <v-icon :color="iconColor(ticket)"
+              <v-icon :color="iconColor(item)"
                 >mdi-{{
-                  constants.ICONS.tickets[ticket.type.toLowerCase()]
+                  constants.ICONS.tickets[item.type.toLowerCase()]
                 }}</v-icon
               >
               <span
                 style="cursor: pointer"
                 class="blue--text"
-                @click="utils.openLink('Jira', ticket.link)"
+                @click="utils.openLink('Jira', item.link)"
               >
-                {{ ticket.key }}
+                {{ item.key }}
                 <v-icon x-small color="blue">mdi-open-in-new</v-icon>
               </span>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title
                 :class="
-                  ticket.status === 'Closed'
-                    ? 'text-decoration-line-through'
-                    : ''
+                  item.status === 'Closed' ? 'text-decoration-line-through' : ''
                 "
               >
-                {{ ticket.summary }}
+                {{ item.summary }}
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-        </v-list>
-      </v-card-text>
+        </template>
+      </v-virtual-scroll>
     </v-card>
   </v-sheet>
 </template>

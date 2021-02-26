@@ -1,16 +1,14 @@
 // https://github.com/csquared/fernet.js
 import fernet from 'fernet'
-
-// TODO: Read CartaroCfg.json
+import Config from '../../main/config'
+Config.load()
 
 function _passwordToKey (password) {
   var paddedPwd = password.padEnd(32, ' ')
   return btoa(paddedPwd)
 }
 
-// TODO: use config file to read `encryption_password`
-//       instead of hard-coding password here
-var keyStr = _passwordToKey('42')
+var keyStr = _passwordToKey(Config.get('CARTARO:encryption_password'))
 // Set Secret Key Globally for all Fernet opts
 fernet.setSecret(keyStr)
 

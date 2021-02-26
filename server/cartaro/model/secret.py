@@ -105,6 +105,10 @@ class Secret(Taggable, Base):
 
         return data
 
+    def rekey(self, new_key):
+        self.__cryer = Crypto(new_key)
+        self.save()
+
     def update(self, data):
         self.name = data.get('name', self.name)
         self.system = data.get('system', self.system)

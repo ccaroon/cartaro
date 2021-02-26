@@ -5,18 +5,6 @@
       <v-toolbar-title>Ĉartaro - Home</v-toolbar-title>
       <v-spacer></v-spacer>
       {{ format.formatDate(Date.now(), "dddd MMM Do, YYYY") }}
-      <v-spacer></v-spacer>
-      <v-text-field
-        ref="searchBox"
-        v-model="searchText"
-        dense
-        clearable
-        placeholder="Search..."
-        prepend-inner-icon="mdi-magnify"
-        @click:clear="clearSearch"
-        @keyup.enter="search()"
-        @keyup.esc="clearSearch()"
-      ></v-text-field>
     </v-app-bar>
     <v-row>
       <v-col>
@@ -31,15 +19,21 @@
         >
       </v-col>
     </v-row>
-    <v-row>
+    <v-row dense no-gutters>
+      <WorkDays v-on:error="displayAlert"></WorkDays>
+    </v-row>
+    <v-row dense>
       <v-col>
         <Tickets v-on:error="displayAlert"></Tickets>
       </v-col>
       <v-col>
         <Todos v-on:error="displayAlert"></Todos>
       </v-col>
+      <v-col>
+        <Notes v-on:error="displayAlert"></Notes>
+      </v-col>
     </v-row>
-    <v-row>
+    <v-row dense>
       <v-col>
         <LogEntries v-on:error="displayAlert"></LogEntries>
       </v-col>
@@ -57,14 +51,16 @@ import Mousetrap from 'mousetrap'
 
 import Countdowns from './Home/Countdowns'
 import LogEntries from './Home/LogEntries'
+import Notes from './Home/Notes'
 import Tickets from './Home/Tickets'
 import Todos from './Home/Todos'
+import WorkDays from './Home/WorkDays'
 
 import Format from '../lib/Format'
 
 export default {
   name: 'home',
-  components: { Countdowns, LogEntries, Tickets, Todos },
+  components: { Countdowns, LogEntries, Notes, Tickets, Todos, WorkDays },
 
   mounted: function () {
     this.bindShortcutKeys()

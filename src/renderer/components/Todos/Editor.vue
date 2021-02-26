@@ -235,6 +235,9 @@
 import Moment from 'moment'
 import Format from '../../lib/Format'
 import Constants from '../../lib/Constants'
+import RestClient from '../../lib/RestClient'
+
+const TagClient = new RestClient('tags')
 
 export default {
   name: 'todo-editor',
@@ -278,13 +281,11 @@ export default {
     loadTags: function () {
       var self = this
 
-      this.$http.get(`http://127.0.0.1:4242/tags/`)
-        .then(resp => {
+      TagClient.fetch({}, '/', {
+        onSuccess: (resp) => {
           self.allTags = resp.data.tags.map(tag => tag.name)
-        })
-        .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
-        })
+        }
+      })
     },
 
     save: function (markComplete = false) {
@@ -298,20 +299,10 @@ export default {
           this.todo.completed_at = Moment().unix()
         }
 
-        var request = null
-        if (this.todo.id) {
-          request = this.$http.put(`http://127.0.0.1:4242/todos/${this.todo.id}`, this.todo)
-        } else {
-          request = this.$http.post('http://127.0.0.1:4242/todos/', this.todo)
-        }
-
-        request
-          .then(resp => {
-            self.close()
-          })
-          .catch(err => {
-            self.errorMsg = err
-          })
+        this.todo.save({
+          onSuccess: (resp) => { self.close() },
+          onError: (err) => { this.errorMsg = err }
+        })
       } else {
         this.errorMsg = 'Please fill in the required fields.'
       }

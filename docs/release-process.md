@@ -5,12 +5,14 @@
    - Version
    - Release Date
    - Entry Contents
-2. `git commit -a`
-3. Squash commits, if desired.
-4. GitHub: Create PR from working branch --> `master`
-5. GitHub: Merge PR to `master`
-6. `git checkout master`
-7. `git up origin`
-8.  `npm version <patch|minor|fullVersion>` (As appropriate)
-9.  `git push origin master`
-10. `git push --tags`
+2. Update package.json
+   - codename
+3. `git commit -a`
+4. Squash commits, if desired.
+5. GitHub: Create PR from working branch --> `master`
+6. GitHub: Merge PR to `master`
+7. `git checkout master`
+8. `git up origin`
+9.  `npm version <patch|minor|fullVersion>` (As appropriate)
+10. `git push origin master`
+11. `git push --tags`

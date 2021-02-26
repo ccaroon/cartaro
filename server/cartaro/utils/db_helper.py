@@ -1,7 +1,6 @@
 import sys
 
-class Util:
-
+class DbHelper:
     __DEFAULT_SORT_VALUE = {
         int: sys.maxsize * -1,
         str: '',
@@ -26,7 +25,7 @@ class Util:
                     break
 
             types.append(attr_type)
-        
+
         return types
 
     @classmethod
@@ -50,3 +49,29 @@ class Util:
 
         # As New List
         return sorted(items, key=key_smith, reverse=reverse)
+
+    # Used to do integer comparisons via the Tinydb.Query.test() method.
+    # This is used b/c is solves the problem of being able to compare values
+    # when a db field's value can be None (null).
+    # If the db_val is None assume no match/False.
+    # Without this (using straight TinyDb) you will get this error if the db
+    # field contains null/None:
+    #   => 'TypeError: '>' not supported between instances of 'NoneType' and 'int'
+    @staticmethod
+    def cmp_integer(doc_val, op, test_val):
+        result = False
+        if doc_val is not None:
+            if op == 'ne':
+                result = doc_val != test_val
+            elif op == 'gt':
+                result = doc_val > test_val
+            elif op == 'gte':
+                result = doc_val >= test_val
+            elif op == 'lt':
+                result = doc_val < test_val
+            elif op == 'lte':
+                result = doc_val <= test_val
+            else:
+                result = doc_val == test_val
+
+        return result

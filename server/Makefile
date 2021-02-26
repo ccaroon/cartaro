@@ -61,7 +61,7 @@ clean:
 	rm -rf .coverage coverage.xml cover/
 	rm -f cartaro-server.zip
 
-real-clean: clean
+dist-clean: clean
 	rm -rf dist/
 
 .PHONY: test test-file cover cover-file dev package clean

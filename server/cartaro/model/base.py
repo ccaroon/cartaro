@@ -10,7 +10,7 @@ from datetime import datetime
 from tinydb import TinyDB, Query
 import tinydb.operations as tyops
 
-from cartaro.utils.util import Util
+from cartaro.utils.db_helper import DbHelper
 # ------------------------------------------------------------------------------
 # Configure JSONEncoder to look for "serialize" method when serializing classes
 # ------------------------------------------------------------------------------
@@ -189,7 +189,7 @@ class Base(ABC):
         docs = cls._database().all()
         # sort_by: attr1,attr2,attr3:asc|desc
         if sort_by:
-            docs = Util.sort(docs, sort_by)
+            docs = DbHelper.sort(docs, sort_by)
 
         # Want ALL docs
         # TODO: Invert this condition and remove the else
@@ -224,24 +224,38 @@ class Base(ABC):
         query_builder = Query()
 
         for (field, value) in kwargs.items():
+            # field=value
+            # field=cmp:value
+            # cmp can be eq|ne|gt|gte|lt|lte
+            # NOTE: Currently `cmp` only valid for numeric searches
+            parts = value.split(':', 2)
+            if len(parts) == 1:
+                test_op = 'eq'
+                test_value = parts[0]
+            elif len(parts) >= 2:
+                test_op = parts[0]
+                test_value = parts[1]
+
             if field == 'tags':
                 # NOTE: Does not normalize tags for searching
-                tags = value.replace(" ", "").split(',')
+                tags = test_value.replace(" ", "").split(',')
                 query_parts.append(query_builder['tags'].any(tags))
             else:
                 # Can search in boolean, int and string fields
-                test_value = value
-                if re.match("(true|false)", value, flags=re.IGNORECASE):
-                    test_value = True if value.lower() == 'true' else False
-                    query_parts.append(query_builder[field] == test_value)
-                elif value.isdecimal():
-                    test_value = int(value)
-                    query_parts.append(query_builder[field] == test_value)
+                query_value = test_value
+                if re.match("(true|false)", query_value, flags=re.IGNORECASE):
+                    query_value = True if query_value.lower() == 'true' else False
+                    query_parts.append(query_builder[field] == query_value)
+                elif query_value.isdecimal():
+                    query_value = int(query_value)
+                    query_parts.append(query_builder[field].test(DbHelper.cmp_integer, test_op, query_value))
+                elif query_value == 'null':
+                    query_parts.append(query_builder[field] == None)
                 else:
-                    # Assume value is a string
+                    # Assume query_value is a string
                     query_parts.append(
                         query_builder[field].search(
-                            test_value, 
+                            query_value,
                             flags=re.IGNORECASE
                         )
                     )
@@ -257,7 +271,7 @@ class Base(ABC):
         docs = cls._database().search(query)
         if sort_by:
             # sort_by: attr1,attr2,attr3:asc|desc
-            docs = Util.sort(docs, sort_by)
+            docs = DbHelper.sort(docs, sort_by)
 
         objs = []
         for doc in docs:
