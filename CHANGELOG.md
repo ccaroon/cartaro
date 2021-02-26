@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## UNRELEASED: v1.1.0 - TBA - 2021-??-??
+## v1.1.0 - Scylax - 2021-02-26
 ### Added
 * Ability to rekey encrypted Secrets (`server/bin/rekey-secrets.py`)
 * UI now has access to the config file
