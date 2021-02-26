@@ -54,6 +54,7 @@ function initApp () {
 }
 
 function quitApp () {
+  logger.info(`Shutting Down! Server PID: [${backendServer.pid}]`)
   mainWindow = null
   backendServer.kill()
   app.quit()
