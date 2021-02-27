@@ -187,6 +187,7 @@ import Mousetrap from 'mousetrap'
 
 import Constants from '../lib/Constants'
 import Format from '../lib/Format'
+import Notification from '../lib/Notification'
 import Utils from '../lib/Utils'
 
 import Actions from './Shared/Actions'
@@ -304,7 +305,9 @@ export default {
           self.totalDays = totalCount
           self.workDays = days
         },
-        onError: null
+        onError: (err) => {
+          Notification.error(err.toString())
+        }
       })
     },
 
@@ -322,7 +325,9 @@ export default {
           self.totalDays = WEEKS_TO_SHOW * DAYS_PER_WEEK
           self.workDays = days
         },
-        onError: null
+        onError: (err) => {
+          Notification.error(err.toString())
+        }
       })
     },
 
@@ -367,17 +372,13 @@ export default {
       workDay.time_out = '00:00'
     },
 
-    save: function (workDay, dryRun = false) {
-      if (dryRun) {
-        console.log(workDay)
-      } else {
-        this.$http.put(`http://127.0.0.1:4242/work_days/${workDay.id}`, workDay)
-          .then(resp => {
-          })
-          .catch(err => {
-            console.log(`${err.response.status} - ${err.response.data.error}`)
-          })
-      }
+    save: function (workDay) {
+      this.$http.put(`http://127.0.0.1:4242/work_days/${workDay.id}`, workDay)
+        .then(resp => {
+        })
+        .catch(err => {
+          Notification.error(err.toString())
+        })
     },
 
     remove: function (workDay) {
@@ -397,7 +398,7 @@ export default {
             self.load()
           })
           .catch(err => {
-            console.log(`${err.response.status} - ${err.response.data.error}`)
+            Notification.error(err.toString())
           })
       }
     },

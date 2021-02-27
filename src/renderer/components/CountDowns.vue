@@ -205,6 +205,7 @@ import Mousetrap from 'mousetrap'
 
 import Constants from '../lib/Constants'
 import Format from '../lib/Format'
+import Notification from '../lib/Notification'
 
 import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
@@ -262,7 +263,7 @@ export default {
           })
         })
         .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
+          Notification.error(err.toString())
         })
     },
 
@@ -279,7 +280,7 @@ export default {
           this.load()
         })
         .catch(err => {
-          console.log(`Error creating CountDown: ${err}`)
+          Notification.error(`Error creating CountDown: ${err}`)
         })
     },
 
@@ -342,7 +343,7 @@ export default {
           self.load()
         })
         .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
+          Notification.error(err.toString())
         })
     },
 
@@ -357,7 +358,7 @@ export default {
             self.load()
           })
           .catch(err => {
-            console.log(`${err.response.status} - ${err.response.data.error}`)
+            Notification.error(err.toString())
           })
       }
     },

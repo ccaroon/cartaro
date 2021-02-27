@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, dialog, Menu, BrowserWindow } from 'electron'
+import { app, dialog, ipcMain, Menu, BrowserWindow } from 'electron'
 import Config from './config'
 import Winston from 'winston'
 
@@ -51,6 +51,10 @@ function initApp () {
   if (!fs.existsSync(Config.dataPath)) {
     fs.mkdirSync(Config.dataPath, '0750')
   }
+
+  ipcMain.on('app-show-notification', (event, args) => {
+    mainWindow.webContents.send('app-show-notification', args)
+  })
 }
 
 function quitApp () {
@@ -66,7 +70,9 @@ function createMenu () {
   var aboutSubMenu = {
     label: 'About Ĉartaro',
     accelerator: mainMetaKey + '+?',
-    click: () => BrowserWindow.getFocusedWindow().webContents.send('menu-help-about')
+    click: () => {
+      BrowserWindow.getFocusedWindow().webContents.send('menu-help-about')
+    }
   }
 
   // var settingsSubMenu = {

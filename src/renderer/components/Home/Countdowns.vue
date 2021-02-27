@@ -19,6 +19,7 @@
 </template>
 <script>
 import Format from '../../lib/Format'
+import Notification from '../../lib/Notification'
 
 export default {
   name: 'home-countdowns',
@@ -38,7 +39,7 @@ export default {
           self.countDowns = resp.data.count_downs
         })
         .catch(err => {
-          self.$emit('error', 'error', `Countdowns: ${err.response.status} - ${err.response.data.error.substring(0, 120)}`)
+          Notification.error(`Countdowns: ${err}`)
         })
     }
   },

@@ -42,8 +42,9 @@
   </v-sheet>
 </template>
 <script>
-import Utils from '../../lib/Utils'
 import Constants from '../../lib/Constants'
+import Notification from '../../lib/Notification'
+import Utils from '../../lib/Utils'
 
 export default {
   name: 'home-tickets',
@@ -62,7 +63,7 @@ export default {
           self.tickets = resp.data.results
         })
         .catch(err => {
-          self.$emit('error', 'error', `Tickets: ${err.response.status} - ${err.response.data.error.substring(0, 120)}`)
+          Notification.error(`Tickets: ${err}`)
         })
     },
 

@@ -81,6 +81,8 @@
 </template>
 
 <script>
+import Notification from '../../lib/Notification'
+
 export default {
   name: 'note-editor',
   components: { },
@@ -99,7 +101,7 @@ export default {
           self.allTags = resp.data.tags.map(tag => tag.name)
         })
         .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
+          Notification.error(err.toString())
         })
     },
 
@@ -120,7 +122,7 @@ export default {
             self.close()
           })
           .catch(err => {
-            self.errorMsg = err
+            Notification.error(err.toString())
           })
       } else {
         this.errorMsg = 'Please fill in the required fields.'
@@ -133,7 +135,6 @@ export default {
     },
 
     close: function () {
-      // this.$emit('input', false)
       this.cleanup()
       this.$emit('close')
     },

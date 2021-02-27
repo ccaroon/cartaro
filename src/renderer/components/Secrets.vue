@@ -83,6 +83,7 @@ import Mousetrap from 'mousetrap'
 import Constants from '../lib/Constants'
 import Crypto from '../lib/Crypto'
 import Format from '../lib/Format'
+import Notification from '../lib/Notification'
 import Utils from '../lib/Utils'
 
 import Actions from './Shared/Actions'
@@ -144,7 +145,7 @@ export default {
           })
         })
         .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
+          Notification.error(err.toString())
         })
     },
 
@@ -202,7 +203,7 @@ export default {
             self.load()
           })
           .catch(err => {
-            console.log(`${err.response.status} - ${err.response.data.error}`)
+            Notification.error(err.toString())
           })
       }
     },

@@ -6,48 +6,35 @@
       <v-spacer></v-spacer>
       {{ format.formatDate(Date.now(), "dddd MMM Do, YYYY") }}
     </v-app-bar>
-    <v-row>
-      <v-col>
-        <v-alert
-          v-model="showAlert"
-          colored-border
-          :type="alertType"
-          border="left"
-          dismissible
-          max-width="95%"
-          >{{ alertMsg }}</v-alert
-        >
-      </v-col>
-    </v-row>
     <v-row dense no-gutters>
-      <WorkDays v-on:error="displayAlert"></WorkDays>
+      <WorkDays></WorkDays>
     </v-row>
     <v-row dense>
       <v-col>
-        <Tickets v-on:error="displayAlert"></Tickets>
+        <Tickets></Tickets>
       </v-col>
       <v-col>
-        <Todos v-on:error="displayAlert"></Todos>
+        <Todos></Todos>
       </v-col>
       <v-col>
-        <Notes v-on:error="displayAlert"></Notes>
+        <Notes></Notes>
       </v-col>
     </v-row>
     <v-row dense>
       <v-col>
-        <LogEntries v-on:error="displayAlert"></LogEntries>
+        <LogEntries></LogEntries>
       </v-col>
     </v-row>
     <v-row>
       <v-col>
-        <Countdowns v-on:error="displayAlert"></Countdowns>
+        <Countdowns></Countdowns>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import Mousetrap from 'mousetrap'
+// import Mousetrap from 'mousetrap'
 
 import Countdowns from './Home/Countdowns'
 import LogEntries from './Home/LogEntries'
@@ -67,38 +54,11 @@ export default {
   },
 
   methods: {
-    bindShortcutKeys: function () {
-      var self = this
-
-      Mousetrap.bind(['ctrl+f', 'command+f'], () => {
-        self.$refs.searchBox.focus()
-        return false
-      })
-    },
-
-    displayAlert: function (type, msg) {
-      this.alertType = type
-      this.alertMsg = msg
-      this.showAlert = true
-    },
-
-    search: function () {},
-
-    clearSearch: function () {
-      if (this.searchText) {
-        this.searchText = null
-      }
-
-      this.$refs.searchBox.blur()
-    }
+    bindShortcutKeys: function () {}
   },
 
   data () {
     return {
-      showAlert: false,
-      alertType: null,
-      alertMsg: null,
-      searchText: null,
       format: Format
     }
   }

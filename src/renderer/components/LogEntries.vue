@@ -72,6 +72,7 @@ import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
 import LogEntryEditor from './LogEntries/Editor'
 import LogEntryViewer from './LogEntries/Viewer'
+import Notification from '../lib/Notification'
 import Tags from './Shared/Tags'
 
 export default {
@@ -123,7 +124,7 @@ export default {
           self.logEntries = resp.data.log_entries
         })
         .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
+          Notification.error(err.toString())
         })
     },
 
@@ -160,7 +161,7 @@ export default {
             self.load()
           })
           .catch(err => {
-            console.log(`${err.response.status} - ${err.response.data.error}`)
+            Notification.error(err.toString())
           })
       }
     },

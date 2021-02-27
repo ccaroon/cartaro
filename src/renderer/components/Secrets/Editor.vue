@@ -121,6 +121,7 @@
 
 <script>
 import Constants from '../../lib/Constants'
+import Notification from '../../lib/Notification'
 
 export default {
   name: 'secret-editor',
@@ -157,7 +158,7 @@ export default {
           self.allTags = resp.data.tags.map(tag => tag.name)
         })
         .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
+          Notification.error(err.toString())
         })
     },
 
@@ -191,7 +192,7 @@ export default {
             self.close()
           })
           .catch(err => {
-            self.errorMsg = err
+            Notification.error(err.toString())
           })
       } else {
         this.errorMsg = 'Please fill in the required fields.'

@@ -137,9 +137,7 @@
 <script>
 import Moment from 'moment'
 import Format from '../../lib/Format'
-
-// TODO: Don't hardcode Jira Location -- Get from Configs (when they get implemented)
-// const jiraBrowseURL = 'https://jira.cengage.com/browse/'
+import Notification from '../../lib/Notification'
 
 export default {
   name: 'logEntry-editor',
@@ -172,7 +170,7 @@ export default {
           self.jiraTickets = resp.data.results
         })
         .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
+          Notification.error(err.toString())
         })
     },
 
@@ -184,25 +182,14 @@ export default {
           self.allTags = resp.data.tags.map(tag => tag.name)
         })
         .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
+          Notification.error(err.toString())
         })
     },
-
-    // fixTicket: function () {
-    //   if (this.logEntry.category === 'Ticket') {
-    //     var ticket = this.logEntry.ticket_link.replace(jiraBrowseURL, '')
-    //     this.logEntry.ticket_link = `${jiraBrowseURL}${ticket}`
-    //   } else {
-    //     this.logEntry.ticket_link = null
-    //   }
-    // },
 
     save: function () {
       var self = this
 
       if (this.$refs.logEntryForm.validate()) {
-        // this.fixTicket()
-
         var request = null
         if (this.logEntry.id) {
           request = this.$http.put(`http://127.0.0.1:4242/log_entries/${this.logEntry.id}`, this.logEntry)

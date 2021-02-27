@@ -61,6 +61,7 @@ import Mousetrap from 'mousetrap'
 
 import Constants from '../lib/Constants'
 import Format from '../lib/Format'
+import Notification from '../lib/Notification'
 
 import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
@@ -117,7 +118,7 @@ export default {
           self.notes = resp.data.notes
         })
         .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
+          Notification.error(err.toString())
         })
     },
 
@@ -146,7 +147,7 @@ export default {
             self.load()
           })
           .catch(err => {
-            console.log(`${err.response.status} - ${err.response.data.error}`)
+            Notification.error(err.toString())
           })
       }
     },

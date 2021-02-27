@@ -60,6 +60,7 @@ import LogEntryEditor from '../LogEntries/Editor'
 
 import Constants from '../../lib/Constants'
 import Format from '../../lib/Format'
+import Notification from '../../lib/Notification'
 import Utils from '../../lib/Utils'
 
 export default {
@@ -98,7 +99,7 @@ export default {
           self.logEntries = resp.data.log_entries
         })
         .catch(err => {
-          self.$emit('error', 'error', `Log Entries: ${err.response.status} - ${err.response.data.error.substring(0, 120)}`)
+          Notification.error(`Log Entries: ${err}`)
         })
     },
 

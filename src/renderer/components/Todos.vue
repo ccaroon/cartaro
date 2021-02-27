@@ -79,8 +79,8 @@ import Mousetrap from 'mousetrap'
 
 import { Todo, fetchTodos } from '../models/Todo'
 
-// import Constants from '../lib/Constants'
 import Format from '../lib/Format'
+import Notification from '../lib/Notification'
 import Utils from '../lib/Utils'
 
 import Actions from './Shared/Actions'
@@ -139,18 +139,23 @@ export default {
       }
 
       fetchTodos(query, {
-        onSuccess: function (todos, totalCount) {
+        onSuccess: (todos, totalCount) => {
           self.totalTodos = totalCount
           self.todos = todos
         },
-        onError: null
+        onError: (err) => {
+          Notification.error(err.toString())
+        }
       })
     },
 
     toggleCompleted: async function (todo) {
       await todo.toggleCompleted()
       todo.save({
-        onSuccess: (resp) => { this.refresh() }
+        onSuccess: (resp) => { this.refresh() },
+        onError: (err) => {
+          Notification.error(err.toString())
+        }
       })
     },
 
@@ -178,7 +183,9 @@ export default {
       if (doDelete) {
         todo.delete({
           onSuccess: (resp) => { this.refresh() },
-          onError: null
+          onError: (err) => {
+            Notification.error(err.toString())
+          }
         })
       }
     },

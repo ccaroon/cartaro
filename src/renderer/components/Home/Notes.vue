@@ -43,13 +43,12 @@
   </div>
 </template>
 <script>
-// import Moment from 'moment'
-
 import NoteEditor from '../Notes/Editor'
 import NoteViewer from '../Notes/Viewer'
 
 import Constants from '../../lib/Constants'
 import Format from '../../lib/Format'
+import Notification from '../../lib/Notification'
 import Utils from '../../lib/Utils'
 
 export default {
@@ -90,7 +89,7 @@ export default {
           self.notes = resp.data.notes
         })
         .catch(err => {
-          self.$emit('error', 'error', `Notes: ${err.response.status} - ${err.response.data.error.substring(0, 120)}`)
+          Notification.error(`Notes: ${err}`)
         })
     }
   },

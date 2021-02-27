@@ -54,6 +54,7 @@ import Moment from 'moment'
 
 import Constants from '../../lib/Constants'
 import Format from '../../lib/Format'
+import Notification from '../../lib/Notification'
 import Utils from '../../lib/Utils'
 
 import TodoEditor from '../Todos/Editor'
@@ -95,7 +96,7 @@ export default {
           self.todos = todos
         },
         onError: (err) => {
-          self.$emit('error', 'error', `Todos: ${err.response.status} - ${err.response.data.error.substring(0, 120)}`)
+          Notification.error(`Todos: ${err}`)
         }
       })
     },

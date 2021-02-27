@@ -39,6 +39,7 @@ import Moment from 'moment'
 
 import Constants from '../../lib/Constants'
 import Format from '../../lib/Format'
+import Notification from '../../lib/Notification'
 import Utils from '../../lib/Utils'
 
 import { fetchWorkDays } from '../../models/WorkDay'
@@ -68,7 +69,7 @@ export default {
           self.workDays = days
         },
         onError: function (err) {
-          self.$emit('error', 'error', `WorkDays: ${err.response.status} - ${err.response.data.error.substring(0, 120)}`)
+          Notification.error(`WorkDays: ${err}`)
         }
       })
     },
