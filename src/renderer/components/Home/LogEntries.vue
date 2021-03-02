@@ -5,6 +5,11 @@
       v-bind:logEntry="logEntry"
       v-on:close="closeEditor"
     ></LogEntryEditor>
+    <LogEntryViewer
+      v-model="showViewer"
+      v-bind:logEntry="logEntry"
+      v-on:close="showViewer = false"
+    ></LogEntryViewer>
     <v-card>
       <v-card-title :class="constants.COLORS.GREY"
         >Log Entries
@@ -15,29 +20,23 @@
         <template v-slot:default="{ index, item }">
           <v-list-item
             :class="rowColor(item, index)"
-            @click="editEntry(item)"
+            @click="viewEntry(item)"
             dense
           >
             <v-list-item-icon>
-              <v-btn
-                fab
-                x-small
+              <v-icon
                 v-if="item.ticket_link"
                 @click.stop="utils.openLink('Jira', item.ticket_link)"
+                color="blue"
+                >mdi-{{
+                  constants.ICONS.logEntries[item.category.toLowerCase()]
+                }}</v-icon
               >
-                <v-icon color="grey darken-1"
-                  >mdi-{{
-                    constants.ICONS.logEntries[item.category.toLowerCase()]
-                  }}</v-icon
-                >
-              </v-btn>
-              <v-btn fab x-small plain v-else>
-                <v-icon
-                  >mdi-{{
-                    constants.ICONS.logEntries[item.category.toLowerCase()]
-                  }}</v-icon
-                >
-              </v-btn>
+              <v-icon v-else
+                >mdi-{{
+                  constants.ICONS.logEntries[item.category.toLowerCase()]
+                }}</v-icon
+              >
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
@@ -47,6 +46,13 @@
                 {{ format.formatDate(item.logged_at * 1000, "ddd") }}
               </v-list-item-subtitle>
             </v-list-item-content>
+            <v-list-item-icon>
+              <v-btn x-small icon outlined>
+                <v-icon small outline @click.stop="editEntry(item)"
+                  >mdi-pencil</v-icon
+                >
+              </v-btn>
+            </v-list-item-icon>
           </v-list-item>
         </template>
       </v-virtual-scroll>
@@ -57,6 +63,7 @@
 import Moment from 'moment'
 
 import LogEntryEditor from '../LogEntries/Editor'
+import LogEntryViewer from '../LogEntries/Viewer'
 
 import Constants from '../../lib/Constants'
 import Format from '../../lib/Format'
@@ -65,7 +72,7 @@ import Utils from '../../lib/Utils'
 
 export default {
   name: 'home-log-entries',
-  components: { LogEntryEditor },
+  components: { LogEntryEditor, LogEntryViewer },
 
   mounted: function () {
     this.loadEntries()
@@ -87,6 +94,11 @@ export default {
     closeEditor: function () {
       this.showEditor = false
       this.loadEntries()
+    },
+
+    viewEntry: function (entry) {
+      this.logEntry = entry
+      this.showViewer = true
     },
 
     loadEntries: function () {
@@ -122,6 +134,7 @@ export default {
       logEntries: [],
       logEntry: {},
       showEditor: false,
+      showViewer: false,
       constants: Constants,
       format: Format,
       utils: Utils

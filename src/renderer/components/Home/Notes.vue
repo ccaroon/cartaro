@@ -24,9 +24,7 @@
             dense
           >
             <v-list-item-icon>
-              <v-icon @click.stop="editNote(item)"
-                >mdi-file-edit-outline</v-icon
-              >
+              <v-icon>mdi-note</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
@@ -36,6 +34,11 @@
                 {{ format.formatDateTime(item.created_at * 1000) }}
               </v-list-item-subtitle>
             </v-list-item-content>
+            <v-list-item-icon>
+              <v-btn x-small icon outlined>
+                <v-icon small @click.stop="editNote(item)">mdi-pencil</v-icon>
+              </v-btn>
+            </v-list-item-icon>
           </v-list-item>
         </template>
       </v-virtual-scroll>

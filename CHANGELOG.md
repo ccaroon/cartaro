@@ -4,9 +4,15 @@
 ### Added
 * Electron main process now logs to `DOCUMENTS/CartaroLog.json`
   - Includes STDOUT/STDERR from backend python server process.
+* Added App wide notification system
 
 ### Changed
-...
+* Added the ability to edit and view LogEntries from the home page
+  - Edit was already available
+  - Added View as the default action
+* Made edit & view actions consistent across Home screen components.
+  - Click row to view
+  - Click "new" edit icon to edit
 
 ### Fixed
 ...
