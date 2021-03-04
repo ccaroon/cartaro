@@ -158,7 +158,7 @@ export default {
           self.allTags = resp.data.tags.map(tag => tag.name)
         })
         .catch(err => {
-          Notification.error(err.toString())
+          Notification.error(`SE.Editor.loadTags: ${err.toString()}`)
         })
     },
 
@@ -192,7 +192,7 @@ export default {
             self.close()
           })
           .catch(err => {
-            Notification.error(err.toString())
+            Notification.error(`SE.Editor.save: ${err.toString()}`)
           })
       } else {
         this.errorMsg = 'Please fill in the required fields.'

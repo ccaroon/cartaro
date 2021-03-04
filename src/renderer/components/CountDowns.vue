@@ -263,7 +263,7 @@ export default {
           })
         })
         .catch(err => {
-          Notification.error(err.toString())
+          Notification.error(`CD.Main.load: ${err.toString()}`)
         })
     },
 
@@ -280,7 +280,7 @@ export default {
           this.load()
         })
         .catch(err => {
-          Notification.error(`Error creating CountDown: ${err}`)
+          Notification.error(`CD.Main.newCountDown: ${err}`)
         })
     },
 
@@ -343,7 +343,7 @@ export default {
           self.load()
         })
         .catch(err => {
-          Notification.error(err.toString())
+          Notification.error(`CD.Main.save: ${err.toString()}`)
         })
     },
 
@@ -358,7 +358,7 @@ export default {
             self.load()
           })
           .catch(err => {
-            Notification.error(err.toString())
+            Notification.error(`CD.Main.remove: ${err.toString()}`)
           })
       }
     },

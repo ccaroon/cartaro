@@ -13,6 +13,7 @@
 * Made edit & view actions consistent across Home screen components.
   - Click row to view
   - Click "new" edit icon to edit
+* Better `Notifcation.error()` messages so that the source can be identified.
 
 ### Fixed
 ...

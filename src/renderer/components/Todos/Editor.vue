@@ -235,6 +235,7 @@
 import Moment from 'moment'
 import Format from '../../lib/Format'
 import Constants from '../../lib/Constants'
+import Notification from '../../lib/Notification'
 import RestClient from '../../lib/RestClient'
 
 const TagClient = new RestClient('tags')
@@ -284,6 +285,9 @@ export default {
       TagClient.fetch({}, '/', {
         onSuccess: (resp) => {
           self.allTags = resp.data.tags.map(tag => tag.name)
+        },
+        onError: (err) => {
+          Notification.error(`TD.Editor.loadTags: ${err.toString()}`)
         }
       })
     },

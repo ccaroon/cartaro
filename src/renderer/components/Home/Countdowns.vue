@@ -39,7 +39,7 @@ export default {
           self.countDowns = resp.data.count_downs
         })
         .catch(err => {
-          Notification.error(`Countdowns: ${err}`)
+          Notification.error(`HM.CntDwn.loadCountDowns: ${err}`)
         })
     }
   },

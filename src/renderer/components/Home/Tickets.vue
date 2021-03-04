@@ -63,7 +63,7 @@ export default {
           self.tickets = resp.data.results
         })
         .catch(err => {
-          Notification.error(`Tickets: ${err}`)
+          Notification.error(`HM.Tickts.loadTickets: ${err}`)
         })
     },
 

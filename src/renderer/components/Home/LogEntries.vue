@@ -111,7 +111,7 @@ export default {
           self.logEntries = resp.data.log_entries
         })
         .catch(err => {
-          Notification.error(`Log Entries: ${err}`)
+          Notification.error(`HM.LogEnt.loadEntries: ${err}`)
         })
     },
 

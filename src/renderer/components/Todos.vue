@@ -144,7 +144,7 @@ export default {
           self.todos = todos
         },
         onError: (err) => {
-          Notification.error(err.toString())
+          Notification.error(`TD.Main.load: ${err.toString()}`)
         }
       })
     },
@@ -154,7 +154,7 @@ export default {
       todo.save({
         onSuccess: (resp) => { this.refresh() },
         onError: (err) => {
-          Notification.error(err.toString())
+          Notification.error(`TD.Main.toggleCompleted: ${err.toString()}`)
         }
       })
     },
@@ -184,7 +184,7 @@ export default {
         todo.delete({
           onSuccess: (resp) => { this.refresh() },
           onError: (err) => {
-            Notification.error(err.toString())
+            Notification.error(`TD.Main.remove: ${err.toString()}`)
           }
         })
       }

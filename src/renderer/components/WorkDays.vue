@@ -306,7 +306,7 @@ export default {
           self.workDays = days
         },
         onError: (err) => {
-          Notification.error(err.toString())
+          Notification.error(`WD.Main.search: ${err.toString()}`)
         }
       })
     },
@@ -326,7 +326,7 @@ export default {
           self.workDays = days
         },
         onError: (err) => {
-          Notification.error(err.toString())
+          Notification.error(`WD.Main.loadWeek: ${err.toString()}`)
         }
       })
     },
@@ -377,7 +377,7 @@ export default {
         .then(resp => {
         })
         .catch(err => {
-          Notification.error(err.toString())
+          Notification.error(`WD.Main.save: ${err.toString()}`)
         })
     },
 
@@ -398,7 +398,7 @@ export default {
             self.load()
           })
           .catch(err => {
-            Notification.error(err.toString())
+            Notification.error(`WD.Main.remove: ${err.toString()}`)
           })
       }
     },

@@ -69,7 +69,7 @@ export default {
           self.workDays = days
         },
         onError: function (err) {
-          Notification.error(`WorkDays: ${err}`)
+          Notification.error(`HM.WDays.load: ${err}`)
         }
       })
     },

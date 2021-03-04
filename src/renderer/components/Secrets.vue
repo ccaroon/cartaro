@@ -145,7 +145,7 @@ export default {
           })
         })
         .catch(err => {
-          Notification.error(err.toString())
+          Notification.error(`SE.Main.load: ${err.toString()}`)
         })
     },
 
@@ -203,7 +203,7 @@ export default {
             self.load()
           })
           .catch(err => {
-            Notification.error(err.toString())
+            Notification.error(`SE.Main.remove: ${err.toString()}`)
           })
       }
     },

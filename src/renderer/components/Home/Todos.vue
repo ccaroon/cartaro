@@ -96,7 +96,7 @@ export default {
           self.todos = todos
         },
         onError: (err) => {
-          Notification.error(`Todos: ${err}`)
+          Notification.error(`HM.Todos.load: ${err}`)
         }
       })
     },

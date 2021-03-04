@@ -92,7 +92,7 @@ export default {
           self.notes = resp.data.notes
         })
         .catch(err => {
-          Notification.error(`Notes: ${err}`)
+          Notification.error(`HM.Notes.loadNotes: ${err}`)
         })
     }
   },

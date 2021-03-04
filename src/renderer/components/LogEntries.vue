@@ -124,7 +124,7 @@ export default {
           self.logEntries = resp.data.log_entries
         })
         .catch(err => {
-          Notification.error(err.toString())
+          Notification.error(`LE.Main.load: ${err.toString()}`)
         })
     },
 
@@ -161,7 +161,7 @@ export default {
             self.load()
           })
           .catch(err => {
-            Notification.error(err.toString())
+            Notification.error(`LE.Main.remove: ${err.toString()}`)
           })
       }
     },

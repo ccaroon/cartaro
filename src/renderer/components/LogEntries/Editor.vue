@@ -170,7 +170,7 @@ export default {
           self.jiraTickets = resp.data.results
         })
         .catch(err => {
-          Notification.error(err.toString())
+          Notification.error(`LE.Editor.loadTickets: ${err.toString()}`)
         })
     },
 
@@ -182,7 +182,7 @@ export default {
           self.allTags = resp.data.tags.map(tag => tag.name)
         })
         .catch(err => {
-          Notification.error(err.toString())
+          Notification.error(`LE.Editor.loadTags: ${err.toString()}`)
         })
     },
 

@@ -118,7 +118,7 @@ export default {
           self.notes = resp.data.notes
         })
         .catch(err => {
-          Notification.error(err.toString())
+          Notification.error(`NT.Main.load: ${err.toString()}`)
         })
     },
 
@@ -147,7 +147,7 @@ export default {
             self.load()
           })
           .catch(err => {
-            Notification.error(err.toString())
+            Notification.error(`NT.Main.remove: ${err.toString()}`)
           })
       }
     },
