@@ -81,14 +81,10 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-textarea
-                  label="Content"
-                  rows="17"
-                  outlined
-                  hide-details
-                  v-model="logEntry.content"
-                  :rules="rules.content"
-                ></v-textarea>
+                <Markdown
+                  :content="logEntry.content"
+                  @update="(newContent) => (logEntry.content = newContent)"
+                ></Markdown>
               </v-col>
             </v-row>
             <v-row>
@@ -139,9 +135,11 @@ import Moment from 'moment'
 import Format from '../../lib/Format'
 import Notification from '../../lib/Notification'
 
+import Markdown from '../Shared/Markdown'
+
 export default {
   name: 'logEntry-editor',
-  components: { },
+  components: { Markdown },
   props: ['logEntry', 'value'],
 
   mounted: function () {
@@ -247,6 +245,10 @@ export default {
           }
           this.jiraTickets.push(this.chosenTicket)
         }
+      }
+
+      if (!this.logEntry.content) {
+        this.logEntry.content = ''
       }
     },
     chosenTicket: function (newTicket) {

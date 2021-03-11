@@ -67,13 +67,10 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-textarea
-                  label="Notes"
-                  rows="5"
-                  outlined
-                  hide-details
-                  v-model="secret.note"
-                ></v-textarea>
+                <Markdown
+                  :content="secret.note"
+                  @update="(newContent) => (secret.note = newContent)"
+                ></Markdown>
               </v-col>
             </v-row>
             <v-row>
@@ -122,10 +119,11 @@
 <script>
 import Constants from '../../lib/Constants'
 import Notification from '../../lib/Notification'
+import Markdown from '../Shared/Markdown'
 
 export default {
   name: 'secret-editor',
-  components: { },
+  components: { Markdown },
   props: ['secret', 'decrypt', 'value'],
 
   mounted: function () {
@@ -221,6 +219,10 @@ export default {
       this._secretType = this.secret.type
       this.secret.data = this.decrypt(this.secret)
       this.secret.__encrypted = false
+
+      if (!this.secret.note) {
+        this.secret.note = ''
+      }
     }
   },
 
