@@ -88,14 +88,11 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-textarea
-                  label="Description"
-                  rows="5"
-                  outlined
-                  hide-details
-                  v-model="todo.description"
-                  :rules="rules.description"
-                ></v-textarea>
+                <Markdown
+                  :content="todo.description"
+                  @update="(newContent) => (todo.description = newContent)"
+                >
+                </Markdown>
               </v-col>
             </v-row>
             <v-row>
@@ -238,11 +235,13 @@ import Constants from '../../lib/Constants'
 import Notification from '../../lib/Notification'
 import RestClient from '../../lib/RestClient'
 
+import Markdown from '../Shared/Markdown'
+
 const TagClient = new RestClient('tags')
 
 export default {
   name: 'todo-editor',
-  components: { },
+  components: { Markdown },
   props: ['todo', 'value'],
 
   updated: function () {
@@ -352,6 +351,11 @@ export default {
         this.todo.due_at = Moment(`${this.dueDate} ${newTime}`, 'YYYY-MM-DD HH:mm').unix()
       } else {
         this.todo.due_at = Moment(`${this.dueDate} 00:00`, 'YYYY-MM-DD HH:mm').unix()
+      }
+    },
+    todo: function () {
+      if (!this.todo.description) {
+        this.todo.description = ''
       }
     }
   },

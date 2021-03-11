@@ -27,14 +27,10 @@
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-textarea
-                  label="Content"
-                  rows="17"
-                  outlined
-                  hide-details
-                  v-model="note.content"
-                  :rules="rules.content"
-                ></v-textarea>
+                <Markdown
+                  :content="note.content"
+                  @update="(newContent) => (note.content = newContent)"
+                ></Markdown>
               </v-col>
             </v-row>
             <v-row>
@@ -82,10 +78,11 @@
 
 <script>
 import Notification from '../../lib/Notification'
+import Markdown from '../Shared/Markdown'
 
 export default {
   name: 'note-editor',
-  components: { },
+  components: { Markdown },
   props: ['note', 'value'],
 
   mounted: function () {
@@ -144,6 +141,14 @@ export default {
       this.note.tags.splice(index, 1)
     }
 
+  },
+
+  watch: {
+    note: function () {
+      if (!this.note.content) {
+        this.note.content = ''
+      }
+    }
   },
 
   data () {
