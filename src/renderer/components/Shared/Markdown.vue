@@ -24,11 +24,11 @@
   import 'codemirror/addon/selection/active-line'
 
   // Themes
-  // import 'codemirror/theme/lesser-dark.css'
+  import 'codemirror/theme/lesser-dark.css'
   // import 'codemirror/theme/material-darker.css'
   // import 'codemirror/theme/material.css'
   // import 'codemirror/theme/panda-syntax.css'
-  import 'codemirror/theme/yonce.css'
+  // import 'codemirror/theme/yonce.css'
 
   export default {
     name: 'shared-markdown',
@@ -49,7 +49,7 @@
           lineNumbers: false,
           lineWrapping: false,
           mode: 'text/x-markdown',
-          theme: 'yonce'
+          theme: 'lesser-dark'
         }
       }
     }
