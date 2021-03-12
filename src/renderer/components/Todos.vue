@@ -77,7 +77,7 @@
 <script>
 import Mousetrap from 'mousetrap'
 
-import { Todo, fetchTodos } from '../models/Todo'
+import Todo from '../models/Todo'
 
 import Format from '../lib/Format'
 import Notification from '../lib/Notification'
@@ -138,13 +138,15 @@ export default {
         query.is_complete = false
       }
 
-      fetchTodos(query, {
-        onSuccess: (todos, totalCount) => {
-          self.totalTodos = totalCount
-          self.todos = todos
-        },
-        onError: (err) => {
-          Notification.error(`TD.Main.load: ${err.toString()}`)
+      Todo.fetch(query, {
+        handlers: {
+          onSuccess: (todos, totalCount) => {
+            self.totalTodos = totalCount
+            self.todos = todos
+          },
+          onError: (err) => {
+            Notification.error(`TD.Main.load: ${err.toString()}`)
+          }
         }
       })
     },
@@ -152,9 +154,11 @@ export default {
     toggleCompleted: async function (todo) {
       await todo.toggleCompleted()
       todo.save({
-        onSuccess: (resp) => { this.refresh() },
-        onError: (err) => {
-          Notification.error(`TD.Main.toggleCompleted: ${err.toString()}`)
+        handlers: {
+          onSuccess: (resp) => { this.refresh() },
+          onError: (err) => {
+            Notification.error(`TD.Main.toggleCompleted: ${err.toString()}`)
+          }
         }
       })
     },
@@ -182,9 +186,9 @@ export default {
 
       if (doDelete) {
         todo.delete({
-          onSuccess: (resp) => { this.refresh() },
-          onError: (err) => {
-            Notification.error(`TD.Main.remove: ${err.toString()}`)
+          handlers: {
+            onSuccess: (resp) => this.refresh(),
+            onError: (err) => Notification.error(`TD.Main.remove: ${err.toString()}`)
           }
         })
       }

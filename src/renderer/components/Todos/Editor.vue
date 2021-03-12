@@ -303,8 +303,10 @@ export default {
         }
 
         this.todo.save({
-          onSuccess: (resp) => { self.close() },
-          onError: (err) => { this.errorMsg = err }
+          handlers: {
+            onSuccess: (resp) => self.close(),
+            onError: (err) => { this.errorMsg = err }
+          }
         })
       } else {
         this.errorMsg = 'Please fill in the required fields.'

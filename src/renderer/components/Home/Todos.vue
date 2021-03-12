@@ -59,7 +59,7 @@ import Utils from '../../lib/Utils'
 
 import TodoEditor from '../Todos/Editor'
 
-import { Todo, fetchTodos } from '../../models/Todo'
+import Todo from '../../models/Todo'
 
 const DUE_WITHIN = 3
 
@@ -91,12 +91,14 @@ export default {
         sort_by: 'due_at,priority'
       }
 
-      fetchTodos(query, {
-        onSuccess: (todos, totalCount) => {
-          self.todos = todos
-        },
-        onError: (err) => {
-          Notification.error(`HM.Todos.load: ${err}`)
+      Todo.fetch(query, {
+        handlers: {
+          onSuccess: (todos, totalCount) => {
+            self.todos = todos
+          },
+          onError: (err) => {
+            Notification.error(`HM.Todos.load: ${err}`)
+          }
         }
       })
     },
@@ -104,7 +106,9 @@ export default {
     toggleCompleted: async function (todo) {
       await todo.toggleCompleted()
       todo.save({
-        onSuccess: (resp) => { this.load() }
+        handlers: {
+          onSuccess: (resp) => { this.load() }
+        }
       })
     },
 

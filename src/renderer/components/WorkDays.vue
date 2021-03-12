@@ -194,14 +194,10 @@ import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
 import Tags from './Shared/Tags'
 
-import { fetchWorkDays } from '../models/WorkDay'
+import WorkDay from '../models/WorkDay'
 
-// TODO: Move consts to WorkDay model
 const DAYS_PER_WEEK = 7
 const WEEKS_TO_SHOW = 5
-
-const DEFAULT_IN = '09:00'
-const DEFAULT_OUT = '16:30'
 
 export default {
   name: 'workDays-main',
@@ -300,13 +296,15 @@ export default {
         query.note = this.searchText
       }
 
-      fetchWorkDays(query, '/', {
-        onSuccess: function (days, totalCount) {
-          self.totalDays = totalCount
-          self.workDays = days
-        },
-        onError: (err) => {
-          Notification.error(`WD.Main.search: ${err.toString()}`)
+      WorkDay.fetch(query, '/', {
+        handlers: {
+          onSuccess: function (days, totalCount) {
+            self.totalDays = totalCount
+            self.workDays = days
+          },
+          onError: (err) => {
+            Notification.error(`WD.Main.search: ${err.toString()}`)
+          }
         }
       })
     },
@@ -320,28 +318,29 @@ export default {
         days: DAYS_PER_WEEK
       }
 
-      fetchWorkDays(query, '/range', {
-        onSuccess: function (days, totalCount) {
-          self.totalDays = WEEKS_TO_SHOW * DAYS_PER_WEEK
-          self.workDays = days
-        },
-        onError: (err) => {
-          Notification.error(`WD.Main.loadWeek: ${err.toString()}`)
+      WorkDay.fetch(query, '/range', {
+        handlers: {
+          onSuccess: function (days, totalCount) {
+            self.totalDays = WEEKS_TO_SHOW * DAYS_PER_WEEK
+            self.workDays = days
+          },
+          onError: (err) => {
+            Notification.error(`WD.Main.loadWeek: ${err.toString()}`)
+          }
         }
       })
     },
 
     newDay: function (day = Moment().startOf('week').add(1, 'day')) {
-      var workDay = {
-        date: null,
-        time_in: DEFAULT_IN,
-        time_out: DEFAULT_OUT,
+      var workDay = new WorkDay({
+        date: day.unix(),
+        time_in: WorkDay.DEFAULT_IN,
+        time_out: WorkDay.DEFAULT_OUT,
         note: null,
-        type: 'normal'
-      }
+        type: WorkDay.TYPE_NORMAL
+      })
 
-      workDay.date = day.unix()
-      return this.$http.post(`http://127.0.0.1:4242/work_days/`, workDay)
+      return workDay.save({ asPromise: true })
     },
 
     newWeek: async function () {
@@ -356,50 +355,37 @@ export default {
     },
 
     changeType: function (workDay) {
-      // TODO: Define type constants in WorkDay model
-      if (workDay.type !== 'normal') {
-        this.clearInOut(workDay)
+      if (workDay.type !== WorkDay.TYPE_NORMAL) {
+        workDay.clearInOut()
       } else {
-        workDay.time_in = DEFAULT_IN
-        workDay.time_out = DEFAULT_OUT
+        workDay.time_in = WorkDay.DEFAULT_IN
+        workDay.time_out = WorkDay.DEFAULT_OUT
       }
 
       this.save(workDay)
     },
 
-    clearInOut: function (workDay) {
-      workDay.time_in = '00:00'
-      workDay.time_out = '00:00'
-    },
-
     save: function (workDay) {
-      this.$http.put(`http://127.0.0.1:4242/work_days/${workDay.id}`, workDay)
-        .then(resp => {
-        })
-        .catch(err => {
-          Notification.error(`WD.Main.save: ${err.toString()}`)
-        })
+      workDay.save({
+        handlers: {
+          onSuccess: null,
+          onError: (err) => Notification.error(`WD.Main.save: ${err.toString()}`)
+        }
+      })
     },
 
     remove: function (workDay) {
       var self = this
-      var safe = 1
-      var msg = `Safe Delete "${this.displayName(workDay)}"?`
-
-      if (workDay.deleted_at) {
-        safe = 0
-        msg = `Delete "${this.displayName(workDay)}"?`
-      }
+      var msg = `Delete "${this.displaySubtitle(workDay)}"?`
 
       var doDelete = confirm(msg)
       if (doDelete) {
-        this.$http.delete(`http://127.0.0.1:4242/work_days/${workDay.id}?safe=${safe}`)
-          .then(resp => {
-            self.load()
-          })
-          .catch(err => {
-            Notification.error(`WD.Main.remove: ${err.toString()}`)
-          })
+        workDay.delete({
+          handlers: {
+            onSuccess: (resp) => self.load(),
+            onError: (err) => Notification.error(`WD.Main.remove: ${err.toString()}`)
+          }
+        })
       }
     },
 

@@ -42,7 +42,7 @@ import Format from '../../lib/Format'
 import Notification from '../../lib/Notification'
 import Utils from '../../lib/Utils'
 
-import { fetchWorkDays } from '../../models/WorkDay'
+import WorkDay from '../../models/WorkDay'
 
 export default {
   name: 'home-work-days',
@@ -64,12 +64,14 @@ export default {
         days: 7
       }
 
-      fetchWorkDays(query, '/range', {
-        onSuccess: function (days, totalCount) {
-          self.workDays = days
-        },
-        onError: function (err) {
-          Notification.error(`HM.WDays.load: ${err}`)
+      WorkDay.fetch(query, '/range', {
+        handlers: {
+          onSuccess: function (days, totalCount) {
+            self.workDays = days
+          },
+          onError: function (err) {
+            Notification.error(`HM.WDays.load: ${err}`)
+          }
         }
       })
     },
