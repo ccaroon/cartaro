@@ -1,10 +1,8 @@
 import Moment from 'moment'
 
-import RestClient from '../lib/RestClient'
+import Resource from './Resource'
 // -----------------------------------------------------------------------------
-class WorkDay {
-  static CLIENT = new RestClient('work_days')
-
+class WorkDay extends Resource {
   static DEFAULT_IN = '09:00'
   static DEFAULT_OUT = '16:30'
 
@@ -14,7 +12,7 @@ class WorkDay {
   static TYPE_HOLIDAY = 'holiday'
 
   constructor(data) {
-    Object.assign(this, data)
+    super('work_days', data)
   }
 
   hoursWorked () {
@@ -32,33 +30,6 @@ class WorkDay {
   clearInOut () {
     this.time_in = '00:00'
     this.time_out = '00:00'
-  }
-
-  save (options = {}) {
-    if (this.id) {
-      return WorkDay.CLIENT.update(this, options)
-    } else {
-      return WorkDay.CLIENT.create(this, options)
-    }
-  }
-
-  delete (options = {}) {
-    return WorkDay.CLIENT.delete(this, options)
-  }
-
-  static fetch (query, endpoint = '/', options = {}) {
-    return WorkDay.CLIENT.fetch(query, endpoint, {
-      handlers: {
-        onSuccess: (resp) => {
-          var workDays = []
-          resp.data.work_days.forEach(day => {
-            workDays.push(new WorkDay(day))
-          })
-          options.handlers.onSuccess(workDays, resp.data.total)
-        },
-        onError: options.handlers.onError
-      }
-    })
   }
 }
 // -----------------------------------------------------------------------------

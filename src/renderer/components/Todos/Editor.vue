@@ -282,11 +282,13 @@ export default {
       var self = this
 
       TagClient.fetch({}, '/', {
-        onSuccess: (resp) => {
-          self.allTags = resp.data.tags.map(tag => tag.name)
-        },
-        onError: (err) => {
-          Notification.error(`TD.Editor.loadTags: ${err.toString()}`)
+        handlers: {
+          onSuccess: (resp) => {
+            self.allTags = resp.data.tags.map(tag => tag.name)
+          },
+          onError: (err) => {
+            Notification.error(`TD.Editor.loadTags: ${err.toString()}`)
+          }
         }
       })
     },

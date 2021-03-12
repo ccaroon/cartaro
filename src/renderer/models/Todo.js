@@ -1,13 +1,11 @@
 import Moment from 'moment'
 
 import Constants from '../lib/Constants'
-import RestClient from '../lib/RestClient'
+import Resource from './Resource'
 // -----------------------------------------------------------------------------
-class Todo {
-  static CLIENT = new RestClient('todos')
-
+class Todo extends Resource {
   constructor(data) {
-    Object.assign(this, data)
+    super('todos', data)
   }
 
   markUncomplete () {
@@ -87,33 +85,6 @@ class Todo {
     }
 
     return color
-  }
-
-  save (options = {}) {
-    if (this.id) {
-      return Todo.CLIENT.update(this, options)
-    } else {
-      return Todo.CLIENT.create(this, options)
-    }
-  }
-
-  delete (options = {}) {
-    return Todo.CLIENT.delete(this, options)
-  }
-
-  static fetch (query, options) {
-    return Todo.CLIENT.fetch(query, '/', {
-      handlers: {
-        onSuccess: (resp) => {
-          var todos = []
-          resp.data.todos.forEach(todo => {
-            todos.push(new Todo(todo))
-          })
-          options.handlers.onSuccess(todos, resp.data.total)
-        },
-        onError: options.handlers.onError
-      }
-    })
   }
 }
 // -----------------------------------------------------------------------------

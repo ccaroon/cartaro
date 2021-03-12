@@ -91,7 +91,7 @@ export default {
         sort_by: 'due_at,priority'
       }
 
-      Todo.fetch(query, {
+      Todo.fetch(query, '/', {
         handlers: {
           onSuccess: (todos, totalCount) => {
             self.todos = todos
