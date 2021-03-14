@@ -2,20 +2,17 @@ import RestClient from '../lib/RestClient'
 // -----------------------------------------------------------------------------
 class Resource {
   static CLIENT = null
-  static NAME = null
 
-  constructor(resource, data) {
+  constructor(data) {
     Object.assign(this, data)
 
-    this.constructor.NAME = resource
     this.client = this.constructor.getClient()
-    console.log(`${resource} | ${this.constructor}`)
   }
 
   static getClient () {
     if (this.CLIENT === null) {
-      console.log(`Creating new RestClient(${this.NAME})`)
-      this.CLIENT = new RestClient(this.NAME)
+      console.log(`Creating new RestClient(${this.RESOURCE_NAME})`)
+      this.CLIENT = new RestClient(this.RESOURCE_NAME)
     }
     return this.CLIENT
   }

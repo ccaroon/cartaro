@@ -80,6 +80,8 @@
 import Notification from '../../lib/Notification'
 import Markdown from '../Shared/Markdown'
 
+import Tag from '../../models/Tag'
+
 export default {
   name: 'note-editor',
   components: { Markdown },
@@ -91,15 +93,10 @@ export default {
 
   methods: {
     loadTags: function () {
-      var self = this
-
-      this.$http.get(`http://127.0.0.1:4242/tags/`)
-        .then(resp => {
-          self.allTags = resp.data.tags.map(tag => tag.name)
-        })
-        .catch(err => {
-          Notification.error(`NT.Editor.loadTags: ${err.toString()}`)
-        })
+      Tag.loadAll({
+        onSuccess: (tags) => { this.allTags = tags },
+        onError: (err) => Notification.error(`NT.Editor.loadTags: ${err.toString()}`)
+      })
     },
 
     save: function () {

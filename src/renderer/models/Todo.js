@@ -4,9 +4,11 @@ import Constants from '../lib/Constants'
 import Resource from './Resource'
 // -----------------------------------------------------------------------------
 class Todo extends Resource {
-  constructor(data) {
-    super('todos', data)
-  }
+  static RESOURCE_NAME = 'todos'
+
+  // constructor(data) {
+  //   super(data)
+  // }
 
   markUncomplete () {
     if (this.repeat > 0) {
@@ -26,8 +28,10 @@ class Todo extends Resource {
         delete newTodo.id
         newTodo.due_at = Moment(this.due_at * 1000).add(this.repeat, 'days').unix()
         newTodo.save({
-          onSuccess: resolve,
-          onError: reject
+          handlers: {
+            onSuccess: resolve,
+            onError: reject
+          }
         })
       })
       promises.push(repeatDuper)

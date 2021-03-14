@@ -3,6 +3,8 @@ import Moment from 'moment'
 import Resource from './Resource'
 // -----------------------------------------------------------------------------
 class WorkDay extends Resource {
+  static RESOURCE_NAME = 'work_days'
+
   static DEFAULT_IN = '09:00'
   static DEFAULT_OUT = '16:30'
 
@@ -11,9 +13,9 @@ class WorkDay extends Resource {
   static TYPE_SICK = 'sick'
   static TYPE_HOLIDAY = 'holiday'
 
-  constructor(data) {
-    super('work_days', data)
-  }
+  // constructor(data) {
+  //   super(data)
+  // }
 
   hoursWorked () {
     var inTime = this.time_in.split(':')

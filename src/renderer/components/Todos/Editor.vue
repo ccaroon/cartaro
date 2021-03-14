@@ -233,11 +233,9 @@ import Moment from 'moment'
 import Format from '../../lib/Format'
 import Constants from '../../lib/Constants'
 import Notification from '../../lib/Notification'
-import RestClient from '../../lib/RestClient'
+import Tag from '../../models/Tag'
 
 import Markdown from '../Shared/Markdown'
-
-const TagClient = new RestClient('tags')
 
 export default {
   name: 'todo-editor',
@@ -279,17 +277,9 @@ export default {
 
   methods: {
     loadTags: function () {
-      var self = this
-
-      TagClient.fetch({}, '/', {
-        handlers: {
-          onSuccess: (resp) => {
-            self.allTags = resp.data.tags.map(tag => tag.name)
-          },
-          onError: (err) => {
-            Notification.error(`TD.Editor.loadTags: ${err.toString()}`)
-          }
-        }
+      Tag.loadAll({
+        onSuccess: (tags) => { this.allTags = tags },
+        onError: (err) => Notification.error(`TD.Editor.loadTags: ${err.toString()}`)
       })
     },
 

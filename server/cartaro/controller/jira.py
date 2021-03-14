@@ -23,18 +23,22 @@ def search():
         search_name = query_string.pop('search', 'default')
         jira_jql = JIRA_CONFIG.get("searches", {}).get(search_name, DEFAULT_SEARCH)
 
-        url = F"{host}/rest/api/2/search?jql={jira_jql}"
-        resp = requests.get(
-            url,
-            headers = {
-                'Authorization': F"Basic {token}"
-            }
-        )
-
-        if resp.status_code == 200:
-            tickets = Ticket.parse_jira(host, resp.json())
+        # Fake it. No tickets.
+        if host.endswith('simulacrum.com'):
+            tickets = []
         else:
-            raise Exception(F"Error Querying Jira: {resp.status_code} - [{url}]")
+            url = F"{host}/rest/api/2/search?jql={jira_jql}"
+            resp = requests.get(
+                url,
+                headers = {
+                    'Authorization': F"Basic {token}"
+                }
+            )
+
+            if resp.status_code == 200:
+                tickets = Ticket.parse_jira(host, resp.json())
+            else:
+                raise Exception(F"Error Querying Jira: {resp.status_code} - [{url}]")
 
         resp = {
             'search_name': search_name,

@@ -135,6 +135,8 @@ import Moment from 'moment'
 import Format from '../../lib/Format'
 import Notification from '../../lib/Notification'
 
+import Tag from '../../models/Tag'
+
 import Markdown from '../Shared/Markdown'
 
 export default {
@@ -173,15 +175,10 @@ export default {
     },
 
     loadTags: function () {
-      var self = this
-
-      this.$http.get(`http://127.0.0.1:4242/tags/`)
-        .then(resp => {
-          self.allTags = resp.data.tags.map(tag => tag.name)
-        })
-        .catch(err => {
-          Notification.error(`LE.Editor.loadTags: ${err.toString()}`)
-        })
+      Tag.loadAll({
+        onSuccess: (tags) => { this.allTags = tags },
+        onError: (err) => Notification.error(`LE.Editor.loadTags: ${err.toString()}`)
+      })
     },
 
     save: function () {
