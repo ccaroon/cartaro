@@ -53,6 +53,10 @@ class Resource {
   delete (options = {}) {
     return this.client.delete(this, options)
   }
+
+  isDeleted () {
+    return this.deleted_at !== null
+  }
 }
 // -----------------------------------------------------------------------------
 export default Resource

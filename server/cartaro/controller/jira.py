@@ -43,7 +43,7 @@ def search():
         resp = {
             'search_name': search_name,
             'jql': jira_jql,
-            'results': tickets
+            'jira': tickets
         }
     except Exception as e:
         status = 500

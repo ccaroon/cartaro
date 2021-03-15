@@ -21,6 +21,8 @@
 import Format from '../../lib/Format'
 import Notification from '../../lib/Notification'
 
+import Countdown from '../../models/Countdown'
+
 export default {
   name: 'home-countdowns',
   components: {},
@@ -32,15 +34,19 @@ export default {
   methods: {
     loadCountDowns: function () {
       var self = this
-      var qs = `is_favorite=true&sort_by=start_at`
+      var query = {
+        is_favorite: true,
+        sort_by: 'start_at'
+      }
 
-      this.$http.get(`http://127.0.0.1:4242/count_downs/?${qs}`)
-        .then(resp => {
-          self.countDowns = resp.data.count_downs
-        })
-        .catch(err => {
-          Notification.error(`HM.CntDwn.loadCountDowns: ${err}`)
-        })
+      Countdown.fetch(query, '/', {
+        handlers: {
+          onSuccess: (items) => {
+            self.countDowns = items
+          },
+          onError: (err) => { Notification.error(`HM.CntDwn.loadCountDowns: ${err}`) }
+        }
+      })
     }
   },
 

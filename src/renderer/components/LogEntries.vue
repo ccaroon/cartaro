@@ -68,6 +68,8 @@ import Mousetrap from 'mousetrap'
 import Constants from '../lib/Constants'
 import Format from '../lib/Format'
 
+import LogEntry from '../models/LogEntry'
+
 import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
 import LogEntryEditor from './LogEntries/Editor'
@@ -107,25 +109,31 @@ export default {
 
     load: function () {
       var self = this
-      var qs = `page=${this.page}&pp=${this.perPage}&sort_by=logged_at:desc`
+      var query = {
+        page: this.page,
+        pp: this.perPage,
+        sort_by: 'logged_at:desc'
+      }
 
       if (this.searchText) {
         var parts = this.searchText.split(':', 2)
         if (parts.length === 2) {
-          qs += `&${parts[0].trim()}=${parts[1].trim()}`
+          query[parts[0].trim()] = parts[1].trim()
         } else {
-          qs += `&subject=${this.searchText}&content=${this.searchText}`
+          query.subject = this.searchText
+          query.content = this.searchText
         }
       }
 
-      this.$http.get(`http://127.0.0.1:4242/log_entries/?${qs}`)
-        .then(resp => {
-          self.totalEntries = resp.data.total
-          self.logEntries = resp.data.log_entries
-        })
-        .catch(err => {
-          Notification.error(`LE.Main.load: ${err.toString()}`)
-        })
+      LogEntry.fetch(query, '/', {
+        handlers: {
+          onSuccess: (items, total) => {
+            self.totalEntries = total
+            self.logEntries = items
+          },
+          onError: (err) => { Notification.error(`LE.Main.load: ${err.toString()}`) }
+        }
+      })
     },
 
     view: function (logEntry) {
@@ -134,9 +142,10 @@ export default {
     },
 
     newEntry: function () {
-      this.edit({
+      var entry = new LogEntry({
         logged_at: Moment().unix()
       })
+      this.edit(entry)
     },
 
     edit: function (logEntry) {
@@ -147,7 +156,7 @@ export default {
     remove: function (logEntry) {
       var self = this
       var safe = 1
-      var msg = `Safe Delete "${logEntry.subject}"?`
+      var msg = `Archive "${logEntry.subject}"?`
 
       if (logEntry.deleted_at) {
         safe = 0
@@ -156,13 +165,13 @@ export default {
 
       var doDelete = confirm(msg)
       if (doDelete) {
-        this.$http.delete(`http://127.0.0.1:4242/log_entries/${logEntry.id}?safe=${safe}`)
-          .then(resp => {
-            self.load()
-          })
-          .catch(err => {
-            Notification.error(`LE.Main.remove: ${err.toString()}`)
-          })
+        logEntry.delete({
+          safe: safe,
+          handlers: {
+            onSuccess: () => { self.load() },
+            onError: (err) => { Notification.error(`LE.Main.remove: ${err.toString()}`) }
+          }
+        })
       }
     },
 

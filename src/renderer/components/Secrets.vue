@@ -189,11 +189,11 @@ export default {
     remove: function (secret) {
       var self = this
       var safe = 1
-      var msg = `Delete "${secret.system}/${secret.sub_system}/${secret.name}"?`
+      var msg = `Archive "${secret.system}/${secret.sub_system}/${secret.name}"?`
 
       if (secret.deleted_at !== null) {
         safe = 0
-        msg = `DELETE "${secret.system}/${secret.sub_system}/${secret.name}"?`
+        msg = `Delete "${secret.system}/${secret.sub_system}/${secret.name}"?`
       }
       var doDelete = confirm(msg)
 
