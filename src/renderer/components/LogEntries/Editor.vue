@@ -135,6 +135,9 @@ import Moment from 'moment'
 import Format from '../../lib/Format'
 import Notification from '../../lib/Notification'
 
+import JiraTicket from '../../models/JiraTicket'
+import Tag from '../../models/Tag'
+
 import Markdown from '../Shared/Markdown'
 
 export default {
@@ -163,45 +166,33 @@ export default {
     loadTickets: function () {
       var self = this
 
-      this.$http.get(`http://127.0.0.1:4242/jira/search`)
-        .then(resp => {
-          self.jiraTickets = resp.data.results
-        })
-        .catch(err => {
-          Notification.error(`LE.Editor.loadTickets: ${err.toString()}`)
-        })
+      JiraTicket.fetch({}, '/search', {
+        handlers: {
+          onSuccess: (tickets) => {
+            self.jiraTickets = tickets
+          },
+          onError: (err) => { Notification.error(`LE.Editor.loadTickets: ${err.toString()}`) }
+        }
+      })
     },
 
     loadTags: function () {
-      var self = this
-
-      this.$http.get(`http://127.0.0.1:4242/tags/`)
-        .then(resp => {
-          self.allTags = resp.data.tags.map(tag => tag.name)
-        })
-        .catch(err => {
-          Notification.error(`LE.Editor.loadTags: ${err.toString()}`)
-        })
+      Tag.loadAll({
+        onSuccess: (tags) => { this.allTags = tags },
+        onError: (err) => Notification.error(`LE.Editor.loadTags: ${err.toString()}`)
+      })
     },
 
     save: function () {
       var self = this
 
       if (this.$refs.logEntryForm.validate()) {
-        var request = null
-        if (this.logEntry.id) {
-          request = this.$http.put(`http://127.0.0.1:4242/log_entries/${this.logEntry.id}`, this.logEntry)
-        } else {
-          request = this.$http.post('http://127.0.0.1:4242/log_entries/', this.logEntry)
-        }
-
-        request
-          .then(resp => {
-            self.close()
-          })
-          .catch(err => {
-            self.errorMsg = err
-          })
+        this.logEntry.save({
+          handlers: {
+            onSuccess: () => { self.close() },
+            onError: (err) => { self.errorMsg = err }
+          }
+        })
       } else {
         this.errorMsg = 'Please fill in the required fields.'
       }
@@ -239,10 +230,10 @@ export default {
         this.chosenTicket = this.findTicketByLink(this.logEntry.ticket_link)
         if (!this.chosenTicket) {
           // Add a "fake" placeholder ticket to the list of tickets
-          this.chosenTicket = {
+          this.chosenTicket = new JiraTicket({
             link: this.logEntry.ticket_link,
             summary: this.logEntry.subject
-          }
+          })
           this.jiraTickets.push(this.chosenTicket)
         }
       }

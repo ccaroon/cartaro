@@ -139,7 +139,7 @@ export default {
     remove: function (note) {
       var self = this
 
-      var doDelete = confirm(`Delete "${note.title}"?`)
+      var doDelete = confirm(`Archive "${note.title}"?`)
 
       if (doDelete) {
         this.$http.delete(`http://127.0.0.1:4242/notes/${note.id}?safe=1`)

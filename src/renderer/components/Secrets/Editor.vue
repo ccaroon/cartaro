@@ -120,6 +120,7 @@
 import Constants from '../../lib/Constants'
 import Notification from '../../lib/Notification'
 import Markdown from '../Shared/Markdown'
+import Tag from '../../models/Tag'
 
 export default {
   name: 'secret-editor',
@@ -149,15 +150,10 @@ export default {
 
   methods: {
     loadTags: function () {
-      var self = this
-
-      this.$http.get(`http://127.0.0.1:4242/tags/`)
-        .then(resp => {
-          self.allTags = resp.data.tags.map(tag => tag.name)
-        })
-        .catch(err => {
-          Notification.error(`SE.Editor.loadTags: ${err.toString()}`)
-        })
+      Tag.loadAll({
+        onSuccess: (tags) => { this.allTags = tags },
+        onError: (err) => Notification.error(`SE.Editor.loadTags: ${err.toString()}`)
+      })
     },
 
     validateSecretData: function () {

@@ -14,6 +14,14 @@
   - Click row to view
   - Click "new" edit icon to edit
 * Better `Notifcation.error()` messages so that the source can be identified.
+* Replaced TextArea "editors" with `vue-codemirror`
+  - Better editing experience
+  - Syntax Highlighting
+  - Color Themes
+* Models - Added Client/UI side JS models for the various Server Resources
+  - Resource - Base model
+  - Todo, Tag, JiraTicket, LogEntry, WorkDay ... 
+  - Helps to DRY'up and Factor out lots of similar code.
 
 ### Fixed
 ...

@@ -13,12 +13,15 @@
         :key="countDown.id"
         :class="rowColor(idx)"
       >
-        <v-list-item-avatar>
+        <v-list-item-avatar v-if="countDown.deleted_at === null">
           <v-btn icon @click="toggleFavorite(countDown)">
             <v-icon :color="countDown.is_favorite ? 'yellow' : ''"
               >mdi-star</v-icon
             >
           </v-btn>
+        </v-list-item-avatar>
+        <v-list-item-avatar v-else>
+          <v-icon color="red">mdi-cancel</v-icon>
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title>
@@ -28,10 +31,13 @@
               dense
               single-line
               autofocus
+              :disabled="countDown.isDeleted()"
               @change="save(countDown)"
             ></v-text-field>
           </v-list-item-title>
-          <v-list-item-subtitle>{{ humanize(countDown) }}</v-list-item-subtitle>
+          <v-list-item-subtitle>{{
+            countDown.humanize()
+          }}</v-list-item-subtitle>
         </v-list-item-content>
         <v-row dense align="center">
           <v-col cols="4">
@@ -42,6 +48,7 @@
               :nudge-right="40"
               transition="scale-transition"
               offset-y
+              :disabled="countDown.isDeleted()"
             >
               <template v-slot:activator="{ on }">
                 <v-text-field
@@ -50,6 +57,7 @@
                   readonly
                   :value="dateDisplay(countDown, 'start')"
                   v-on="on"
+                  :disabled="countDown.isDeleted()"
                 ></v-text-field>
               </template>
               <v-sheet width="100%">
@@ -119,6 +127,7 @@
               :nudge-right="40"
               transition="scale-transition"
               offset-y
+              :disabled="countDown.isDeleted()"
             >
               <template v-slot:activator="{ on }">
                 <v-text-field
@@ -129,6 +138,7 @@
                   @click:clear="clearEndDate(countDown)"
                   :value="dateDisplay(countDown, 'end')"
                   v-on="on"
+                  :disabled="countDown.isDeleted()"
                 ></v-text-field>
               </template>
               <v-sheet width="100%">
@@ -207,6 +217,8 @@ import Constants from '../lib/Constants'
 import Format from '../lib/Format'
 import Notification from '../lib/Notification'
 
+import Countdown from '../models/Countdown'
+
 import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
 
@@ -242,46 +254,50 @@ export default {
 
     load: function () {
       var self = this
-      var qs = `page=${this.page}&pp=${this.perPage}&sort_by=start_at`
+      var query = {
+        page: this.page,
+        pp: this.perPage,
+        sort_by: 'start_at'
+      }
 
       if (this.searchText) {
         var parts = this.searchText.split(':', 2)
         if (parts.length === 2) {
-          qs += `&${parts[0].trim()}=${parts[1].trim()}`
+          query[parts[0].trim()] = parts[1].trim()
         } else {
-          qs += `&name=${this.searchText}`
+          query.name = this.searchText
         }
       }
 
-      this.$http.get(`http://127.0.0.1:4242/count_downs/?${qs}`)
-        .then(resp => {
-          self.totalCountDowns = resp.data.total
-          self.countDowns = resp.data.count_downs
+      Countdown.fetch(query, '/', {
+        handlers: {
+          onSuccess: (items, total) => {
+            self.totalCountDowns = total
+            self.countDowns = items
 
-          self.countDowns.forEach((cd) => {
-            self.initDate(cd)
-          })
-        })
-        .catch(err => {
-          Notification.error(`CD.Main.load: ${err.toString()}`)
-        })
+            self.countDowns.forEach((cd) => {
+              self.initDate(cd)
+            })
+          },
+          onError: (err) => { Notification.error(`CD.Main.load: ${err.toString()}`) }
+        }
+      })
     },
 
     newCountDown: function () {
-      var countDown = {
+      var countDown = new Countdown({
         name: '** NEW COUNTDOWN **',
         // Set Date to something early so it appears at the top of the list
         start_at: Moment('1971-01-01').unix(),
         end_at: null
-      }
+      })
 
-      this.$http.post(`http://127.0.0.1:4242/count_downs/`, countDown)
-        .then(resp => {
-          this.load()
-        })
-        .catch(err => {
-          Notification.error(`CD.Main.newCountDown: ${err}`)
-        })
+      countDown.save({
+        handlers: {
+          onSuccess: () => { this.load() },
+          onError: (err) => { Notification.error(`CD.Main.newCountDown: ${err}`) }
+        }
+      })
     },
 
     dateDisplay: function (countDown, type) {
@@ -294,10 +310,6 @@ export default {
       }
 
       return asString
-    },
-
-    humanize: function (countDown) {
-      return Format.humanizeDateRange(countDown.start_at, countDown.end_at)
     },
 
     // Init dates for use with date-picker / time-picker
@@ -319,12 +331,11 @@ export default {
     clearEndDate: function (countDown) {
       countDown.endDate = null
       countDown.endTime = null
-
       this.save(countDown)
     },
 
     toggleFavorite: function (countDown) {
-      countDown.is_favorite = !countDown.is_favorite
+      countDown.toggleFavorite()
       this.save(countDown)
     },
 
@@ -338,28 +349,33 @@ export default {
         countDown.end_at = null
       }
 
-      this.$http.put(`http://127.0.0.1:4242/count_downs/${countDown.id}`, countDown)
-        .then(resp => {
-          self.load()
-        })
-        .catch(err => {
-          Notification.error(`CD.Main.save: ${err.toString()}`)
-        })
+      countDown.save({
+        handlers: {
+          onSuccess: () => { self.load() },
+          onError: (err) => { Notification.error(`CD.Main.save: ${err.toString()}`) }
+        }
+      })
     },
 
     remove: function (countDown) {
       var self = this
+      var safe = 1
+      var msg = `Archive "${countDown.name}"?`
 
-      var doDelete = confirm(`Delete "${countDown.name}"?`)
+      if (countDown.isDeleted()) {
+        safe = 0
+        msg = `Delete "${countDown.name}"?`
+      }
 
+      var doDelete = confirm(msg)
       if (doDelete) {
-        this.$http.delete(`http://127.0.0.1:4242/count_downs/${countDown.id}`)
-          .then(resp => {
-            self.load()
-          })
-          .catch(err => {
-            Notification.error(`CD.Main.remove: ${err.toString()}`)
-          })
+        countDown.delete({
+          safe: safe,
+          handlers: {
+            onSuccess: () => { self.load() },
+            onError: (err) => { Notification.error(`CD.Main.remove: ${err.toString()}`) }
+          }
+        })
       }
     },
 

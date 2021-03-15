@@ -138,7 +138,7 @@ export default {
         query.is_complete = false
       }
 
-      Todo.fetch(query, {
+      Todo.fetch(query, '/', {
         handlers: {
           onSuccess: (todos, totalCount) => {
             self.totalTodos = totalCount

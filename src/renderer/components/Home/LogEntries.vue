@@ -65,6 +65,8 @@ import Moment from 'moment'
 import LogEntryEditor from '../LogEntries/Editor'
 import LogEntryViewer from '../LogEntries/Viewer'
 
+import LogEntry from '../../models/LogEntry'
+
 import Constants from '../../lib/Constants'
 import Format from '../../lib/Format'
 import Notification from '../../lib/Notification'
@@ -80,9 +82,9 @@ export default {
 
   methods: {
     newEntry: function () {
-      this.logEntry = {
+      this.logEntry = new LogEntry({
         logged_at: Moment().unix()
-      }
+      })
       this.showEditor = true
     },
 
@@ -104,15 +106,19 @@ export default {
     loadEntries: function () {
       var self = this
       const startOfWeek = Moment().startOf('week')
-      var qs = `logged_at=gte:${startOfWeek.unix()}&sort_by=logged_at:desc`
+      var query = {
+        logged_at: `gte:${startOfWeek.unix()}`,
+        sort_by: 'logged_at:desc'
+      }
 
-      this.$http.get(`http://127.0.0.1:4242/log_entries/?${qs}`)
-        .then(resp => {
-          self.logEntries = resp.data.log_entries
-        })
-        .catch(err => {
-          Notification.error(`HM.LogEnt.loadEntries: ${err}`)
-        })
+      LogEntry.fetch(query, '/', {
+        handlers: {
+          onSuccess: (items) => {
+            self.logEntries = items
+          },
+          onError: (err) => { Notification.error(`HM.LogEnt.loadEntries: ${err}`) }
+        }
+      })
     },
 
     rowColor: function (entry, index) {
