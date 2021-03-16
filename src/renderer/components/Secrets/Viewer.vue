@@ -20,7 +20,7 @@
       <v-card-title>{{ formatType(secret.type) }}</v-card-title>
       <v-card-text>
         <v-row
-          v-for="(val, fld) in decrypt(secret)"
+          v-for="(val, fld) in secret.decrypt()"
           :key="fld"
           no-gutters
           dense
@@ -37,7 +37,7 @@
       <v-divider></v-divider>
       <v-card-title>Notes</v-card-title>
       <v-card-text
-        v-html="md.render(secret.note || '')"
+        v-html="$markdown.render(secret.note || '')"
         class="body-1 pt-3"
         style="height: 250px"
       ></v-card-text>
@@ -60,13 +60,11 @@
 import Format from '../../lib/Format'
 import Constants from '../../lib/Constants'
 import Utils from '../../lib/Utils'
-import MarkdownIt from 'markdown-it'
-import MDEmoji from 'markdown-it-emoji'
 
 export default {
   name: 'secret-viewer',
   components: {},
-  props: ['secret', 'isHidden', 'decrypt', 'value'],
+  props: ['secret', 'isHidden', 'value'],
 
   methods: {
     formatType: function (type = ' ') {
@@ -94,8 +92,7 @@ export default {
       constants: Constants,
       format: Format,
       utils: Utils,
-      hideData: true,
-      md: new MarkdownIt().use(MDEmoji)
+      hideData: true
     }
   }
 }

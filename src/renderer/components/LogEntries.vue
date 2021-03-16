@@ -32,11 +32,9 @@
           >
         </v-list-item-avatar>
         <v-list-item-content @click="view(logEntry)">
-          <v-list-item-title
-            class="subtitle-1"
-            v-if="logEntry.deleted_at === null"
-            >{{ logEntry.subject }}</v-list-item-title
-          >
+          <v-list-item-title class="subtitle-1" v-if="!logEntry.isDeleted()">{{
+            logEntry.subject
+          }}</v-list-item-title>
           <v-list-item-title class="subtitle-1" v-else>
             <del>{{ logEntry.subject }}</del>
           </v-list-item-title>
@@ -158,7 +156,7 @@ export default {
       var safe = 1
       var msg = `Archive "${logEntry.subject}"?`
 
-      if (logEntry.deleted_at) {
+      if (logEntry.isDeleted()) {
         safe = 0
         msg = `Delete "${logEntry.subject}"?`
       }
@@ -196,7 +194,7 @@ export default {
 
   data () {
     return {
-      logEntry: {},
+      logEntry: new LogEntry({}),
       logEntries: [],
       page: 1,
       perPage: 15,

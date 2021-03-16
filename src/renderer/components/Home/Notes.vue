@@ -49,6 +49,8 @@
 import NoteEditor from '../Notes/Editor'
 import NoteViewer from '../Notes/Viewer'
 
+import Note from '../../models/Note'
+
 import Constants from '../../lib/Constants'
 import Format from '../../lib/Format'
 import Notification from '../../lib/Notification'
@@ -70,7 +72,7 @@ export default {
     },
 
     newNote: function () {
-      this.editNote({})
+      this.editNote(new Note({}))
     },
 
     editNote: function (note) {
@@ -85,15 +87,21 @@ export default {
 
     loadNotes: function () {
       var self = this
-      var qs = `op=and&is_favorite=true&deleted_at=null&sort_by=created_at:desc`
+      var query = {
+        op: 'and',
+        is_favorite: true,
+        deleted_at: null,
+        sort_by: 'created_at:desc'
+      }
 
-      this.$http.get(`http://127.0.0.1:4242/notes/?${qs}`)
-        .then(resp => {
-          self.notes = resp.data.notes
-        })
-        .catch(err => {
-          Notification.error(`HM.Notes.loadNotes: ${err}`)
-        })
+      Note.fetch(query, '/', {
+        handlers: {
+          onSuccess: (items) => {
+            self.notes = items
+          },
+          onError: (err) => { Notification.error(`HM.Notes.loadNotes: ${err}`) }
+        }
+      })
     }
   },
 

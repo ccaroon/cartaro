@@ -13,7 +13,7 @@
         :key="countDown.id"
         :class="rowColor(idx)"
       >
-        <v-list-item-avatar v-if="countDown.deleted_at === null">
+        <v-list-item-avatar v-if="!countDown.isDeleted()">
           <v-btn icon @click="toggleFavorite(countDown)">
             <v-icon :color="countDown.is_favorite ? 'yellow' : ''"
               >mdi-star</v-icon

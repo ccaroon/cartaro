@@ -22,11 +22,7 @@ export default {
 
   methods: {
     deleteIconColor: function () {
-      var color = null
-      if (this.item['deleted_at'] && this.item.deleted_at) {
-        color = 'red'
-      }
-      return color
+      return this.item.isDeleted() ? 'red' : null
     }
   },
 

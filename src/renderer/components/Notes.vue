@@ -27,11 +27,9 @@
           <v-icon :color="note.is_favorite ? 'yellow' : ''">mdi-star</v-icon>
         </v-list-item-avatar>
         <v-list-item-content @click="view(note)">
-          <v-list-item-title
-            class="subtitle-1"
-            v-if="note.deleted_at === null"
-            >{{ note.title }}</v-list-item-title
-          >
+          <v-list-item-title class="subtitle-1" v-if="!note.isDeleted()">{{
+            note.title
+          }}</v-list-item-title>
           <v-list-item-title class="subtitle-1" v-else>
             <del>{{ note.title }}</del>
           </v-list-item-title>
@@ -62,6 +60,8 @@ import Mousetrap from 'mousetrap'
 import Constants from '../lib/Constants'
 import Format from '../lib/Format'
 import Notification from '../lib/Notification'
+
+import Note from '../models/Note'
 
 import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
@@ -101,25 +101,31 @@ export default {
 
     load: function () {
       var self = this
-      var qs = `page=${this.page}&pp=${this.perPage}&sort_by=created_at`
+      var query = {
+        page: this.page,
+        pp: this.perPage,
+        sort_by: 'created_at'
+      }
 
       if (this.searchText) {
         var parts = this.searchText.split(':', 2)
         if (parts.length === 2) {
-          qs += `&${parts[0].trim()}=${parts[1].trim()}`
+          query[parts[0].trim()] = parts[1].trim()
         } else {
-          qs += `&title=${this.searchText}&content=${this.searchText}`
+          query.title = this.searchText
+          query.content = this.searchText
         }
       }
 
-      this.$http.get(`http://127.0.0.1:4242/notes/?${qs}`)
-        .then(resp => {
-          self.totalNotes = resp.data.total
-          self.notes = resp.data.notes
-        })
-        .catch(err => {
-          Notification.error(`NT.Main.load: ${err.toString()}`)
-        })
+      Note.fetch(query, '/', {
+        handlers: {
+          onSuccess: (items, total) => {
+            self.totalNotes = total
+            self.notes = items
+          },
+          onError: (err) => { Notification.error(`NT.Main.load: ${err.toString()}`) }
+        }
+      })
     },
 
     view: function (note) {
@@ -128,7 +134,7 @@ export default {
     },
 
     newNote: function () {
-      this.edit({})
+      this.edit(new Note({}))
     },
 
     edit: function (note) {
@@ -138,17 +144,23 @@ export default {
 
     remove: function (note) {
       var self = this
+      var safe = 1
+      var msg = `Archive "${note.title}"?`
 
-      var doDelete = confirm(`Archive "${note.title}"?`)
+      if (note.isDeleted()) {
+        safe = 0
+        msg = `Delete "${note.title}"?`
+      }
 
+      var doDelete = confirm(msg)
       if (doDelete) {
-        this.$http.delete(`http://127.0.0.1:4242/notes/${note.id}?safe=1`)
-          .then(resp => {
-            self.load()
-          })
-          .catch(err => {
-            Notification.error(`NT.Main.remove: ${err.toString()}`)
-          })
+        note.delete({
+          safe: safe,
+          handlers: {
+            onSuccess: () => { self.load() },
+            onError: (err) => { Notification.error(`NT.Main.remove: ${err.toString()}`) }
+          }
+        })
       }
     },
 
@@ -173,7 +185,7 @@ export default {
 
   data () {
     return {
-      note: {},
+      note: new Note({}),
       notes: [],
       page: 1,
       perPage: 15,

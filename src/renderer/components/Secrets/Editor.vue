@@ -125,7 +125,7 @@ import Tag from '../../models/Tag'
 export default {
   name: 'secret-editor',
   components: { Markdown },
-  props: ['secret', 'decrypt', 'value'],
+  props: ['secret', 'value'],
 
   mounted: function () {
     this.loadTags()
@@ -137,13 +137,8 @@ export default {
         return this.secret.type
       },
       set: function (newVal) {
-        this.secret.type = newVal
         this._secretType = newVal
-        // Stub in new, empty data
-        this.secret.data = {}
-        this.secret.type.split('-').forEach(fld => {
-          this.secret.data[fld] = ''
-        })
+        this.secret.changeType(newVal)
       }
     }
   },
@@ -158,9 +153,8 @@ export default {
 
     validateSecretData: function () {
       var OK = true
-      var fields = this.secret.type.split('-')
-      fields.forEach(fld => {
-        if (!this.secret.data[fld]) {
+      this.secret.values(val => {
+        if (!val) {
           OK = false
         }
       })
@@ -174,20 +168,12 @@ export default {
       if (this.$refs.secretForm.validate()) {
         this.secret.__encrypted = false
 
-        var request = null
-        if (this.secret.id) {
-          request = this.$http.put(`http://127.0.0.1:4242/secrets/${this.secret.id}`, this.secret)
-        } else {
-          request = this.$http.post('http://127.0.0.1:4242/secrets/', this.secret)
-        }
-
-        request
-          .then(resp => {
-            self.close()
-          })
-          .catch(err => {
-            Notification.error(`SE.Editor.save: ${err.toString()}`)
-          })
+        this.secret.save({
+          handlers: {
+            onSuccess: () => { self.close() },
+            onError: (err) => { Notification.error(`SE.Editor.save: ${err.toString()}`) }
+          }
+        })
       } else {
         this.errorMsg = 'Please fill in the required fields.'
       }
@@ -213,8 +199,7 @@ export default {
   watch: {
     secret: function () {
       this._secretType = this.secret.type
-      this.secret.data = this.decrypt(this.secret)
-      this.secret.__encrypted = false
+      this.secret.decrypt()
 
       if (!this.secret.note) {
         this.secret.note = ''

@@ -18,9 +18,7 @@
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title
-            :class="
-              workDay.deleted_at !== null ? 'text-decoration-line-through' : ''
-            "
+            :class="workDay.isDeleted() ? 'text-decoration-line-through' : ''"
             ><strong>{{ displayTitle(workDay) }}</strong></v-list-item-title
           >
           <v-list-item-subtitle>

@@ -103,21 +103,12 @@ export default {
       var self = this
 
       if (this.$refs.noteForm.validate()) {
-        var request = null
-
-        if (this.note.id) {
-          request = this.$http.put(`http://127.0.0.1:4242/notes/${this.note.id}`, this.note)
-        } else {
-          request = this.$http.post('http://127.0.0.1:4242/notes/', this.note)
-        }
-
-        request
-          .then(resp => {
-            self.close()
-          })
-          .catch(err => {
-            Notification.error(`NT.Editor.save: ${err.toString()}`)
-          })
+        this.note.save({
+          handlers: {
+            onSuccess: () => { self.close() },
+            onError: (err) => { Notification.error(`NT.Editor.save: ${err.toString()}`) }
+          }
+        })
       } else {
         this.errorMsg = 'Please fill in the required fields.'
       }

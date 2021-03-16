@@ -47,7 +47,7 @@
           tabSize: 4,
           styleActiveLine: true,
           lineNumbers: false,
-          lineWrapping: false,
+          lineWrapping: true,
           mode: 'text/x-markdown',
           theme: 'lesser-dark'
         }

@@ -20,7 +20,7 @@
   - Color Themes
 * Models - Added Client/UI side JS models for the various Server Resources
   - Resource - Base model
-  - Todo, Tag, JiraTicket, LogEntry, WorkDay ... 
+  - Countdown, Secret, Todo, Tag, JiraTicket, LogEntry, WorkDay ... Etc.
   - Helps to DRY'up and Factor out lots of similar code.
 
 ### Fixed
