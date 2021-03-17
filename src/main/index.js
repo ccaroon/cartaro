@@ -1,10 +1,12 @@
 'use strict'
 
 import { app, dialog, ipcMain, Menu, BrowserWindow } from 'electron'
-import Config from './config'
+import config from '../Config'
 import Winston from 'winston'
 
-const PORT = 4242
+const PORT_DEV = 4224
+const PORT_PRD = 4242
+var PORT = null
 const http = require('axios')
 const fs = require('fs')
 const path = require('path')
@@ -13,6 +15,14 @@ let mainWindow, backendServer
 const winURL = process.env.NODE_ENV === 'development'
   ? 'http://localhost:9080'
   : `file://${__dirname}/index.html`
+
+// Server PORT
+if (process.env.NODE_ENV === 'development') {
+  PORT = PORT_DEV
+} else {
+  PORT = PORT_PRD
+}
+config.setTransient('serverPort', PORT)
 
 const docPath = path.join(app.getPath('documents'), 'Cartaro')
 
@@ -48,8 +58,8 @@ if (process.env.NODE_ENV === 'development') {
 
 function initApp () {
   // Create data directory
-  if (!fs.existsSync(Config.dataPath)) {
-    fs.mkdirSync(Config.dataPath, '0750')
+  if (!fs.existsSync(docPath)) {
+    fs.mkdirSync(docPath, '0750')
   }
 
   ipcMain.on('app-show-notification', (event, args) => {
