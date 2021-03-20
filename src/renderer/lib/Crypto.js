@@ -7,7 +7,7 @@ function _passwordToKey (password) {
   return btoa(paddedPwd)
 }
 
-var keyStr = _passwordToKey(config.get('CARTARO:encryption_password'))
+var keyStr = _passwordToKey(config.get('encryption_password'))
 // Set Secret Key Globally for all Fernet opts
 fernet.setSecret(keyStr)
 

@@ -6,13 +6,14 @@ class RestClient {
   resource = null
 
   static HOST = 'http://127.0.0.1'
+  static PORT = config.get('serverPort', 4242)
 
   constructor(resource) {
     this.resource = resource
   }
 
   __baseUrl () {
-    return `${RestClient.HOST}:${config.getTransient('serverPort')}`
+    return `${RestClient.HOST}:${RestClient.PORT}`
   }
 
   create (obj, options = {}) {
@@ -31,8 +32,6 @@ class RestClient {
       filters.push(`${key}=${value}`)
     }
     var qs = filters.join('&')
-
-    console.log(`baseUrl: ${this.__baseUrl()}`)
 
     var p = axios.get(`${this.__baseUrl()}/${this.resource}${endpoint}?${qs}`)
     return this.__resolve(p, options)

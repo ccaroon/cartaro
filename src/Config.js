@@ -6,12 +6,7 @@ var app = process.type === 'renderer'
 const fs = require('fs')
 const path = require('path')
 
-console.log('-------------------------')
-console.log(process.env.NODE_ENV)
-console.log('-------------------------')
 const docPath = path.join(app.getPath('documents'), 'Cartaro')
-// TODO: Separate cfg files for Dev and non-Dev
-const configFile = `${docPath}/CartaroCfg.json`
 // -----------------------------------------------------------------------------
 class Config {
   static DEFAULTS = {}
@@ -24,7 +19,7 @@ class Config {
     this.load()
   }
 
-  get (path, isTransient = false) {
+  get (path, defValue = null, isTransient = false) {
     const pathParts = path.split(':')
     var value = this.data
     if (isTransient) {
@@ -35,11 +30,15 @@ class Config {
       value = value[key]
     })
 
+    if (value === undefined || value === null) {
+      value = defValue
+    }
+
     return value
   }
 
-  getTransient (path) {
-    return this.get(path, true)
+  getTransient (path, defValue = null) {
+    return this.get(path, defValue, true)
   }
 
   set (path, value, isTransient = false) {
@@ -66,7 +65,7 @@ class Config {
         var contents = fs.readFileSync(this.path)
         var data = JSON.parse(contents)
 
-        this.data = Object.assign({}, Config.DEFAULTS, data)
+        this.data = Object.assign({}, Config.DEFAULTS, data.CARTARO)
       } else {
         this.data = Config.DEFAULTS
       }
@@ -77,11 +76,16 @@ class Config {
 
   save () {
     delete this.data.__transient
-    var json = JSON.stringify(this.data)
+    var data = {
+      CARTARO: this.data
+    }
+    var json = JSON.stringify(data)
     fs.writeFileSync(this.path, json)
   }
 }
 // -----------------------------------------------------------------------------
+const suffix = process.env.NODE_ENV === 'development' ? '-dev' : ''
+const configFile = `${docPath}/CartaroCfg${suffix}.json`
 const __instance = new Config(configFile)
 // -----------------------------------------------------------------------------
 export default __instance
