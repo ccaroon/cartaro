@@ -11,7 +11,7 @@ class Resource {
 
   static getClient () {
     if (this.CLIENT === null) {
-      console.log(`Creating new RestClient(${this.RESOURCE_NAME})`)
+      // console.log(`Creating new RestClient(${this.RESOURCE_NAME})`)
       this.CLIENT = new RestClient(this.RESOURCE_NAME)
     }
     return this.CLIENT

@@ -1,21 +1,28 @@
 import axios from 'axios'
+
+import config from '../../Config'
 // -----------------------------------------------------------------------------
 class RestClient {
   resource = null
 
-  static BASE_URL = 'http://127.0.0.1:4242'
+  static HOST = 'http://127.0.0.1'
+  static PORT = config.get('serverPort', 4242)
 
   constructor(resource) {
     this.resource = resource
   }
 
+  __baseUrl () {
+    return `${RestClient.HOST}:${RestClient.PORT}`
+  }
+
   create (obj, options = {}) {
-    var p = axios.post(`${RestClient.BASE_URL}/${this.resource}/`, obj)
+    var p = axios.post(`${this.__baseUrl()}/${this.resource}/`, obj)
     return this.__resolve(p, options)
   }
 
   update (obj, options = {}) {
-    var p = axios.put(`${RestClient.BASE_URL}/${this.resource}/${obj.id}`, obj)
+    var p = axios.put(`${this.__baseUrl()}/${this.resource}/${obj.id}`, obj)
     return this.__resolve(p, options)
   }
 
@@ -26,12 +33,12 @@ class RestClient {
     }
     var qs = filters.join('&')
 
-    var p = axios.get(`${RestClient.BASE_URL}/${this.resource}${endpoint}?${qs}`)
+    var p = axios.get(`${this.__baseUrl()}/${this.resource}${endpoint}?${qs}`)
     return this.__resolve(p, options)
   }
 
   delete (obj, options) {
-    var url = `${RestClient.BASE_URL}/${this.resource}/${obj.id}`
+    var url = `${this.__baseUrl()}/${this.resource}/${obj.id}`
     if ('safe' in options) {
       url += `?safe=${options.safe}`
     }

@@ -7,10 +7,17 @@
         {{ appInfo.name }} v{{ appInfo.version }} ({{ appInfo.codename }})
       </v-card-title>
       <v-card-text>
-        {{ appInfo.description }} &mdash; &copy; {{ appInfo.author }} 2020-{{ new Date().getFullYear() }}
+        {{ appInfo.description }} &mdash; &copy; {{ appInfo.author }} 2020-{{
+          new Date().getFullYear()
+        }}
         <v-divider></v-divider>
         <v-subheader>Built With</v-subheader>
-        <v-data-table :items="items" hide-default-footer hide-default-header dark>
+        <v-data-table
+          :items="items"
+          hide-default-footer
+          hide-default-header
+          dark
+        >
           <template v-slot:body="{ items }">
             <tbody>
               <tr v-for="item in items" :key="item.name">
@@ -18,7 +25,11 @@
                   <v-icon>mdi-{{ item.icon }}</v-icon>
                   {{ item.name }}
                 </td>
-                <td :id="'about-tech-' + item.name.toLowerCase().replace(' ', '')">{{ item.value }}</td>
+                <td
+                  :id="'about-tech-' + item.name.toLowerCase().replace(' ', '')"
+                >
+                  {{ item.value }}
+                </td>
               </tr>
             </tbody>
           </template>
@@ -29,6 +40,8 @@
 </template>
 
 <script>
+  import config from '../../Config'
+
   const { ipcRenderer } = require('electron')
   const pkgJson = require(`../../../package.json`)
 
@@ -48,7 +61,8 @@
           { name: 'NodeJS', value: process.versions.node, icon: 'nodejs' },
           { name: 'Chrome', value: process.versions.chrome, icon: 'google-chrome' },
           { name: 'Platform', value: require('os').platform(), icon: 'laptop' },
-          { name: 'Vue Version', value: require('vue/package.json').version, icon: 'vuejs' }
+          { name: 'Vue Version', value: require('vue/package.json').version, icon: 'vuejs' },
+          { name: 'Server', value: `Port: ${config.get('serverPort')}`, icon: 'language-python' }
         ]
       }
 

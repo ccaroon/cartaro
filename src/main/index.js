@@ -1,10 +1,10 @@
 'use strict'
 
 import { app, dialog, ipcMain, Menu, BrowserWindow } from 'electron'
-import Config from './config'
+import config from '../Config'
 import Winston from 'winston'
 
-const PORT = 4242
+const PORT = config.get('serverPort', 4242)
 const http = require('axios')
 const fs = require('fs')
 const path = require('path')
@@ -48,8 +48,8 @@ if (process.env.NODE_ENV === 'development') {
 
 function initApp () {
   // Create data directory
-  if (!fs.existsSync(Config.dataPath)) {
-    fs.mkdirSync(Config.dataPath, '0750')
+  if (!fs.existsSync(docPath)) {
+    fs.mkdirSync(docPath, '0750')
   }
 
   ipcMain.on('app-show-notification', (event, args) => {
