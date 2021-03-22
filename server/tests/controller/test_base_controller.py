@@ -21,7 +21,7 @@ class Snippet(cartaro.model.taggable.Taggable, cartaro.model.base.Base):
         }
         # Tags
         data.update(super()._serialize())
-        
+
         return data
 # ------------------------------------------------------------------------------
 class BaseControllerTest(unittest.TestCase):
@@ -31,7 +31,7 @@ class BaseControllerTest(unittest.TestCase):
     def __gen_snippets(self, count, ts='', cs=''):
         for i in range(0, count):
             snippet = Snippet(
-                title=F"{self.FAKER.name()} - {ts}", 
+                title=F"{self.FAKER.name()} - {ts}",
                 content=F"{self.FAKER.text()} - {cs}"
             )
             snippet.save()
@@ -47,7 +47,7 @@ class BaseControllerTest(unittest.TestCase):
         Snippet.purge()
         # New Snippet for testing
         self.snippet = Snippet(
-            title=self.FAKER.name(), 
+            title=self.FAKER.name(),
             content=self.FAKER.text(),
             tags=['thing-1', 'thing-2']
         )
@@ -134,7 +134,7 @@ class BaseControllerTest(unittest.TestCase):
         # Save to compare below
         note_1 = snippets[0]
         note_10 = snippets[9]
-        
+
         # Default: page 3, pp 10
         r = self.client.get('/snippets/?page=3&pp=10')
         self.assertEqual(r.status_code, 200)
@@ -283,3 +283,47 @@ class BaseControllerTest(unittest.TestCase):
         r_data = r.get_json()
         self.assertIsNotNone(r_data.get('error', None))
         self.assertRegexpMatches(r_data['error'], "Not Found")
+
+    def test_undelete(self):
+        snippet = Snippet(title=self.FAKER.name(), content=self.FAKER.text())
+        snippet.save()
+
+        # Safe Delete
+        r = self.client.delete(F"/snippets/{snippet.id}?safe=1")
+        self.assertEqual(r.status_code, 200)
+
+        r_data = r.get_json()
+        self.assertIsNotNone(r_data.get('id', None))
+        self.assertEqual(snippet.id, r_data.get('id', None))
+
+        del_note = Snippet(id=snippet.id)
+        del_note.load()
+        self.assertIsNotNone(del_note.deleted_at)
+
+        # UnDelete
+        r = self.client.put(F"/snippets/undelete/{del_note.id}")
+        self.assertEqual(r.status_code, 200)
+
+        r_data = r.get_json()
+        self.assertIsNotNone(r_data.get('id', None))
+        self.assertEqual(del_note.id, r_data.get('id', None))
+
+        undel_note = Snippet(id=del_note.id)
+        undel_note.load()
+        self.assertIsNone(undel_note.deleted_at)
+        self.assertEqual(undel_note.title, snippet.title)
+        self.assertEqual(undel_note.content, snippet.content)
+
+    def test_undelete_nonexistent(self):
+        r = self.client.put(F"/snippets/undelete/77998800")
+        self.assertEqual(r.status_code, 404)
+
+
+
+
+
+
+
+
+
+#

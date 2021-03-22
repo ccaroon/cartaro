@@ -167,20 +167,20 @@ class BaseTest(unittest.TestCase):
         obj_id = obj.id
 
         obj.delete(safe=True)
-        self.assertIsNone(obj.id)
+        self.assertIsNotNone(obj.id)
         self.assertIsNotNone(obj.deleted_at)
 
         now = arrow.now().timestamp
         self.assertTrue(now-5 <= obj.deleted_at.timestamp <= now)
 
-        with self.assertRaisesRegex(ValueError, 'Valid Object ID required for loading'):
-            obj.load()
+        # with self.assertRaisesRegex(ValueError, 'Valid Object ID required for loading'):
+        #     obj.load()
 
         with self.assertRaisesRegex(RuntimeError, "Can't Save ... Object deleted"):
             obj.save()
 
-        with self.assertRaisesRegex(ValueError, 'Valid Object ID required for deletion'):
-            obj.delete()
+        # with self.assertRaisesRegex(ValueError, 'Valid Object ID required for deletion'):
+        #     obj.delete()
 
         # Should still be able to load it via a new instance
         obj2 = Ticket(id=obj_id)
@@ -225,6 +225,25 @@ class BaseTest(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, F"Record Not Found: \[{obj.id}\]"):
             obj.delete()
+
+    def test_undelete(self):
+        obj = Ticket(name="Learn to Recycle", desc="Reduce. Reuse. Recycle.")
+
+        obj.save()
+        self.assertIsNotNone(obj.id)
+        self.assertIsNotNone(obj.created_at)
+        self.assertIsNone(obj.deleted_at)
+
+        # obj_id = obj.id
+
+        # Safe delete / Archive
+        obj.delete(safe=True)
+        self.assertIsNotNone(obj.id)
+        self.assertIsNotNone(obj.deleted_at)
+
+        obj.undelete()
+        self.assertIsNotNone(obj.id)
+        self.assertIsNone(obj.deleted_at)
 
     def test_fetch(self):
         # Create a bunch of new records

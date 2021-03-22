@@ -39,6 +39,7 @@
               offset-y
               max-width="290px"
               min-width="290px"
+              :disabled="workDay.isDeleted()"
             >
               <template v-slot:activator="{ on }">
                 <v-text-field
@@ -47,6 +48,7 @@
                   prepend-icon="mdi-clock-outline"
                   readonly
                   v-on="on"
+                  :disabled="workDay.isDeleted()"
                 ></v-text-field>
               </template>
               <v-time-picker
@@ -91,6 +93,7 @@
               offset-y
               max-width="290px"
               min-width="290px"
+              :disabled="workDay.isDeleted()"
             >
               <template v-slot:activator="{ on }">
                 <v-text-field
@@ -99,6 +102,7 @@
                   prepend-icon="mdi-clock-outline"
                   readonly
                   v-on="on"
+                  :disabled="workDay.isDeleted()"
                 ></v-text-field>
               </template>
               <v-time-picker
@@ -141,16 +145,16 @@
               mandatory
               @change="changeType(workDay)"
             >
-              <v-btn icon value="normal">
+              <v-btn icon value="normal" :disabled="workDay.isDeleted()">
                 <v-icon>mdi-{{ constants.ICONS.workDays.normal }}</v-icon>
               </v-btn>
-              <v-btn icon value="holiday">
+              <v-btn icon value="holiday" :disabled="workDay.isDeleted()">
                 <v-icon>mdi-{{ constants.ICONS.workDays.holiday }}</v-icon>
               </v-btn>
-              <v-btn icon value="pto">
+              <v-btn icon value="pto" :disabled="workDay.isDeleted()">
                 <v-icon>mdi-{{ constants.ICONS.workDays.pto }}</v-icon>
               </v-btn>
-              <v-btn icon value="sick">
+              <v-btn icon value="sick" :disabled="workDay.isDeleted()">
                 <v-icon>mdi-{{ constants.ICONS.workDays.sick }}</v-icon>
               </v-btn>
             </v-btn-toggle>
@@ -160,12 +164,17 @@
               v-model="workDay.note"
               placeholder="Note"
               autofocus
+              :disabled="workDay.isDeleted()"
               @change="save(workDay)"
             ></v-text-field>
           </v-col>
         </v-row>
         <Actions
-          v-bind:actions="{ remove: remove }"
+          v-bind:actions="{
+            onArchiveDelete: (item) => {
+              refresh();
+            },
+          }"
           v-bind:item="workDay"
         ></Actions>
       </v-list-item>
@@ -370,21 +379,6 @@ export default {
           onError: (err) => Notification.error(`WD.Main.save: ${err.toString()}`)
         }
       })
-    },
-
-    remove: function (workDay) {
-      var self = this
-      var msg = `Delete "${this.displaySubtitle(workDay)}"?`
-
-      var doDelete = confirm(msg)
-      if (doDelete) {
-        workDay.delete({
-          handlers: {
-            onSuccess: (resp) => self.load(),
-            onError: (err) => Notification.error(`WD.Main.remove: ${err.toString()}`)
-          }
-        })
-      }
     },
 
     rowColor: function (idx) {

@@ -32,12 +32,14 @@
           >
         </v-list-item-avatar>
         <v-list-item-content @click="view(logEntry)">
-          <v-list-item-title class="subtitle-1" v-if="!logEntry.isDeleted()">{{
-            logEntry.subject
-          }}</v-list-item-title>
-          <v-list-item-title class="subtitle-1" v-else>
-            <del>{{ logEntry.subject }}</del>
-          </v-list-item-title>
+          <v-list-item-title
+            :class="
+              logEntry.isDeleted()
+                ? 'subtitle-1 text-decoration-line-through'
+                : 'subtitle-1'
+            "
+            >{{ logEntry.subject }}</v-list-item-title
+          >
           <v-list-item-subtitle>
             {{ logEntry.category }} |
             {{
@@ -52,7 +54,14 @@
           </v-list-item-subtitle>
         </v-list-item-content>
         <Actions
-          v-bind:actions="{ edit: edit, remove: remove }"
+          v-bind:actions="{
+            onEdit: (item) => {
+              edit(item);
+            },
+            onArchiveDelete: (item) => {
+              refresh();
+            },
+          }"
           v-bind:item="logEntry"
         ></Actions>
       </v-list-item>
@@ -149,28 +158,6 @@ export default {
     edit: function (logEntry) {
       this.logEntry = logEntry
       this.showEditor = true
-    },
-
-    remove: function (logEntry) {
-      var self = this
-      var safe = 1
-      var msg = `Archive "${logEntry.subject}"?`
-
-      if (logEntry.isDeleted()) {
-        safe = 0
-        msg = `Delete "${logEntry.subject}"?`
-      }
-
-      var doDelete = confirm(msg)
-      if (doDelete) {
-        logEntry.delete({
-          safe: safe,
-          handlers: {
-            onSuccess: () => { self.load() },
-            onError: (err) => { Notification.error(`LE.Main.remove: ${err.toString()}`) }
-          }
-        })
-      }
     },
 
     closeEditor: function () {

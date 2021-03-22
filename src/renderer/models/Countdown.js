@@ -12,6 +12,10 @@ class Countdown extends Resource {
   toggleFavorite () {
     this.is_favorite = !this.is_favorite
   }
+
+  toString () {
+    return this.name
+  }
 }
 // -----------------------------------------------------------------------------
 export default Countdown

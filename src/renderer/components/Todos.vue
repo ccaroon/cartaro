@@ -37,7 +37,9 @@
           >
         </v-list-item-avatar>
         <v-list-item-content @click="view(todo)">
-          <v-list-item-title>
+          <v-list-item-title
+            :class="todo.isDeleted() ? 'text-decoration-line-through' : ''"
+          >
             {{ todo.title }}
           </v-list-item-title>
           <v-list-item-subtitle>
@@ -67,7 +69,14 @@
         </v-list-item-content>
 
         <Actions
-          v-bind:actions="{ edit: edit, remove: remove }"
+          v-bind:actions="{
+            onEdit: (item) => {
+              edit(item);
+            },
+            onArchiveDelete: (item) => {
+              refresh();
+            },
+          }"
           v-bind:item="todo"
         ></Actions>
       </v-list-item>
@@ -179,19 +188,6 @@ export default {
     edit: function (todo) {
       this.todo = todo
       this.showEditor = true
-    },
-
-    remove: function (todo) {
-      var doDelete = confirm(`Delete "${todo.title}"?`)
-
-      if (doDelete) {
-        todo.delete({
-          handlers: {
-            onSuccess: (resp) => this.refresh(),
-            onError: (err) => Notification.error(`TD.Main.remove: ${err.toString()}`)
-          }
-        })
-      }
     },
 
     closeEditor: function () {

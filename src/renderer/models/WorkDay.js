@@ -1,4 +1,5 @@
 import Moment from 'moment'
+import Format from '../lib/Format'
 
 import Resource from './Resource'
 // -----------------------------------------------------------------------------
@@ -32,6 +33,10 @@ class WorkDay extends Resource {
   clearInOut () {
     this.time_in = '00:00'
     this.time_out = '00:00'
+  }
+
+  toString () {
+    return Format.formatDate(this.date)
   }
 }
 // -----------------------------------------------------------------------------

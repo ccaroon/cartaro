@@ -7,6 +7,7 @@
                 "default": "project in (Stuff) AND issuetype in (standardIssueTypes()) AND assignee = currentUser() AND Sprint in openSprints()"
             },
             "token": "0xdeadbeef"
-        }
+        },
+        "serverPort": 8888
     }
 }
