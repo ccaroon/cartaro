@@ -22,7 +22,7 @@
       <v-list-item
         v-for="(secret, idx) in secrets"
         :key="secret.id"
-        :class="rowColor(idx)"
+        :class="utils.rowColor(idx)"
         @click
       >
         <v-list-item-avatar>
@@ -54,7 +54,7 @@
               <v-col>
                 <Tags
                   v-bind:tags="secret.tags"
-                  v-bind:color="rowColor(idx + 1)"
+                  v-bind:color="utils.rowColor(idx + 1)"
                 ></Tags>
               </v-col>
             </v-row>
@@ -184,15 +184,6 @@ export default {
 
     closeViewer: function () {
       this.showViewer = false
-    },
-
-    rowColor: function (idx) {
-      var color = Constants.COLORS.GREY
-
-      if (idx % 2 === 0) {
-        color = Constants.COLORS.GREY_ALT
-      }
-      return color
     }
   },
 

@@ -21,7 +21,7 @@
       <v-list-item
         v-for="(logEntry, idx) in logEntries"
         :key="logEntry.id"
-        :class="rowColor(idx)"
+        :class="utils.rowColor(idx)"
         @click
       >
         <v-list-item-avatar>
@@ -49,7 +49,7 @@
             }}
             <Tags
               v-bind:tags="logEntry.tags"
-              v-bind:color="rowColor(idx + 1)"
+              v-bind:color="utils.rowColor(idx + 1)"
             ></Tags>
           </v-list-item-subtitle>
         </v-list-item-content>
@@ -74,6 +74,7 @@ import Mousetrap from 'mousetrap'
 
 import Constants from '../lib/Constants'
 import Format from '../lib/Format'
+import Utils from '../lib/Utils'
 
 import LogEntry from '../models/LogEntry'
 
@@ -167,15 +168,6 @@ export default {
 
     closeViewer: function () {
       this.showViewer = false
-    },
-
-    rowColor: function (idx) {
-      var color = Constants.COLORS.GREY
-
-      if (idx % 2 === 0) {
-        color = Constants.COLORS.GREY_ALT
-      }
-      return color
     }
   },
 
@@ -190,6 +182,7 @@ export default {
       showViewer: false,
       constants: Constants,
       format: Format,
+      utils: Utils,
       searchText: null
     }
   }
