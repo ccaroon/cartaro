@@ -11,7 +11,7 @@
       <v-list-item
         v-for="(countDown, idx) in countDowns"
         :key="countDown.id"
-        :class="rowColor(idx)"
+        :class="utils.rowColor(idx)"
       >
         <v-list-item-avatar v-if="!countDown.isDeleted()">
           <v-btn icon @click="toggleFavorite(countDown)">
@@ -217,9 +217,9 @@
 import Moment from 'moment'
 import Mousetrap from 'mousetrap'
 
-import Constants from '../lib/Constants'
 import Format from '../lib/Format'
 import Notification from '../lib/Notification'
+import Utils from '../lib/Utils'
 
 import Countdown from '../models/Countdown'
 
@@ -359,16 +359,6 @@ export default {
           onError: (err) => { Notification.error(`CD.Main.save: ${err.toString()}`) }
         }
       })
-    },
-
-    rowColor: function (idx) {
-      var color = Constants.COLORS.GREY
-
-      if (idx % 2 === 0) {
-        color = Constants.COLORS.GREY_ALT
-      }
-
-      return color
     }
   },
 
@@ -379,6 +369,7 @@ export default {
       perPage: 11,
       totalCountDowns: 0,
       format: Format,
+      utils: Utils,
       searchText: null,
       showStartDateMenu: [],
       showStartTimeMenu: [],

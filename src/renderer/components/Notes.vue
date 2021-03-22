@@ -20,7 +20,7 @@
       <v-list-item
         v-for="(note, idx) in notes"
         :key="note.id"
-        :class="rowColor(idx)"
+        :class="utils.rowColor(idx)"
         @click
       >
         <v-list-item-avatar>
@@ -43,7 +43,7 @@
             }}
             <Tags
               v-bind:tags="note.tags"
-              v-bind:color="rowColor(idx + 1)"
+              v-bind:color="utils.rowColor(idx + 1)"
             ></Tags>
           </v-list-item-subtitle>
         </v-list-item-content>
@@ -66,9 +66,9 @@
 <script>
 import Mousetrap from 'mousetrap'
 
-import Constants from '../lib/Constants'
 import Format from '../lib/Format'
 import Notification from '../lib/Notification'
+import Utils from '../lib/Utils'
 
 import Note from '../models/Note'
 
@@ -158,15 +158,6 @@ export default {
 
     closeViewer: function () {
       this.showViewer = false
-    },
-
-    rowColor: function (idx) {
-      var color = Constants.COLORS.GREY
-
-      if (idx % 2 === 0) {
-        color = Constants.COLORS.GREY_ALT
-      }
-      return color
     }
   },
 
@@ -180,6 +171,7 @@ export default {
       showEditor: false,
       showViewer: false,
       format: Format,
+      utils: Utils,
       searchText: null
     }
   }
