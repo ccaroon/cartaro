@@ -54,7 +54,14 @@
           </v-list-item-subtitle>
         </v-list-item-content>
         <Actions
-          v-bind:actions="{ edit: edit, remove: remove }"
+          v-bind:actions="{
+            onEdit: (item) => {
+              edit(item);
+            },
+            onArchiveDelete: (item) => {
+              refresh();
+            },
+          }"
           v-bind:item="logEntry"
         ></Actions>
       </v-list-item>
@@ -151,28 +158,6 @@ export default {
     edit: function (logEntry) {
       this.logEntry = logEntry
       this.showEditor = true
-    },
-
-    remove: function (logEntry) {
-      var self = this
-      var safe = 1
-      var msg = `Archive "${logEntry.subject}"?`
-
-      if (logEntry.isDeleted()) {
-        safe = 0
-        msg = `Delete "${logEntry.subject}"?`
-      }
-
-      var doDelete = confirm(msg)
-      if (doDelete) {
-        logEntry.delete({
-          safe: safe,
-          handlers: {
-            onSuccess: () => { self.load() },
-            onError: (err) => { Notification.error(`LE.Main.remove: ${err.toString()}`) }
-          }
-        })
-      }
     },
 
     closeEditor: function () {

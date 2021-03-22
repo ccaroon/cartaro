@@ -4,6 +4,7 @@ from tinydb import Query
 
 from .base import Base
 from .taggable import Taggable
+from cartaro.utils.db_helper import DbHelper
 
 class WorkDay(Taggable, Base):
     TYPE_NORMAL = "normal"
@@ -75,10 +76,9 @@ class WorkDay(Taggable, Base):
 
         db = cls._database()
 
-        # print(F"S{start_date} -- E{end_date}")
-
         Day = Query()
         docs = db.search(Day.date.test(lambda value, s, e: s <= value <= e, start_date.timestamp, end_date.timestamp))
+        docs = DbHelper.sort(docs, 'date')
 
         work_days = []
         for doc in docs:

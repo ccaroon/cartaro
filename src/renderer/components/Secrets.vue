@@ -61,7 +61,14 @@
           </v-list-item-subtitle>
         </v-list-item-content>
         <Actions
-          v-bind:actions="{ edit: edit, remove: remove }"
+          v-bind:actions="{
+            onEdit: (item) => {
+              edit(item);
+            },
+            onArchiveDelete: (item) => {
+              refresh();
+            },
+          }"
           v-bind:item="secret"
         ></Actions>
       </v-list-item>
@@ -168,28 +175,6 @@ export default {
     edit: function (secret) {
       this.secret = secret
       this.showEditor = true
-    },
-
-    remove: function (secret) {
-      var self = this
-      var safe = 1
-      var msg = `Archive "${secret.system}/${secret.sub_system}/${secret.name}"?`
-
-      if (secret.isDeleted()) {
-        safe = 0
-        msg = `Delete "${secret.system}/${secret.sub_system}/${secret.name}"?`
-      }
-
-      var doDelete = confirm(msg)
-      if (doDelete) {
-        secret.delete({
-          safe: safe,
-          handlers: {
-            onSuccess: () => { self.load() },
-            onError: (err) => { Notification.error(`SE.Main.remove: ${err.toString()}`) }
-          }
-        })
-      }
     },
 
     closeEditor: function () {
