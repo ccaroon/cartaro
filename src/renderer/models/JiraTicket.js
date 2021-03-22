@@ -15,6 +15,10 @@ class JiraTicket extends Resource {
 
     return color
   }
+
+  toString () {
+    return this.summary
+  }
 }
 // -----------------------------------------------------------------------------
 export default JiraTicket

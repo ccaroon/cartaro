@@ -45,6 +45,10 @@ class Secret extends Resource {
 
     return this.data
   }
+
+  toString () {
+    return this.name
+  }
 }
 // -----------------------------------------------------------------------------
 export default Secret

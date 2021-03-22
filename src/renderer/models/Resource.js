@@ -54,6 +54,10 @@ class Resource {
     return this.client.delete(this, options)
   }
 
+  undelete (options = {}) {
+    return this.client.undelete(this, options)
+  }
+
   isDeleted () {
     return this.deleted_at !== null
   }

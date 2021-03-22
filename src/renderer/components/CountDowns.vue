@@ -202,7 +202,11 @@
           </v-col>
         </v-row>
         <Actions
-          v-bind:actions="{ remove: remove }"
+          v-bind:actions="{
+            onArchiveDelete: (item) => {
+              refresh();
+            },
+          }"
           v-bind:item="countDown"
         ></Actions>
       </v-list-item>
@@ -355,28 +359,6 @@ export default {
           onError: (err) => { Notification.error(`CD.Main.save: ${err.toString()}`) }
         }
       })
-    },
-
-    remove: function (countDown) {
-      var self = this
-      var safe = 1
-      var msg = `Archive "${countDown.name}"?`
-
-      if (countDown.isDeleted()) {
-        safe = 0
-        msg = `Delete "${countDown.name}"?`
-      }
-
-      var doDelete = confirm(msg)
-      if (doDelete) {
-        countDown.delete({
-          safe: safe,
-          handlers: {
-            onSuccess: () => { self.load() },
-            onError: (err) => { Notification.error(`CD.Main.remove: ${err.toString()}`) }
-          }
-        })
-      }
     },
 
     rowColor: function (idx) {

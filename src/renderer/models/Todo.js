@@ -90,6 +90,10 @@ class Todo extends Resource {
 
     return color
   }
+
+  toString () {
+    return this.title
+  }
 }
 // -----------------------------------------------------------------------------
 export default Todo

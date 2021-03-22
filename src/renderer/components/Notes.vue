@@ -27,12 +27,14 @@
           <v-icon :color="note.is_favorite ? 'yellow' : ''">mdi-star</v-icon>
         </v-list-item-avatar>
         <v-list-item-content @click="view(note)">
-          <v-list-item-title class="subtitle-1" v-if="!note.isDeleted()">{{
-            note.title
-          }}</v-list-item-title>
-          <v-list-item-title class="subtitle-1" v-else>
-            <del>{{ note.title }}</del>
-          </v-list-item-title>
+          <v-list-item-title
+            :class="
+              note.isDeleted()
+                ? 'subtitle-1 text-decoration-line-through'
+                : 'subtitle-1'
+            "
+            >{{ note.title }}</v-list-item-title
+          >
           <v-list-item-subtitle>
             {{
               note.created_at
@@ -46,7 +48,14 @@
           </v-list-item-subtitle>
         </v-list-item-content>
         <Actions
-          v-bind:actions="{ edit: edit, remove: remove }"
+          v-bind:actions="{
+            onEdit: (item) => {
+              edit(item);
+            },
+            onArchiveDelete: (item) => {
+              refresh();
+            },
+          }"
           v-bind:item="note"
         ></Actions>
       </v-list-item>
@@ -140,28 +149,6 @@ export default {
     edit: function (note) {
       this.note = note
       this.showEditor = true
-    },
-
-    remove: function (note) {
-      var self = this
-      var safe = 1
-      var msg = `Archive "${note.title}"?`
-
-      if (note.isDeleted()) {
-        safe = 0
-        msg = `Delete "${note.title}"?`
-      }
-
-      var doDelete = confirm(msg)
-      if (doDelete) {
-        note.delete({
-          safe: safe,
-          handlers: {
-            onSuccess: () => { self.load() },
-            onError: (err) => { Notification.error(`NT.Main.remove: ${err.toString()}`) }
-          }
-        })
-      }
     },
 
     closeEditor: function () {

@@ -128,6 +128,10 @@ class Base(ABC):
     def _post_save(self):
         pass
 
+    def undelete(self):
+        self.__deleted_at = None
+        self.save()
+
     def delete(self, safe=False):
         if self.id:
             now = arrow.now(Base.TIMEZONE)
@@ -140,8 +144,8 @@ class Base(ABC):
                     self._database().update(tyops.set('deleted_at', self.__deleted_at.timestamp), doc_ids=[self.id])
                 else:
                     self._database().remove(doc_ids=[self.id])
+                    self.__id = None
 
-                self.__id = None
             except KeyError as ke:
                 raise ValueError(F"Record Not Found: [{self.id}]")
         else:

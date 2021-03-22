@@ -47,6 +47,11 @@ class RestClient {
     return this.__resolve(p, options)
   }
 
+  undelete (obj, options = {}) {
+    var p = axios.put(`${this.__baseUrl()}/${this.resource}/undelete/${obj.id}`)
+    return this.__resolve(p, options)
+  }
+
   __resolve (promise, options) {
     var resolvedVal = true
 

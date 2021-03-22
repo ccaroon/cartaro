@@ -32,12 +32,14 @@
           >
         </v-list-item-avatar>
         <v-list-item-content @click="view(logEntry)">
-          <v-list-item-title class="subtitle-1" v-if="!logEntry.isDeleted()">{{
-            logEntry.subject
-          }}</v-list-item-title>
-          <v-list-item-title class="subtitle-1" v-else>
-            <del>{{ logEntry.subject }}</del>
-          </v-list-item-title>
+          <v-list-item-title
+            :class="
+              logEntry.isDeleted()
+                ? 'subtitle-1 text-decoration-line-through'
+                : 'subtitle-1'
+            "
+            >{{ logEntry.subject }}</v-list-item-title
+          >
           <v-list-item-subtitle>
             {{ logEntry.category }} |
             {{

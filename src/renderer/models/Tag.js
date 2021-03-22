@@ -16,6 +16,10 @@ class Tag extends Resource {
       }
     })
   }
+
+  toString () {
+    return this.name
+  }
 }
 // -----------------------------------------------------------------------------
 export default Tag
