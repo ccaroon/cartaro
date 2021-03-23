@@ -12,11 +12,7 @@
         <template v-slot:default="{ index, item }">
           <v-list-item :class="utils.rowColor(index)" dense>
             <v-list-item-icon>
-              <v-icon :color="item.color()"
-                >mdi-{{
-                  constants.ICONS.tickets[item.type.toLowerCase()]
-                }}</v-icon
-              >
+              <v-icon :color="item.color()">{{ item.icon() }}</v-icon>
               <span
                 style="cursor: pointer"
                 class="blue--text"

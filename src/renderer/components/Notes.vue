@@ -24,7 +24,9 @@
         @click
       >
         <v-list-item-avatar>
-          <v-icon :color="note.is_favorite ? 'yellow' : ''">mdi-star</v-icon>
+          <v-icon :color="note.is_favorite ? 'yellow' : ''">{{
+            note.icon()
+          }}</v-icon>
         </v-list-item-avatar>
         <v-list-item-content @click="view(note)">
           <v-list-item-title

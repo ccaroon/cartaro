@@ -28,15 +28,9 @@
                 v-if="item.ticket_link"
                 @click.stop="utils.openLink('Jira', item.ticket_link)"
                 color="blue"
-                >mdi-{{
-                  constants.ICONS.logEntries[item.category.toLowerCase()]
-                }}</v-icon
+                >{{ item.icon() }}</v-icon
               >
-              <v-icon v-else
-                >mdi-{{
-                  constants.ICONS.logEntries[item.category.toLowerCase()]
-                }}</v-icon
-              >
+              <v-icon v-else>{{ item.icon() }}</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>

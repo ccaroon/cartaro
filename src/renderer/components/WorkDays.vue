@@ -14,7 +14,7 @@
         :class="rowColor(idx)"
       >
         <v-list-item-avatar>
-          <v-icon>mdi-{{ constants.ICONS.workDays[workDay.type] }}</v-icon>
+          <v-icon>{{ workDay.icon() }}</v-icon>
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title
@@ -146,16 +146,16 @@
               @change="changeType(workDay)"
             >
               <v-btn icon value="normal" :disabled="workDay.isDeleted()">
-                <v-icon>mdi-{{ constants.ICONS.workDays.normal }}</v-icon>
+                <v-icon>{{ icons.get("workday") }}</v-icon>
               </v-btn>
               <v-btn icon value="holiday" :disabled="workDay.isDeleted()">
-                <v-icon>mdi-{{ constants.ICONS.workDays.holiday }}</v-icon>
+                <v-icon>{{ icons.get("holiday") }}</v-icon>
               </v-btn>
               <v-btn icon value="pto" :disabled="workDay.isDeleted()">
-                <v-icon>mdi-{{ constants.ICONS.workDays.pto }}</v-icon>
+                <v-icon>{{ icons.get("pto") }}</v-icon>
               </v-btn>
               <v-btn icon value="sick" :disabled="workDay.isDeleted()">
-                <v-icon>mdi-{{ constants.ICONS.workDays.sick }}</v-icon>
+                <v-icon>{{ icons.get("sick") }}</v-icon>
               </v-btn>
             </v-btn-toggle>
           </v-col>
@@ -194,6 +194,7 @@ import Mousetrap from 'mousetrap'
 
 import Constants from '../lib/Constants'
 import Format from '../lib/Format'
+import Icon from '../lib/Icon'
 import Notification from '../lib/Notification'
 import Utils from '../lib/Utils'
 
@@ -403,6 +404,7 @@ export default {
       totalDays: 0,
       constants: Constants,
       format: Format,
+      icons: Icon,
       searchText: null,
       showTimeInMenu: [],
       showTimeOutMenu: []

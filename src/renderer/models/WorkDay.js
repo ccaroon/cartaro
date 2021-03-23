@@ -1,6 +1,6 @@
 import Moment from 'moment'
 import Format from '../lib/Format'
-
+import Icon from '../lib/Icon'
 import Resource from './Resource'
 // -----------------------------------------------------------------------------
 class WorkDay extends Resource {
@@ -14,9 +14,9 @@ class WorkDay extends Resource {
   static TYPE_SICK = 'sick'
   static TYPE_HOLIDAY = 'holiday'
 
-  // constructor(data) {
-  //   super(data)
-  // }
+  icon () {
+    return Icon.get(this.type, 'mdi-calendar')
+  }
 
   hoursWorked () {
     var inTime = this.time_in.split(':')

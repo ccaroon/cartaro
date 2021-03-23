@@ -5,7 +5,7 @@
         <v-col cols="2" v-for="(workDay, idx) in workDays" :key="workDay.id">
           <v-list-item :class="dayColor(idx, workDay)" dense>
             <v-list-item-avatar>
-              <v-icon>mdi-{{ constants.ICONS.workDays[workDay.type] }}</v-icon>
+              <v-icon>{{ workDay.icon() }}</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>

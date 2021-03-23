@@ -26,8 +26,9 @@
           dense
         >
           <v-col>
-            <v-icon @click.stop="utils.copyToClipboard(fld.toUpperCase(), val)"
-              >mdi-{{ constants.ICONS.secrets[fld] }}</v-icon
+            <v-icon
+              @click.stop="utils.copyToClipboard(fld.toUpperCase(), val)"
+              >{{ secret.icon(fld) }}</v-icon
             >&nbsp;
             <template v-if="hideData">**********</template>
             <template v-else>{{ val }}</template>

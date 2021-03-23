@@ -1,6 +1,6 @@
-import Resource from './Resource'
-
 import Crypto from '../lib/Crypto'
+import Icon from '../lib/Icon'
+import Resource from './Resource'
 // -----------------------------------------------------------------------------
 class Secret extends Resource {
   static RESOURCE_NAME = 'secrets'
@@ -44,6 +44,17 @@ class Secret extends Resource {
     }
 
     return this.data
+  }
+
+  icon (field = null) {
+    let icon = null
+
+    if (field) {
+      icon = Icon.search(field, 'mdi-eye-off')
+    } else {
+      icon = Icon.get('secret', 'mdi-eye-off')
+    }
+    return icon
   }
 
   toString () {
