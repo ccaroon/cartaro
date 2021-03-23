@@ -56,7 +56,7 @@
               <v-col>
                 <v-text-field
                   :label="fld"
-                  :prepend-icon="'mdi-' + constants.ICONS.secrets[fld]"
+                  :prepend-icon="secret.icon(fld).code"
                   v-model.lazy="secret.data[fld]"
                   outlined
                   dense

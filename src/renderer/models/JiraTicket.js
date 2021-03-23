@@ -1,8 +1,12 @@
+import Icon from '../lib/Icon'
 import Resource from './Resource'
-
 // -----------------------------------------------------------------------------
 class JiraTicket extends Resource {
   static RESOURCE_NAME = 'jira'
+
+  icon () {
+    return Icon.search(this.type, 'mdi-ticket-confirmation')
+  }
 
   color () {
     var color = 'blue'

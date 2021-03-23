@@ -25,11 +25,7 @@
         @click
       >
         <v-list-item-avatar>
-          <v-icon
-            >mdi-{{
-              constants.ICONS.logEntries[logEntry.category.toLowerCase()]
-            }}</v-icon
-          >
+          <v-icon>{{ logEntry.icon() }}</v-icon>
         </v-list-item-avatar>
         <v-list-item-content @click="view(logEntry)">
           <v-list-item-title

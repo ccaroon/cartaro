@@ -46,7 +46,7 @@
               <v-col cols="3" v-for="(val, fld) in secret.decrypt()" :key="fld">
                 <v-icon
                   @click.stop="utils.copyToClipboard(fld.toUpperCase(), val)"
-                  >mdi-{{ constants.ICONS.secrets[fld] }}</v-icon
+                  >{{ secret.icon(fld) }}</v-icon
                 >&nbsp;
                 <template v-if="isHidden[secret.id]">**********</template>
                 <template v-else>{{ val }}</template>

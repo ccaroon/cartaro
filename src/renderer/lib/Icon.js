@@ -21,13 +21,14 @@ class Icon {
     { icon: new Icon('Cloud', 'mdi-cloud'), keywords: [] },
     { icon: new Icon('Code', 'mdi-code-braces'), keywords: ['coding', 'development', 'programming'] },
     { icon: new Icon('Coffee', 'mdi-coffee'), keywords: ['cuppa'] },
-    { icon: new Icon('Configs', 'mdi-cog'), keywords: ['settings'] },
+    { icon: new Icon('Cog', 'mdi-cog'), keywords: ['configs', 'settings', 'operational'] },
     { icon: new Icon('Credentials', 'mdi-credit-card'), keywords: ['creds'] },
     { icon: new Icon('CSS', 'mdi-language-css3'), keywords: ['css3'] },
     { icon: new Icon('Databases', 'mdi-database'), keywords: ['DB', 'sql', 'mysql', 'postgresql', 'redis'] },
     { icon: new Icon('Debian', 'mdi-debian'), keywords: [] },
     { icon: new Icon('Disaster', 'mdi-flash-alert'), keywords: ['dr', 'disaster recovery'] },
     { icon: new Icon('Docker', 'mdi-docker'), keywords: [] },
+    { icon: new Icon('Dots', 'mdi-dots-horizontal'), keywords: ['other', 'misc'] },
     { icon: new Icon('Electronics', 'mdi-raspberrypi'), keywords: [] },
     { icon: new Icon('Errors', 'mdi-alert-octagon'), keywords: [] },
     { icon: new Icon('Events', 'mdi-calendar-star'), keywords: [] },
@@ -41,11 +42,13 @@ class Icon {
     { icon: new Icon('GoLang', 'mdi-language-go'), keywords: ['go'] },
     { icon: new Icon('Harddrives', 'mdi-harddisk'), keywords: ['harddisks', 'hard disks', 'HD', 'hard drives'] },
     { icon: new Icon('Heart', 'mdi-heart-pulse'), keywords: ['love'] },
+    { icon: new Icon('Holiday', 'mdi-flag-variant'), keywords: [] },
     { icon: new Icon('HTML', 'mdi-language-html5'), keywords: ['html5'] },
     { icon: new Icon('iPhone', 'mdi-cellphone-iphone'), keywords: [] },
     { icon: new Icon('Java', 'mdi-language-java'), keywords: [] },
     { icon: new Icon('JavaScript', 'mdi-language-javascript'), keywords: ['ecma'] },
     { icon: new Icon('Jira', 'mdi-jira'), keywords: [] },
+    { icon: new Icon('Key', 'mdi-key'), keywords: [] },
     { icon: new Icon('Laptop', 'mdi-laptop'), keywords: ['computer'] },
     { icon: new Icon('Learn', 'mdi-school'), keywords: ['learning'] },
     { icon: new Icon('MacIntosh', 'mdi-apple-finder'), keywords: ['macos'] },
@@ -53,6 +56,7 @@ class Icon {
     { icon: new Icon('Markdown', 'mdi-language-markdown'), keywords: [] },
     { icon: new Icon('Medical', 'mdi-medical-bag'), keywords: ['doctor', 'dr', 'sick'] },
     { icon: new Icon('Medicine', 'mdi-pill'), keywords: [] },
+    { icon: new Icon('Meeting', 'mdi-calendar-star'), keywords: [] },
     { icon: new Icon('Memory', 'mdi-memory'), keywords: ['mem', 'ram'] },
     { icon: new Icon('Misc', 'mdi-dots-horizontal'), keywords: [] },
     { icon: new Icon('Network', 'mdi-lan-connect'), keywords: ['internet'] },
@@ -60,23 +64,30 @@ class Icon {
     { icon: new Icon('Notes', 'mdi-note'), keywords: [] },
     { icon: new Icon('NPM', 'mdi-npm'), keywords: ['package.json'] },
     { icon: new Icon('Package', 'mdi-package-variant'), keywords: ['yum', 'rpm', 'deb', 'apt', 'tar', 'tgz', 'zip'] },
-    { icon: new Icon('Password', 'mdi-lock'), keywords: [] },
+    { icon: new Icon('Password', 'mdi-form-textbox-password'), keywords: [] },
     { icon: new Icon('PHP', 'mdi-language-php'), keywords: [] },
     { icon: new Icon('Pipeline', 'mdi-pipe'), keywords: [] },
+    { icon: new Icon('PTO', 'mdi-island'), keywords: ['vacation'] },
     { icon: new Icon('Python', 'mdi-language-python'), keywords: [] },
     { icon: new Icon('RedHat', 'mdi-redhat'), keywords: [] },
     { icon: new Icon('Reports', 'mdi-file-chart'), keywords: ['reporting', 'chart'] },
     { icon: new Icon('Secret', 'mdi-eye-off'), keywords: [] },
+    { icon: new Icon('Sick', 'mdi-emoticon-sick'), keywords: [] },
     { icon: new Icon('Slack', 'mdi-slack'), keywords: [] },
+    { icon: new Icon('Story', 'mdi-bookmark'), keywords: [] },
+    { icon: new Icon('Task', 'mdi-checkbox-marked'), keywords: [] },
     { icon: new Icon('Teams', 'mdi-account-multiple'), keywords: [] },
     { icon: new Icon('Terraform', 'mdi-terraform'), keywords: [] },
+    { icon: new Icon('Ticket', 'mdi-ticket-confirmation'), keywords: [] },
+    { icon: new Icon('Token', 'mdi-currency-usd-circle'), keywords: [] },
     { icon: new Icon('Tooth', 'mdi-tooth-outline'), keywords: ['dentist', 'teeth', 'dental'] },
     { icon: new Icon('Transfer', 'mdi-transfer'), keywords: ['xfer'] },
     { icon: new Icon('Ubuntu', 'mdi-ubuntu'), keywords: [] },
-    { icon: new Icon('Users', 'mdi-account-box'), keywords: ['user'] },
+    { icon: new Icon('Users', 'mdi-account-box'), keywords: ['user', 'username'] },
     { icon: new Icon('Vault', 'mdi-safe-square-outline'), keywords: ['safe', 'hashicorp-vault'] },
     { icon: new Icon('VPN', 'mdi-vpn'), keywords: [] },
-    { icon: new Icon('Weekly', 'mdi-calendar-range'), keywords: ['weeks'] }
+    { icon: new Icon('Weekly', 'mdi-calendar-range'), keywords: ['weeks'] },
+    { icon: new Icon('Workday', 'mdi-calendar'), keywords: [] }
   ]
 
   name = null
@@ -112,6 +123,20 @@ class Icon {
     }
 
     return foundIcon
+  }
+
+  static get (name, defaultIcon = null) {
+    let foundData = this.ICONS.find((iconData) => {
+      if (iconData.icon.name.toLowerCase() === name.toLowerCase()) {
+        return true
+      }
+    })
+
+    if (!foundData && defaultIcon) {
+      foundData = { icon: new Icon('Default', defaultIcon) }
+    }
+
+    return foundData ? foundData.icon : null
   }
 
   // TODO: use the longest match found?

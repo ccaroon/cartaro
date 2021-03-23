@@ -26,32 +26,6 @@ const constants = {
     entryDate: 'YYYY-MM-DD'
   },
 
-  ICONS: {
-    secrets: {
-      token: 'currency-usd-circle',
-      username: 'account',
-      password: 'shield-account',
-      key: 'key',
-      secret: 'eye-off'
-    },
-    logEntries: {
-      meeting: 'calendar-star',
-      ticket: 'ticket-confirmation',
-      operational: 'cog',
-      other: 'dots-hexagon'
-    },
-    tickets: {
-      task: 'checkbox-marked',
-      story: 'bookmark'
-    },
-    workDays: {
-      normal: 'calendar',
-      holiday: 'flag-variant',
-      pto: 'island',
-      sick: 'hospital-box'
-    }
-  },
-
   MONTHS: [
     { text: 'January', value: 1, icon: 'mdi-snowflake' },
     { text: 'February', value: 2, icon: 'mdi-snowman' },
