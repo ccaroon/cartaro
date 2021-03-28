@@ -9,7 +9,7 @@ class JiraTicket extends Resource {
   }
 
   color () {
-    var color = 'blue'
+    let color = 'blue'
 
     if (this.status === 'In Progress') {
       color = 'green'

@@ -22,7 +22,7 @@
         v-for="(todo, idx) in todos"
         :key="todo.id"
         :class="todo.color(idx)"
-        @click
+        @click.stop
       >
         <v-list-item-avatar>
           <v-icon :color="todo.priorityColor()"
@@ -108,7 +108,7 @@ export default {
 
   methods: {
     bindShortcutKeys: function () {
-      var self = this
+      const self = this
 
       Mousetrap.bind(['ctrl+n', 'command+n'], () => {
         self.newTodo()
@@ -129,15 +129,15 @@ export default {
     },
 
     load: function () {
-      var self = this
-      var query = {
+      const self = this
+      const query = {
         page: this.page,
         pp: this.perPage,
         sort_by: 'due_at,priority,is_complete'
       }
 
       if (this.searchText) {
-        var parts = this.searchText.split(':', 2)
+        const parts = this.searchText.split(':', 2)
         if (parts.length === 2) {
           query[parts[0].trim()] = parts[1].trim()
         } else {
@@ -178,7 +178,7 @@ export default {
     },
 
     newTodo: function () {
-      var todo = new Todo({
+      const todo = new Todo({
         priority: 1,
         repeat: 0
       })

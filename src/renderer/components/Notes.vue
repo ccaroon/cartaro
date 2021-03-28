@@ -21,7 +21,7 @@
         v-for="(note, idx) in notes"
         :key="note.id"
         :class="utils.rowColor(idx)"
-        @click
+        @click.stop
       >
         <v-list-item-avatar>
           <v-icon :color="note.is_favorite ? 'yellow' : ''">{{
@@ -90,7 +90,7 @@ export default {
 
   methods: {
     bindShortcutKeys: function () {
-      var self = this
+      const self = this
 
       Mousetrap.bind(['ctrl+n', 'command+n'], () => {
         self.newNote()
@@ -111,15 +111,15 @@ export default {
     },
 
     load: function () {
-      var self = this
-      var query = {
+      const self = this
+      const query = {
         page: this.page,
         pp: this.perPage,
         sort_by: 'created_at'
       }
 
       if (this.searchText) {
-        var parts = this.searchText.split(':', 2)
+        const parts = this.searchText.split(':', 2)
         if (parts.length === 2) {
           query[parts[0].trim()] = parts[1].trim()
         } else {

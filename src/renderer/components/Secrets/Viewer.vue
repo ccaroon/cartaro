@@ -69,8 +69,8 @@ export default {
 
   methods: {
     formatType: function (type = ' ') {
-      var parts = type.split('-')
-      var prettyParts = parts.map(p => {
+      const parts = type.split('-')
+      const prettyParts = parts.map(p => {
         return `${p[0].toUpperCase()}${p.slice(1)}`
       })
 

@@ -100,7 +100,7 @@ export default {
     },
 
     save: function () {
-      var self = this
+      const self = this
 
       if (this.$refs.noteForm.validate()) {
         this.note.save({
@@ -125,7 +125,7 @@ export default {
     },
 
     removeTag: function (tag) {
-      var index = this.note.tags.indexOf(tag)
+      const index = this.note.tags.indexOf(tag)
       this.note.tags.splice(index, 1)
     }
 

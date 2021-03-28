@@ -284,7 +284,7 @@ export default {
     },
 
     save: function (markComplete = false) {
-      var self = this
+      const self = this
 
       if (this.$refs.todoForm.validate()) {
         // TODO: handle repeating todos
@@ -324,7 +324,7 @@ export default {
     },
 
     removeTag: function (tag) {
-      var index = this.todo.tags.indexOf(tag)
+      const index = this.todo.tags.indexOf(tag)
       this.todo.tags.splice(index, 1)
     }
 
@@ -333,7 +333,7 @@ export default {
   watch: {
     dueDate: function (newDate) {
       if (newDate) {
-        var dt = this.dueTime ? this.dueTime : '00:00'
+        const dt = this.dueTime ? this.dueTime : '00:00'
         this.todo.due_at = Moment(`${newDate} ${dt}`, 'YYYY-MM-DD HH:mm').unix()
       } else {
         this.todo.repeat = 0

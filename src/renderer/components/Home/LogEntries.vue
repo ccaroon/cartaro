@@ -98,9 +98,9 @@ export default {
     },
 
     loadEntries: function () {
-      var self = this
+      const self = this
       const startOfWeek = Moment().startOf('week')
-      var query = {
+      const query = {
         logged_at: `gte:${startOfWeek.unix()}`,
         sort_by: 'logged_at:desc'
       }
@@ -116,7 +116,7 @@ export default {
     },
 
     rowColor: function (entry, index) {
-      var color = Utils.rowColor(index)
+      let color = Utils.rowColor(index)
 
       if (Moment(entry.logged_at * 1000).isSame(Moment(), 'day')) {
         color = 'light-green accent-1'

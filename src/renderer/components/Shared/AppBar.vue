@@ -60,7 +60,7 @@ export default {
     },
 
     bindShortcutKeys: function () {
-      var self = this
+      const self = this
 
       Mousetrap.bind(['ctrl+f', 'command+f'], () => {
         self.$refs.searchBox.focus()

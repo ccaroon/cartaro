@@ -20,11 +20,11 @@ class Todo extends Resource {
   }
 
   markComplete () {
-    var promises = []
+    const promises = []
 
     if (this.repeat > 0) {
-      var repeatDuper = new Promise((resolve, reject) => {
-        var newTodo = new Todo(this)
+      const repeatDuper = new Promise((resolve, reject) => {
+        const newTodo = new Todo(this)
         delete newTodo.id
         newTodo.due_at = Moment(this.due_at * 1000).add(this.repeat, 'days').unix()
         newTodo.save({
@@ -38,7 +38,7 @@ class Todo extends Resource {
     }
 
     // **MUST** come last in promises list
-    var always = new Promise((resolve) => {
+    const always = new Promise((resolve) => {
       this.is_complete = true
       this.completed_at = Moment().unix()
       resolve()
@@ -49,7 +49,7 @@ class Todo extends Resource {
   }
 
   toggleCompleted () {
-    var promise = new Promise((resolve) => { resolve(true) })
+    let promise = new Promise((resolve) => { resolve(true) })
     if (this.is_complete) {
       this.markUncomplete()
     } else {
@@ -59,18 +59,18 @@ class Todo extends Resource {
   }
 
   priorityColor () {
-    var key = `PRIORITY_${this.priority}`
+    const key = `PRIORITY_${this.priority}`
     return Constants.COLORS[key]
   }
 
   color (idx) {
-    var colors = {
+    const colors = {
       default: [Constants.COLORS.GREY, Constants.COLORS.GREY_ALT],
       dueSoon: ['yellow lighten-2', 'yellow lighten-4'],
       overdue: ['red lighten-2', 'red lighten-4']
     }
-    var colorKey = 'default'
-    var color = null
+    let colorKey = 'default'
+    let color = null
 
     const now = Moment()
     const due = Moment.unix(this.due_at)

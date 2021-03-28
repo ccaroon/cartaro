@@ -12,7 +12,7 @@ const path = require('path')
 let mainWindow, backendServer
 const winURL = process.env.NODE_ENV === 'development'
   ? 'http://localhost:9080'
-  : `file://${__dirname}/index.html`
+  : `file://${path.join(__dirname, 'index.html')}`
 
 const docPath = path.join(app.getPath('documents'), 'Cartaro')
 
@@ -65,9 +65,9 @@ function quitApp () {
 }
 
 function createMenu () {
-  var mainMetaKey = process.platform === 'darwin' ? 'Cmd' : 'Ctrl'
+  const mainMetaKey = process.platform === 'darwin' ? 'Cmd' : 'Ctrl'
   // -------------
-  var aboutSubMenu = {
+  const aboutSubMenu = {
     label: 'About Ĉartaro',
     accelerator: mainMetaKey + '+?',
     click: () => {
@@ -169,10 +169,10 @@ function createMenu () {
 // SEE: https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
 // ---------------------------------------------------------------------------
 function initServer () {
-  var basePath = path.resolve(path.dirname(__dirname))
-  var cmd = `./bin/python ./bin/flask run -p ${PORT}`
+  const basePath = path.resolve(path.dirname(__dirname))
+  const cmd = `./bin/python ./bin/flask run -p ${PORT}`
 
-  var serverPath = null
+  let serverPath = null
   if (basePath.match(/\/Resources\//i)) {
     // Electron launched as bundled app
     serverPath = path.join(basePath, '../../server/dist')
@@ -181,7 +181,7 @@ function initServer () {
     serverPath = path.join(basePath, '../server/dist')
   }
 
-  var env = {} // process.env
+  const env = {} // process.env
   env.PYTHONPATH = serverPath
   env.FLASK_ENV = process.env.NODE_ENV
   env.FLASK_APP = 'cartaro'
@@ -264,7 +264,7 @@ app.on('window-all-closed', () => {
 app.on('ready', () => {
   initApp()
 
-  var startServer = new Promise((resolve, reject) => {
+  const startServer = new Promise((resolve, reject) => {
     initServer()
     serverHealthy(resolve, reject)
   })

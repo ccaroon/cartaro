@@ -98,7 +98,7 @@ class Icon {
   }
 
   static superSearch (terms, defaultIcon = null, options = {}) {
-    var parts = null
+    let parts = null
     if (typeof (terms) === 'string') {
       parts = terms.split(options.sep || ' ')
     } else {
@@ -109,8 +109,8 @@ class Icon {
       parts.reverse()
     }
 
-    var foundIcon = null
-    for (var i = 0; i < parts.length; i++) {
+    let foundIcon = null
+    for (let i = 0; i < parts.length; i++) {
       foundIcon = this.search(parts[i], null)
 
       if (foundIcon) {
@@ -129,6 +129,8 @@ class Icon {
     let foundData = this.ICONS.find((iconData) => {
       if (iconData.icon.name.toLowerCase() === name.toLowerCase()) {
         return true
+      } else {
+        return false
       }
     })
 
@@ -141,17 +143,17 @@ class Icon {
 
   // TODO: use the longest match found?
   static search (keyword, defaultIcon = null) {
-    var foundData = null
+    let foundData = null
 
     if (keyword.length > 1 && !this.SKIP_WORDS.includes(keyword)) {
-      var pattern = new RegExp(keyword, 'i')
+      const pattern = new RegExp(keyword, 'i')
       foundData = this.ICONS.find((iconData) => {
         if (iconData.icon.name.match(pattern)) {
           return true
         } else {
-          var foundInKw = false
-          for (var j = 0; j < iconData.keywords.length; j++) {
-            var keyword = iconData.keywords[j]
+          let foundInKw = false
+          for (let j = 0; j < iconData.keywords.length; j++) {
+            const keyword = iconData.keywords[j]
             if (keyword.match(pattern)) {
               foundInKw = true
               break

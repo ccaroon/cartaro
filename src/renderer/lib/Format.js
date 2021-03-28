@@ -18,8 +18,8 @@ export default {
   },
 
   humanizeDateRange: function (startDate, endDate) {
-    var now = Moment()
-    var value = null
+    const now = Moment()
+    let value = null
 
     if (startDate && !endDate) {
       const start = Moment.unix(startDate)
@@ -47,8 +47,8 @@ export default {
   },
 
   humanizeDate: function (date, defMsg = 'N/A') {
-    var now = Moment()
-    var value = defMsg
+    const now = Moment()
+    let value = defMsg
 
     if (date != null) {
       value = Moment.unix(date).from(now)

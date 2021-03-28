@@ -137,7 +137,7 @@ export default {
         return this.secret.type
       },
       set: function (newVal) {
-        this._secretType = newVal
+        this.secretTypeVal = newVal
         this.secret.changeType(newVal)
       }
     }
@@ -152,7 +152,7 @@ export default {
     },
 
     validateSecretData: function () {
-      var OK = true
+      let OK = true
       this.secret.values(val => {
         if (!val) {
           OK = false
@@ -163,7 +163,7 @@ export default {
     },
 
     save: function () {
-      var self = this
+      const self = this
 
       if (this.$refs.secretForm.validate()) {
         this.secret.__encrypted = false
@@ -190,7 +190,7 @@ export default {
     },
 
     removeTag: function (tag) {
-      var index = this.secret.tags.indexOf(tag)
+      const index = this.secret.tags.indexOf(tag)
       this.secret.tags.splice(index, 1)
     }
 
@@ -198,7 +198,7 @@ export default {
 
   watch: {
     secret: function () {
-      this._secretType = this.secret.type
+      this.secretTypeVal = this.secret.type
       this.secret.decrypt()
 
       if (!this.secret.note) {
@@ -212,7 +212,7 @@ export default {
       allTags: [],
       constants: Constants,
       errorMsg: null,
-      _secretType: null,
+      secretTypeVal: null,
       rules: {
         name: [
           name => !!name || 'Name is required'

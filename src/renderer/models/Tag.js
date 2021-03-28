@@ -9,7 +9,7 @@ class Tag extends Resource {
       handlers: {
         onSuccess: (objs) => {
           // Want a list of tag names, not full Tag objects
-          var tags = objs.map(tag => tag.name)
+          const tags = objs.map(tag => tag.name)
           handlers.onSuccess(tags)
         },
         onError: handlers.onError

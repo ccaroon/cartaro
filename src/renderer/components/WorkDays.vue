@@ -200,7 +200,6 @@ import Utils from '../lib/Utils'
 
 import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
-import Tags from './Shared/Tags'
 
 import WorkDay from '../models/WorkDay'
 
@@ -209,7 +208,7 @@ const WEEKS_TO_SHOW = 5
 
 export default {
   name: 'workDays-main',
-  components: { Actions, AppBar, Tags },
+  components: { Actions, AppBar },
   mounted: function () {
     this.bindShortcutKeys()
     this.load()
@@ -217,7 +216,7 @@ export default {
 
   methods: {
     bindShortcutKeys: function () {
-      var self = this
+      const self = this
 
       Mousetrap.bind(['ctrl+n', 'command+n'], () => {
         self.newWeek()
@@ -289,15 +288,15 @@ export default {
     },
 
     search: function () {
-      var self = this
+      const self = this
       this.perPage = 10
 
-      var query = {
+      const query = {
         page: this.page,
         pp: this.perPage
       }
 
-      var parts = this.searchText.split(':', 2)
+      const parts = this.searchText.split(':', 2)
       if (parts.length === 2) {
         query[parts[0].trim()] = parts[1].trim()
       } else {
@@ -318,9 +317,9 @@ export default {
     },
 
     loadWeek: function () {
-      var self = this
+      const self = this
       this.perPage = DAYS_PER_WEEK
-      var query = {
+      const query = {
         pp: this.perPage,
         start: this.currWeek.format('YYYY-MM-DD'),
         days: DAYS_PER_WEEK
@@ -340,7 +339,7 @@ export default {
     },
 
     newDay: function (day = Moment().startOf('week').add(1, 'day')) {
-      var workDay = new WorkDay({
+      const workDay = new WorkDay({
         date: day.unix(),
         time_in: WorkDay.DEFAULT_IN,
         time_out: WorkDay.DEFAULT_OUT,
@@ -353,7 +352,7 @@ export default {
 
     newWeek: async function () {
       // This Monday
-      var day = Moment().startOf('week').add(1, 'day')
+      const day = Moment().startOf('week').add(1, 'day')
 
       for (let i = 1; i <= 5; i++) {
         await this.newDay(day)
@@ -383,7 +382,7 @@ export default {
     },
 
     rowColor: function (idx) {
-      var workDay = this.workDays[idx]
+      const workDay = this.workDays[idx]
       let color = Utils.rowColor(idx)
 
       if (workDay && Moment().isSame(Moment.unix(workDay.date), 'day')) {

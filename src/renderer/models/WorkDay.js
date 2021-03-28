@@ -19,13 +19,13 @@ class WorkDay extends Resource {
   }
 
   hoursWorked () {
-    var inTime = this.time_in.split(':')
-    var dayStart = Moment(this.date * 1000).startOf('day').hours(inTime[0]).minutes(inTime[1])
+    const inTime = this.time_in.split(':')
+    const dayStart = Moment(this.date * 1000).startOf('day').hours(inTime[0]).minutes(inTime[1])
 
-    var outTime = this.time_out.split(':')
-    var dayEnd = Moment(this.date * 1000).startOf('day').hours(outTime[0]).minutes(outTime[1])
+    const outTime = this.time_out.split(':')
+    const dayEnd = Moment(this.date * 1000).startOf('day').hours(outTime[0]).minutes(outTime[1])
 
-    var duration = Moment.duration(dayEnd.diff(dayStart))
+    const duration = Moment.duration(dayEnd.diff(dayStart))
 
     return duration
   }
