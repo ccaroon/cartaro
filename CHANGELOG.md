@@ -48,8 +48,16 @@
 ### Security
 ...
 
-### Misc
-* Upgraded 'eslint' & friends to the latest versions and fixed lots of linting issues.
+### Upgrades
+* `eslint`: 7.23.0
+  - eslint related modules to the latest versions and fixed lots of linting issues.
+* `electron`: 11.4.1 -> 12.0.2
+  - Had to disable `contextIsolation` for v12 :(
+* Switched to `@electron/remote` instead of using (soon-to-be-deprecated) built-in `remote`
+  - https://github.com/electron/remote
+* `electron-builder`: 22.10.5
+* `vuetify`: 2.4.8
+* Various `XYZZY-loader` modules
 
 --------------------------------------------------------------------------------
 

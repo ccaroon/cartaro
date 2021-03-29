@@ -4,6 +4,8 @@ import { app, dialog, ipcMain, Menu, BrowserWindow } from 'electron'
 import config from '../Config'
 import Winston from 'winston'
 
+require('@electron/remote/main').initialize()
+
 const PORT = config.get('serverPort', 4242)
 const http = require('axios')
 const fs = require('fs')
@@ -229,7 +231,10 @@ function createWindow () {
     useContentSize: true,
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: true
+      enableRemoteModule: true,
+      // TODO: Code does not run w/o this. Can't figure out what I need to
+      //       change to be able to turn this OFF.
+      contextIsolation: false
     }
   })
   createMenu()

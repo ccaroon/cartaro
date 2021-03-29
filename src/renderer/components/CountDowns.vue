@@ -379,11 +379,3 @@ export default {
   }
 }
 </script>
-<style lang="sass" scoped>
-// ** Not Working **
-// I want to make the time-picker heading height shorter
-// Cannot get any SASS for time-picker to work here.
-// *****************
-// $time-picker-title-color: #00f
-// $time-picker-title-btn-height: 25px !default
-</style>

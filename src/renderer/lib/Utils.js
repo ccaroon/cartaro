@@ -1,6 +1,6 @@
 import Constants from './Constants'
 
-const { BrowserWindow } = require('electron').remote
+const { BrowserWindow } = require('@electron/remote')
 
 export default {
   copyToClipboard: function (name, data) {

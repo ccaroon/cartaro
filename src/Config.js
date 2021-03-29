@@ -1,7 +1,7 @@
 // Config
 // -----------------------------------------------------------------------------
 const app = process.type === 'renderer'
-  ? require('electron').remote.app
+  ? require('@electron/remote').app
   : require('electron').app
 const fs = require('fs')
 const path = require('path')
