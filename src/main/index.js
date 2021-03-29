@@ -229,7 +229,10 @@ function createWindow () {
     useContentSize: true,
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: true
+      enableRemoteModule: true,
+      // TODO: Code does not run w/o this. Can't figure out what I need to
+      //       change to be able to turn this OFF.
+      contextIsolation: false
     }
   })
   createMenu()
