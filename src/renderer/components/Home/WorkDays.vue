@@ -58,8 +58,8 @@ export default {
     },
 
     load: function () {
-      var self = this
-      var query = {
+      const self = this
+      const query = {
         start: Moment().startOf('week').format('YYYY-MM-DD'),
         days: 7
       }
@@ -77,7 +77,7 @@ export default {
     },
 
     displayHoursWorked: function (workDay) {
-      var duration = workDay.hoursWorked()
+      const duration = workDay.hoursWorked()
       return `${duration.hours()}h ${duration.minutes()}m`
     },
 
@@ -92,7 +92,7 @@ export default {
     },
 
     dayColor: function (idx, workDay) {
-      var color = Utils.rowColor(idx)
+      let color = Utils.rowColor(idx)
 
       if (Moment().startOf('day').isSame(workDay.date * 1000)) {
         color = Constants.COLORS.ITEM_HIGHLIGHT

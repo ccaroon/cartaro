@@ -23,7 +23,7 @@ class Resource {
     return client.fetch(query, endpoint, {
       handlers: {
         onSuccess: (resp) => {
-          var items = []
+          const items = []
           resp.data[client.resource].forEach(data => {
             items.push(new this(data))
           })

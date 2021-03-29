@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="value" persistent max-width="75%" max-height="90%">
+  <v-dialog :value="value" persistent max-width="75%" max-height="90%">
     <v-card>
       <v-card-title>
         <span class="headline">LogEntry Editor</span>
@@ -164,7 +164,7 @@ export default {
 
   methods: {
     loadTickets: function () {
-      var self = this
+      const self = this
 
       JiraTicket.fetch({}, '/search', {
         handlers: {
@@ -184,7 +184,7 @@ export default {
     },
 
     save: function () {
-      var self = this
+      const self = this
 
       if (this.$refs.logEntryForm.validate()) {
         this.logEntry.save({
@@ -209,12 +209,12 @@ export default {
     },
 
     removeTag: function (tag) {
-      var index = this.logEntry.tags.indexOf(tag)
+      const index = this.logEntry.tags.indexOf(tag)
       this.logEntry.tags.splice(index, 1)
     },
 
     findTicketByLink: function (link) {
-      var foundTicket = this.jiraTickets.find(ticket =>
+      const foundTicket = this.jiraTickets.find(ticket =>
         ticket.link === link
       )
 

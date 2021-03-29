@@ -22,7 +22,7 @@
         v-for="(logEntry, idx) in logEntries"
         :key="logEntry.id"
         :class="utils.rowColor(idx)"
-        @click
+        @click.stop
       >
         <v-list-item-avatar>
           <v-icon>{{ logEntry.icon() }}</v-icon>
@@ -91,7 +91,7 @@ export default {
 
   methods: {
     bindShortcutKeys: function () {
-      var self = this
+      const self = this
 
       Mousetrap.bind(['ctrl+n', 'command+n'], () => {
         self.newEntry()
@@ -112,15 +112,15 @@ export default {
     },
 
     load: function () {
-      var self = this
-      var query = {
+      const self = this
+      const query = {
         page: this.page,
         pp: this.perPage,
         sort_by: 'logged_at:desc'
       }
 
       if (this.searchText) {
-        var parts = this.searchText.split(':', 2)
+        const parts = this.searchText.split(':', 2)
         if (parts.length === 2) {
           query[parts[0].trim()] = parts[1].trim()
         } else {
@@ -146,7 +146,7 @@ export default {
     },
 
     newEntry: function () {
-      var entry = new LogEntry({
+      const entry = new LogEntry({
         logged_at: Moment().unix()
       })
       this.edit(entry)

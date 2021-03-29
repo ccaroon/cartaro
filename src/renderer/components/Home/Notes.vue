@@ -86,8 +86,8 @@ export default {
     },
 
     loadNotes: function () {
-      var self = this
-      var query = {
+      const self = this
+      const query = {
         op: 'and',
         is_favorite: true,
         deleted_at: null,

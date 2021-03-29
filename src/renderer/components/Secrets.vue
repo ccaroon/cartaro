@@ -23,7 +23,7 @@
         v-for="(secret, idx) in secrets"
         :key="secret.id"
         :class="utils.rowColor(idx)"
-        @click
+        @click.stop
       >
         <v-list-item-avatar>
           <v-icon
@@ -102,7 +102,7 @@ export default {
 
   methods: {
     bindShortcutKeys: function () {
-      var self = this
+      const self = this
 
       Mousetrap.bind(['ctrl+n', 'command+n'], () => {
         self.newSecret()
@@ -123,15 +123,15 @@ export default {
     },
 
     load: function () {
-      var self = this
-      var query = {
+      const self = this
+      const query = {
         page: this.page,
         pp: this.perPage,
         sort_by: 'system'
       }
 
       if (this.searchText) {
-        var parts = this.searchText.split(':', 2)
+        const parts = this.searchText.split(':', 2)
         if (parts.length === 2) {
           query[parts[0].trim()] = parts[1].trim()
         } else {

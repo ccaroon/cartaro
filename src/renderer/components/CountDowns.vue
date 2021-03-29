@@ -236,7 +236,7 @@ export default {
 
   methods: {
     bindShortcutKeys: function () {
-      var self = this
+      const self = this
 
       Mousetrap.bind(['ctrl+n', 'command+n'], () => {
         self.newCountDown()
@@ -257,15 +257,15 @@ export default {
     },
 
     load: function () {
-      var self = this
-      var query = {
+      const self = this
+      const query = {
         page: this.page,
         pp: this.perPage,
         sort_by: 'start_at'
       }
 
       if (this.searchText) {
-        var parts = this.searchText.split(':', 2)
+        const parts = this.searchText.split(':', 2)
         if (parts.length === 2) {
           query[parts[0].trim()] = parts[1].trim()
         } else {
@@ -289,7 +289,7 @@ export default {
     },
 
     newCountDown: function () {
-      var countDown = new Countdown({
+      const countDown = new Countdown({
         name: '** NEW COUNTDOWN **',
         // Set Date to something early so it appears at the top of the list
         start_at: Moment('1971-01-01').unix(),
@@ -305,9 +305,9 @@ export default {
     },
 
     dateDisplay: function (countDown, type) {
-      var asString = ''
-      var dateAttr = `${type}Date`
-      var timeAttr = `${type}Time`
+      let asString = ''
+      const dateAttr = `${type}Date`
+      const timeAttr = `${type}Time`
 
       if (countDown[dateAttr] && countDown[timeAttr]) {
         asString = countDown[dateAttr] + ' @ ' + countDown[timeAttr]
@@ -321,8 +321,8 @@ export default {
       this.$set(countDown, 'startDate', Format.formatDate(countDown.start_at * 1000, 'YYYY-MM-DD'))
       this.$set(countDown, 'startTime', Format.formatDate(countDown.start_at * 1000, 'HH:mm'))
 
-      var endDate = null
-      var endTime = null
+      let endDate = null
+      let endTime = null
       if (countDown.end_at) {
         endDate = Format.formatDate(countDown.end_at * 1000, 'YYYY-MM-DD')
         endTime = Format.formatDate(countDown.end_at * 1000, 'HH:mm')
@@ -344,7 +344,7 @@ export default {
     },
 
     save: function (countDown) {
-      var self = this
+      const self = this
       countDown.start_at = Moment(`${countDown.startDate} ${countDown.startTime}`, 'YYYY-MM-DD HH:mm:ss').unix()
 
       if (countDown.endDate && countDown.endTime) {

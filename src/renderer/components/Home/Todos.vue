@@ -77,7 +77,7 @@ export default {
     },
 
     load: function () {
-      var self = this
+      const self = this
       const daysAhead = Moment().add(DUE_WITHIN, 'days')
 
       // Todos that are:
@@ -113,7 +113,7 @@ export default {
     },
 
     newTodo: function () {
-      var todo = new Todo({
+      const todo = new Todo({
         priority: 1,
         repeat: 0
       })

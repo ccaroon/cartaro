@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="value" persistent scrollable max-width="75%">
+  <v-dialog :value="value" persistent scrollable max-width="75%">
     <v-card>
       <v-card-title>
         {{ secret.name }}
@@ -69,8 +69,8 @@ export default {
 
   methods: {
     formatType: function (type = ' ') {
-      var parts = type.split('-')
-      var prettyParts = parts.map(p => {
+      const parts = type.split('-')
+      const prettyParts = parts.map(p => {
         return `${p[0].toUpperCase()}${p.slice(1)}`
       })
 

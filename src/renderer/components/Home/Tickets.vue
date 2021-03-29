@@ -53,7 +53,7 @@ export default {
 
   methods: {
     loadTickets: function () {
-      var self = this
+      const self = this
 
       JiraTicket.fetch({}, '/search', {
         handlers: {

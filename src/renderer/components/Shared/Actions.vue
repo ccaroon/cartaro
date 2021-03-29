@@ -58,7 +58,7 @@ export default {
 
   methods: {
     unArchive: function () {
-      var self = this
+      const self = this
 
       this.item.deleted_at = null
       this.item.undelete({
@@ -81,16 +81,16 @@ export default {
     },
 
     doArchiveDelete: function (prompt = true) {
-      var self = this
-      var safe = 1
-      var msg = `Archive "${this.item}"?`
+      const self = this
+      let safe = 1
+      let msg = `Archive "${this.item}"?`
 
       if (this.item.isDeleted()) {
         safe = 0
         msg = `Delete "${this.item}"?`
       }
 
-      var doDelete = prompt ? confirm(msg) : true
+      const doDelete = prompt ? confirm(msg) : true
 
       if (doDelete) {
         this.item.delete({

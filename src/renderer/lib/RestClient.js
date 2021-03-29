@@ -17,28 +17,29 @@ class RestClient {
   }
 
   create (obj, options = {}) {
-    var p = axios.post(`${RestClient.baseUrl()}/${this.resource}/`, obj)
+    const p = axios.post(`${RestClient.baseUrl()}/${this.resource}/`, obj)
     return this.__resolve(p, options)
   }
 
   update (obj, options = {}) {
-    var p = axios.put(`${RestClient.baseUrl()}/${this.resource}/${obj.id}`, obj)
+    const p = axios.put(`${RestClient.baseUrl()}/${this.resource}/${obj.id}`, obj)
     return this.__resolve(p, options)
   }
 
   fetch (query, endpoint = '/', options = {}) {
-    var filters = []
-    for (const [key, value] of Object.entries(query)) {
+    const filters = []
+    let key, value
+    for ([key, value] of Object.entries(query)) {
       filters.push(`${key}=${value}`)
     }
-    var qs = filters.join('&')
+    const qs = filters.join('&')
 
-    var p = axios.get(`${RestClient.baseUrl()}/${this.resource}${endpoint}?${qs}`)
+    const p = axios.get(`${RestClient.baseUrl()}/${this.resource}${endpoint}?${qs}`)
     return this.__resolve(p, options)
   }
 
   delete (obj, options) {
-    var url = `${RestClient.baseUrl()}/${this.resource}/${obj.id}`
+    let url = `${RestClient.baseUrl()}/${this.resource}/${obj.id}`
     if ('safe' in options) {
       url += `?safe=${options.safe}`
     }
@@ -48,12 +49,12 @@ class RestClient {
   }
 
   undelete (obj, options = {}) {
-    var p = axios.put(`${RestClient.baseUrl()}/${this.resource}/undelete/${obj.id}`)
+    const p = axios.put(`${RestClient.baseUrl()}/${this.resource}/undelete/${obj.id}`)
     return this.__resolve(p, options)
   }
 
   __resolve (promise, options) {
-    var resolvedVal = true
+    let resolvedVal = true
 
     if (options.asPromise) {
       resolvedVal = promise

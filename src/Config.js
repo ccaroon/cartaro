@@ -1,6 +1,6 @@
 // Config
 // -----------------------------------------------------------------------------
-var app = process.type === 'renderer'
+const app = process.type === 'renderer'
   ? require('electron').remote.app
   : require('electron').app
 const fs = require('fs')
@@ -21,7 +21,7 @@ class Config {
 
   get (path, defValue = null, isTransient = false) {
     const pathParts = path.split(':')
-    var value = this.data
+    let value = this.data
     if (isTransient) {
       value = this.data.__transient
     }
@@ -44,7 +44,7 @@ class Config {
   set (path, value, isTransient = false) {
     const pathParts = path.split(':')
     const key = pathParts.pop()
-    var data = this.data
+    let data = this.data
     if (isTransient) {
       data = this.data.__transient
     }
@@ -62,8 +62,8 @@ class Config {
   load () {
     if (this.data === null) {
       if (fs.existsSync(this.path)) {
-        var contents = fs.readFileSync(this.path)
-        var data = JSON.parse(contents)
+        const contents = fs.readFileSync(this.path)
+        const data = JSON.parse(contents)
 
         this.data = Object.assign({}, Config.DEFAULTS, data.CARTARO)
       } else {
@@ -76,10 +76,10 @@ class Config {
 
   save () {
     delete this.data.__transient
-    var data = {
+    const data = {
       CARTARO: this.data
     }
-    var json = JSON.stringify(data)
+    const json = JSON.stringify(data)
     fs.writeFileSync(this.path, json)
   }
 }

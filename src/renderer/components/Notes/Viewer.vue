@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="value" persistent scrollable max-width="75%">
+  <v-dialog :value="value" persistent scrollable max-width="75%">
     <v-card>
       <v-card-title>
         {{ note.title }}
