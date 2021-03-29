@@ -5,6 +5,11 @@
 * Electron main process now logs to `DOCUMENTS/CartaroLog.json`
   - Includes STDOUT/STDERR from backend python server process.
 * Added App wide notification system
+* Icons
+  - Created Icon class to manage all icons
+  - Moved Constants.ICONS to Icon class
+  - Includes code to dynamically select an icon based on keywords or sentences.
+  - Added dynamic Icons to Notes based on, first, it's tags, then it's title.
 
 ### Changed
 * Added the ability to edit and view LogEntries from the home page
@@ -22,6 +27,14 @@
   - Resource - Base model
   - Countdown, Secret, Todo, Tag, JiraTicket, LogEntry, WorkDay ... Etc.
   - Helps to DRY'up and Factor out lots of similar code.
+* Config File
+  - Converted to a class and refactored it's code a bit
+  - Separate config file for DEV mode and PROD mode
+  - Meaning that you can have DEV instance and PROD instance run on different ports.
+* Consistent Archive / Delete behavior
+  - Moved all archive/delete handling to the `Shared/Actions` component
+  - All components now support archiving.
+  - After an item is archived, it can be deleted (forever) or restored.
 
 ### Fixed
 ...
@@ -34,6 +47,9 @@
 
 ### Security
 ...
+
+### Misc
+* Upgraded 'eslint' & friends to the latest versions and fixed lots of linting issues.
 
 --------------------------------------------------------------------------------
 

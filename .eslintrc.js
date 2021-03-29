@@ -1,6 +1,5 @@
 module.exports = {
   root: true,
-  // parser: 'babel-eslint',
   parser: "vue-eslint-parser",
   parserOptions: {
     parser: 'babel-eslint',
@@ -17,9 +16,7 @@ module.exports = {
   globals: {
     __static: true
   },
-  plugins: [
-    // 'vue'
-  ],
+  plugins: [],
   // 0 = OFF | 1 = WARN | 2 = ERR
   'rules': {
     'arrow-parens': 0,
@@ -35,6 +32,6 @@ module.exports = {
       'exceptAfterSingleLine': true
     }],
     // ----- VUE -----
-    'vue/no-mutating-props': 1
+    'vue/no-mutating-props': 0
   }
 }
