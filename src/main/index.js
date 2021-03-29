@@ -4,6 +4,8 @@ import { app, dialog, ipcMain, Menu, BrowserWindow } from 'electron'
 import config from '../Config'
 import Winston from 'winston'
 
+require('@electron/remote/main').initialize()
+
 const PORT = config.get('serverPort', 4242)
 const http = require('axios')
 const fs = require('fs')

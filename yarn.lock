@@ -190,6 +190,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@electron/remote@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@electron/remote@npm:1.0.4"
+  peerDependencies:
+    electron: ">= 10.0.0-beta.1"
+  checksum: bcb0b475340fef7fe1dc149f28707f772682e519d88949734dcb27b9889c5450bd7e42f40fbdc81479400a84c0ba570716644d211f41b8e21304914230dc87a7
+  languageName: node
+  linkType: hard
+
 "@electron/universal@npm:1.0.4":
   version: 1.0.4
   resolution: "@electron/universal@npm:1.0.4"
@@ -617,6 +626,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "Cartaro@workspace:."
   dependencies:
+    "@electron/remote": ^1.0.4
     "@mdi/font": ^5.9.55
     ajv: ^8.0.1
     axios: ^0.21.1
