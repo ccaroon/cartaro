@@ -48,8 +48,12 @@
 ### Security
 ...
 
-### Misc
-* Upgraded 'eslint' & friends to the latest versions and fixed lots of linting issues.
+### Upgrades
+* `eslint`: 7.23.0
+  - eslint related modules to the latest versions and fixed lots of linting issues.
+* `electron`: 11.4.1
+* `electron-builder`: 22.10.5
+* `vuetify`: 2.4.8
 
 --------------------------------------------------------------------------------
 
