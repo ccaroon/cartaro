@@ -6,8 +6,8 @@ from cartaro.model.taggable import Taggable
 
 from cartaro.model.tag import Tag
 # ------------------------------------------------------------------------------
-# Since cartaro.model.base.Base is an Abstract Class we have to create a concrete
-# class for testing purposes.
+# Since cartaro.model.base.Base is an Abstract Class we have to create a 
+# concrete class for testing purposes.
 # ------------------------------------------------------------------------------
 class Comment(Taggable, Base):
     def __init__(self, id=None, **kwargs):

@@ -8,7 +8,7 @@ test-file:
 	CARTARO_ENV=test \
 	CARTARO_DOC_PATH=tests/tmp \
 	CARTARO_CFG_PATH=../tests/data \
-	nosetests -v -s tests $(FILE)
+	nosetests -v -s $(FILE)
 
 cover:
 	CARTARO_ENV=test \
@@ -26,7 +26,7 @@ cover-file:
 	CARTARO_ENV=test \
 	CARTARO_DOC_PATH=tests/tmp \
 	CARTARO_CFG_PATH=../tests/data \
-	nosetests -v -s tests $(FILE) \
+	nosetests -v -s $(FILE) \
 			--with-coverage \
 			--cover-erase \
 			--cover-html \
