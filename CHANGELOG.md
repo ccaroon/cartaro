@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## UNRELEASED: v1.2.0 - van Schagen - 2021-??-??
+## v1.2.0 - van Schagen - 2021-03-30
 ### Added
 * Electron main process now logs to `DOCUMENTS/CartaroLog.json`
   - Includes STDOUT/STDERR from backend python server process.
@@ -35,18 +35,6 @@
   - Moved all archive/delete handling to the `Shared/Actions` component
   - All components now support archiving.
   - After an item is archived, it can be deleted (forever) or restored.
-
-### Fixed
-...
-
-### Deprecated
-...
-
-### Removed
-...
-
-### Security
-...
 
 ### Upgrades
 * `eslint`: 7.23.0
@@ -99,15 +87,6 @@
 * UI now reads encryption password from config file (was hard-coded for testing)
 * Fixed a bug where App would display Home screen on startup **before** server
   was ready causing the Home screen to be blank/have no data.
-
-### Deprecated
-n/a
-
-### Removed
-n/a
-
-### Security
-n/a
 
 --------------------------------------------------------------------------------
 
