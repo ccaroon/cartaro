@@ -110,6 +110,27 @@ def create_controller(controller_name, Model):
 
         return jsonify(resp), status
 
+    @controller.route('/undelete/<int:id>', methods=['PUT'])
+    def undelete(id):
+        resp = None
+        status = 200
+        try:
+            obj = Model(id=id)
+            obj.load()
+            obj.undelete()
+
+            resp = obj
+        except Exception as e:
+            if "Record Not Found" in str(e):
+                status = 404
+            else:
+                status = 500
+            resp = {
+                "error": str(e)
+            }
+
+        return jsonify(resp), status
+
     @controller.route('/<int:id>', methods=['DELETE'])
     def delete(id):
         resp = None
@@ -118,7 +139,7 @@ def create_controller(controller_name, Model):
         try:
             # Assume 'safe' specified as 0 or 1
             safe_del = int(request.args.get('safe', False))
-            
+
             obj = Model(id=id)
             obj.delete(safe=safe_del)
 

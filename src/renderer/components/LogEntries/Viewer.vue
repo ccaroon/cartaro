@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="value" persistent scrollable max-width="75%">
+  <v-dialog :value="value" persistent scrollable max-width="75%">
     <v-card>
       <v-card-title>
         {{ logEntry.subject }}
@@ -18,7 +18,7 @@
           <span
             style="cursor: pointer"
             class="blue--text"
-            @click="openLink(logEntry.ticket_link)"
+            @click="utils.openLink('Jira', logEntry.ticket_link)"
           >
             {{ logEntry.category }}
             <v-icon x-small color="blue">mdi-open-in-new</v-icon>
@@ -34,7 +34,7 @@
       </v-card-subtitle>
       <v-divider></v-divider>
       <v-card-text
-        v-html="md.render(logEntry.content || '')"
+        v-html="$markdown.render(logEntry.content || '')"
         class="body-1 pt-3"
         style="height: 500px"
       ></v-card-text>
@@ -46,12 +46,8 @@
   </v-dialog>
 </template>
 <script>
-import MarkdownIt from 'markdown-it'
-import MDEmoji from 'markdown-it-emoji'
-
 import Format from '../../lib/Format'
-
-const { BrowserWindow } = require('electron').remote
+import Utils from '../../lib/Utils'
 
 export default {
   name: 'logEntry-viewer',
@@ -59,34 +55,6 @@ export default {
   props: ['logEntry', 'value'],
 
   methods: {
-    // openLink: function (url) {
-    //   const win = BrowserWindow.getFocusedWindow()
-    //   const view = new BrowserView()
-    //   win.setBrowserView(view)
-    //   view.setBounds({ x: 0, y: 0, width: 300, height: 300 })
-    //   view.webContents.loadURL('https://electronjs.org')
-    // },
-    openLink: function (url) {
-      const main = BrowserWindow.getFocusedWindow()
-      const child = new BrowserWindow({
-        parent: main,
-        // modal: true,
-        title: 'Jira',
-        fullscreenable: false,
-        webPreferences: {
-          devTools: false
-        },
-        autoHideMenuBar: true,
-        width: 1200,
-        height: 900
-      })
-
-      child.loadURL(url)
-      // child.once('ready-to-show', () => {
-      //   child.show()
-      // })
-    },
-
     close: function () {
       this.$emit('close')
     }
@@ -94,9 +62,8 @@ export default {
 
   data () {
     return {
-      // TODO: move to Vue instance like $http
-      md: new MarkdownIt().use(MDEmoji),
-      format: Format
+      format: Format,
+      utils: Utils
     }
   }
 }

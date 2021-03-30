@@ -1,48 +1,80 @@
 'use strict'
 
-import { app, dialog, Menu, BrowserWindow } from 'electron'
-import Config from './config'
+import { app, dialog, ipcMain, Menu, BrowserWindow } from 'electron'
+import config from '../Config'
+import Winston from 'winston'
 
-const PORT = 4242
+require('@electron/remote/main').initialize()
+
+const PORT = config.get('serverPort', 4242)
 const http = require('axios')
 const fs = require('fs')
 const path = require('path')
+
+let mainWindow, backendServer
+const winURL = process.env.NODE_ENV === 'development'
+  ? 'http://localhost:9080'
+  : `file://${path.join(__dirname, 'index.html')}`
+
+const docPath = path.join(app.getPath('documents'), 'Cartaro')
+
+const logSuffix = process.env.NODE_ENV === 'development' ? '-dev' : ''
+const logger = Winston.createLogger({
+  level: 'info',
+  format: Winston.format.combine(
+    Winston.format.timestamp({ format: 'YYYY-MM-DD@HH:mm:ss' }),
+    Winston.format.uncolorize(),
+    Winston.format.json()
+  ),
+  transports: [
+    new Winston.transports.File({
+      filename: path.join(docPath, `CartaroLog${logSuffix}.json`)
+    })
+  ]
+})
 
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
-if (process.env.NODE_ENV !== 'development') {
+if (process.env.NODE_ENV === 'development') {
+  // Log to console when in Dev mode
+  logger.add(new Winston.transports.Console({
+    format: Winston.format.printf((info) => {
+      return `${info.level}: ${info.message}`
+    })
+  }))
+} else {
   global.__static = path.join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
-let mainWindow, backendServer
-const winURL = process.env.NODE_ENV === 'development'
-  ? 'http://localhost:9080'
-  : `file://${__dirname}/index.html`
-
-const docPath = path.join(app.getPath('documents'), 'Cartaro')
-
 function initApp () {
   // Create data directory
-  if (!fs.existsSync(Config.dataPath)) {
-    fs.mkdirSync(Config.dataPath, '0750')
+  if (!fs.existsSync(docPath)) {
+    fs.mkdirSync(docPath, '0750')
   }
+
+  ipcMain.on('app-show-notification', (event, args) => {
+    mainWindow.webContents.send('app-show-notification', args)
+  })
 }
 
 function quitApp () {
+  logger.info(`Shutting Down! Server PID: [${backendServer.pid}]`)
   mainWindow = null
   backendServer.kill()
   app.quit()
 }
 
 function createMenu () {
-  var mainMetaKey = process.platform === 'darwin' ? 'Cmd' : 'Ctrl'
+  const mainMetaKey = process.platform === 'darwin' ? 'Cmd' : 'Ctrl'
   // -------------
-  var aboutSubMenu = {
+  const aboutSubMenu = {
     label: 'About Ĉartaro',
     accelerator: mainMetaKey + '+?',
-    click: () => BrowserWindow.getFocusedWindow().webContents.send('menu-help-about')
+    click: () => {
+      BrowserWindow.getFocusedWindow().webContents.send('menu-help-about')
+    }
   }
 
   // var settingsSubMenu = {
@@ -139,10 +171,10 @@ function createMenu () {
 // SEE: https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
 // ---------------------------------------------------------------------------
 function initServer () {
-  var basePath = path.resolve(path.dirname(__dirname))
-  var cmd = `./bin/python ./bin/flask run -p ${PORT}`
+  const basePath = path.resolve(path.dirname(__dirname))
+  const cmd = `./bin/python ./bin/flask run -p ${PORT}`
 
-  var serverPath = null
+  let serverPath = null
   if (basePath.match(/\/Resources\//i)) {
     // Electron launched as bundled app
     serverPath = path.join(basePath, '../../server/dist')
@@ -151,7 +183,7 @@ function initServer () {
     serverPath = path.join(basePath, '../server/dist')
   }
 
-  var env = {} // process.env
+  const env = {} // process.env
   env.PYTHONPATH = serverPath
   env.FLASK_ENV = process.env.NODE_ENV
   env.FLASK_APP = 'cartaro'
@@ -163,18 +195,18 @@ function initServer () {
     null,
     { cwd: serverPath, env: env, shell: true }
   )
-  console.log(`Server PID: [${backendServer.pid}]`)
+  logger.info(`Server PID: [${backendServer.pid}]`)
 
   backendServer.stdout.on('data', function (data) {
-    console.log(`[STDOUT:${new Date().toLocaleString()}]\n${data.toString('utf8')}`)
+    logger.info(data.toString('utf8'))
   })
 
   backendServer.stderr.on('data', function (data) {
-    console.log(`[STDERR:${new Date().toLocaleString()}]\n${data.toString('utf8')}`)
+    logger.info(data.toString('utf8'))
   })
 
   backendServer.on('error', function (err) {
-    console.log(`[ERROR:${new Date().toLocaleString()}]\n${err.toString('utf8')}`)
+    logger.error(err.toString('utf8'))
   })
 
   backendServer.on('exit', function (code, signal) {
@@ -199,7 +231,10 @@ function createWindow () {
     useContentSize: true,
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: true
+      enableRemoteModule: true,
+      // TODO: Code does not run w/o this. Can't figure out what I need to
+      //       change to be able to turn this OFF.
+      contextIsolation: false
     }
   })
   createMenu()
@@ -212,11 +247,11 @@ function serverHealthy (resolve, reject, iteration = 1) {
 
   http.get(`http://localhost:${PORT}/sys/ping`)
     .then(() => {
-      console.log(`Server Healthy After ${iteration} Tries.`)
+      logger.info(`Server Healthy After ${iteration} Tries.`)
       resolve()
     })
     .catch(() => {
-      console.log(`Health Check Failed: ${iteration}/${MAX}`)
+      logger.error(`Health Check Failed: ${iteration}/${MAX}`)
       if (iteration > MAX) {
         reject(`Server not healthy after ${MAX} tries.`)
       } else {
@@ -234,7 +269,7 @@ app.on('window-all-closed', () => {
 app.on('ready', () => {
   initApp()
 
-  var startServer = new Promise((resolve, reject) => {
+  const startServer = new Promise((resolve, reject) => {
     initServer()
     serverHealthy(resolve, reject)
   })
@@ -247,7 +282,7 @@ app.on('ready', () => {
       })
     })
     .catch(err => {
-      console.log(`Failed to start server: ${err}`)
+      logger.error(`Failed to start server: ${err}`)
       quitApp()
     })
 })

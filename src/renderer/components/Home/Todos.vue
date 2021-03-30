@@ -54,11 +54,12 @@ import Moment from 'moment'
 
 import Constants from '../../lib/Constants'
 import Format from '../../lib/Format'
+import Notification from '../../lib/Notification'
 import Utils from '../../lib/Utils'
 
 import TodoEditor from '../Todos/Editor'
 
-import { Todo, fetchTodos } from '../../models/Todo'
+import Todo from '../../models/Todo'
 
 const DUE_WITHIN = 3
 
@@ -76,7 +77,7 @@ export default {
     },
 
     load: function () {
-      var self = this
+      const self = this
       const daysAhead = Moment().add(DUE_WITHIN, 'days')
 
       // Todos that are:
@@ -90,12 +91,14 @@ export default {
         sort_by: 'due_at,priority'
       }
 
-      fetchTodos(query, {
-        onSuccess: (todos, totalCount) => {
-          self.todos = todos
-        },
-        onError: (err) => {
-          self.$emit('error', 'error', `Todos: ${err.response.status} - ${err.response.data.error.substring(0, 120)}`)
+      Todo.fetch(query, '/', {
+        handlers: {
+          onSuccess: (todos, totalCount) => {
+            self.todos = todos
+          },
+          onError: (err) => {
+            Notification.error(`HM.Todos.load: ${err}`)
+          }
         }
       })
     },
@@ -103,12 +106,14 @@ export default {
     toggleCompleted: async function (todo) {
       await todo.toggleCompleted()
       todo.save({
-        onSuccess: (resp) => { this.load() }
+        handlers: {
+          onSuccess: (resp) => { this.load() }
+        }
       })
     },
 
     newTodo: function () {
-      var todo = new Todo({
+      const todo = new Todo({
         priority: 1,
         repeat: 0
       })

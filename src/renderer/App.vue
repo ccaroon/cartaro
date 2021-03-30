@@ -22,6 +22,19 @@
     <v-main>
       <About />
       <router-view></router-view>
+      <v-snackbar
+        :color="notification.color"
+        :timeout="notification.timeout"
+        v-model="notification.visible"
+      >
+        <v-icon>{{ notification.icon }}</v-icon>
+        {{ notification.message }}
+        <template v-slot:action="{ attrs }">
+          <v-btn icon v-bind="attrs" @click="notification.visible = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </template>
+      </v-snackbar>
     </v-main>
 
     <!-- <v-footer app fixed padless dark>
@@ -45,6 +58,14 @@ export default {
     ipcRenderer.on('menu-view-main', (event, arg) => {
       this.$router.push('/')
     })
+
+    ipcRenderer.on('app-show-notification', (event, note) => {
+      this.notification.icon = note.icon || 'mdi-message'
+      this.notification.color = note.color || 'info'
+      this.notification.message = note.message
+      this.notification.timeout = note.timeout || -1
+      this.notification.visible = true
+    })
   },
 
   methods: {
@@ -57,6 +78,13 @@ export default {
   data: () => ({
     drawer: true,
     about: false,
+    notification: {
+      icon: null,
+      color: null,
+      visible: false,
+      timeout: null,
+      message: null
+    },
     pageName: 'Home',
     menu: [
       { name: 'Home', path: '/', icon: 'mdi-home' },

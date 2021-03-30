@@ -14,13 +14,11 @@
         :class="rowColor(idx)"
       >
         <v-list-item-avatar>
-          <v-icon>mdi-{{ constants.ICONS.workDays[workDay.type] }}</v-icon>
+          <v-icon>{{ workDay.icon() }}</v-icon>
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title
-            :class="
-              workDay.deleted_at !== null ? 'text-decoration-line-through' : ''
-            "
+            :class="workDay.isDeleted() ? 'text-decoration-line-through' : ''"
             ><strong>{{ displayTitle(workDay) }}</strong></v-list-item-title
           >
           <v-list-item-subtitle>
@@ -41,6 +39,7 @@
               offset-y
               max-width="290px"
               min-width="290px"
+              :disabled="workDay.isDeleted()"
             >
               <template v-slot:activator="{ on }">
                 <v-text-field
@@ -49,6 +48,7 @@
                   prepend-icon="mdi-clock-outline"
                   readonly
                   v-on="on"
+                  :disabled="workDay.isDeleted()"
                 ></v-text-field>
               </template>
               <v-time-picker
@@ -93,6 +93,7 @@
               offset-y
               max-width="290px"
               min-width="290px"
+              :disabled="workDay.isDeleted()"
             >
               <template v-slot:activator="{ on }">
                 <v-text-field
@@ -101,6 +102,7 @@
                   prepend-icon="mdi-clock-outline"
                   readonly
                   v-on="on"
+                  :disabled="workDay.isDeleted()"
                 ></v-text-field>
               </template>
               <v-time-picker
@@ -143,17 +145,17 @@
               mandatory
               @change="changeType(workDay)"
             >
-              <v-btn icon value="normal">
-                <v-icon>mdi-{{ constants.ICONS.workDays.normal }}</v-icon>
+              <v-btn icon value="normal" :disabled="workDay.isDeleted()">
+                <v-icon>{{ icons.get("workday") }}</v-icon>
               </v-btn>
-              <v-btn icon value="holiday">
-                <v-icon>mdi-{{ constants.ICONS.workDays.holiday }}</v-icon>
+              <v-btn icon value="holiday" :disabled="workDay.isDeleted()">
+                <v-icon>{{ icons.get("holiday") }}</v-icon>
               </v-btn>
-              <v-btn icon value="pto">
-                <v-icon>mdi-{{ constants.ICONS.workDays.pto }}</v-icon>
+              <v-btn icon value="pto" :disabled="workDay.isDeleted()">
+                <v-icon>{{ icons.get("pto") }}</v-icon>
               </v-btn>
-              <v-btn icon value="sick">
-                <v-icon>mdi-{{ constants.ICONS.workDays.sick }}</v-icon>
+              <v-btn icon value="sick" :disabled="workDay.isDeleted()">
+                <v-icon>{{ icons.get("sick") }}</v-icon>
               </v-btn>
             </v-btn-toggle>
           </v-col>
@@ -162,12 +164,17 @@
               v-model="workDay.note"
               placeholder="Note"
               autofocus
+              :disabled="workDay.isDeleted()"
               @change="save(workDay)"
             ></v-text-field>
           </v-col>
         </v-row>
         <Actions
-          v-bind:actions="{ remove: remove }"
+          v-bind:actions="{
+            onArchiveDelete: (item) => {
+              refresh();
+            },
+          }"
           v-bind:item="workDay"
         ></Actions>
       </v-list-item>
@@ -187,24 +194,21 @@ import Mousetrap from 'mousetrap'
 
 import Constants from '../lib/Constants'
 import Format from '../lib/Format'
+import Icon from '../lib/Icon'
+import Notification from '../lib/Notification'
 import Utils from '../lib/Utils'
 
 import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
-import Tags from './Shared/Tags'
 
-import { fetchWorkDays } from '../models/WorkDay'
+import WorkDay from '../models/WorkDay'
 
-// TODO: Move consts to WorkDay model
 const DAYS_PER_WEEK = 7
 const WEEKS_TO_SHOW = 5
 
-const DEFAULT_IN = '09:00'
-const DEFAULT_OUT = '16:30'
-
 export default {
   name: 'workDays-main',
-  components: { Actions, AppBar, Tags },
+  components: { Actions, AppBar },
   mounted: function () {
     this.bindShortcutKeys()
     this.load()
@@ -212,7 +216,7 @@ export default {
 
   methods: {
     bindShortcutKeys: function () {
-      var self = this
+      const self = this
 
       Mousetrap.bind(['ctrl+n', 'command+n'], () => {
         self.newWeek()
@@ -284,64 +288,71 @@ export default {
     },
 
     search: function () {
-      var self = this
+      const self = this
       this.perPage = 10
 
-      var query = {
+      const query = {
         page: this.page,
         pp: this.perPage
       }
 
-      var parts = this.searchText.split(':', 2)
+      const parts = this.searchText.split(':', 2)
       if (parts.length === 2) {
         query[parts[0].trim()] = parts[1].trim()
       } else {
         query.note = this.searchText
       }
 
-      fetchWorkDays(query, '/', {
-        onSuccess: function (days, totalCount) {
-          self.totalDays = totalCount
-          self.workDays = days
-        },
-        onError: null
+      WorkDay.fetch(query, '/', {
+        handlers: {
+          onSuccess: function (days, totalCount) {
+            self.totalDays = totalCount
+            self.workDays = days
+          },
+          onError: (err) => {
+            Notification.error(`WD.Main.search: ${err.toString()}`)
+          }
+        }
       })
     },
 
     loadWeek: function () {
-      var self = this
+      const self = this
       this.perPage = DAYS_PER_WEEK
-      var query = {
+      const query = {
         pp: this.perPage,
         start: this.currWeek.format('YYYY-MM-DD'),
         days: DAYS_PER_WEEK
       }
 
-      fetchWorkDays(query, '/range', {
-        onSuccess: function (days, totalCount) {
-          self.totalDays = WEEKS_TO_SHOW * DAYS_PER_WEEK
-          self.workDays = days
-        },
-        onError: null
+      WorkDay.fetch(query, '/range', {
+        handlers: {
+          onSuccess: function (days, totalCount) {
+            self.totalDays = WEEKS_TO_SHOW * DAYS_PER_WEEK
+            self.workDays = days
+          },
+          onError: (err) => {
+            Notification.error(`WD.Main.loadWeek: ${err.toString()}`)
+          }
+        }
       })
     },
 
     newDay: function (day = Moment().startOf('week').add(1, 'day')) {
-      var workDay = {
-        date: null,
-        time_in: DEFAULT_IN,
-        time_out: DEFAULT_OUT,
+      const workDay = new WorkDay({
+        date: day.unix(),
+        time_in: WorkDay.DEFAULT_IN,
+        time_out: WorkDay.DEFAULT_OUT,
         note: null,
-        type: 'normal'
-      }
+        type: WorkDay.TYPE_NORMAL
+      })
 
-      workDay.date = day.unix()
-      return this.$http.post(`http://127.0.0.1:4242/work_days/`, workDay)
+      return workDay.save({ asPromise: true })
     },
 
     newWeek: async function () {
       // This Monday
-      var day = Moment().startOf('week').add(1, 'day')
+      const day = Moment().startOf('week').add(1, 'day')
 
       for (let i = 1; i <= 5; i++) {
         await this.newDay(day)
@@ -351,59 +362,27 @@ export default {
     },
 
     changeType: function (workDay) {
-      // TODO: Define type constants in WorkDay model
-      if (workDay.type !== 'normal') {
-        this.clearInOut(workDay)
+      if (workDay.type !== WorkDay.TYPE_NORMAL) {
+        workDay.clearInOut()
       } else {
-        workDay.time_in = DEFAULT_IN
-        workDay.time_out = DEFAULT_OUT
+        workDay.time_in = WorkDay.DEFAULT_IN
+        workDay.time_out = WorkDay.DEFAULT_OUT
       }
 
       this.save(workDay)
     },
 
-    clearInOut: function (workDay) {
-      workDay.time_in = '00:00'
-      workDay.time_out = '00:00'
-    },
-
-    save: function (workDay, dryRun = false) {
-      if (dryRun) {
-        console.log(workDay)
-      } else {
-        this.$http.put(`http://127.0.0.1:4242/work_days/${workDay.id}`, workDay)
-          .then(resp => {
-          })
-          .catch(err => {
-            console.log(`${err.response.status} - ${err.response.data.error}`)
-          })
-      }
-    },
-
-    remove: function (workDay) {
-      var self = this
-      var safe = 1
-      var msg = `Safe Delete "${this.displayName(workDay)}"?`
-
-      if (workDay.deleted_at) {
-        safe = 0
-        msg = `Delete "${this.displayName(workDay)}"?`
-      }
-
-      var doDelete = confirm(msg)
-      if (doDelete) {
-        this.$http.delete(`http://127.0.0.1:4242/work_days/${workDay.id}?safe=${safe}`)
-          .then(resp => {
-            self.load()
-          })
-          .catch(err => {
-            console.log(`${err.response.status} - ${err.response.data.error}`)
-          })
-      }
+    save: function (workDay) {
+      workDay.save({
+        handlers: {
+          onSuccess: null,
+          onError: (err) => Notification.error(`WD.Main.save: ${err.toString()}`)
+        }
+      })
     },
 
     rowColor: function (idx) {
-      var workDay = this.workDays[idx]
+      const workDay = this.workDays[idx]
       let color = Utils.rowColor(idx)
 
       if (workDay && Moment().isSame(Moment.unix(workDay.date), 'day')) {
@@ -424,6 +403,7 @@ export default {
       totalDays: 0,
       constants: Constants,
       format: Format,
+      icons: Icon,
       searchText: null,
       showTimeInMenu: [],
       showTimeOutMenu: []

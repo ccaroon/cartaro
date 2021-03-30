@@ -10,23 +10,33 @@ Esperanto for Chronicle. Ĉartaro is a journal or chronicle of your work.
 * VueJS
 * Vuetify
 
-### Notes
-* NodeJS - 14.15.x
+## Back-end / Server
+* Python 3.8
+* Flask
+* TinyDB
 
-## Server
-* Python 3.8.x
+## Development
+Requires NodeJS v14.15.x and Python 3.8.x
 
-### Development
-#### Setup
+### Setup
+0. `cd server`
 1. Create Virtual Env: `python -mvenv venv`
 2. Activate: `. ./venv/bin/activate`
 3. Install Deps: `pip install -r requirements.txt`
 
-#### Notes
+### Notes
 * Unit Tests: `make test`
 * Coverage: `make cover`
 * Start Dev Server: `make dev`
     - Runs on port 7777
+
+## Build
+0. `cd server`
+1. `make dist`
+2. `cd ..`
+3. `yarn build`
+4. `cd build`
+5. Profit!
 
 ## Tools
 [Image Converter](https://anyconv.com/png-to-icns-converter/)

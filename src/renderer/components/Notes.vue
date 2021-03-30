@@ -20,21 +20,23 @@
       <v-list-item
         v-for="(note, idx) in notes"
         :key="note.id"
-        :class="rowColor(idx)"
-        @click
+        :class="utils.rowColor(idx)"
+        @click.stop
       >
         <v-list-item-avatar>
-          <v-icon :color="note.is_favorite ? 'yellow' : ''">mdi-star</v-icon>
+          <v-icon :color="note.is_favorite ? 'yellow' : ''">{{
+            note.icon()
+          }}</v-icon>
         </v-list-item-avatar>
         <v-list-item-content @click="view(note)">
           <v-list-item-title
-            class="subtitle-1"
-            v-if="note.deleted_at === null"
+            :class="
+              note.isDeleted()
+                ? 'subtitle-1 text-decoration-line-through'
+                : 'subtitle-1'
+            "
             >{{ note.title }}</v-list-item-title
           >
-          <v-list-item-title class="subtitle-1" v-else>
-            <del>{{ note.title }}</del>
-          </v-list-item-title>
           <v-list-item-subtitle>
             {{
               note.created_at
@@ -43,12 +45,19 @@
             }}
             <Tags
               v-bind:tags="note.tags"
-              v-bind:color="rowColor(idx + 1)"
+              v-bind:color="utils.rowColor(idx + 1)"
             ></Tags>
           </v-list-item-subtitle>
         </v-list-item-content>
         <Actions
-          v-bind:actions="{ edit: edit, remove: remove }"
+          v-bind:actions="{
+            onEdit: (item) => {
+              edit(item);
+            },
+            onArchiveDelete: (item) => {
+              refresh();
+            },
+          }"
           v-bind:item="note"
         ></Actions>
       </v-list-item>
@@ -59,8 +68,11 @@
 <script>
 import Mousetrap from 'mousetrap'
 
-import Constants from '../lib/Constants'
 import Format from '../lib/Format'
+import Notification from '../lib/Notification'
+import Utils from '../lib/Utils'
+
+import Note from '../models/Note'
 
 import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
@@ -78,7 +90,7 @@ export default {
 
   methods: {
     bindShortcutKeys: function () {
-      var self = this
+      const self = this
 
       Mousetrap.bind(['ctrl+n', 'command+n'], () => {
         self.newNote()
@@ -99,26 +111,32 @@ export default {
     },
 
     load: function () {
-      var self = this
-      var qs = `page=${this.page}&pp=${this.perPage}&sort_by=created_at`
+      const self = this
+      const query = {
+        page: this.page,
+        pp: this.perPage,
+        sort_by: 'created_at'
+      }
 
       if (this.searchText) {
-        var parts = this.searchText.split(':', 2)
+        const parts = this.searchText.split(':', 2)
         if (parts.length === 2) {
-          qs += `&${parts[0].trim()}=${parts[1].trim()}`
+          query[parts[0].trim()] = parts[1].trim()
         } else {
-          qs += `&title=${this.searchText}&content=${this.searchText}`
+          query.title = this.searchText
+          query.content = this.searchText
         }
       }
 
-      this.$http.get(`http://127.0.0.1:4242/notes/?${qs}`)
-        .then(resp => {
-          self.totalNotes = resp.data.total
-          self.notes = resp.data.notes
-        })
-        .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
-        })
+      Note.fetch(query, '/', {
+        handlers: {
+          onSuccess: (items, total) => {
+            self.totalNotes = total
+            self.notes = items
+          },
+          onError: (err) => { Notification.error(`NT.Main.load: ${err.toString()}`) }
+        }
+      })
     },
 
     view: function (note) {
@@ -127,28 +145,12 @@ export default {
     },
 
     newNote: function () {
-      this.edit({})
+      this.edit(new Note({}))
     },
 
     edit: function (note) {
       this.note = note
       this.showEditor = true
-    },
-
-    remove: function (note) {
-      var self = this
-
-      var doDelete = confirm(`Delete "${note.title}"?`)
-
-      if (doDelete) {
-        this.$http.delete(`http://127.0.0.1:4242/notes/${note.id}?safe=1`)
-          .then(resp => {
-            self.load()
-          })
-          .catch(err => {
-            console.log(`${err.response.status} - ${err.response.data.error}`)
-          })
-      }
     },
 
     closeEditor: function () {
@@ -158,21 +160,12 @@ export default {
 
     closeViewer: function () {
       this.showViewer = false
-    },
-
-    rowColor: function (idx) {
-      var color = Constants.COLORS.GREY
-
-      if (idx % 2 === 0) {
-        color = Constants.COLORS.GREY_ALT
-      }
-      return color
     }
   },
 
   data () {
     return {
-      note: {},
+      note: new Note({}),
       notes: [],
       page: 1,
       perPage: 15,
@@ -180,6 +173,7 @@ export default {
       showEditor: false,
       showViewer: false,
       format: Format,
+      utils: Utils,
       searchText: null
     }
   }

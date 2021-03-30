@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="value" persistent scrollable max-width="75%">
+  <v-dialog :value="value" persistent scrollable max-width="75%">
     <v-card>
       <v-card-title>
         {{ secret.name }}
@@ -20,14 +20,15 @@
       <v-card-title>{{ formatType(secret.type) }}</v-card-title>
       <v-card-text>
         <v-row
-          v-for="(val, fld) in decrypt(secret)"
+          v-for="(val, fld) in secret.decrypt()"
           :key="fld"
           no-gutters
           dense
         >
           <v-col>
-            <v-icon @click.stop="utils.copyToClipboard(fld.toUpperCase(), val)"
-              >mdi-{{ constants.ICONS.secrets[fld] }}</v-icon
+            <v-icon
+              @click.stop="utils.copyToClipboard(fld.toUpperCase(), val)"
+              >{{ secret.icon(fld) }}</v-icon
             >&nbsp;
             <template v-if="hideData">**********</template>
             <template v-else>{{ val }}</template>
@@ -37,7 +38,7 @@
       <v-divider></v-divider>
       <v-card-title>Notes</v-card-title>
       <v-card-text
-        v-html="md.render(secret.note || '')"
+        v-html="$markdown.render(secret.note || '')"
         class="body-1 pt-3"
         style="height: 250px"
       ></v-card-text>
@@ -60,18 +61,16 @@
 import Format from '../../lib/Format'
 import Constants from '../../lib/Constants'
 import Utils from '../../lib/Utils'
-import MarkdownIt from 'markdown-it'
-import MDEmoji from 'markdown-it-emoji'
 
 export default {
   name: 'secret-viewer',
   components: {},
-  props: ['secret', 'isHidden', 'decrypt', 'value'],
+  props: ['secret', 'isHidden', 'value'],
 
   methods: {
     formatType: function (type = ' ') {
-      var parts = type.split('-')
-      var prettyParts = parts.map(p => {
+      const parts = type.split('-')
+      const prettyParts = parts.map(p => {
         return `${p[0].toUpperCase()}${p.slice(1)}`
       })
 
@@ -94,8 +93,7 @@ export default {
       constants: Constants,
       format: Format,
       utils: Utils,
-      hideData: true,
-      md: new MarkdownIt().use(MDEmoji)
+      hideData: true
     }
   }
 }

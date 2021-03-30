@@ -1,6 +1,6 @@
 import Constants from './Constants'
 
-const { BrowserWindow } = require('electron').remote
+const { BrowserWindow } = require('@electron/remote')
 
 export default {
   copyToClipboard: function (name, data) {
@@ -29,7 +29,7 @@ export default {
   },
 
   rowColor: function (idx) {
-    var color = Constants.COLORS.GREY
+    let color = Constants.COLORS.GREY
 
     if (idx % 2 === 0) {
       color = Constants.COLORS.GREY_ALT

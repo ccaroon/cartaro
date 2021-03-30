@@ -24,9 +24,7 @@
             dense
           >
             <v-list-item-icon>
-              <v-icon @click.stop="editNote(item)"
-                >mdi-file-edit-outline</v-icon
-              >
+              <v-icon>{{ item.icon() }}</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
@@ -36,6 +34,11 @@
                 {{ format.formatDateTime(item.created_at * 1000) }}
               </v-list-item-subtitle>
             </v-list-item-content>
+            <v-list-item-icon>
+              <v-btn x-small icon outlined>
+                <v-icon small @click.stop="editNote(item)">mdi-pencil</v-icon>
+              </v-btn>
+            </v-list-item-icon>
           </v-list-item>
         </template>
       </v-virtual-scroll>
@@ -43,13 +46,14 @@
   </div>
 </template>
 <script>
-// import Moment from 'moment'
-
 import NoteEditor from '../Notes/Editor'
 import NoteViewer from '../Notes/Viewer'
 
+import Note from '../../models/Note'
+
 import Constants from '../../lib/Constants'
 import Format from '../../lib/Format'
+import Notification from '../../lib/Notification'
 import Utils from '../../lib/Utils'
 
 export default {
@@ -68,7 +72,7 @@ export default {
     },
 
     newNote: function () {
-      this.editNote({})
+      this.editNote(new Note({}))
     },
 
     editNote: function (note) {
@@ -82,16 +86,22 @@ export default {
     },
 
     loadNotes: function () {
-      var self = this
-      var qs = `op=and&is_favorite=true&deleted_at=null&sort_by=created_at:desc`
+      const self = this
+      const query = {
+        op: 'and',
+        is_favorite: true,
+        deleted_at: null,
+        sort_by: 'created_at:desc'
+      }
 
-      this.$http.get(`http://127.0.0.1:4242/notes/?${qs}`)
-        .then(resp => {
-          self.notes = resp.data.notes
-        })
-        .catch(err => {
-          self.$emit('error', 'error', `Notes: ${err.response.status} - ${err.response.data.error.substring(0, 120)}`)
-        })
+      Note.fetch(query, '/', {
+        handlers: {
+          onSuccess: (items) => {
+            self.notes = items
+          },
+          onError: (err) => { Notification.error(`HM.Notes.loadNotes: ${err}`) }
+        }
+      })
     }
   },
 

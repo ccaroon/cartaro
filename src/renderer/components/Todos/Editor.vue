@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="value" persistent max-width="75%" max-height="90%">
+  <v-dialog :value="value" persistent max-width="75%" max-height="90%">
     <v-card>
       <v-card-title>
         <span class="headline">Todo Editor</span>
@@ -88,14 +88,11 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-textarea
-                  label="Description"
-                  rows="5"
-                  outlined
-                  hide-details
-                  v-model="todo.description"
-                  :rules="rules.description"
-                ></v-textarea>
+                <Markdown
+                  :content="todo.description"
+                  @update="(newContent) => (todo.description = newContent)"
+                >
+                </Markdown>
               </v-col>
             </v-row>
             <v-row>
@@ -235,13 +232,14 @@
 import Moment from 'moment'
 import Format from '../../lib/Format'
 import Constants from '../../lib/Constants'
-import RestClient from '../../lib/RestClient'
+import Notification from '../../lib/Notification'
+import Tag from '../../models/Tag'
 
-const TagClient = new RestClient('tags')
+import Markdown from '../Shared/Markdown'
 
 export default {
   name: 'todo-editor',
-  components: { },
+  components: { Markdown },
   props: ['todo', 'value'],
 
   updated: function () {
@@ -279,17 +277,14 @@ export default {
 
   methods: {
     loadTags: function () {
-      var self = this
-
-      TagClient.fetch({}, '/', {
-        onSuccess: (resp) => {
-          self.allTags = resp.data.tags.map(tag => tag.name)
-        }
+      Tag.loadAll({
+        onSuccess: (tags) => { this.allTags = tags },
+        onError: (err) => Notification.error(`TD.Editor.loadTags: ${err.toString()}`)
       })
     },
 
     save: function (markComplete = false) {
-      var self = this
+      const self = this
 
       if (this.$refs.todoForm.validate()) {
         // TODO: handle repeating todos
@@ -300,8 +295,10 @@ export default {
         }
 
         this.todo.save({
-          onSuccess: (resp) => { self.close() },
-          onError: (err) => { this.errorMsg = err }
+          handlers: {
+            onSuccess: (resp) => self.close(),
+            onError: (err) => { this.errorMsg = err }
+          }
         })
       } else {
         this.errorMsg = 'Please fill in the required fields.'
@@ -327,7 +324,7 @@ export default {
     },
 
     removeTag: function (tag) {
-      var index = this.todo.tags.indexOf(tag)
+      const index = this.todo.tags.indexOf(tag)
       this.todo.tags.splice(index, 1)
     }
 
@@ -336,7 +333,7 @@ export default {
   watch: {
     dueDate: function (newDate) {
       if (newDate) {
-        var dt = this.dueTime ? this.dueTime : '00:00'
+        const dt = this.dueTime ? this.dueTime : '00:00'
         this.todo.due_at = Moment(`${newDate} ${dt}`, 'YYYY-MM-DD HH:mm').unix()
       } else {
         this.todo.repeat = 0
@@ -348,6 +345,11 @@ export default {
         this.todo.due_at = Moment(`${this.dueDate} ${newTime}`, 'YYYY-MM-DD HH:mm').unix()
       } else {
         this.todo.due_at = Moment(`${this.dueDate} 00:00`, 'YYYY-MM-DD HH:mm').unix()
+      }
+    },
+    todo: function () {
+      if (!this.todo.description) {
+        this.todo.description = ''
       }
     }
   },

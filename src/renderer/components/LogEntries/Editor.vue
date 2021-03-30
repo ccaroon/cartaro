@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="value" persistent max-width="75%" max-height="90%">
+  <v-dialog :value="value" persistent max-width="75%" max-height="90%">
     <v-card>
       <v-card-title>
         <span class="headline">LogEntry Editor</span>
@@ -81,14 +81,10 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-textarea
-                  label="Content"
-                  rows="17"
-                  outlined
-                  hide-details
-                  v-model="logEntry.content"
-                  :rules="rules.content"
-                ></v-textarea>
+                <Markdown
+                  :content="logEntry.content"
+                  @update="(newContent) => (logEntry.content = newContent)"
+                ></Markdown>
               </v-col>
             </v-row>
             <v-row>
@@ -137,13 +133,16 @@
 <script>
 import Moment from 'moment'
 import Format from '../../lib/Format'
+import Notification from '../../lib/Notification'
 
-// TODO: Don't hardcode Jira Location -- Get from Configs (when they get implemented)
-// const jiraBrowseURL = 'https://jira.cengage.com/browse/'
+import JiraTicket from '../../models/JiraTicket'
+import Tag from '../../models/Tag'
+
+import Markdown from '../Shared/Markdown'
 
 export default {
   name: 'logEntry-editor',
-  components: { },
+  components: { Markdown },
   props: ['logEntry', 'value'],
 
   mounted: function () {
@@ -165,58 +164,35 @@ export default {
 
   methods: {
     loadTickets: function () {
-      var self = this
+      const self = this
 
-      this.$http.get(`http://127.0.0.1:4242/jira/search`)
-        .then(resp => {
-          self.jiraTickets = resp.data.results
-        })
-        .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
-        })
+      JiraTicket.fetch({}, '/search', {
+        handlers: {
+          onSuccess: (tickets) => {
+            self.jiraTickets = tickets
+          },
+          onError: (err) => { Notification.error(`LE.Editor.loadTickets: ${err.toString()}`) }
+        }
+      })
     },
 
     loadTags: function () {
-      var self = this
-
-      this.$http.get(`http://127.0.0.1:4242/tags/`)
-        .then(resp => {
-          self.allTags = resp.data.tags.map(tag => tag.name)
-        })
-        .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
-        })
+      Tag.loadAll({
+        onSuccess: (tags) => { this.allTags = tags },
+        onError: (err) => Notification.error(`LE.Editor.loadTags: ${err.toString()}`)
+      })
     },
 
-    // fixTicket: function () {
-    //   if (this.logEntry.category === 'Ticket') {
-    //     var ticket = this.logEntry.ticket_link.replace(jiraBrowseURL, '')
-    //     this.logEntry.ticket_link = `${jiraBrowseURL}${ticket}`
-    //   } else {
-    //     this.logEntry.ticket_link = null
-    //   }
-    // },
-
     save: function () {
-      var self = this
+      const self = this
 
       if (this.$refs.logEntryForm.validate()) {
-        // this.fixTicket()
-
-        var request = null
-        if (this.logEntry.id) {
-          request = this.$http.put(`http://127.0.0.1:4242/log_entries/${this.logEntry.id}`, this.logEntry)
-        } else {
-          request = this.$http.post('http://127.0.0.1:4242/log_entries/', this.logEntry)
-        }
-
-        request
-          .then(resp => {
-            self.close()
-          })
-          .catch(err => {
-            self.errorMsg = err
-          })
+        this.logEntry.save({
+          handlers: {
+            onSuccess: () => { self.close() },
+            onError: (err) => { self.errorMsg = err }
+          }
+        })
       } else {
         this.errorMsg = 'Please fill in the required fields.'
       }
@@ -233,12 +209,12 @@ export default {
     },
 
     removeTag: function (tag) {
-      var index = this.logEntry.tags.indexOf(tag)
+      const index = this.logEntry.tags.indexOf(tag)
       this.logEntry.tags.splice(index, 1)
     },
 
     findTicketByLink: function (link) {
-      var foundTicket = this.jiraTickets.find(ticket =>
+      const foundTicket = this.jiraTickets.find(ticket =>
         ticket.link === link
       )
 
@@ -254,12 +230,16 @@ export default {
         this.chosenTicket = this.findTicketByLink(this.logEntry.ticket_link)
         if (!this.chosenTicket) {
           // Add a "fake" placeholder ticket to the list of tickets
-          this.chosenTicket = {
+          this.chosenTicket = new JiraTicket({
             link: this.logEntry.ticket_link,
             summary: this.logEntry.subject
-          }
+          })
           this.jiraTickets.push(this.chosenTicket)
         }
+      }
+
+      if (!this.logEntry.content) {
+        this.logEntry.content = ''
       }
     },
     chosenTicket: function (newTicket) {

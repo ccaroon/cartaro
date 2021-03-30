@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="value" persistent max-width="75%" max-height="90%">
+  <v-dialog :value="value" persistent max-width="75%" max-height="90%">
     <v-card>
       <v-card-title>
         <span class="headline">Secret Editor</span>
@@ -56,7 +56,7 @@
               <v-col>
                 <v-text-field
                   :label="fld"
-                  :prepend-icon="'mdi-' + constants.ICONS.secrets[fld]"
+                  :prepend-icon="secret.icon(fld).code"
                   v-model.lazy="secret.data[fld]"
                   outlined
                   dense
@@ -67,13 +67,10 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-textarea
-                  label="Notes"
-                  rows="5"
-                  outlined
-                  hide-details
-                  v-model="secret.note"
-                ></v-textarea>
+                <Markdown
+                  :content="secret.note"
+                  @update="(newContent) => (secret.note = newContent)"
+                ></Markdown>
               </v-col>
             </v-row>
             <v-row>
@@ -121,11 +118,14 @@
 
 <script>
 import Constants from '../../lib/Constants'
+import Notification from '../../lib/Notification'
+import Markdown from '../Shared/Markdown'
+import Tag from '../../models/Tag'
 
 export default {
   name: 'secret-editor',
-  components: { },
-  props: ['secret', 'decrypt', 'value'],
+  components: { Markdown },
+  props: ['secret', 'value'],
 
   mounted: function () {
     this.loadTags()
@@ -137,35 +137,24 @@ export default {
         return this.secret.type
       },
       set: function (newVal) {
-        this.secret.type = newVal
-        this._secretType = newVal
-        // Stub in new, empty data
-        this.secret.data = {}
-        this.secret.type.split('-').forEach(fld => {
-          this.secret.data[fld] = ''
-        })
+        this.secretTypeVal = newVal
+        this.secret.changeType(newVal)
       }
     }
   },
 
   methods: {
     loadTags: function () {
-      var self = this
-
-      this.$http.get(`http://127.0.0.1:4242/tags/`)
-        .then(resp => {
-          self.allTags = resp.data.tags.map(tag => tag.name)
-        })
-        .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
-        })
+      Tag.loadAll({
+        onSuccess: (tags) => { this.allTags = tags },
+        onError: (err) => Notification.error(`SE.Editor.loadTags: ${err.toString()}`)
+      })
     },
 
     validateSecretData: function () {
-      var OK = true
-      var fields = this.secret.type.split('-')
-      fields.forEach(fld => {
-        if (!this.secret.data[fld]) {
+      let OK = true
+      this.secret.values(val => {
+        if (!val) {
           OK = false
         }
       })
@@ -174,25 +163,17 @@ export default {
     },
 
     save: function () {
-      var self = this
+      const self = this
 
       if (this.$refs.secretForm.validate()) {
         this.secret.__encrypted = false
 
-        var request = null
-        if (this.secret.id) {
-          request = this.$http.put(`http://127.0.0.1:4242/secrets/${this.secret.id}`, this.secret)
-        } else {
-          request = this.$http.post('http://127.0.0.1:4242/secrets/', this.secret)
-        }
-
-        request
-          .then(resp => {
-            self.close()
-          })
-          .catch(err => {
-            self.errorMsg = err
-          })
+        this.secret.save({
+          handlers: {
+            onSuccess: () => { self.close() },
+            onError: (err) => { Notification.error(`SE.Editor.save: ${err.toString()}`) }
+          }
+        })
       } else {
         this.errorMsg = 'Please fill in the required fields.'
       }
@@ -209,7 +190,7 @@ export default {
     },
 
     removeTag: function (tag) {
-      var index = this.secret.tags.indexOf(tag)
+      const index = this.secret.tags.indexOf(tag)
       this.secret.tags.splice(index, 1)
     }
 
@@ -217,9 +198,12 @@ export default {
 
   watch: {
     secret: function () {
-      this._secretType = this.secret.type
-      this.secret.data = this.decrypt(this.secret)
-      this.secret.__encrypted = false
+      this.secretTypeVal = this.secret.type
+      this.secret.decrypt()
+
+      if (!this.secret.note) {
+        this.secret.note = ''
+      }
     }
   },
 
@@ -228,7 +212,7 @@ export default {
       allTags: [],
       constants: Constants,
       errorMsg: null,
-      _secretType: null,
+      secretTypeVal: null,
       rules: {
         name: [
           name => !!name || 'Name is required'

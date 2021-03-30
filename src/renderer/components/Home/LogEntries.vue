@@ -5,6 +5,11 @@
       v-bind:logEntry="logEntry"
       v-on:close="closeEditor"
     ></LogEntryEditor>
+    <LogEntryViewer
+      v-model="showViewer"
+      v-bind:logEntry="logEntry"
+      v-on:close="showViewer = false"
+    ></LogEntryViewer>
     <v-card>
       <v-card-title :class="constants.COLORS.GREY"
         >Log Entries
@@ -15,29 +20,17 @@
         <template v-slot:default="{ index, item }">
           <v-list-item
             :class="rowColor(item, index)"
-            @click="editEntry(item)"
+            @click="viewEntry(item)"
             dense
           >
             <v-list-item-icon>
-              <v-btn
-                fab
-                x-small
+              <v-icon
                 v-if="item.ticket_link"
                 @click.stop="utils.openLink('Jira', item.ticket_link)"
+                color="blue"
+                >{{ item.icon() }}</v-icon
               >
-                <v-icon color="grey darken-1"
-                  >mdi-{{
-                    constants.ICONS.logEntries[item.category.toLowerCase()]
-                  }}</v-icon
-                >
-              </v-btn>
-              <v-btn fab x-small plain v-else>
-                <v-icon
-                  >mdi-{{
-                    constants.ICONS.logEntries[item.category.toLowerCase()]
-                  }}</v-icon
-                >
-              </v-btn>
+              <v-icon v-else>{{ item.icon() }}</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
@@ -47,6 +40,13 @@
                 {{ format.formatDate(item.logged_at * 1000, "ddd") }}
               </v-list-item-subtitle>
             </v-list-item-content>
+            <v-list-item-icon>
+              <v-btn x-small icon outlined>
+                <v-icon small outline @click.stop="editEntry(item)"
+                  >mdi-pencil</v-icon
+                >
+              </v-btn>
+            </v-list-item-icon>
           </v-list-item>
         </template>
       </v-virtual-scroll>
@@ -57,14 +57,18 @@
 import Moment from 'moment'
 
 import LogEntryEditor from '../LogEntries/Editor'
+import LogEntryViewer from '../LogEntries/Viewer'
+
+import LogEntry from '../../models/LogEntry'
 
 import Constants from '../../lib/Constants'
 import Format from '../../lib/Format'
+import Notification from '../../lib/Notification'
 import Utils from '../../lib/Utils'
 
 export default {
   name: 'home-log-entries',
-  components: { LogEntryEditor },
+  components: { LogEntryEditor, LogEntryViewer },
 
   mounted: function () {
     this.loadEntries()
@@ -72,9 +76,9 @@ export default {
 
   methods: {
     newEntry: function () {
-      this.logEntry = {
+      this.logEntry = new LogEntry({
         logged_at: Moment().unix()
-      }
+      })
       this.showEditor = true
     },
 
@@ -88,22 +92,31 @@ export default {
       this.loadEntries()
     },
 
-    loadEntries: function () {
-      var self = this
-      const startOfWeek = Moment().startOf('week')
-      var qs = `logged_at=gte:${startOfWeek.unix()}&sort_by=logged_at:desc`
+    viewEntry: function (entry) {
+      this.logEntry = entry
+      this.showViewer = true
+    },
 
-      this.$http.get(`http://127.0.0.1:4242/log_entries/?${qs}`)
-        .then(resp => {
-          self.logEntries = resp.data.log_entries
-        })
-        .catch(err => {
-          self.$emit('error', 'error', `Log Entries: ${err.response.status} - ${err.response.data.error.substring(0, 120)}`)
-        })
+    loadEntries: function () {
+      const self = this
+      const startOfWeek = Moment().startOf('week')
+      const query = {
+        logged_at: `gte:${startOfWeek.unix()}`,
+        sort_by: 'logged_at:desc'
+      }
+
+      LogEntry.fetch(query, '/', {
+        handlers: {
+          onSuccess: (items) => {
+            self.logEntries = items
+          },
+          onError: (err) => { Notification.error(`HM.LogEnt.loadEntries: ${err}`) }
+        }
+      })
     },
 
     rowColor: function (entry, index) {
-      var color = Utils.rowColor(index)
+      let color = Utils.rowColor(index)
 
       if (Moment(entry.logged_at * 1000).isSame(Moment(), 'day')) {
         color = 'light-green accent-1'
@@ -121,6 +134,7 @@ export default {
       logEntries: [],
       logEntry: {},
       showEditor: false,
+      showViewer: false,
       constants: Constants,
       format: Format,
       utils: Utils

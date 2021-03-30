@@ -21,25 +21,21 @@
       <v-list-item
         v-for="(logEntry, idx) in logEntries"
         :key="logEntry.id"
-        :class="rowColor(idx)"
-        @click
+        :class="utils.rowColor(idx)"
+        @click.stop
       >
         <v-list-item-avatar>
-          <v-icon
-            >mdi-{{
-              constants.ICONS.logEntries[logEntry.category.toLowerCase()]
-            }}</v-icon
-          >
+          <v-icon>{{ logEntry.icon() }}</v-icon>
         </v-list-item-avatar>
         <v-list-item-content @click="view(logEntry)">
           <v-list-item-title
-            class="subtitle-1"
-            v-if="logEntry.deleted_at === null"
+            :class="
+              logEntry.isDeleted()
+                ? 'subtitle-1 text-decoration-line-through'
+                : 'subtitle-1'
+            "
             >{{ logEntry.subject }}</v-list-item-title
           >
-          <v-list-item-title class="subtitle-1" v-else>
-            <del>{{ logEntry.subject }}</del>
-          </v-list-item-title>
           <v-list-item-subtitle>
             {{ logEntry.category }} |
             {{
@@ -49,12 +45,19 @@
             }}
             <Tags
               v-bind:tags="logEntry.tags"
-              v-bind:color="rowColor(idx + 1)"
+              v-bind:color="utils.rowColor(idx + 1)"
             ></Tags>
           </v-list-item-subtitle>
         </v-list-item-content>
         <Actions
-          v-bind:actions="{ edit: edit, remove: remove }"
+          v-bind:actions="{
+            onEdit: (item) => {
+              edit(item);
+            },
+            onArchiveDelete: (item) => {
+              refresh();
+            },
+          }"
           v-bind:item="logEntry"
         ></Actions>
       </v-list-item>
@@ -67,11 +70,15 @@ import Mousetrap from 'mousetrap'
 
 import Constants from '../lib/Constants'
 import Format from '../lib/Format'
+import Utils from '../lib/Utils'
+
+import LogEntry from '../models/LogEntry'
 
 import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
 import LogEntryEditor from './LogEntries/Editor'
 import LogEntryViewer from './LogEntries/Viewer'
+import Notification from '../lib/Notification'
 import Tags from './Shared/Tags'
 
 export default {
@@ -84,7 +91,7 @@ export default {
 
   methods: {
     bindShortcutKeys: function () {
-      var self = this
+      const self = this
 
       Mousetrap.bind(['ctrl+n', 'command+n'], () => {
         self.newEntry()
@@ -105,26 +112,32 @@ export default {
     },
 
     load: function () {
-      var self = this
-      var qs = `page=${this.page}&pp=${this.perPage}&sort_by=logged_at:desc`
+      const self = this
+      const query = {
+        page: this.page,
+        pp: this.perPage,
+        sort_by: 'logged_at:desc'
+      }
 
       if (this.searchText) {
-        var parts = this.searchText.split(':', 2)
+        const parts = this.searchText.split(':', 2)
         if (parts.length === 2) {
-          qs += `&${parts[0].trim()}=${parts[1].trim()}`
+          query[parts[0].trim()] = parts[1].trim()
         } else {
-          qs += `&subject=${this.searchText}&content=${this.searchText}`
+          query.subject = this.searchText
+          query.content = this.searchText
         }
       }
 
-      this.$http.get(`http://127.0.0.1:4242/log_entries/?${qs}`)
-        .then(resp => {
-          self.totalEntries = resp.data.total
-          self.logEntries = resp.data.log_entries
-        })
-        .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
-        })
+      LogEntry.fetch(query, '/', {
+        handlers: {
+          onSuccess: (items, total) => {
+            self.totalEntries = total
+            self.logEntries = items
+          },
+          onError: (err) => { Notification.error(`LE.Main.load: ${err.toString()}`) }
+        }
+      })
     },
 
     view: function (logEntry) {
@@ -133,36 +146,15 @@ export default {
     },
 
     newEntry: function () {
-      this.edit({
+      const entry = new LogEntry({
         logged_at: Moment().unix()
       })
+      this.edit(entry)
     },
 
     edit: function (logEntry) {
       this.logEntry = logEntry
       this.showEditor = true
-    },
-
-    remove: function (logEntry) {
-      var self = this
-      var safe = 1
-      var msg = `Safe Delete "${logEntry.subject}"?`
-
-      if (logEntry.deleted_at) {
-        safe = 0
-        msg = `Delete "${logEntry.subject}"?`
-      }
-
-      var doDelete = confirm(msg)
-      if (doDelete) {
-        this.$http.delete(`http://127.0.0.1:4242/log_entries/${logEntry.id}?safe=${safe}`)
-          .then(resp => {
-            self.load()
-          })
-          .catch(err => {
-            console.log(`${err.response.status} - ${err.response.data.error}`)
-          })
-      }
     },
 
     closeEditor: function () {
@@ -172,21 +164,12 @@ export default {
 
     closeViewer: function () {
       this.showViewer = false
-    },
-
-    rowColor: function (idx) {
-      var color = Constants.COLORS.GREY
-
-      if (idx % 2 === 0) {
-        color = Constants.COLORS.GREY_ALT
-      }
-      return color
     }
   },
 
   data () {
     return {
-      logEntry: {},
+      logEntry: new LogEntry({}),
       logEntries: [],
       page: 1,
       perPage: 15,
@@ -195,6 +178,7 @@ export default {
       showViewer: false,
       constants: Constants,
       format: Format,
+      utils: Utils,
       searchText: null
     }
   }

@@ -22,7 +22,7 @@
         v-for="(todo, idx) in todos"
         :key="todo.id"
         :class="todo.color(idx)"
-        @click
+        @click.stop
       >
         <v-list-item-avatar>
           <v-icon :color="todo.priorityColor()"
@@ -37,7 +37,9 @@
           >
         </v-list-item-avatar>
         <v-list-item-content @click="view(todo)">
-          <v-list-item-title>
+          <v-list-item-title
+            :class="todo.isDeleted() ? 'text-decoration-line-through' : ''"
+          >
             {{ todo.title }}
           </v-list-item-title>
           <v-list-item-subtitle>
@@ -67,7 +69,14 @@
         </v-list-item-content>
 
         <Actions
-          v-bind:actions="{ edit: edit, remove: remove }"
+          v-bind:actions="{
+            onEdit: (item) => {
+              edit(item);
+            },
+            onArchiveDelete: (item) => {
+              refresh();
+            },
+          }"
           v-bind:item="todo"
         ></Actions>
       </v-list-item>
@@ -77,10 +86,10 @@
 <script>
 import Mousetrap from 'mousetrap'
 
-import { Todo, fetchTodos } from '../models/Todo'
+import Todo from '../models/Todo'
 
-// import Constants from '../lib/Constants'
 import Format from '../lib/Format'
+import Notification from '../lib/Notification'
 import Utils from '../lib/Utils'
 
 import Actions from './Shared/Actions'
@@ -99,7 +108,7 @@ export default {
 
   methods: {
     bindShortcutKeys: function () {
-      var self = this
+      const self = this
 
       Mousetrap.bind(['ctrl+n', 'command+n'], () => {
         self.newTodo()
@@ -120,15 +129,15 @@ export default {
     },
 
     load: function () {
-      var self = this
-      var query = {
+      const self = this
+      const query = {
         page: this.page,
         pp: this.perPage,
         sort_by: 'due_at,priority,is_complete'
       }
 
       if (this.searchText) {
-        var parts = this.searchText.split(':', 2)
+        const parts = this.searchText.split(':', 2)
         if (parts.length === 2) {
           query[parts[0].trim()] = parts[1].trim()
         } else {
@@ -138,19 +147,28 @@ export default {
         query.is_complete = false
       }
 
-      fetchTodos(query, {
-        onSuccess: function (todos, totalCount) {
-          self.totalTodos = totalCount
-          self.todos = todos
-        },
-        onError: null
+      Todo.fetch(query, '/', {
+        handlers: {
+          onSuccess: (todos, totalCount) => {
+            self.totalTodos = totalCount
+            self.todos = todos
+          },
+          onError: (err) => {
+            Notification.error(`TD.Main.load: ${err.toString()}`)
+          }
+        }
       })
     },
 
     toggleCompleted: async function (todo) {
       await todo.toggleCompleted()
       todo.save({
-        onSuccess: (resp) => { this.refresh() }
+        handlers: {
+          onSuccess: (resp) => { this.refresh() },
+          onError: (err) => {
+            Notification.error(`TD.Main.toggleCompleted: ${err.toString()}`)
+          }
+        }
       })
     },
 
@@ -160,7 +178,7 @@ export default {
     },
 
     newTodo: function () {
-      var todo = new Todo({
+      const todo = new Todo({
         priority: 1,
         repeat: 0
       })
@@ -170,17 +188,6 @@ export default {
     edit: function (todo) {
       this.todo = todo
       this.showEditor = true
-    },
-
-    remove: function (todo) {
-      var doDelete = confirm(`Delete "${todo.title}"?`)
-
-      if (doDelete) {
-        todo.delete({
-          onSuccess: (resp) => { this.refresh() },
-          onError: null
-        })
-      }
     },
 
     closeEditor: function () {

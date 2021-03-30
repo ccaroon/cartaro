@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="value" persistent max-width="75%" max-height="90%">
+  <v-dialog :value="value" persistent max-width="75%" max-height="90%">
     <v-card>
       <v-card-title>
         <span class="headline">Note Editor</span>
@@ -27,14 +27,10 @@
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-textarea
-                  label="Content"
-                  rows="17"
-                  outlined
-                  hide-details
-                  v-model="note.content"
-                  :rules="rules.content"
-                ></v-textarea>
+                <Markdown
+                  :content="note.content"
+                  @update="(newContent) => (note.content = newContent)"
+                ></Markdown>
               </v-col>
             </v-row>
             <v-row>
@@ -81,9 +77,14 @@
 </template>
 
 <script>
+import Notification from '../../lib/Notification'
+import Markdown from '../Shared/Markdown'
+
+import Tag from '../../models/Tag'
+
 export default {
   name: 'note-editor',
-  components: { },
+  components: { Markdown },
   props: ['note', 'value'],
 
   mounted: function () {
@@ -92,36 +93,22 @@ export default {
 
   methods: {
     loadTags: function () {
-      var self = this
-
-      this.$http.get(`http://127.0.0.1:4242/tags/`)
-        .then(resp => {
-          self.allTags = resp.data.tags.map(tag => tag.name)
-        })
-        .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
-        })
+      Tag.loadAll({
+        onSuccess: (tags) => { this.allTags = tags },
+        onError: (err) => Notification.error(`NT.Editor.loadTags: ${err.toString()}`)
+      })
     },
 
     save: function () {
-      var self = this
+      const self = this
 
       if (this.$refs.noteForm.validate()) {
-        var request = null
-
-        if (this.note.id) {
-          request = this.$http.put(`http://127.0.0.1:4242/notes/${this.note.id}`, this.note)
-        } else {
-          request = this.$http.post('http://127.0.0.1:4242/notes/', this.note)
-        }
-
-        request
-          .then(resp => {
-            self.close()
-          })
-          .catch(err => {
-            self.errorMsg = err
-          })
+        this.note.save({
+          handlers: {
+            onSuccess: () => { self.close() },
+            onError: (err) => { Notification.error(`NT.Editor.save: ${err.toString()}`) }
+          }
+        })
       } else {
         this.errorMsg = 'Please fill in the required fields.'
       }
@@ -133,16 +120,23 @@ export default {
     },
 
     close: function () {
-      // this.$emit('input', false)
       this.cleanup()
       this.$emit('close')
     },
 
     removeTag: function (tag) {
-      var index = this.note.tags.indexOf(tag)
+      const index = this.note.tags.indexOf(tag)
       this.note.tags.splice(index, 1)
     }
 
+  },
+
+  watch: {
+    note: function () {
+      if (!this.note.content) {
+        this.note.content = ''
+      }
+    }
   },
 
   data () {

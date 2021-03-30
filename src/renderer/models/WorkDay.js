@@ -1,48 +1,43 @@
 import Moment from 'moment'
-
-import RestClient from '../lib/RestClient'
-
-const CLIENT = new RestClient('work_days')
+import Format from '../lib/Format'
+import Icon from '../lib/Icon'
+import Resource from './Resource'
 // -----------------------------------------------------------------------------
-function WorkDay (data) {
-  Object.assign(this, data)
-  this.client = CLIENT
+class WorkDay extends Resource {
+  static RESOURCE_NAME = 'work_days'
+
+  static DEFAULT_IN = '09:00'
+  static DEFAULT_OUT = '16:30'
+
+  static TYPE_NORMAL = 'normal'
+  static TYPE_PTO = 'pto'
+  static TYPE_SICK = 'sick'
+  static TYPE_HOLIDAY = 'holiday'
+
+  icon () {
+    return Icon.get(this.type, 'mdi-calendar')
+  }
+
+  hoursWorked () {
+    const inTime = this.time_in.split(':')
+    const dayStart = Moment(this.date * 1000).startOf('day').hours(inTime[0]).minutes(inTime[1])
+
+    const outTime = this.time_out.split(':')
+    const dayEnd = Moment(this.date * 1000).startOf('day').hours(outTime[0]).minutes(outTime[1])
+
+    const duration = Moment.duration(dayEnd.diff(dayStart))
+
+    return duration
+  }
+
+  clearInOut () {
+    this.time_in = '00:00'
+    this.time_out = '00:00'
+  }
+
+  toString () {
+    return Format.formatDate(this.date)
+  }
 }
 // -----------------------------------------------------------------------------
-WorkDay.prototype.hoursWorked = function () {
-  var inTime = this.time_in.split(':')
-  var dayStart = Moment(this.date * 1000).startOf('day').hours(inTime[0]).minutes(inTime[1])
-
-  var outTime = this.time_out.split(':')
-  var dayEnd = Moment(this.date * 1000).startOf('day').hours(outTime[0]).minutes(outTime[1])
-
-  var duration = Moment.duration(dayEnd.diff(dayStart))
-
-  return duration
-}
-// WorkDay.prototype.save = function (handlers = {}) {
-//   if (this.id) {
-//     this.client.update(this, handlers)
-//   } else {
-//     this.client.create(this, handlers)
-//   }
-// }
-
-// WorkDay.prototype.delete = function (handlers = {}) {
-//   this.client.delete(this, handlers)
-// }
-// // -----------------------------------------------------------------------------
-function fetchWorkDays (query, endpoint = '/', handlers) {
-  CLIENT.fetch(query, endpoint, {
-    onSuccess: (resp) => {
-      var workDays = []
-      resp.data.work_days.forEach(day => {
-        workDays.push(new WorkDay(day))
-      })
-      handlers.onSuccess(workDays, resp.data.total)
-    },
-    onError: handlers.onError
-  })
-}
-// -----------------------------------------------------------------------------
-export { WorkDay, fetchWorkDays }
+export default WorkDay

@@ -1,58 +1,89 @@
 import axios from 'axios'
 
-const BASE_URL = 'http://127.0.0.1:4242'
+import config from '../../Config'
+// -----------------------------------------------------------------------------
+class RestClient {
+  resource = null
 
-function RestClient (resource) {
-  this.resource = resource
-}
+  static HOST = 'http://127.0.0.1'
+  static PORT = config.get('serverPort', 4242)
 
-RestClient.prototype.create = function (obj, handlers) {
-  var p = axios.post(`${BASE_URL}/${this.resource}/`, obj)
-  this.__resolve(p, handlers)
-}
-
-RestClient.prototype.update = function (obj, handlers) {
-  var p = axios.put(`${BASE_URL}/${this.resource}/${obj.id}`, obj)
-  this.__resolve(p, handlers)
-}
-
-RestClient.prototype.fetch = function (query, endpoint = '/', handlers) {
-  var filters = []
-  for (const [key, value] of Object.entries(query)) {
-    filters.push(`${key}=${value}`)
+  constructor(resource) {
+    this.resource = resource
   }
-  var qs = filters.join('&')
 
-  var p = axios.get(`${BASE_URL}/${this.resource}${endpoint}?${qs}`)
-  this.__resolve(p, handlers)
-}
+  static baseUrl () {
+    return `${this.HOST}:${this.PORT}`
+  }
 
-RestClient.prototype.delete = function (obj, handlers) {
-  var p = axios.delete(`${BASE_URL}/${this.resource}/${obj.id}`)
-  this.__resolve(p, handlers)
-}
+  create (obj, options = {}) {
+    const p = axios.post(`${RestClient.baseUrl()}/${this.resource}/`, obj)
+    return this.__resolve(p, options)
+  }
 
-RestClient.prototype.__resolve = function (promise, handlers) {
-  promise
-    .then(resp => {
-      if (handlers.onSuccess) {
-        handlers.onSuccess(resp)
-      }
-    })
-    .catch(err => {
-      if (handlers.onError) {
-        handlers.onError(err)
-      }
-      this.handleError(err)
-    })
-}
+  update (obj, options = {}) {
+    const p = axios.put(`${RestClient.baseUrl()}/${this.resource}/${obj.id}`, obj)
+    return this.__resolve(p, options)
+  }
 
-RestClient.prototype.handleError = function (err) {
-  if (err.response) {
-    console.log(`${err.response.status} - ${err.response.data.error}`)
-  } else {
-    console.log(err)
+  fetch (query, endpoint = '/', options = {}) {
+    const filters = []
+    let key, value
+    for ([key, value] of Object.entries(query)) {
+      filters.push(`${key}=${value}`)
+    }
+    const qs = filters.join('&')
+
+    const p = axios.get(`${RestClient.baseUrl()}/${this.resource}${endpoint}?${qs}`)
+    return this.__resolve(p, options)
+  }
+
+  delete (obj, options) {
+    let url = `${RestClient.baseUrl()}/${this.resource}/${obj.id}`
+    if ('safe' in options) {
+      url += `?safe=${options.safe}`
+    }
+
+    const p = axios.delete(url)
+    return this.__resolve(p, options)
+  }
+
+  undelete (obj, options = {}) {
+    const p = axios.put(`${RestClient.baseUrl()}/${this.resource}/undelete/${obj.id}`)
+    return this.__resolve(p, options)
+  }
+
+  __resolve (promise, options) {
+    let resolvedVal = true
+
+    if (options.asPromise) {
+      resolvedVal = promise
+    } else {
+      const handlers = 'handlers' in options ? options.handlers : {}
+      promise
+        .then(resp => {
+          if (handlers.onSuccess) {
+            handlers.onSuccess(resp)
+          }
+        })
+        .catch(err => {
+          if (handlers.onError) {
+            handlers.onError(err)
+          }
+          this.__handleError(err)
+        })
+    }
+
+    return resolvedVal
+  }
+
+  __handleError (err) {
+    if (err.response) {
+      console.log(`${err.response.status} - ${err.response.data.error}`)
+    } else {
+      console.log(err)
+    }
   }
 }
-
+// -----------------------------------------------------------------------------
 export default RestClient

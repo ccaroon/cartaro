@@ -12,11 +12,7 @@
         <template v-slot:default="{ index, item }">
           <v-list-item :class="utils.rowColor(index)" dense>
             <v-list-item-icon>
-              <v-icon :color="iconColor(item)"
-                >mdi-{{
-                  constants.ICONS.tickets[item.type.toLowerCase()]
-                }}</v-icon
-              >
+              <v-icon :color="item.color()">{{ item.icon() }}</v-icon>
               <span
                 style="cursor: pointer"
                 class="blue--text"
@@ -42,8 +38,10 @@
   </v-sheet>
 </template>
 <script>
-import Utils from '../../lib/Utils'
 import Constants from '../../lib/Constants'
+import Notification from '../../lib/Notification'
+import Utils from '../../lib/Utils'
+import JiraTicket from '../../models/JiraTicket'
 
 export default {
   name: 'home-tickets',
@@ -55,26 +53,16 @@ export default {
 
   methods: {
     loadTickets: function () {
-      var self = this
+      const self = this
 
-      this.$http.get(`http://127.0.0.1:4242/jira/search`)
-        .then(resp => {
-          self.tickets = resp.data.results
-        })
-        .catch(err => {
-          self.$emit('error', 'error', `Tickets: ${err.response.status} - ${err.response.data.error.substring(0, 120)}`)
-        })
-    },
-
-    iconColor: function (ticket) {
-      var color = 'blue'
-      if (ticket.status === 'In Progress') {
-        color = 'green'
-      } else if (ticket.status === 'Closed') {
-        color = 'red'
-      }
-
-      return color
+      JiraTicket.fetch({}, '/search', {
+        handlers: {
+          onSuccess: (items) => {
+            self.tickets = items
+          },
+          onError: (err) => { Notification.error(`HM.Tickts.loadTickets: ${err}`) }
+        }
+      })
     }
   },
 

@@ -10,13 +10,11 @@
     <SecretEditor
       v-model="showEditor"
       v-bind:secret="secret"
-      v-bind:decrypt="decryptSecretData"
       v-on:close="closeEditor"
     ></SecretEditor>
     <SecretViewer
       v-model="showViewer"
       v-bind:secret="secret"
-      v-bind:decrypt="decryptSecretData"
       v-bind:isHidden="isHidden[secret.id]"
       v-on:close="closeViewer"
     ></SecretViewer>
@@ -24,8 +22,8 @@
       <v-list-item
         v-for="(secret, idx) in secrets"
         :key="secret.id"
-        :class="rowColor(idx)"
-        @click
+        :class="utils.rowColor(idx)"
+        @click.stop
       >
         <v-list-item-avatar>
           <v-icon
@@ -36,9 +34,7 @@
         </v-list-item-avatar>
         <v-list-item-content @click="view(secret)">
           <v-list-item-title
-            :class="
-              secret.deleted_at !== null ? 'text-decoration-line-through' : ''
-            "
+            :class="secret.isDeleted() ? 'text-decoration-line-through' : ''"
           >
             {{ secret.name }} |
             <span class="text-caption text--secondary"
@@ -47,14 +43,10 @@
           </v-list-item-title>
           <v-list-item-subtitle>
             <v-row dense no-gutters>
-              <v-col
-                cols="3"
-                v-for="(val, fld) in decryptSecretData(secret)"
-                :key="fld"
-              >
+              <v-col cols="3" v-for="(val, fld) in secret.decrypt()" :key="fld">
                 <v-icon
                   @click.stop="utils.copyToClipboard(fld.toUpperCase(), val)"
-                  >mdi-{{ constants.ICONS.secrets[fld] }}</v-icon
+                  >{{ secret.icon(fld) }}</v-icon
                 >&nbsp;
                 <template v-if="isHidden[secret.id]">**********</template>
                 <template v-else>{{ val }}</template>
@@ -62,14 +54,21 @@
               <v-col>
                 <Tags
                   v-bind:tags="secret.tags"
-                  v-bind:color="rowColor(idx + 1)"
+                  v-bind:color="utils.rowColor(idx + 1)"
                 ></Tags>
               </v-col>
             </v-row>
           </v-list-item-subtitle>
         </v-list-item-content>
         <Actions
-          v-bind:actions="{ edit: edit, remove: remove }"
+          v-bind:actions="{
+            onEdit: (item) => {
+              edit(item);
+            },
+            onArchiveDelete: (item) => {
+              refresh();
+            },
+          }"
           v-bind:item="secret"
         ></Actions>
       </v-list-item>
@@ -81,9 +80,11 @@
 import Mousetrap from 'mousetrap'
 
 import Constants from '../lib/Constants'
-import Crypto from '../lib/Crypto'
 import Format from '../lib/Format'
+import Notification from '../lib/Notification'
 import Utils from '../lib/Utils'
+
+import Secret from '../models/Secret'
 
 import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
@@ -101,7 +102,7 @@ export default {
 
   methods: {
     bindShortcutKeys: function () {
-      var self = this
+      const self = this
 
       Mousetrap.bind(['ctrl+n', 'command+n'], () => {
         self.newSecret()
@@ -122,47 +123,38 @@ export default {
     },
 
     load: function () {
-      var self = this
-      var qs = `page=${this.page}&pp=${this.perPage}&sort_by=system`
+      const self = this
+      const query = {
+        page: this.page,
+        pp: this.perPage,
+        sort_by: 'system'
+      }
 
       if (this.searchText) {
-        var parts = this.searchText.split(':', 2)
+        const parts = this.searchText.split(':', 2)
         if (parts.length === 2) {
-          qs += `&${parts[0].trim()}=${parts[1].trim()}`
+          query[parts[0].trim()] = parts[1].trim()
         } else {
-          qs += `&name=${this.searchText}&system=${this.searchText}&sub_system=${this.searchText}&note=${this.searchText}`
+          query.name = this.searchText
+          query.system = this.searchText
+          query.sub_system = this.searchText
+          query.note = this.searchText
         }
       }
 
-      this.$http.get(`http://127.0.0.1:4242/secrets/?${qs}`)
-        .then(resp => {
-          self.totalSecrets = resp.data.total
-          self.secrets = resp.data.secrets
+      Secret.fetch(query, '/', {
+        handlers: {
+          onSuccess: (items, total) => {
+            self.totalSecrets = total
+            self.secrets = items
 
-          self.secrets.forEach(secret => {
-            this.isHidden[secret.id] = true
-          })
-        })
-        .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
-        })
-    },
-
-    // Decrypt secret's data optionally storing it in the `clearText` var
-    decryptSecretData: function (secret, clearText = {}) {
-      if (secret && secret.type) {
-        if (secret.__encrypted) {
-          var fields = secret.type.split('-')
-
-          fields.forEach(fld => {
-            clearText[fld] = Crypto.decrypt(secret.data[fld])
-          })
-        } else {
-          clearText = secret.data
+            self.secrets.forEach(secret => {
+              this.isHidden[secret.id] = true
+            })
+          },
+          onError: (err) => { Notification.error(`SE.Main.load: ${err.toString()}`) }
         }
-      }
-
-      return clearText
+      })
     },
 
     view: function (secret) {
@@ -171,40 +163,18 @@ export default {
     },
 
     newSecret: function () {
-      this.edit({
-        type: 'username-password',
+      this.edit(new Secret({
+        type: Secret.TYPE_USERNAME_PASSWORD,
         data: {
           username: '',
           password: ''
         }
-      })
+      }))
     },
 
     edit: function (secret) {
       this.secret = secret
       this.showEditor = true
-    },
-
-    remove: function (secret) {
-      var self = this
-      var safe = 1
-      var msg = `Delete "${secret.system}/${secret.sub_system}/${secret.name}"?`
-
-      if (secret.deleted_at !== null) {
-        safe = 0
-        msg = `DELETE "${secret.system}/${secret.sub_system}/${secret.name}"?`
-      }
-      var doDelete = confirm(msg)
-
-      if (doDelete) {
-        this.$http.delete(`http://127.0.0.1:4242/secrets/${secret.id}?safe=${safe}`)
-          .then(resp => {
-            self.load()
-          })
-          .catch(err => {
-            console.log(`${err.response.status} - ${err.response.data.error}`)
-          })
-      }
     },
 
     closeEditor: function () {
@@ -214,21 +184,12 @@ export default {
 
     closeViewer: function () {
       this.showViewer = false
-    },
-
-    rowColor: function (idx) {
-      var color = Constants.COLORS.GREY
-
-      if (idx % 2 === 0) {
-        color = Constants.COLORS.GREY_ALT
-      }
-      return color
     }
   },
 
   data () {
     return {
-      secret: {},
+      secret: new Secret({}),
       secrets: [],
       // Using an Array and indexing by secret.id b/c Object was not
       // trigging UI updates on changes

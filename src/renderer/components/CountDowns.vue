@@ -11,14 +11,17 @@
       <v-list-item
         v-for="(countDown, idx) in countDowns"
         :key="countDown.id"
-        :class="rowColor(idx)"
+        :class="utils.rowColor(idx)"
       >
-        <v-list-item-avatar>
+        <v-list-item-avatar v-if="!countDown.isDeleted()">
           <v-btn icon @click="toggleFavorite(countDown)">
             <v-icon :color="countDown.is_favorite ? 'yellow' : ''"
               >mdi-star</v-icon
             >
           </v-btn>
+        </v-list-item-avatar>
+        <v-list-item-avatar v-else>
+          <v-icon color="red">mdi-cancel</v-icon>
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title>
@@ -28,10 +31,13 @@
               dense
               single-line
               autofocus
+              :disabled="countDown.isDeleted()"
               @change="save(countDown)"
             ></v-text-field>
           </v-list-item-title>
-          <v-list-item-subtitle>{{ humanize(countDown) }}</v-list-item-subtitle>
+          <v-list-item-subtitle>{{
+            countDown.humanize()
+          }}</v-list-item-subtitle>
         </v-list-item-content>
         <v-row dense align="center">
           <v-col cols="4">
@@ -42,6 +48,7 @@
               :nudge-right="40"
               transition="scale-transition"
               offset-y
+              :disabled="countDown.isDeleted()"
             >
               <template v-slot:activator="{ on }">
                 <v-text-field
@@ -50,6 +57,7 @@
                   readonly
                   :value="dateDisplay(countDown, 'start')"
                   v-on="on"
+                  :disabled="countDown.isDeleted()"
                 ></v-text-field>
               </template>
               <v-sheet width="100%">
@@ -119,6 +127,7 @@
               :nudge-right="40"
               transition="scale-transition"
               offset-y
+              :disabled="countDown.isDeleted()"
             >
               <template v-slot:activator="{ on }">
                 <v-text-field
@@ -129,6 +138,7 @@
                   @click:clear="clearEndDate(countDown)"
                   :value="dateDisplay(countDown, 'end')"
                   v-on="on"
+                  :disabled="countDown.isDeleted()"
                 ></v-text-field>
               </template>
               <v-sheet width="100%">
@@ -192,7 +202,11 @@
           </v-col>
         </v-row>
         <Actions
-          v-bind:actions="{ remove: remove }"
+          v-bind:actions="{
+            onArchiveDelete: (item) => {
+              refresh();
+            },
+          }"
           v-bind:item="countDown"
         ></Actions>
       </v-list-item>
@@ -203,8 +217,11 @@
 import Moment from 'moment'
 import Mousetrap from 'mousetrap'
 
-import Constants from '../lib/Constants'
 import Format from '../lib/Format'
+import Notification from '../lib/Notification'
+import Utils from '../lib/Utils'
+
+import Countdown from '../models/Countdown'
 
 import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
@@ -219,7 +236,7 @@ export default {
 
   methods: {
     bindShortcutKeys: function () {
-      var self = this
+      const self = this
 
       Mousetrap.bind(['ctrl+n', 'command+n'], () => {
         self.newCountDown()
@@ -240,53 +257,57 @@ export default {
     },
 
     load: function () {
-      var self = this
-      var qs = `page=${this.page}&pp=${this.perPage}&sort_by=start_at`
+      const self = this
+      const query = {
+        page: this.page,
+        pp: this.perPage,
+        sort_by: 'start_at'
+      }
 
       if (this.searchText) {
-        var parts = this.searchText.split(':', 2)
+        const parts = this.searchText.split(':', 2)
         if (parts.length === 2) {
-          qs += `&${parts[0].trim()}=${parts[1].trim()}`
+          query[parts[0].trim()] = parts[1].trim()
         } else {
-          qs += `&name=${this.searchText}`
+          query.name = this.searchText
         }
       }
 
-      this.$http.get(`http://127.0.0.1:4242/count_downs/?${qs}`)
-        .then(resp => {
-          self.totalCountDowns = resp.data.total
-          self.countDowns = resp.data.count_downs
+      Countdown.fetch(query, '/', {
+        handlers: {
+          onSuccess: (items, total) => {
+            self.totalCountDowns = total
+            self.countDowns = items
 
-          self.countDowns.forEach((cd) => {
-            self.initDate(cd)
-          })
-        })
-        .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
-        })
+            self.countDowns.forEach((cd) => {
+              self.initDate(cd)
+            })
+          },
+          onError: (err) => { Notification.error(`CD.Main.load: ${err.toString()}`) }
+        }
+      })
     },
 
     newCountDown: function () {
-      var countDown = {
+      const countDown = new Countdown({
         name: '** NEW COUNTDOWN **',
         // Set Date to something early so it appears at the top of the list
         start_at: Moment('1971-01-01').unix(),
         end_at: null
-      }
+      })
 
-      this.$http.post(`http://127.0.0.1:4242/count_downs/`, countDown)
-        .then(resp => {
-          this.load()
-        })
-        .catch(err => {
-          console.log(`Error creating CountDown: ${err}`)
-        })
+      countDown.save({
+        handlers: {
+          onSuccess: () => { this.load() },
+          onError: (err) => { Notification.error(`CD.Main.newCountDown: ${err}`) }
+        }
+      })
     },
 
     dateDisplay: function (countDown, type) {
-      var asString = ''
-      var dateAttr = `${type}Date`
-      var timeAttr = `${type}Time`
+      let asString = ''
+      const dateAttr = `${type}Date`
+      const timeAttr = `${type}Time`
 
       if (countDown[dateAttr] && countDown[timeAttr]) {
         asString = countDown[dateAttr] + ' @ ' + countDown[timeAttr]
@@ -295,17 +316,13 @@ export default {
       return asString
     },
 
-    humanize: function (countDown) {
-      return Format.humanizeDateRange(countDown.start_at, countDown.end_at)
-    },
-
     // Init dates for use with date-picker / time-picker
     initDate: function (countDown) {
       this.$set(countDown, 'startDate', Format.formatDate(countDown.start_at * 1000, 'YYYY-MM-DD'))
       this.$set(countDown, 'startTime', Format.formatDate(countDown.start_at * 1000, 'HH:mm'))
 
-      var endDate = null
-      var endTime = null
+      let endDate = null
+      let endTime = null
       if (countDown.end_at) {
         endDate = Format.formatDate(countDown.end_at * 1000, 'YYYY-MM-DD')
         endTime = Format.formatDate(countDown.end_at * 1000, 'HH:mm')
@@ -318,17 +335,16 @@ export default {
     clearEndDate: function (countDown) {
       countDown.endDate = null
       countDown.endTime = null
-
       this.save(countDown)
     },
 
     toggleFavorite: function (countDown) {
-      countDown.is_favorite = !countDown.is_favorite
+      countDown.toggleFavorite()
       this.save(countDown)
     },
 
     save: function (countDown) {
-      var self = this
+      const self = this
       countDown.start_at = Moment(`${countDown.startDate} ${countDown.startTime}`, 'YYYY-MM-DD HH:mm:ss').unix()
 
       if (countDown.endDate && countDown.endTime) {
@@ -337,39 +353,12 @@ export default {
         countDown.end_at = null
       }
 
-      this.$http.put(`http://127.0.0.1:4242/count_downs/${countDown.id}`, countDown)
-        .then(resp => {
-          self.load()
-        })
-        .catch(err => {
-          console.log(`${err.response.status} - ${err.response.data.error}`)
-        })
-    },
-
-    remove: function (countDown) {
-      var self = this
-
-      var doDelete = confirm(`Delete "${countDown.name}"?`)
-
-      if (doDelete) {
-        this.$http.delete(`http://127.0.0.1:4242/count_downs/${countDown.id}`)
-          .then(resp => {
-            self.load()
-          })
-          .catch(err => {
-            console.log(`${err.response.status} - ${err.response.data.error}`)
-          })
-      }
-    },
-
-    rowColor: function (idx) {
-      var color = Constants.COLORS.GREY
-
-      if (idx % 2 === 0) {
-        color = Constants.COLORS.GREY_ALT
-      }
-
-      return color
+      countDown.save({
+        handlers: {
+          onSuccess: () => { self.load() },
+          onError: (err) => { Notification.error(`CD.Main.save: ${err.toString()}`) }
+        }
+      })
     }
   },
 
@@ -380,6 +369,7 @@ export default {
       perPage: 11,
       totalCountDowns: 0,
       format: Format,
+      utils: Utils,
       searchText: null,
       showStartDateMenu: [],
       showStartTimeMenu: [],
@@ -389,11 +379,3 @@ export default {
   }
 }
 </script>
-<style lang="sass" scoped>
-// ** Not Working **
-// I want to make the time-picker heading height shorter
-// Cannot get any SASS for time-picker to work here.
-// *****************
-// $time-picker-title-color: #00f
-// $time-picker-title-btn-height: 25px !default
-</style>
