@@ -1,5 +1,26 @@
 # CHANGELOG
 
+## UNRELEASED: v1.3.0 - Anaximenes - 2021-??-??
+### Added
+...
+
+### Changed
+...
+
+### Fixed
+...
+
+### Deprecated
+...
+
+### Removed
+...
+
+### Security
+...
+
+--------------------------------------------------------------------------------
+
 ## v1.2.0 - van Schagen - 2021-03-30
 ### Added
 * Electron main process now logs to `DOCUMENTS/CartaroLog.json`
