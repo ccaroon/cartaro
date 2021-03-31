@@ -25,15 +25,16 @@ import 'codemirror/addon/selection/active-line'
 
 // Themes
 import 'codemirror/theme/lesser-dark.css'
-// import 'codemirror/theme/material-darker.css'
+import 'codemirror/theme/material-darker.css'
 // import 'codemirror/theme/material.css'
-// import 'codemirror/theme/panda-syntax.css'
-// import 'codemirror/theme/yonce.css'
+import 'codemirror/theme/panda-syntax.css'
+import 'codemirror/theme/the-matrix.css'
+import 'codemirror/theme/yonce.css'
 
 export default {
   name: 'shared-markdown',
   components: { codemirror },
-  props: ['content'],
+  props: ['content', 'theme'],
   mounted () {},
   methods: {
     onContentChange: function (newContent) {
@@ -49,7 +50,7 @@ export default {
         lineNumbers: false,
         lineWrapping: true,
         mode: 'text/x-markdown',
-        theme: 'lesser-dark'
+        theme: this.theme || 'lesser-dark'
       }
     }
   }
