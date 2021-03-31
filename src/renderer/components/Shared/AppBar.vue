@@ -6,7 +6,7 @@
     <v-row no-gutters align="center">
       <v-col cols="1">
         <v-toolbar-items>
-          <v-btn icon @click.stop="newItem()">
+          <v-btn v-if="newItem" icon @click.stop="newItem()">
             <v-icon>{{ newIcon || "mdi-file-plus" }}</v-icon>
           </v-btn>
         </v-toolbar-items>
@@ -14,6 +14,7 @@
       <v-col cols="8">
         <v-toolbar-items>
           <v-pagination
+            v-if="numPages"
             v-model="page"
             :length="numPages"
             total-visible="10"
@@ -25,6 +26,7 @@
         <v-toolbar-items>
           <v-text-field
             ref="searchBox"
+            v-if="!hideSearch"
             v-model="searchText"
             dense
             clearable
@@ -45,7 +47,7 @@ import Mousetrap from 'mousetrap'
 export default {
   name: 'shared-app-bar',
   components: {},
-  props: ['name', 'numPages', 'newItem', 'newIcon', 'refresh'],
+  props: ['name', 'numPages', 'newItem', 'newIcon', 'refresh', 'hideSearch'],
 
   mounted: function () {
     this.bindShortcutKeys()
