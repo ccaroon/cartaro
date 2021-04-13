@@ -257,7 +257,7 @@ function serverHealthy (resolve, reject, iteration = 1) {
       } else {
         setTimeout(() => {
           serverHealthy(resolve, reject, iteration + 1)
-        }, 500)
+        }, 750)
       }
     })
 }

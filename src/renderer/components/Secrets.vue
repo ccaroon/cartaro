@@ -3,9 +3,8 @@
     <AppBar
       v-bind:name="'Secrets'"
       v-bind:numPages="Math.ceil(totalSecrets / perPage)"
-      v-bind:newItem="newSecret"
-      v-bind:newIcon="'mdi-lock-plus'"
       v-bind:refresh="refresh"
+      v-bind:buttons="appBarButtons"
     ></AppBar>
     <SecretEditor
       v-model="showEditor"
@@ -202,7 +201,10 @@ export default {
       format: Format,
       constants: Constants,
       utils: Utils,
-      searchText: null
+      searchText: null,
+      appBarButtons: [
+        { name: 'New', icon: 'mdi-lock-plus', action: this.newSecret }
+      ]
     }
   }
 }

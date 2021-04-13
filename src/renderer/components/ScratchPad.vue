@@ -2,9 +2,7 @@
   <v-container class="black">
     <AppBar
       v-bind:name="'Scratch Pad'"
-      v-bind:numPages="0"
-      v-bind:newItem="null"
-      v-bind:refresh="null"
+      v-bind:buttons="appBarButtons"
       v-bind:hideSearch="true"
     ></AppBar>
     <v-tabs v-model="activeTab" fixed-tabs dark>
@@ -32,11 +30,14 @@ export default {
   name: 'scratch-pad',
   components: { AppBar, Markdown },
   mounted: function () {
-    this.loadTab(this.activeTab)
+    const self = this
+    this.loadTab(this.activeTab, (content) => {
+      self.contentUpdate(content)
+    })
   },
 
   beforeDestroy: function () {
-    this.saveTab(this.activeTab)
+    this.saveTab(this.activeTab, this.activeContent)
   },
 
   methods: {
@@ -44,21 +45,20 @@ export default {
       return `scratch-pad-tab-${tabNum}`
     },
 
-    loadTab: function (tabNum) {
-      const self = this
+    loadTab: function (tabNum, postLoad) {
       const storageKey = this.tabKey(tabNum)
       LocalForage.getItem(storageKey)
         .then((value) => {
-          self.activeContent = value
+          postLoad(value)
         })
         .catch((err) => {
           Notification.error(`ScratchPad.loadTab(${tabNum}): ${err.toString()}`)
         })
     },
 
-    saveTab: function (tabNum, postSave = null) {
+    saveTab: function (tabNum, content, postSave = null) {
       const storageKey = this.tabKey(tabNum)
-      LocalForage.setItem(storageKey, this.activeContent)
+      LocalForage.setItem(storageKey, content)
         .then(() => {
           if (postSave) {
             postSave()
@@ -69,6 +69,17 @@ export default {
         })
     },
 
+    saveActiveTab: function () {
+      this.saveTab(this.activeTab, this.activeContent)
+    },
+
+    clearAll: function () {
+      for (let i = 0; i < this.numTabs; i++) {
+        this.saveTab(i, '')
+      }
+      this.contentUpdate('')
+    },
+
     contentUpdate: function (newContent) {
       this.activeContent = newContent
     }
@@ -77,8 +88,10 @@ export default {
   watch: {
     activeTab: function (newTab, oldTab) {
       const self = this
-      this.saveTab(oldTab, () => {
-        self.loadTab(newTab)
+      this.saveTab(oldTab, this.activeContent, () => {
+        self.loadTab(newTab, (content) => {
+          this.activeContent = content
+        })
       })
     }
   },
@@ -87,7 +100,11 @@ export default {
     return {
       activeTab: 0,
       numTabs: 5,
-      activeContent: ''
+      activeContent: '',
+      appBarButtons: [
+        { text: 'Save', icon: 'mdi-content-save', action: this.saveActiveTab },
+        { text: 'Erase All', icon: 'mdi-nuke', action: this.clearAll }
+      ]
     }
   }
 }

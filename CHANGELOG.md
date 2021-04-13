@@ -7,7 +7,10 @@
   - Saved to local storage.
 
 ### Changed
-...
+* Shared/AppBar
+  - Removed `newItem` and `newIcon` properties
+  - Added `buttons` property that can be used in a more general way to define any number of buttons and their actions.
+* Updated "sleep" time between serverHealthy checks on startup from 500ms to 750ms
 
 ### Fixed
 ...

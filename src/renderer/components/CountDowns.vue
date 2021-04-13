@@ -3,9 +3,8 @@
     <AppBar
       v-bind:name="'Countdowns'"
       v-bind:numPages="Math.ceil(totalCountDowns / perPage)"
-      v-bind:newItem="newCountDown"
-      v-bind:newIcon="'mdi-alarm-plus'"
       v-bind:refresh="refresh"
+      v-bind:buttons="appBarButtons"
     ></AppBar>
     <v-list dense>
       <v-list-item
@@ -374,7 +373,10 @@ export default {
       showStartDateMenu: [],
       showStartTimeMenu: [],
       showEndDateMenu: [],
-      showEndTimeMenu: []
+      showEndTimeMenu: [],
+      appBarButtons: [
+        { name: 'New', icon: 'mdi-alarm-plus', action: this.newCountDown }
+      ]
     }
   }
 }

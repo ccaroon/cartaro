@@ -6,8 +6,14 @@
     <v-row no-gutters align="center">
       <v-col cols="1">
         <v-toolbar-items>
-          <v-btn v-if="newItem" icon @click.stop="newItem()">
-            <v-icon>{{ newIcon || "mdi-file-plus" }}</v-icon>
+          <v-btn
+            v-for="(button, idx) in buttons"
+            :title="button.name"
+            :key="idx"
+            icon
+            @click.stop="button.action()"
+          >
+            <v-icon>{{ button.icon }}</v-icon>
           </v-btn>
         </v-toolbar-items>
       </v-col>
@@ -47,7 +53,7 @@ import Mousetrap from 'mousetrap'
 export default {
   name: 'shared-app-bar',
   components: {},
-  props: ['name', 'numPages', 'newItem', 'newIcon', 'refresh', 'hideSearch'],
+  props: ['name', 'numPages', 'refresh', 'hideSearch', 'buttons'],
 
   mounted: function () {
     this.bindShortcutKeys()
