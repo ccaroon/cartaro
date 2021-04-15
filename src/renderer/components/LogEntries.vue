@@ -3,9 +3,8 @@
     <AppBar
       v-bind:name="'Log Entries'"
       v-bind:numPages="Math.ceil(totalEntries / perPage)"
-      v-bind:newItem="newEntry"
-      v-bind:newIcon="'mdi-newspaper-plus'"
       v-bind:refresh="refresh"
+      v-bind:buttons="appBarButtons"
     ></AppBar>
     <LogEntryEditor
       v-model="showEditor"
@@ -179,7 +178,10 @@ export default {
       constants: Constants,
       format: Format,
       utils: Utils,
-      searchText: null
+      searchText: null,
+      appBarButtons: [
+        { name: 'New', icon: 'mdi-newspaper-plus', action: this.newEntry }
+      ]
     }
   }
 }

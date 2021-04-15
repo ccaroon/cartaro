@@ -3,8 +3,7 @@
     <AppBar
       v-bind:name="'Work Days'"
       v-bind:numPages="Math.ceil(totalDays / perPage)"
-      v-bind:newItem="newWeek"
-      v-bind:newIcon="'mdi-calendar-plus'"
+      v-bind:buttons="appBarButtons"
       v-bind:refresh="refresh"
     ></AppBar>
     <v-list>
@@ -406,7 +405,10 @@ export default {
       icons: Icon,
       searchText: null,
       showTimeInMenu: [],
-      showTimeOutMenu: []
+      showTimeOutMenu: [],
+      appBarButtons: [
+        { name: 'New Week', icon: 'mdi-calendar-plus', action: this.newWeek }
+      ]
     }
   }
 }

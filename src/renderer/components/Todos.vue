@@ -3,9 +3,8 @@
     <AppBar
       v-bind:name="'Todos'"
       v-bind:numPages="Math.ceil(totalTodos / perPage)"
-      v-bind:newItem="newTodo"
-      v-bind:newIcon="'mdi-file-check-outline'"
       v-bind:refresh="refresh"
+      v-bind:buttons="appBarButtons"
     ></AppBar>
     <TodoEditor
       v-model="showEditor"
@@ -211,7 +210,10 @@ export default {
       utils: Utils,
       searchText: null,
       showViewer: false,
-      showEditor: false
+      showEditor: false,
+      appBarButtons: [
+        { name: 'New', icon: 'mdi-file-check-outline', action: this.newTodo }
+      ]
     }
   }
 }

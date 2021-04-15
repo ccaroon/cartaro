@@ -3,8 +3,8 @@
     <AppBar
       v-bind:name="'Notes'"
       v-bind:numPages="Math.ceil(totalNotes / perPage)"
-      v-bind:newItem="newNote"
       v-bind:refresh="refresh"
+      v-bind:buttons="appBarButtons"
     ></AppBar>
     <NoteEditor
       v-model="showEditor"
@@ -174,7 +174,10 @@ export default {
       showViewer: false,
       format: Format,
       utils: Utils,
-      searchText: null
+      searchText: null,
+      appBarButtons: [
+        { name: 'New', icon: 'mdi-file-plus', action: this.newNote }
+      ]
     }
   }
 }

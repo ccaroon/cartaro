@@ -93,7 +93,8 @@ export default {
       { name: 'Notes', path: '/notes', icon: 'mdi-note-multiple' },
       { name: 'Todos', path: '/todos', icon: 'mdi-clipboard-list-outline' },
       { name: 'Secrets', path: '/secrets', icon: 'mdi-lock' },
-      { name: 'CountDowns', path: '/count_downs', icon: 'mdi-update' }
+      { name: 'CountDowns', path: '/count_downs', icon: 'mdi-update' },
+      { name: 'ScratchPad', path: '/scratch_pad', icon: 'mdi-square-edit-outline' }
     ]
   })
 }

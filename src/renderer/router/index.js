@@ -26,6 +26,11 @@ export default new Router({
       component: require('@/components/Notes').default
     },
     {
+      path: '/scratch_pad',
+      name: 'scratch_pad',
+      component: require('@/components/ScratchPad').default
+    },
+    {
       path: '/secrets',
       name: 'secrets',
       component: require('@/components/Secrets').default
