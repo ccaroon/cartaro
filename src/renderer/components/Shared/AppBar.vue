@@ -55,6 +55,13 @@ export default {
   components: {},
   props: ['name', 'numPages', 'refresh', 'hideSearch', 'buttons'],
 
+  // created() {
+  //   window.addEventListener("scroll", this.handleScroll);
+  // },
+  // destroyed() {
+  //   window.removeEventListener("scroll", this.handleScroll);
+  // },
+
   mounted: function () {
     this.bindShortcutKeys()
   },
@@ -73,6 +80,22 @@ export default {
       Mousetrap.bind(['ctrl+f', 'command+f'], () => {
         self.$refs.searchBox.focus()
         return false
+      })
+
+      Mousetrap.bind('left', () => {
+        self.page--
+        if (self.page < 1) {
+          self.page = 1
+        }
+        self.refresh(self.page, self.searchText)
+      })
+      Mousetrap.bind('right', () => {
+        self.page++
+
+        if (self.page > self.numPages) {
+          self.page = self.numPages
+        }
+        self.refresh(self.page, self.searchText)
       })
     },
 

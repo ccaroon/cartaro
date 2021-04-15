@@ -5,6 +5,7 @@
 * ScratchPad
   - An tabbed editor to quickly save scratch work or copy/pasted snippets
   - Saved to local storage.
+* Pageable item screens (LogEntries, Notes, etc) can be paged using the `left` & `right` arrow keys.
 
 ### Changed
 * Shared/AppBar
