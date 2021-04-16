@@ -6,12 +6,18 @@
   - An tabbed editor to quickly save scratch work or copy/pasted snippets
   - Saved to local storage.
 * Pageable item screens (LogEntries, Notes, etc) can be paged using the `left` & `right` arrow keys.
+* New Secret type "BLOT" - BLock Of Text.
+    - can be used to store things like licenses, SSH keys, etc.
 
 ### Changed
 * Shared/AppBar
   - Removed `newItem` and `newIcon` properties
   - Added `buttons` property that can be used in a more general way to define any number of buttons and their actions.
 * Updated "sleep" time between serverHealthy checks on startup from 500ms to 750ms
+* Secrets Enhancements
+  + Secrets entries are now grouped by "System" on the main screen
+  + Data fields are now presented in the order defined by the Secret type
+     - I.e. `username-password` lists Username first on screens, then Password
 
 ### Fixed
 ...

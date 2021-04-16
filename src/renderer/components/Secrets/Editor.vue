@@ -49,24 +49,35 @@
                   <v-btn value="username-password">Username/Password</v-btn>
                   <v-btn value="token">Token</v-btn>
                   <v-btn value="key-secret">Key/Secret</v-btn>
+                  <v-btn value="blot">BLOT</v-btn>
                 </v-btn-toggle>
               </v-col>
             </v-row>
-            <v-row v-for="(val, fld) in secret.data" :key="fld">
+            <v-row v-for="fld in secret.fieldNames()" :key="fld">
               <v-col>
-                <v-text-field
-                  :label="fld"
-                  :prepend-icon="secret.icon(fld).code"
-                  v-model.lazy="secret.data[fld]"
-                  outlined
-                  dense
-                  hide-details
-                  :rules="rules.secretData"
-                ></v-text-field>
+                <template v-if="secretType === 'blot'">
+                  <span class="text-h6">Content</span>
+                  <Markdown
+                    :content="secret.data[fld]"
+                    @update="(newContent) => (secret.data[fld] = newContent)"
+                  ></Markdown>
+                </template>
+                <template v-else>
+                  <v-text-field
+                    :label="fld"
+                    :prepend-icon="secret.icon(fld).code"
+                    v-model.lazy="secret.data[fld]"
+                    outlined
+                    dense
+                    hide-details
+                    :rules="rules.secretData"
+                  ></v-text-field>
+                </template>
               </v-col>
             </v-row>
             <v-row>
               <v-col>
+                <span class="text-h6">Notes</span>
                 <Markdown
                   :content="secret.note"
                   @update="(newContent) => (secret.note = newContent)"
@@ -228,3 +239,9 @@ export default {
   }
 }
 </script>
+<style lang="css" scoped>
+/* >>> -means- that this style should effect child components */
+>>> .CodeMirror {
+  height: 200px;
+}
+</style>
