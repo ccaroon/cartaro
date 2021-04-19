@@ -98,6 +98,7 @@ class Icon {
     { icon: new Icon('Vault', 'mdi-safe-square-outline'), keywords: ['safe'] },
     { icon: new Icon('VPN', 'mdi-vpn'), keywords: [] },
     { icon: new Icon('Weekly', 'mdi-calendar-range'), keywords: ['weeks'] },
+    { icon: new Icon('WiFi', 'mdi-wifi'), keywords: [] },
     { icon: new Icon('Workday', 'mdi-calendar'), keywords: [] },
     { icon: new Icon('XRay', 'mdi-radiology-box'), keywords: [] }
   ]
