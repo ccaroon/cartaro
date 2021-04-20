@@ -8,6 +8,8 @@
 * Pageable item screens (LogEntries, Notes, etc) can be paged using the `left` & `right` arrow keys.
 * New Secret type "BLOT" - BLock Of Text.
     - can be used to store things like licenses, SSH keys, etc.
+* Can now specify a `group_by` parameter to the server's find routes (`GET /`)
+  - Example: `/secrets/?group_by=system`
 
 ### Changed
 * Shared/AppBar

@@ -56,6 +56,7 @@ def create_controller(controller_name, Model):
             per_page = int(query_string.pop('pp', 10))
             operator = query_string.pop('op', 'or')
             sort_by  = query_string.pop('sort_by', None)
+            group_by = query_string.pop('group_by', None)
 
             num_objs = None
             objs = None
@@ -69,6 +70,16 @@ def create_controller(controller_name, Model):
                 # s = slice(offset, offset + per_page)
                 if num_objs > per_page:
                     objs = objs[offset:offset + per_page]
+
+            if group_by:
+                grouped_objs = {}
+                for obj in objs:
+                    group_key = getattr(obj, group_by)
+                    group = grouped_objs.get(group_key, [])
+                    group.append(obj)
+                    grouped_objs[group_key] = group
+
+                objs = grouped_objs
 
             resp = {
                 'total': num_objs,

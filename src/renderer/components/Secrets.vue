@@ -139,7 +139,8 @@ export default {
       const query = {
         page: this.page,
         pp: this.perPage,
-        sort_by: 'system'
+        sort_by: 'system',
+        group_by: 'system'
       }
 
       if (this.searchText) {
@@ -158,24 +159,14 @@ export default {
         handlers: {
           onSuccess: (items, total) => {
             self.totalSecrets = total
-            // self.secrets = items
+            self.secrets = items
 
-            // Group Secrets by System
-            // TODO: Move grouping to the server side
-            // That will help with the different number of items
-            // per page
-            // perPage would mean # of groups to retrieve
-            const groupedSecrets = {}
-            items.forEach(secret => {
-              secret.decrypt()
-              this.isHidden[secret.id] = true
-              if (!groupedSecrets[secret.system]) {
-                groupedSecrets[secret.system] = []
-              }
-              groupedSecrets[secret.system].push(secret)
-            })
-
-            this.secrets = groupedSecrets
+            for (const group of Object.values(self.secrets)) {
+              group.forEach(secret => {
+                secret.decrypt()
+                this.isHidden[secret.id] = true
+              })
+            }
           },
           onError: (err) => { Notification.error(`SE.Main.load: ${err.toString()}`) }
         }
