@@ -23,10 +23,24 @@ class Resource {
     return client.fetch(query, endpoint, {
       handlers: {
         onSuccess: (resp) => {
-          const items = []
-          resp.data[client.resource].forEach(data => {
-            items.push(new this(data))
-          })
+          let items = null
+          const itemData = resp.data[client.resource]
+          if (itemData instanceof Array) {
+            items = []
+            itemData.forEach(data => {
+              items.push(new this(data))
+            })
+          } else {
+            // Assume itemData is a Hash (Object)
+            items = {}
+            for (const [name, group] of Object.entries(itemData)) {
+              const itemList = []
+              group.forEach(item => {
+                itemList.push(new this(item))
+              })
+              items[name] = itemList
+            }
+          }
           options.handlers.onSuccess(items, resp.data.total)
         },
         onError: options.handlers.onError

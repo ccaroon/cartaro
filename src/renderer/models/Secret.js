@@ -24,7 +24,7 @@ class Secret extends Resource {
   }
 
   keys (iterator) {
-    this.type.split('-').forEach(fld => {
+    this.fieldNames().forEach(fld => {
       iterator(fld)
     })
   }
@@ -33,6 +33,15 @@ class Secret extends Resource {
     this.keys(key => {
       iterator(this.data[key])
     })
+  }
+
+  fieldNames () {
+    let names = []
+    if (this.type) {
+      names = this.type.split('-')
+    }
+
+    return names
   }
 
   decrypt () {

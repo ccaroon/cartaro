@@ -1,6 +1,9 @@
 <template>
   <v-app-bar app dense fixed dark clipped-left>
-    <v-app-bar-nav-icon></v-app-bar-nav-icon>
+    <v-app-bar-nav-icon>
+      <v-icon v-if="env === 'development'" color="red">mdi-dev-to</v-icon>
+      <v-icon v-else>mdi-map-legend</v-icon>
+    </v-app-bar-nav-icon>
     <v-toolbar-title>Ĉartaro - {{ name }}</v-toolbar-title>
     <v-spacer></v-spacer>
     <v-row no-gutters align="center">
@@ -45,6 +48,10 @@
         </v-toolbar-items>
       </v-col>
     </v-row>
+    <template v-if="endSlot">
+      <v-spacer></v-spacer>
+      {{ endSlot }}
+    </template>
   </v-app-bar>
 </template>
 <script>
@@ -53,7 +60,7 @@ import Mousetrap from 'mousetrap'
 export default {
   name: 'shared-app-bar',
   components: {},
-  props: ['name', 'numPages', 'refresh', 'hideSearch', 'buttons'],
+  props: ['name', 'numPages', 'refresh', 'hideSearch', 'buttons', 'endSlot'],
 
   // created() {
   //   window.addEventListener("scroll", this.handleScroll);
@@ -113,7 +120,8 @@ export default {
   data () {
     return {
       page: 1,
-      searchText: null
+      searchText: null,
+      env: process.env.NODE_ENV
     }
   }
 }

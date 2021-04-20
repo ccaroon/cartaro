@@ -6,12 +6,27 @@
   - An tabbed editor to quickly save scratch work or copy/pasted snippets
   - Saved to local storage.
 * Pageable item screens (LogEntries, Notes, etc) can be paged using the `left` & `right` arrow keys.
+* New Secret type "BLOT" - BLock Of Text.
+    - can be used to store things like licenses, SSH keys, etc.
+* Can now specify a `group_by` parameter to the server's find routes (`GET /`)
+  - Example: `/secrets/?group_by=system`
 
 ### Changed
 * Shared/AppBar
   - Removed `newItem` and `newIcon` properties
-  - Added `buttons` property that can be used in a more general way to define any number of buttons and their actions.
+  - Added `buttons` property that can be used in a more general way to define 
+    any number of buttons and their actions.
+  - Icon in Top-Left of App indicates if the App is running in development mode.
+  - Added `endSlot` option
+    + Will add a `spacer` and the value of `endSlot` to the right-most side of the
+    AppBar if defined.
 * Updated "sleep" time between serverHealthy checks on startup from 500ms to 750ms
+* Secrets Enhancements
+  + Secrets entries are now grouped by "System" on the main screen
+  + Data fields are now presented in the order defined by the Secret type
+     - I.e. `username-password` lists Username first on screens, then Password
+* Change Home screen to use the Shared/AppBar component instead of defining it's own
+  using very similar code.
 
 ### Fixed
 ...

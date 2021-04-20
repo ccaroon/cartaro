@@ -7,6 +7,7 @@ class Secret(Taggable, Base):
     TYPE_USER_PASS  = 'username-password'
     TYPE_TOKEN      = 'token'
     TYPE_KEY_SECRET = 'key-secret'
+    TYPE_BLOT       = 'blot'
     ENCRYPTION_KEY  = None
 
     TEMPLATES = {
@@ -20,6 +21,9 @@ class Secret(Taggable, Base):
         TYPE_KEY_SECRET: {
             'key': None,
             'secret': None
+        },
+        TYPE_BLOT: {
+            'content': None
         }
     }
 

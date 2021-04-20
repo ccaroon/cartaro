@@ -19,19 +19,16 @@
       <v-divider></v-divider>
       <v-card-title>{{ formatType(secret.type) }}</v-card-title>
       <v-card-text>
-        <v-row
-          v-for="(val, fld) in secret.decrypt()"
-          :key="fld"
-          no-gutters
-          dense
-        >
+        <v-row v-for="fld in secret.fieldNames()" :key="fld" no-gutters dense>
           <v-col>
             <v-icon
-              @click.stop="utils.copyToClipboard(fld.toUpperCase(), val)"
+              @click.stop="
+                utils.copyToClipboard(fld.toUpperCase(), secret.data[fld])
+              "
               >{{ secret.icon(fld) }}</v-icon
             >&nbsp;
             <template v-if="hideData">**********</template>
-            <template v-else>{{ val }}</template>
+            <template v-else>{{ secret.data[fld] }}</template>
           </v-col>
         </v-row>
       </v-card-text>

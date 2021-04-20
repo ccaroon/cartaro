@@ -219,3 +219,30 @@ class SecretTest(unittest.TestCase):
         self.assertTrue(Tag(name="lego") in secret3.tags)
         self.assertTrue(Tag(name="brick-by-brick") in secret3.tags)
         self.assertTrue(Tag(name="studs-r-us") in secret3.tags)
+
+    def test_blot(self):
+        license = 'this is the way the world ends. not with a bang...'
+        secret = Secret(
+            name="Hydra License",
+            system="Hydra",
+            sub_system="license",
+            type=Secret.TYPE_BLOT,
+            data={'content': license}
+        )
+
+        self.assertEqual(secret.type, Secret.TYPE_BLOT)
+
+        self.assertDictEqual(secret.data, {
+            'content': license
+        })
+
+
+
+
+
+
+
+
+
+
+# 

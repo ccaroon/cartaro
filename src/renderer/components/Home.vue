@@ -1,11 +1,10 @@
 <template>
   <v-container fluid>
-    <v-app-bar app dense fixed dark clipped-left>
-      <v-app-bar-nav-icon></v-app-bar-nav-icon>
-      <v-toolbar-title>Ĉartaro - Home</v-toolbar-title>
-      <v-spacer></v-spacer>
-      {{ format.formatDate(Date.now(), "dddd MMM Do, YYYY") }}
-    </v-app-bar>
+    <AppBar
+      v-bind:name="'Home'"
+      v-bind:hideSearch="true"
+      v-bind:endSlot="format.formatDate(Date.now(), 'dddd MMM Do, YYYY')"
+    ></AppBar>
     <v-row dense no-gutters>
       <WorkDays></WorkDays>
     </v-row>
@@ -36,6 +35,7 @@
 <script>
 // import Mousetrap from 'mousetrap'
 
+import AppBar from './Shared/AppBar'
 import Countdowns from './Home/Countdowns'
 import LogEntries from './Home/LogEntries'
 import Notes from './Home/Notes'
@@ -47,7 +47,7 @@ import Format from '../lib/Format'
 
 export default {
   name: 'home',
-  components: { Countdowns, LogEntries, Notes, Tickets, Todos, WorkDays },
+  components: { AppBar, Countdowns, LogEntries, Notes, Tickets, Todos, WorkDays },
 
   mounted: function () {
     this.bindShortcutKeys()

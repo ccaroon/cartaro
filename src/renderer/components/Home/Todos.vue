@@ -61,7 +61,8 @@ import TodoEditor from '../Todos/Editor'
 
 import Todo from '../../models/Todo'
 
-const DUE_WITHIN = 3
+// TODO: make this configurable
+const DUE_WITHIN = 5
 
 export default {
   name: 'home-todos',

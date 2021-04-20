@@ -28,10 +28,14 @@ class BaseControllerTest(unittest.TestCase):
 
     FAKER = faker.Faker()
 
-    def __gen_snippets(self, count, ts='', cs=''):
+    def __gen_snippets(self, count, title=None, ts='', cs=''):
         for i in range(0, count):
+            the_title = title if title else self.FAKER.name()
+            if ts:
+                the_title += F" - {ts}"
+
             snippet = Snippet(
-                title=F"{self.FAKER.name()} - {ts}",
+                title=the_title,
                 content=F"{self.FAKER.text()} - {cs}"
             )
             snippet.save()
@@ -46,12 +50,12 @@ class BaseControllerTest(unittest.TestCase):
     def setUp(self):
         Snippet.purge()
         # New Snippet for testing
-        self.snippet = Snippet(
-            title=self.FAKER.name(),
-            content=self.FAKER.text(),
-            tags=['thing-1', 'thing-2']
-        )
-        self.snippet.save()
+        # self.snippet = Snippet(
+        #     title=self.FAKER.name(),
+        #     content=self.FAKER.text(),
+        #     tags=['thing-1', 'thing-2']
+        # )
+        # self.snippet.save()
 
         self.client = cartaro.flask_app.test_client()
 
@@ -80,16 +84,23 @@ class BaseControllerTest(unittest.TestCase):
         self.assertIn('tag-2', snippet['tags'])
 
     def test_retrieve(self):
+        a_snippet = Snippet(
+            title=self.FAKER.name(),
+            content=self.FAKER.text(),
+            tags=['thing-1', 'thing-2']
+        )
+        a_snippet.save()
+        
         # Normal
-        r = self.client.get(F'/snippets/{self.snippet.id}')
+        r = self.client.get(F'/snippets/{a_snippet.id}')
         self.assertEqual(r.status_code, 200)
 
         snippet = r.get_json()
         self.assertIsNone(snippet.get('error', None))
 
-        self.assertEqual(snippet.get('title', None), self.snippet.title)
-        self.assertEqual(snippet.get('content', None), self.snippet.content)
-        self.assertEqual(len(snippet['tags']), len(self.snippet.tags))
+        self.assertEqual(snippet.get('title', None), a_snippet.title)
+        self.assertEqual(snippet.get('content', None), a_snippet.content)
+        self.assertEqual(len(snippet['tags']), len(a_snippet.tags))
         self.assertIn('thing-1', snippet['tags'])
         self.assertIn('thing-2', snippet['tags'])
 
@@ -213,26 +224,51 @@ class BaseControllerTest(unittest.TestCase):
         self.assertIsInstance(snippets, list)
         self.assertEqual(len(snippets), 3)
 
+    def test_find_group_by(self):
+        self.__gen_snippets(8, title='MurderOfCrows')
+        self.__gen_snippets(5, title='HerdOfCattle')
+        
+        r = self.client.get('/snippets/?group_by=title')
+        self.assertEqual(r.status_code, 200)
+
+        data = r.get_json()
+        self.assertEqual(data['page'], 1)
+        self.assertEqual(data['per_page'], 10)
+        self.assertEqual(data['total'], 13)
+
+        snippets = data['snippets']
+        self.assertIsInstance(snippets, dict)
+        self.assertEqual(len(snippets), 2)
+        self.assertEqual(len(snippets['MurderOfCrows']), 8)
+        self.assertEqual(len(snippets['HerdOfCattle']), 2)
+
     def test_update(self):
+        a_snippet = Snippet(
+            title=self.FAKER.name(),
+            content=self.FAKER.text(),
+            tags=['thing-1', 'thing-2']
+        )
+        a_snippet.save()
+
         data = {
             'title': self.FAKER.name(),
             'content': self.FAKER.text(),
             'tags': ['ghoti-1', 'ghoti-2', 'ghoti-3']
         }
 
-        self.assertNotEqual(self.snippet.title, data['title'])
-        self.assertNotEqual(self.snippet.content, data['content'])
-        self.assertNotEqual(self.snippet.tags, data['tags'])
+        self.assertNotEqual(a_snippet.title, data['title'])
+        self.assertNotEqual(a_snippet.content, data['content'])
+        self.assertNotEqual(a_snippet.tags, data['tags'])
 
-        r = self.client.put(F"/snippets/{self.snippet.id}", json=data)
+        r = self.client.put(F"/snippets/{a_snippet.id}", json=data)
         self.assertIsNone(r.get_json().get('error', None))
         self.assertEqual(r.status_code, 200)
 
-        r = self.client.get(F"/snippets/{self.snippet.id}")
+        r = self.client.get(F"/snippets/{a_snippet.id}")
         self.assertEqual(r.status_code, 200)
 
         snippet = r.get_json()
-        self.assertEqual(snippet['id'], self.snippet.id)
+        self.assertEqual(snippet['id'], a_snippet.id)
         self.assertEqual(snippet['title'], data['title'])
         self.assertEqual(snippet['content'], data['content'])
         self.assertIn(data['tags'][0], snippet['tags'])
@@ -317,7 +353,6 @@ class BaseControllerTest(unittest.TestCase):
     def test_undelete_nonexistent(self):
         r = self.client.put(F"/snippets/undelete/77998800")
         self.assertEqual(r.status_code, 404)
-
 
 
 
