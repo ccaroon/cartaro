@@ -34,7 +34,7 @@ import 'codemirror/theme/yonce.css'
 export default {
   name: 'shared-markdown',
   components: { codemirror },
-  props: ['content', 'theme'],
+  props: ['content', 'keyMap', 'theme'],
   mounted () {},
   methods: {
     onContentChange: function (newContent) {
@@ -45,12 +45,14 @@ export default {
   data () {
     return {
       cmOption: {
+        autofocus: true,
         tabSize: 4,
         styleActiveLine: true,
         lineNumbers: false,
         lineWrapping: true,
         mode: 'text/x-markdown',
-        theme: this.theme || 'lesser-dark'
+        theme: this.theme || 'lesser-dark',
+        extraKeys: this.keyMap
       }
     }
   }

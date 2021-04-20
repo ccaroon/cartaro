@@ -7,13 +7,14 @@
     ></AppBar>
     <v-tabs v-model="activeTab" fixed-tabs dark>
       <v-tab v-for="i in Array(numTabs).keys()" :key="i">
-        <v-icon color="light-green accent-3">mdi-numeric-{{ i }}-circle</v-icon>
+        <v-icon :color="tabColor(i)">mdi-numeric-{{ i + 1 }}-circle</v-icon>
       </v-tab>
       <v-tabs-items v-model="activeTab">
         <v-tab-item v-for="i in Array(numTabs).keys()" :key="i">
           <Markdown
             :content="activeContent"
             @update="contentUpdate"
+            v-bind:keyMap="keyMap"
             theme="yonce"
           ></Markdown>
         </v-tab-item>
@@ -22,6 +23,8 @@
   </v-container>
 </template>
 <script>
+import Mousetrap from 'mousetrap'
+
 import AppBar from './Shared/AppBar'
 import LocalForage from 'localforage'
 import Markdown from './Shared/Markdown'
@@ -41,8 +44,20 @@ export default {
   },
 
   methods: {
+    tabColor: function (tabNum) {
+      let color = 'light-green accent-3'
+      if (tabNum === this.activeTab && this.dirty) {
+        color = 'red accent-3'
+      }
+      return color
+    },
+
     tabKey: function (tabNum) {
       return `scratch-pad-tab-${tabNum}`
+    },
+
+    setActiveTab: function (tabNum) {
+      this.activeTab = tabNum
     },
 
     loadTab: function (tabNum, postLoad) {
@@ -57,9 +72,12 @@ export default {
     },
 
     saveTab: function (tabNum, content, postSave = null) {
+      const self = this
       const storageKey = this.tabKey(tabNum)
+
       LocalForage.setItem(storageKey, content)
         .then(() => {
+          self.dirty = false
           if (postSave) {
             postSave()
           }
@@ -81,7 +99,10 @@ export default {
     },
 
     contentUpdate: function (newContent) {
-      this.activeContent = newContent
+      if (newContent !== this.activeContent) {
+        this.dirty = true
+        this.activeContent = newContent
+      }
     }
   },
 
@@ -97,15 +118,36 @@ export default {
   },
 
   data () {
-    return {
+    const self = this
+
+    const data = {
       activeTab: 0,
       numTabs: 5,
       activeContent: '',
+      dirty: false,
+      keyMap: {
+        'Cmd-S': () => { this.saveActiveTab() },
+        'Ctrl-S': () => { this.saveActiveTab() }
+      },
       appBarButtons: [
         { text: 'Save', icon: 'mdi-content-save', action: this.saveActiveTab },
         { text: 'Erase All', icon: 'mdi-nuke', action: this.clearAll }
       ]
     }
+
+    for (let i = 0; i < data.numTabs; i++) {
+      // For when CodeMirror is focused
+      data.keyMap[`Cmd-${i + 1}`] = () => { this.setActiveTab(i) }
+      data.keyMap[`Ctrl-${i + 1}`] = () => { this.setActiveTab(i) }
+
+      // For when this component is focused
+      Mousetrap.bind([`ctrl+${i + 1}`, `command+${i + 1}`], () => {
+        self.setActiveTab(i)
+        return false
+      })
+    }
+
+    return data
   }
 }
 </script>

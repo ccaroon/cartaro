@@ -5,11 +5,16 @@
 * ScratchPad
   - An tabbed editor to quickly save scratch work or copy/pasted snippets
   - Saved to local storage.
+  - Cmd/Ctrl-S: save the active scratch pad
+  - Cmd/Ctrl-<n>: switch to scratch pad #n
+  - Tab number changes color when content has changed
 * Pageable item screens (LogEntries, Notes, etc) can be paged using the `left` & `right` arrow keys.
 * New Secret type "BLOT" - BLock Of Text.
     - can be used to store things like licenses, SSH keys, etc.
 * Can now specify a `group_by` parameter to the server's find routes (`GET /`)
   - Example: `/secrets/?group_by=system`
+* Markdown Editor keyMaps
+  - Can pass in a `keyMap` option to the Markdown component to map hot keys to actions.
 
 ### Changed
 * Shared/AppBar
