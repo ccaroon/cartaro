@@ -61,11 +61,12 @@ export default {
       const self = this
 
       this.item.deleted_at = null
+      self.actions.onArchiveDelete('pre-undelete', self.item)
       this.item.undelete({
         handlers: {
           onSuccess: () => {
             this.showArchiveDelete = false
-            self.actions.onArchiveDelete(self.item)
+            self.actions.onArchiveDelete('post-undelete', self.item)
           },
           onError: (err) => { Notification.error(`SH.Actions.unArchive: ${err.toString()}`) }
         }
@@ -93,12 +94,14 @@ export default {
       const doDelete = prompt ? confirm(msg) : true
 
       if (doDelete) {
+        const event = safe ? 'archive' : 'delete'
+        self.actions.onArchiveDelete(`pre-${event}`, self.item)
         this.item.delete({
           safe: safe,
           handlers: {
             onSuccess: () => {
               this.showArchiveDelete = false
-              self.actions.onArchiveDelete(self.item)
+              self.actions.onArchiveDelete(`post-${event}`, self.item)
             },
             onError: (err) => { Notification.error(`SH.Actions.archiveDelete: ${err.toString()}`) }
           }

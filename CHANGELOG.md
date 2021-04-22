@@ -32,6 +32,7 @@
      - I.e. `username-password` lists Username first on screens, then Password
 * Change Home screen to use the Shared/AppBar component instead of defining it's own
   using very similar code.
+* Shared/Actions: The `onArchiveDelete` action callback now takes an event param.
 
 ### Fixed
 ...

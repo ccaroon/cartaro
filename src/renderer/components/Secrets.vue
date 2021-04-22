@@ -75,8 +75,10 @@
               onEdit: (item) => {
                 edit(item);
               },
-              onArchiveDelete: (item) => {
-                refresh();
+              onArchiveDelete: (event, item) => {
+                if (event.startsWith('post-')) {
+                  refresh();
+                }
               },
             }"
             v-bind:item="secret"

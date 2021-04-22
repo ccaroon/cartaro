@@ -202,8 +202,10 @@
         </v-row>
         <Actions
           v-bind:actions="{
-            onArchiveDelete: (item) => {
-              refresh();
+            onArchiveDelete: (event, item) => {
+              if (event.startsWith('post-')) {
+                refresh();
+              }
             },
           }"
           v-bind:item="countDown"
@@ -297,7 +299,7 @@ export default {
 
       countDown.save({
         handlers: {
-          onSuccess: () => { this.load() },
+          onSuccess: () => { this.refresh() },
           onError: (err) => { Notification.error(`CD.Main.newCountDown: ${err}`) }
         }
       })
