@@ -5,9 +5,9 @@
       <v-icon v-else>mdi-map-legend</v-icon>
     </v-app-bar-nav-icon>
     <v-toolbar-title>Ĉartaro - {{ name }}</v-toolbar-title>
-    <v-spacer></v-spacer>
+    <v-divider class="mx-4" vertical></v-divider>
     <v-row no-gutters align="center">
-      <v-col cols="1">
+      <v-col cols="2">
         <v-toolbar-items>
           <v-btn
             v-for="(button, idx) in buttons"
@@ -20,18 +20,18 @@
           </v-btn>
         </v-toolbar-items>
       </v-col>
-      <v-col cols="8">
+      <v-col cols="6">
         <v-toolbar-items>
           <v-pagination
             v-if="numPages"
             v-model="page"
             :length="numPages"
-            total-visible="10"
+            total-visible="7"
             @input="refresh"
           ></v-pagination>
         </v-toolbar-items>
       </v-col>
-      <v-col>
+      <v-col cols="4">
         <v-toolbar-items>
           <v-text-field
             ref="searchBox"
