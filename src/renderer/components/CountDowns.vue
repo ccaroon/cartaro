@@ -23,185 +23,40 @@
           <v-icon color="red">mdi-cancel</v-icon>
         </v-list-item-avatar>
         <v-list-item-content>
-          <v-list-item-title>
-            <v-text-field
-              v-model="countDown.name"
-              placeholder="Name"
-              dense
-              single-line
-              autofocus
-              :disabled="countDown.isDeleted()"
-              @change="save(countDown)"
-            ></v-text-field>
-          </v-list-item-title>
+          <v-list-item-title
+            :class="countDown.isDeleted() ? 'text-decoration-line-through' : ''"
+            >{{ countDown.name }}</v-list-item-title
+          >
           <v-list-item-subtitle>{{
             countDown.humanize()
           }}</v-list-item-subtitle>
         </v-list-item-content>
-        <v-row dense align="center">
-          <v-col cols="4">
-            <v-menu
-              ref="startDatePicker"
-              v-model="showStartDateMenu[idx]"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              :disabled="countDown.isDeleted()"
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  label="Start"
-                  prepend-icon="mdi-calendar-clock"
-                  readonly
-                  :value="dateDisplay(countDown, 'start')"
-                  v-on="on"
-                  :disabled="countDown.isDeleted()"
-                ></v-text-field>
-              </template>
-              <v-sheet width="100%">
-                <v-row dense align="end">
-                  <v-col cols="6">
-                    <v-date-picker
-                      v-model="countDown.startDate"
-                      color="green"
-                      flat
-                      scrollable
-                    ></v-date-picker>
-                  </v-col>
-                  <v-col cols="6">
-                    <v-time-picker
-                      v-model="countDown.startTime"
-                      color="green"
-                      flat
-                      scrollable
-                    ></v-time-picker>
-                  </v-col>
-                </v-row>
-                <v-row dense align="center" justify="center">
-                  <v-col cols="3">
-                    <v-btn
-                      rounded
-                      color="green"
-                      @click="
-                        save(countDown);
-                        $set(showStartDateMenu, idx, false);
-                      "
-                      >OK</v-btn
-                    >
-                  </v-col>
-                  <v-col cols="3">
-                    <v-btn
-                      rounded
-                      color="blue"
-                      @click="
-                        countDown.startDate = format.formatDate(
-                          Date.now(),
-                          'YYYY-MM-DD'
-                        )
-                      "
-                      >Today</v-btn
-                    >
-                  </v-col>
-                  <v-col cols="3">
-                    <v-btn
-                      text
-                      color="red"
-                      @click="
-                        initDate(countDown);
-                        $set(showStartDateMenu, idx, false);
-                      "
-                      >Cancel</v-btn
-                    >
-                  </v-col>
-                </v-row>
-              </v-sheet>
-            </v-menu>
-          </v-col>
-          <v-col cols="4">
-            <v-menu
-              ref="endDatePicker"
-              v-model="showEndDateMenu[idx]"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              :disabled="countDown.isDeleted()"
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  label="End"
-                  prepend-icon="mdi-calendar-clock"
-                  readonly
-                  clearable
-                  @click:clear="clearEndDate(countDown)"
-                  :value="dateDisplay(countDown, 'end')"
-                  v-on="on"
-                  :disabled="countDown.isDeleted()"
-                ></v-text-field>
-              </template>
-              <v-sheet width="100%">
-                <v-row dense align="end">
-                  <v-col cols="6">
-                    <v-date-picker
-                      v-model="countDown.endDate"
-                      color="red"
-                      flat
-                      scrollable
-                    ></v-date-picker>
-                  </v-col>
-                  <v-col cols="6">
-                    <v-time-picker
-                      v-model="countDown.endTime"
-                      color="red"
-                      flat
-                      scrollable
-                    ></v-time-picker>
-                  </v-col>
-                </v-row>
-                <v-row dense align="center" justify="center">
-                  <v-col cols="3">
-                    <v-btn
-                      rounded
-                      color="green"
-                      @click="
-                        save(countDown);
-                        $set(showEndDateMenu, idx, false);
-                      "
-                      >OK</v-btn
-                    >
-                  </v-col>
-                  <v-col cols="3">
-                    <v-btn
-                      rounded
-                      color="blue"
-                      @click="
-                        countDown.endDate = format.formatDate(
-                          Date.now(),
-                          'YYYY-MM-DD'
-                        )
-                      "
-                      >Today</v-btn
-                    >
-                  </v-col>
-                  <v-col cols="3">
-                    <v-btn
-                      text
-                      color="red"
-                      @click="
-                        initDate(countDown);
-                        $set(showEndDateMenu, idx, false);
-                      "
-                      >Cancel</v-btn
-                    >
-                  </v-col>
-                </v-row>
-              </v-sheet>
-            </v-menu>
-          </v-col>
-        </v-row>
+
+        <v-list-item-content>
+          <v-list-item-title> Start </v-list-item-title>
+          <v-list-item-subtitle>{{
+            dateDisplay(countDown, "start")
+          }}</v-list-item-subtitle>
+        </v-list-item-content>
+
+        <v-list-item-content>
+          <template v-if="countDown.end_at">
+            <v-list-item-title> End </v-list-item-title>
+            <v-list-item-subtitle>
+              {{ dateDisplay(countDown, "end") }}
+            </v-list-item-subtitle>
+          </template>
+        </v-list-item-content>
+
+        <v-list-item-icon>
+          <v-icon>mdi-calendar-icon</v-icon>
+        </v-list-item-icon>
+
         <Actions
           v-bind:actions="{
+            onEdit: (item) => {
+              edit(item);
+            },
             onArchiveDelete: (event, item) => {
               if (event.startsWith('post-')) {
                 refresh();
@@ -212,12 +67,178 @@
         ></Actions>
       </v-list-item>
     </v-list>
+    <div class="text-center">
+      <v-bottom-sheet v-model="showEditor">
+        <v-card>
+          <v-form ref="newEditForm">
+            <v-row>
+              <v-col>
+                <v-text-field
+                  v-model="countDown.name"
+                  label="Name"
+                  autofocus
+                  prepend-icon="mdi-label"
+                  require
+                  :rules="rules.name"
+                ></v-text-field>
+              </v-col>
+              <v-col>
+                <v-menu
+                  ref="startDatePicker"
+                  v-model="showStartDateMenu"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      label="Start"
+                      prepend-icon="mdi-calendar-clock"
+                      readonly
+                      :value="dateDisplay(countDown, 'start')"
+                      v-on="on"
+                      required
+                      :rules="rules.date"
+                    ></v-text-field>
+                  </template>
+                  <v-sheet width="100%">
+                    <v-row dense align="end">
+                      <v-col cols="6">
+                        <v-date-picker
+                          v-model="countDown.startDate"
+                          color="green"
+                          flat
+                          scrollable
+                        ></v-date-picker>
+                      </v-col>
+                      <v-col cols="6">
+                        <v-time-picker
+                          v-model="countDown.startTime"
+                          color="green"
+                          flat
+                          scrollable
+                        ></v-time-picker>
+                      </v-col>
+                    </v-row>
+                    <v-row dense align="center" justify="center">
+                      <v-col cols="3">
+                        <v-btn
+                          rounded
+                          color="green"
+                          @click="showStartDateMenu = false"
+                          >OK</v-btn
+                        >
+                      </v-col>
+                      <v-col cols="3">
+                        <v-btn
+                          rounded
+                          color="blue"
+                          @click="
+                            countDown.start_at = Date.now() / 1000;
+                            initDate(countDown);
+                          "
+                          >Today</v-btn
+                        >
+                      </v-col>
+                      <v-col cols="3">
+                        <v-btn
+                          text
+                          color="red"
+                          @click="showStartDateMenu = false"
+                          >Cancel</v-btn
+                        >
+                      </v-col>
+                    </v-row>
+                  </v-sheet>
+                </v-menu>
+              </v-col>
+              <v-col>
+                <v-menu
+                  ref="endDatePicker"
+                  v-model="showEndDateMenu"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      label="End"
+                      prepend-icon="mdi-calendar-clock"
+                      readonly
+                      clearable
+                      @click:clear="clearEndDate(countDown)"
+                      :value="dateDisplay(countDown, 'end')"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-sheet width="100%">
+                    <v-row dense align="end">
+                      <v-col cols="6">
+                        <v-date-picker
+                          v-model="countDown.endDate"
+                          color="red"
+                          flat
+                          scrollable
+                        ></v-date-picker>
+                      </v-col>
+                      <v-col cols="6">
+                        <v-time-picker
+                          v-model="countDown.endTime"
+                          color="red"
+                          flat
+                          scrollable
+                        ></v-time-picker>
+                      </v-col>
+                    </v-row>
+                    <v-row dense align="center" justify="center">
+                      <v-col cols="3">
+                        <v-btn
+                          rounded
+                          color="green"
+                          @click="showEndDateMenu = false"
+                          >OK</v-btn
+                        >
+                      </v-col>
+                      <v-col cols="3">
+                        <v-btn
+                          rounded
+                          color="blue"
+                          @click="
+                            countDown.end_at = Date.now() / 1000;
+                            initDate(countDown);
+                          "
+                          >Today</v-btn
+                        >
+                      </v-col>
+                      <v-col cols="3">
+                        <v-btn text color="red" @click="showEndDateMenu = false"
+                          >Cancel</v-btn
+                        >
+                      </v-col>
+                    </v-row>
+                  </v-sheet>
+                </v-menu>
+              </v-col>
+              <v-col cols="1" text-center>
+                <v-btn fab color="success" small @click="save(countDown)">
+                  <v-icon>mdi-content-save</v-icon>
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card>
+      </v-bottom-sheet>
+    </div>
+    <!-- -------------------- -->
   </v-container>
 </template>
 <script>
 import Moment from 'moment'
 import Mousetrap from 'mousetrap'
 
+import Constants from '../lib/Constants'
 import Format from '../lib/Format'
 import Notification from '../lib/Notification'
 import Utils from '../lib/Utils'
@@ -289,20 +310,21 @@ export default {
       })
     },
 
-    newCountDown: function () {
-      const countDown = new Countdown({
-        name: 'NEW COUNTDOWN',
-        // Set Date to something early so it appears at the top of the list
-        start_at: Moment('1971-01-01').unix(),
-        end_at: null
-      })
+    edit: function (item) {
+      this.countDown = item
+      this.showEditor = true
+    },
 
-      countDown.save({
-        handlers: {
-          onSuccess: () => { this.refresh() },
-          onError: (err) => { Notification.error(`CD.Main.newCountDown: ${err}`) }
-        }
+    newCountDown: function () {
+      this.countDown = new Countdown({
+        name: '',
+        start_at: Moment().unix(),
+        end_at: null,
+        deleted_at: null
       })
+      this.initDate(this.countDown)
+
+      this.showEditor = true
     },
 
     dateDisplay: function (countDown, type) {
@@ -336,7 +358,6 @@ export default {
     clearEndDate: function (countDown) {
       countDown.endDate = null
       countDown.endTime = null
-      this.save(countDown)
     },
 
     toggleFavorite: function (countDown) {
@@ -354,31 +375,52 @@ export default {
         countDown.end_at = null
       }
 
-      countDown.save({
-        handlers: {
-          onSuccess: () => { self.load() },
-          onError: (err) => { Notification.error(`CD.Main.save: ${err.toString()}`) }
-        }
-      })
+      if (this.$refs.newEditForm.validate()) {
+        countDown.save({
+          handlers: {
+            onSuccess: () => {
+              this.showEditor = false
+              self.load()
+            },
+            onError: (err) => { Notification.error(`CD.Main.save: ${err.toString()}`) }
+          }
+        })
+      }
     }
   },
 
   data () {
     return {
+      countDown: new Countdown({}),
       countDowns: [],
       page: 1,
-      perPage: 11,
+      perPage: 15,
       totalCountDowns: 0,
       format: Format,
       utils: Utils,
       searchText: null,
-      showStartDateMenu: [],
-      showStartTimeMenu: [],
-      showEndDateMenu: [],
-      showEndTimeMenu: [],
+      showEditor: false,
+      showStartDateMenu: false,
+      showStartTimeMenu: false,
+      showEndDateMenu: false,
+      showEndTimeMenu: false,
       appBarButtons: [
         { name: 'New', icon: 'mdi-alarm-plus', action: this.newCountDown }
-      ]
+      ],
+      rules: {
+        name: [
+          name => !!name || 'Name is required'
+        ],
+        date: [
+          date => !!date || 'Date is required',
+          date => (Moment(date, Constants.FORMATS.countDownDate, true).isValid()) || 'Format as ' + Constants.FORMATS.countDownDate
+        ],
+        amount: [
+          amount => !!amount || 'Amount is required',
+          amount => (parseFloat(amount) !== 0.0) || 'Amount cannot be zero',
+          amount => /^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$/.test(amount) || 'Amount must be a dollar amount'
+        ]
+      }
     }
   }
 }
