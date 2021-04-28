@@ -170,8 +170,10 @@
         </v-row>
         <Actions
           v-bind:actions="{
-            onArchiveDelete: (item) => {
-              refresh();
+            onArchiveDelete: (event, item) => {
+              if (event.startsWith('post-')) {
+                refresh();
+              }
             },
           }"
           v-bind:item="workDay"

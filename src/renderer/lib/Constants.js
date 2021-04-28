@@ -23,7 +23,8 @@ const constants = {
   },
 
   FORMATS: {
-    entryDate: 'YYYY-MM-DD'
+    entryDate: 'YYYY-MM-DD',
+    countDownDate: 'YYYY-MM-DD @ HH:mm'
   },
 
   MONTHS: [

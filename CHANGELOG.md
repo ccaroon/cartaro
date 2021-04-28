@@ -15,6 +15,7 @@
   - Example: `/secrets/?group_by=system`
 * Markdown Editor keyMaps
   - Can pass in a `keyMap` option to the Markdown component to map hot keys to actions.
+* Countdowns get a dynamic icon based on their name
 
 ### Changed
 * Shared/AppBar
@@ -32,9 +33,11 @@
      - I.e. `username-password` lists Username first on screens, then Password
 * Change Home screen to use the Shared/AppBar component instead of defining it's own
   using very similar code.
+* Shared/Actions: The `onArchiveDelete` action callback now takes an event param.
+* Changed Countdowns from inline new/edit to using a bottom sheet editor.
 
 ### Fixed
-...
+* Archived/Deleted Countdowns, if favorited, no longer show on Home screen
 
 ### Deprecated
 ...

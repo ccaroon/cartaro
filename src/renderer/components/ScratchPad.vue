@@ -15,7 +15,7 @@
             :content="activeContent"
             @update="contentUpdate"
             v-bind:keyMap="keyMap"
-            theme="yonce"
+            theme="lesser-dark"
           ></Markdown>
         </v-tab-item>
       </v-tabs-items>
