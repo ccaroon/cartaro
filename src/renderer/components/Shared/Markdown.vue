@@ -24,9 +24,10 @@ import 'codemirror/mode/yaml/yaml.js'
 import 'codemirror/addon/selection/active-line'
 
 // Themes
+import 'codemirror/theme/ayu-dark.css'
 import 'codemirror/theme/lesser-dark.css'
-import 'codemirror/theme/material-darker.css'
 // import 'codemirror/theme/material.css'
+// import 'codemirror/theme/material-darker.css'
 import 'codemirror/theme/panda-syntax.css'
 import 'codemirror/theme/the-matrix.css'
 import 'codemirror/theme/yonce.css'

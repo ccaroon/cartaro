@@ -14,9 +14,9 @@
       >
         <v-list-item-avatar v-if="!countDown.isDeleted()">
           <v-btn icon @click="toggleFavorite(countDown)">
-            <v-icon :color="countDown.is_favorite ? 'yellow' : ''"
-              >mdi-star</v-icon
-            >
+            <v-icon :color="countDown.is_favorite ? 'yellow' : ''">{{
+              countDown.icon()
+            }}</v-icon>
           </v-btn>
         </v-list-item-avatar>
         <v-list-item-avatar v-else>
@@ -291,7 +291,7 @@ export default {
 
     newCountDown: function () {
       const countDown = new Countdown({
-        name: '** NEW COUNTDOWN **',
+        name: 'NEW COUNTDOWN',
         // Set Date to something early so it appears at the top of the list
         start_at: Moment('1971-01-01').unix(),
         end_at: null

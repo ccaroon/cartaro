@@ -18,6 +18,7 @@ class Icon {
     { icon: new Icon('Branch', 'mdi-source-branch'), keywords: ['branches'] },
     { icon: new Icon('Bugs', 'mdi-bug'), keywords: [] },
     { icon: new Icon('C', 'mdi-language-c'), keywords: [] },
+    { icon: new Icon('Cake', 'mdi-cake-variant'), keywords: ['birthday'] },
     { icon: new Icon('C++', 'mdi-language-cpp'), keywords: [] },
     { icon: new Icon('CentOS', 'mdi-centos'), keywords: ['centos7'] },
     { icon: new Icon('Cloud', 'mdi-cloud'), keywords: [] },
@@ -72,6 +73,7 @@ class Icon {
     { icon: new Icon('Notes', 'mdi-note'), keywords: [] },
     { icon: new Icon('NPM', 'mdi-npm'), keywords: ['package.json'] },
     { icon: new Icon('Outlook', 'mdi-microsoft-outlook'), keywords: [] },
+    { icon: new Icon('One up', 'mdi-one-up'), keywords: ['bonus', 'extra'] },
     { icon: new Icon('Package', 'mdi-package-variant'), keywords: ['yum', 'rpm', 'deb', 'apt', 'tar', 'tgz', 'zip'] },
     { icon: new Icon('Password', 'mdi-form-textbox-password'), keywords: [] },
     { icon: new Icon('PHP', 'mdi-language-php'), keywords: [] },
@@ -97,9 +99,10 @@ class Icon {
     { icon: new Icon('Users', 'mdi-account-box'), keywords: ['user', 'username'] },
     { icon: new Icon('Vault', 'mdi-safe-square-outline'), keywords: ['safe'] },
     { icon: new Icon('VPN', 'mdi-vpn'), keywords: [] },
-    { icon: new Icon('Weekly', 'mdi-calendar-range'), keywords: ['weeks'] },
+    { icon: new Icon('Weekly', 'mdi-calendar-range'), keywords: ['weeks', 'week'] },
     { icon: new Icon('WiFi', 'mdi-wifi'), keywords: [] },
     { icon: new Icon('Workday', 'mdi-calendar'), keywords: [] },
+    { icon: new Icon('Virus', 'mdi-virus'), keywords: ['covid', 'covid-19'] },
     { icon: new Icon('XRay', 'mdi-radiology-box'), keywords: [] }
   ]
 
@@ -158,8 +161,8 @@ class Icon {
   static search (keyword, defaultIcon = null) {
     let foundData = null
 
-    if (keyword.length > 1 && !this.SKIP_WORDS.includes(keyword)) {
-      const pattern = new RegExp(keyword, 'i')
+    if (keyword.length > 1 && !this.SKIP_WORDS.includes(keyword.toLowerCase())) {
+      const pattern = new RegExp(`^${keyword}$`, 'i')
       foundData = this.ICONS.find((iconData) => {
         if (iconData.icon.name.match(pattern)) {
           return true
