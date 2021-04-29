@@ -35,7 +35,7 @@
       <v-divider></v-divider>
       <v-card-text
         v-html="$markdown.render(logEntry.content || '')"
-        class="body-1 pt-3"
+        class="pt-3"
         style="height: 500px"
       ></v-card-text>
       <v-card-actions>

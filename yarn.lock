@@ -661,10 +661,12 @@ __metadata:
     eslint-plugin-vue: ^7.8.0
     fernet: ^0.3.1
     file-loader: 1.1.11
+    highlight.js: ^10.7.2
     html-webpack-plugin: ^3.2.0
     localforage: ^1.9.0
     markdown-it: ^12.0.4
     markdown-it-emoji: ^2.0.0
+    markdown-it-task-lists: ^2.1.1
     mini-css-extract-plugin: ^1.4.0
     moment: ^2.29.1
     mousetrap: ^1.6.5
@@ -6339,6 +6341,13 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
+"highlight.js@npm:^10.7.2":
+  version: 10.7.2
+  resolution: "highlight.js@npm:10.7.2"
+  checksum: 8208e010011298abc7be9d7f69946a408d9a9b62f88000e76672aa53cee91399d188bc6a8c33cf41323e137e0e03ff8f16ac934bdc53673747658808ea62a7ac
+  languageName: node
+  linkType: hard
+
 "highlight.js@npm:^9.3.0":
   version: 9.18.5
   resolution: "highlight.js@npm:9.18.5"
@@ -8153,6 +8162,13 @@ fsevents@~2.3.1:
   version: 2.0.0
   resolution: "markdown-it-emoji@npm:2.0.0"
   checksum: e277818e1434ccbd26485993200dbf6ceed6ffe1927b2573f99c5c7490a497d4b644140648d1f0c3de082e9bc1f482438ca4641fbbe7ef0dc85ed1d5f1b81bb0
+  languageName: node
+  linkType: hard
+
+"markdown-it-task-lists@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "markdown-it-task-lists@npm:2.1.1"
+  checksum: 4a5dfb53e659885611cae483ed29111062b1ae7bc41aaead92efcba098559d6df1aef36b168aa20a28f5b0a4bdde5c675cffb5e6cf0699b9832bd49fc1e2f5fe
   languageName: node
   linkType: hard
 

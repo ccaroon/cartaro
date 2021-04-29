@@ -36,7 +36,7 @@
       <v-card-title>Notes</v-card-title>
       <v-card-text
         v-html="$markdown.render(secret.note || '')"
-        class="body-1 pt-3"
+        class="pt-3"
         style="height: 250px"
       ></v-card-text>
       <v-card-actions>

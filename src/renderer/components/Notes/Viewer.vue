@@ -19,7 +19,7 @@
       <v-divider></v-divider>
       <v-card-text
         v-html="$markdown.render(note.content || '')"
-        class="body-1 pt-3"
+        class="pt-3"
         style="height: 750px"
       ></v-card-text>
       <v-card-actions>

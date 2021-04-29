@@ -42,7 +42,7 @@
       <v-divider></v-divider>
       <v-card-text
         v-html="$markdown.render(todo.description || '')"
-        class="body-1 pt-3"
+        class="pt-3"
         style="height: 250px"
       ></v-card-text>
       <v-card-actions>

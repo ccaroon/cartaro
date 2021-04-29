@@ -8,6 +8,7 @@
   - Cmd/Ctrl-S: save the active scratch pad
   - Cmd/Ctrl-<n>: switch to scratch pad #n
   - Tab number changes color when content has changed
+  - A tab can be converted to a Note
 * Pageable item screens (LogEntries, Notes, etc) can be paged using the `left` & `right` arrow keys.
 * New Secret type "BLOT" - BLock Of Text.
     - can be used to store things like licenses, SSH keys, etc.
@@ -35,6 +36,11 @@
   using very similar code.
 * Shared/Actions: The `onArchiveDelete` action callback now takes an event param.
 * Changed Countdowns from inline new/edit to using a bottom sheet editor.
+* Improved Markdown Rendering
+  - Less clunky looking (font smaller)
+  - Tweaked a few options
+  - Added syntax highlighting for code blocks
+  - Added Task list rendering:  `- [x] stuff`
 
 ### Fixed
 * Archived/Deleted Countdowns, if favorited, no longer show on Home screen
