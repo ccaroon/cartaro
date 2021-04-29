@@ -1,12 +1,21 @@
 import { ipcRenderer } from 'electron'
 
 export default {
-  info: function (msg) {
+  info: function (msg, timeout = 10000) {
     this.showNotification({
       icon: 'mdi-information',
       color: 'info',
       message: msg,
-      timeout: 10000
+      timeout: timeout
+    })
+  },
+
+  success: function (msg, timeout = 10000) {
+    this.showNotification({
+      icon: 'mdi-information',
+      color: 'success',
+      message: msg,
+      timeout: timeout
     })
   },
 

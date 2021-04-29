@@ -26,8 +26,11 @@
 import Mousetrap from 'mousetrap'
 
 import AppBar from './Shared/AppBar'
+import Format from '../lib/Format'
 import LocalForage from 'localforage'
 import Markdown from './Shared/Markdown'
+import Note from '../models/Note'
+import Notification from '../lib/Notification'
 
 export default {
   name: 'scratch-pad',
@@ -91,6 +94,25 @@ export default {
       this.saveTab(this.activeTab, this.activeContent)
     },
 
+    convertTabToNote: function () {
+      const dtStamp = Format.formatDateTime(new Date(), 'MMM DD, YYYY HH:mm:ss')
+      const title = `ScratchPad #${this.activeTab + 1} - ${dtStamp}`
+      const note = new Note({
+        title: title,
+        content: this.activeContent
+      })
+
+      note.save({
+        handlers: {
+          onSuccess: () => {
+            Notification.success(`Converted Tab #${this.activeTab + 1} to ${title}`, 4000)
+            this.contentUpdate('')
+          },
+          onError: (err) => { Notification.error(`SP.Editor.convertTabToNote: ${err.toString()}`) }
+        }
+      })
+    },
+
     clearAll: function () {
       for (let i = 0; i < this.numTabs; i++) {
         this.saveTab(i, '')
@@ -130,8 +152,10 @@ export default {
         'Ctrl-S': () => { this.saveActiveTab() }
       },
       appBarButtons: [
-        { text: 'Save', icon: 'mdi-content-save', action: this.saveActiveTab },
-        { text: 'Erase All', icon: 'mdi-nuke', action: this.clearAll }
+        { name: 'Save', icon: 'mdi-content-save', action: this.saveActiveTab },
+        { name: 'Export', icon: 'mdi-application-export', action: this.convertTabToNote },
+        { name: '|' },
+        { name: 'Erase All', icon: 'mdi-nuke', action: this.clearAll }
       ]
     }
 

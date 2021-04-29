@@ -9,15 +9,22 @@
     <v-row no-gutters align="center">
       <v-col cols="2">
         <v-toolbar-items>
-          <v-btn
-            v-for="(button, idx) in buttons"
-            :title="button.name"
-            :key="idx"
-            icon
-            @click.stop="button.action()"
-          >
-            <v-icon>{{ button.icon }}</v-icon>
-          </v-btn>
+          <template v-for="(button, idx) in buttons">
+            <v-divider
+              v-if="button.name === '|'"
+              vertical
+              :key="idx"
+            ></v-divider>
+            <v-btn
+              v-else
+              :title="button.name"
+              icon
+              :key="idx"
+              @click.stop="button.action()"
+            >
+              <v-icon>{{ button.icon }}</v-icon>
+            </v-btn>
+          </template>
         </v-toolbar-items>
       </v-col>
       <v-col cols="6">
