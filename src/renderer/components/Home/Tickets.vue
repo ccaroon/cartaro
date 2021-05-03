@@ -23,11 +23,7 @@
               </span>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title
-                :class="
-                  item.status === 'Closed' ? 'text-decoration-line-through' : ''
-                "
-              >
+              <v-list-item-title :class="textWeight(item)">
                 {{ item.summary }}
               </v-list-item-title>
             </v-list-item-content>
@@ -63,6 +59,17 @@ export default {
           onError: (err) => { Notification.error(`HM.Tickts.loadTickets: ${err}`) }
         }
       })
+    },
+
+    textWeight: function (ticket) {
+      let textClass = 'text--primary'
+
+      if (ticket.status === 'Closed') {
+        textClass = 'text-decoration-line-through'
+      } else if (ticket.status === 'Blocked') {
+        textClass = 'text--disabled'
+      }
+      return textClass
     }
   },
 

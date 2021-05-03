@@ -20,6 +20,7 @@ class Icon {
     { icon: new Icon('Bugs', 'mdi-bug'), keywords: [] },
     { icon: new Icon('C', 'mdi-language-c'), keywords: [] },
     { icon: new Icon('Cake', 'mdi-cake-variant'), keywords: ['birthday'] },
+    { icon: new Icon('Cancel', 'mdi-cancel'), keywords: ['blocked'] },
     { icon: new Icon('C++', 'mdi-language-cpp'), keywords: [] },
     { icon: new Icon('CentOS', 'mdi-centos'), keywords: ['centos7'] },
     { icon: new Icon('Cloud', 'mdi-cloud'), keywords: [] },
