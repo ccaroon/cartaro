@@ -231,7 +231,6 @@
         </v-card>
       </v-bottom-sheet>
     </div>
-    <!-- -------------------- -->
   </v-container>
 </template>
 <script>
@@ -362,10 +361,10 @@ export default {
 
     toggleFavorite: function (countDown) {
       countDown.toggleFavorite()
-      this.save(countDown)
+      this.save(countDown, false)
     },
 
-    save: function (countDown) {
+    save: function (countDown, validate = true) {
       const self = this
       countDown.start_at = Moment(`${countDown.startDate} ${countDown.startTime}`, 'YYYY-MM-DD HH:mm:ss').unix()
 
@@ -375,7 +374,12 @@ export default {
         countDown.end_at = null
       }
 
-      if (this.$refs.newEditForm.validate()) {
+      let doSave = true
+      if (validate) {
+        doSave = this.$refs.newEditForm.validate()
+      }
+
+      if (doSave) {
         countDown.save({
           handlers: {
             onSuccess: () => {
@@ -414,11 +418,6 @@ export default {
         date: [
           date => !!date || 'Date is required',
           date => (Moment(date, Constants.FORMATS.countDownDate, true).isValid()) || 'Format as ' + Constants.FORMATS.countDownDate
-        ],
-        amount: [
-          amount => !!amount || 'Amount is required',
-          amount => (parseFloat(amount) !== 0.0) || 'Amount cannot be zero',
-          amount => /^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$/.test(amount) || 'Amount must be a dollar amount'
         ]
       }
     }
