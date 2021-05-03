@@ -2,7 +2,7 @@
 
 import { app, dialog, ipcMain, Menu, BrowserWindow } from 'electron'
 import config from '../Config'
-import Winston from 'winston'
+import Logger from './Logger'
 
 require('@electron/remote/main').initialize()
 
@@ -17,34 +17,14 @@ const winURL = process.env.NODE_ENV === 'development'
   : `file://${path.join(__dirname, 'index.html')}`
 
 const docPath = path.join(app.getPath('documents'), 'Cartaro')
-
-const logSuffix = process.env.NODE_ENV === 'development' ? '-dev' : ''
-const logger = Winston.createLogger({
-  level: 'info',
-  format: Winston.format.combine(
-    Winston.format.timestamp({ format: 'YYYY-MM-DD@HH:mm:ss' }),
-    Winston.format.uncolorize(),
-    Winston.format.json()
-  ),
-  transports: [
-    new Winston.transports.File({
-      filename: path.join(docPath, `CartaroLog${logSuffix}.json`)
-    })
-  ]
-})
+Logger.init(docPath)
+const logger = Logger.getInstance()
 
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
-if (process.env.NODE_ENV === 'development') {
-  // Log to console when in Dev mode
-  logger.add(new Winston.transports.Console({
-    format: Winston.format.printf((info) => {
-      return `${info.level}: ${info.message}`
-    })
-  }))
-} else {
+if (process.env.NODE_ENV !== 'development') {
   global.__static = path.join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
