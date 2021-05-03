@@ -12,6 +12,7 @@ class Icon {
     { icon: new Icon('Ansible', 'mdi-ansible'), keywords: [] },
     { icon: new Icon('Apple', 'mdi-apple'), keywords: [] },
     { icon: new Icon('AWS', 'mdi-aws'), keywords: [] },
+    { icon: new Icon('Bash', 'mdi-bash'), keywords: ['shell'] },
     { icon: new Icon('BitBucket', 'mdi-bitbucket'), keywords: ['stash'] },
     { icon: new Icon('Books', 'mdi-book-open-variant'), keywords: ['book'] },
     { icon: new Icon('Brain', 'mdi-brain'), keywords: ['mindtap', 'think'] },
@@ -31,11 +32,11 @@ class Icon {
     { icon: new Icon('CSS', 'mdi-language-css3'), keywords: ['css3'] },
     { icon: new Icon('Databases', 'mdi-database'), keywords: ['DB', 'sql', 'mysql', 'postgresql', 'redis', 'mongodb'] },
     { icon: new Icon('Debian', 'mdi-debian'), keywords: [] },
-    { icon: new Icon('Disaster', 'mdi-flash-alert'), keywords: ['dr', 'disaster recovery'] },
+    { icon: new Icon('Disaster', 'mdi-flash-alert'), keywords: ['dr', 'disaster-recovery'] },
     { icon: new Icon('Docker', 'mdi-docker'), keywords: [] },
     { icon: new Icon('DNS', 'mdi-dns'), keywords: ['infoblox', 'route53'] },
     { icon: new Icon('Dots', 'mdi-dots-horizontal'), keywords: ['other', 'misc'] },
-    { icon: new Icon('Electronics', 'mdi-raspberrypi'), keywords: [] },
+    { icon: new Icon('Electronics', 'mdi-raspberrypi'), keywords: ['raspi'] },
     { icon: new Icon('Errors', 'mdi-alert-octagon'), keywords: [] },
     { icon: new Icon('Events', 'mdi-calendar-star'), keywords: [] },
     { icon: new Icon('F5', 'mdi-keyboard-f5'), keywords: ['bigip'] },
@@ -47,7 +48,7 @@ class Icon {
     { icon: new Icon('Goal', 'mdi-flag-checkered'), keywords: ['goals'] },
     { icon: new Icon('GoLang', 'mdi-language-go'), keywords: ['go'] },
     { icon: new Icon('Google', 'mdi-google'), keywords: ['go'] },
-    { icon: new Icon('Harddrives', 'mdi-harddisk'), keywords: ['harddisks', 'hard disks', 'HD', 'hard drives'] },
+    { icon: new Icon('Harddrives', 'mdi-harddisk'), keywords: ['harddisks', 'hard-disks', 'HD', 'hard-drives'] },
     { icon: new Icon('Heart', 'mdi-heart-pulse'), keywords: ['love'] },
     { icon: new Icon('Holiday', 'mdi-flag-variant'), keywords: [] },
     { icon: new Icon('HTML', 'mdi-language-html5'), keywords: ['html5'] },
@@ -55,6 +56,7 @@ class Icon {
     { icon: new Icon('Java', 'mdi-language-java'), keywords: [] },
     { icon: new Icon('JavaScript', 'mdi-language-javascript'), keywords: ['ecma'] },
     { icon: new Icon('Jira', 'mdi-jira'), keywords: [] },
+    { icon: new Icon('jQuery', 'mdi-jquery'), keywords: [] },
     { icon: new Icon('Key', 'mdi-key'), keywords: [] },
     { icon: new Icon('Laptop', 'mdi-laptop'), keywords: ['computer'] },
     { icon: new Icon('Learn', 'mdi-school'), keywords: ['learning'] },
@@ -67,7 +69,8 @@ class Icon {
     { icon: new Icon('Meeting', 'mdi-calendar-star'), keywords: [] },
     { icon: new Icon('Memory', 'mdi-memory'), keywords: ['mem', 'ram'] },
     { icon: new Icon('Misc', 'mdi-dots-horizontal'), keywords: [] },
-    { icon: new Icon('Monitoring', 'mdi-monitor-dashboard'), keywords: ['logicmonitor', 'logic monitor'] },
+    { icon: new Icon('Monitoring', 'mdi-monitor-dashboard'), keywords: ['logic-monitor'] },
+    { icon: new Icon('Mother', 'mdi-mother-heart'), keywords: ['mothers', 'mom', 'mum'] },
     { icon: new Icon('Network', 'mdi-lan-connect'), keywords: ['internet'] },
     { icon: new Icon('NodeJS', 'mdi-nodejs'), keywords: ['node.js'] },
     { icon: new Icon('Notes', 'mdi-note'), keywords: [] },
@@ -85,7 +88,7 @@ class Icon {
     { icon: new Icon('Secret', 'mdi-eye-off'), keywords: [] },
     { icon: new Icon('Sick', 'mdi-emoticon-sick'), keywords: [] },
     { icon: new Icon('Slack', 'mdi-slack'), keywords: [] },
-    { icon: new Icon('SSH', 'mdi-ssh'), keywords: [] },
+    { icon: new Icon('SSH', 'mdi-ssh'), keywords: ['scp'] },
     { icon: new Icon('Story', 'mdi-bookmark'), keywords: [] },
     { icon: new Icon('Support', 'mdi-face-agent'), keywords: [] },
     { icon: new Icon('Task', 'mdi-checkbox-marked'), keywords: [] },
@@ -157,19 +160,24 @@ class Icon {
     return foundData ? foundData.icon : null
   }
 
-  // TODO: use the longest match found?
-  static search (keyword, defaultIcon = null) {
-    let foundData = null
+  static normalize (name) {
+    return name.replaceAll(/\W/g, '')
+  }
 
-    if (keyword.length > 1 && !this.SKIP_WORDS.includes(keyword.toLowerCase())) {
-      const pattern = new RegExp(`^${keyword}$`, 'i')
+  // TODO: use the longest match found?
+  static search (name, defaultIcon = null) {
+    let foundData = null
+    const searchName = this.normalize(name)
+
+    if (searchName.length > 1 && !this.SKIP_WORDS.includes(searchName.toLowerCase())) {
+      const pattern = new RegExp(`^${searchName}$`, 'i')
       foundData = this.ICONS.find((iconData) => {
         if (iconData.icon.name.match(pattern)) {
           return true
         } else {
           let foundInKw = false
           for (let j = 0; j < iconData.keywords.length; j++) {
-            const keyword = iconData.keywords[j]
+            const keyword = this.normalize(iconData.keywords[j])
             if (keyword.match(pattern)) {
               foundInKw = true
               break
@@ -181,7 +189,7 @@ class Icon {
     }
 
     if (!foundData && defaultIcon) {
-      foundData = { icon: new Icon(keyword, defaultIcon) }
+      foundData = { icon: new Icon(name, defaultIcon) }
     }
 
     return foundData ? foundData.icon : null
