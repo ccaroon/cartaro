@@ -1,5 +1,26 @@
 # CHANGELOG
 
+## UNRELEASED: v1.4.0 - Ouroboros - 2021-??-??
+### Added
+...
+
+### Changed
+...
+
+### Fixed
+...
+
+### Deprecated
+...
+
+### Removed
+...
+
+### Security
+...
+
+--------------------------------------------------------------------------------
+
 ## v1.3.0 - Anaximenes - 2021-05-04
 ### Added
 * ScratchPad
