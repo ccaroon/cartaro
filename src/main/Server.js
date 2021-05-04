@@ -57,7 +57,7 @@ class Server {
     })
 
     this.__instance.on('exit', function (code, signal) {
-      if (code || signal) {
+      if (code) {
         dialog.showMessageBoxSync(null, {
           type: 'error',
           title: 'Backend Server Has Exited',
