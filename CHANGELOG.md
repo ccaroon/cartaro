@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## UNRELEASED: v1.3.0 - Anaximenes - 2021-??-??
+## v1.3.0 - Anaximenes - 2021-05-04
 ### Added
 * ScratchPad
   - An tabbed editor to quickly save scratch work or copy/pasted snippets
