@@ -41,6 +41,7 @@
   - Tweaked a few options
   - Added syntax highlighting for code blocks
   - Added Task list rendering:  `- [x] stuff`
+* `main/index.js` code clean-up for better readability & maintainability
 
 ### Fixed
 * Archived/Deleted Countdowns, if favorited, no longer show on Home screen

@@ -1,10 +1,12 @@
+import path from 'path'
+
 import Winston from 'winston'
-const path = require('path')
+import Settings from './Settings'
 // -----------------------------------------------------------------------------
 class Logger {
   static __instance = null
 
-  static init (logDir) {
+  static init () {
     if (this.__instance === null) {
       const logSuffix = process.env.NODE_ENV === 'development' ? '-dev' : ''
 
@@ -17,7 +19,7 @@ class Logger {
         ),
         transports: [
           new Winston.transports.File({
-            filename: path.join(logDir, `CartaroLog${logSuffix}.json`)
+            filename: path.join(Settings.docPath, `CartaroLog${logSuffix}.json`)
           })
         ]
       })
@@ -34,6 +36,7 @@ class Logger {
   }
 
   static getInstance () {
+    this.init()
     return this.__instance
   }
 }
