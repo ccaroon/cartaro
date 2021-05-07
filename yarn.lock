@@ -190,12 +190,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/remote@npm:^1.0.4":
-  version: 1.0.4
-  resolution: "@electron/remote@npm:1.0.4"
+"@electron/remote@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@electron/remote@npm:1.1.0"
   peerDependencies:
     electron: ">= 10.0.0-beta.1"
-  checksum: bcb0b475340fef7fe1dc149f28707f772682e519d88949734dcb27b9889c5450bd7e42f40fbdc81479400a84c0ba570716644d211f41b8e21304914230dc87a7
+  checksum: f05e5f85077debe2ed77fa8dc1c1b2bd799ff2f48ab996c718f38d735ed9ed7fd356a5b67b42c4fbff3b063ca2104b2dee27f6ad925446e0afc8cf85ac865a19
   languageName: node
   linkType: hard
 
@@ -626,7 +626,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "Cartaro@workspace:."
   dependencies:
-    "@electron/remote": ^1.0.4
+    "@electron/remote": ^1.1.0
     "@mdi/font": ^5.9.55
     ajv: ^8.0.1
     axios: ^0.21.1
@@ -645,7 +645,7 @@ __metadata:
     css-loader: ^5.2.0
     del: ^6.0.0
     devtron: ^1.4.0
-    electron: ^12.0.2
+    electron: ^12.0.7
     electron-builder: ^22.10.5
     electron-debug: ^3.2.0
     electron-devtools-installer: ^3.1.1
@@ -4569,16 +4569,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^12.0.2":
-  version: 12.0.2
-  resolution: "electron@npm:12.0.2"
+"electron@npm:^12.0.7":
+  version: 12.0.7
+  resolution: "electron@npm:12.0.7"
   dependencies:
     "@electron/get": ^1.0.1
     "@types/node": ^14.6.2
     extract-zip: ^1.0.3
   bin:
     electron: cli.js
-  checksum: 77f69f651309151748913fe3b57bcfc82f814142d7ccc8f9157c2ba7647b08ab9ae7d38b3231075ecce348422f0ce4351879e5f0e76095a8c8c304d08c2983d0
+  checksum: 12dc0d1ebf99b41d06f1d2242359a75e359c2b49c1e68d7f94f68ca9be316c69e6466d1bd4ec436b0471d3efa57615e59e9ea25803b33df45f8bffd60ed016dd
   languageName: node
   linkType: hard
 
