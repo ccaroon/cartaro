@@ -640,7 +640,7 @@ __metadata:
   dependencies:
     "@electron/remote": ^1.1.0
     "@mdi/font": ^5.9.55
-    ajv: ^8.0.1
+    ajv: ^8.2.0
     axios: ^0.21.1
     babel-core: ^6.26.3
     babel-eslint: ^10.1.0
@@ -651,7 +651,7 @@ __metadata:
     babel-preset-stage-0: ^6.24.1
     babel-register: ^6.26.0
     cfonts: ^2.9.1
-    chalk: ^4.1.0
+    chalk: ^4.1.1
     copy-webpack-plugin: ^5.1.2
     cross-env: ^7.0.3
     css-loader: ^5.2.0
@@ -660,7 +660,7 @@ __metadata:
     electron: ^12.0.7
     electron-builder: ^22.11.1
     electron-debug: ^3.2.0
-    electron-devtools-installer: ^3.1.1
+    electron-devtools-installer: ^3.2.0
     eslint: ^7.23.0
     eslint-config-standard: ^16.0.2
     eslint-friendly-formatter: ^4.0.1
@@ -811,15 +811,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^8.0.1":
-  version: 8.0.1
-  resolution: "ajv@npm:8.0.1"
+"ajv@npm:^8.2.0":
+  version: 8.2.0
+  resolution: "ajv@npm:8.2.0"
   dependencies:
     fast-deep-equal: ^3.1.1
     json-schema-traverse: ^1.0.0
     require-from-string: ^2.0.2
     uri-js: ^4.2.2
-  checksum: 6ec271f8a4e2d938d5a28f21e927b31bec16c72e05cac68d21c53d71ec2c9360d504db529e5e891c11cc2939c9fdf922bece8a4500b0cfb0877bdd6acfef3949
+  checksum: 949f891686134c49c9c98c401d29ccd9e0cbd5d2c76163edd21c3c6bea694a4f7e5108fdc0c55b4cc90de85c93a9356fc30b3a7fab222721db3e38c585c61053
   languageName: node
   linkType: hard
 
@@ -3060,6 +3060,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chalk@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "chalk@npm:4.1.1"
+  dependencies:
+    ansi-styles: ^4.1.0
+    supports-color: ^7.1.0
+  checksum: 445c12db7aeed0046500a1e4184d31209a77d165654c885a789c41c8598a6a95bd2392180987cac572c967b93a2a730dda778bb7f87fa06ca63fd8592f8cc59f
+  languageName: node
+  linkType: hard
+
 "change-case@npm:3.0.x":
   version: 3.0.2
   resolution: "change-case@npm:3.0.2"
@@ -4517,14 +4527,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-devtools-installer@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "electron-devtools-installer@npm:3.1.1"
+"electron-devtools-installer@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "electron-devtools-installer@npm:3.2.0"
   dependencies:
     rimraf: ^3.0.2
     semver: ^7.2.1
+    tslib: ^2.1.0
     unzip-crx-3: ^0.2.0
-  checksum: 02aae416013a06b202ed907d7948f316ddf22f58fb7a9d38638958cd2f11e845d3b25d4a39ffada79dc4e57056bb15031d384b43b69991c3dc5a2edb02ec9a43
+  checksum: 71b31b48233244ea04f35532b98b543213befd1da389a7d8176eeaf6272b7123b468fb5190487206043c23ad04c8fbb7ceebfe336acab895ce93a11acffeaaad
   languageName: node
   linkType: hard
 
@@ -11735,6 +11746,13 @@ resolve@^1.12.0:
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
   checksum: f44fe7f216946b17d3e3074df3746372703cf24e9127b4c045511456e8e4bf25515fb0a1bb3937676cc305651c5d4fcb6377b0588a4c6a957e748c4c28905d17
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^2.1.0":
+  version: 2.2.0
+  resolution: "tslib@npm:2.2.0"
+  checksum: 2d35468c470410871c5246e43f12dcb6d0fc363b617c176f26443b9530e5c5ee8448966892a42956168d8f495da7865bda33dfe82c26c91991e28999974a618f
   languageName: node
   linkType: hard
 
