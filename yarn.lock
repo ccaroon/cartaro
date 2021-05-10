@@ -679,11 +679,11 @@ __metadata:
     markdown-it: ^12.0.6
     markdown-it-emoji: ^2.0.0
     markdown-it-task-lists: ^2.1.1
-    mini-css-extract-plugin: ^1.4.0
+    mini-css-extract-plugin: ^1.6.0
     moment: ^2.29.1
     mousetrap: ^1.6.5
     multispinner: ^0.2.1
-    node-loader: ^1.0.2
+    node-loader: ^1.0.3
     node-sass: ^5.0.0
     sass-loader: ^11.1.0
     style-loader: ^2.0.0
@@ -8437,16 +8437,16 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"mini-css-extract-plugin@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "mini-css-extract-plugin@npm:1.4.0"
+"mini-css-extract-plugin@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "mini-css-extract-plugin@npm:1.6.0"
   dependencies:
     loader-utils: ^2.0.0
     schema-utils: ^3.0.0
     webpack-sources: ^1.1.0
   peerDependencies:
     webpack: ^4.4.0 || ^5.0.0
-  checksum: 081612504f579a3d49b31b2358a27185efbfc3c28f9b8240dfd27def92a840d3f7eb254b3997565fb9690f29b21b598a0027a99ac87cd6f19a81e9211cec2ec0
+  checksum: c9c50bed4ffa0ce0099c26184ed6f5b8675be068252fb2a68b790d8afa58c896e0c36aae0e0601e5036fdc04ecad761e884ce4d27a75c8bd3fb69ff7b4c52f91
   languageName: node
   linkType: hard
 
@@ -8786,15 +8786,15 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"node-loader@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "node-loader@npm:1.0.2"
+"node-loader@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "node-loader@npm:1.0.3"
   dependencies:
     loader-utils: ^2.0.0
     schema-utils: ^3.0.0
   peerDependencies:
     webpack: ^4.0.0 || ^5.0.0
-  checksum: c21b11df95a06c2d4f1177eec458dd7f55aa1216d03463b0a05baf959ee46a66cebb31417f465738cadc81beb681a452d6e13814ef4e8ecdee9f41d53dec712e
+  checksum: 4ddbbf88004da137f56a46deefe08f77dd173685626e575717ba6acb9c6b3c801c8ecbdec2cd56ddf3fb9386a1bd2ccba2905e5749ef2a1e939e5a9fb0d01075
   languageName: node
   linkType: hard
 
