@@ -115,7 +115,7 @@
     "multispinner": "^0.2.1",
     "node-loader": "^1.0.2",
     "node-sass": "^5.0.0",
-    "sass-loader": "^11.0.1",
+    "sass-loader": "^11.1.0",
     "style-loader": "^2.0.0",
     "url-loader": "^4.1.1",
     "vue-html-loader": "^1.2.4",
