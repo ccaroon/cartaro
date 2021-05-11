@@ -6,7 +6,10 @@
   - `CARTARO_ENV=dev|prod CARTARO_DOC_PATH=~/... bin/prune-tags.py`
 
 ### Changed
-...
+* Added AppBar to dialogs for Editors and Viewers
+  - Moved "Close" button to an "X" in the app bar
+  - Moved dialog title to app bar
+  - Generally nicer looking dialogs
 
 ### Fixed
 ...

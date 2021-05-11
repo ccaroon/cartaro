@@ -108,7 +108,7 @@ export default {
   data () {
     return {
       notes: [],
-      note: {},
+      note: new Note({}),
       showEditor: false,
       showViewer: false,
       constants: Constants,

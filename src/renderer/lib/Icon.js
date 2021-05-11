@@ -122,7 +122,7 @@ class Icon {
     if (typeof (terms) === 'string') {
       parts = terms.split(options.sep || ' ')
     } else {
-      parts = terms
+      parts = terms || []
     }
 
     if (options.rev) {

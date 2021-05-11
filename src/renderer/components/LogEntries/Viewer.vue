@@ -1,19 +1,14 @@
 <template>
   <v-dialog :value="value" persistent scrollable max-width="75%">
     <v-card>
-      <v-card-title>
-        {{ logEntry.subject }}
+      <v-app-bar dense flat>
+        <v-toolbar-title>{{ logEntry.subject }}</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-chip
-          small
-          label
-          class="mr-1"
-          v-for="(tag, idx) in logEntry.tags"
-          :key="idx"
-          >{{ tag }}</v-chip
-        >
-      </v-card-title>
-      <v-card-subtitle>
+        <v-btn small icon @click="close()">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-app-bar>
+      <v-card-subtitle class="pl-4 pb-1">
         <template v-if="logEntry.category === 'Ticket'">
           <span
             style="cursor: pointer"
@@ -38,9 +33,17 @@
         class="pt-3"
         style="height: 500px"
       ></v-card-text>
+      <v-divider></v-divider>
       <v-card-actions>
+        <v-chip
+          small
+          label
+          class="pa-1 mr-1"
+          v-for="(tag, idx) in logEntry.tags"
+          :key="idx"
+          >{{ tag }}</v-chip
+        >
         <v-spacer></v-spacer>
-        <v-btn color="success" @click="close()">Close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
