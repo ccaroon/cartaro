@@ -2,7 +2,8 @@
 
 ## UNRELEASED: v1.4.0 - Ouroboros - 2021-??-??
 ### Added
-...
+* Script to purge empty and unused tags: `server/bin/prune-tags.py`
+  - `CARTARO_ENV=dev|prod CARTARO_DOC_PATH=~/... bin/prune-tags.py`
 
 ### Changed
 ...
@@ -18,6 +19,14 @@
 
 ### Security
 ...
+
+### Misc
+* Updated lots of node modules including...
+  - electron & electron/remote
+  - eslint
+  - vuetify
+  - markdown-it
+  - etc...
 
 --------------------------------------------------------------------------------
 
