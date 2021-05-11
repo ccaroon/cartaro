@@ -1,22 +1,17 @@
 <template>
   <v-dialog :value="value" persistent scrollable max-width="75%">
     <v-card>
-      <v-card-title>
+      <v-app-bar dense flat>
         <v-icon :color="todo.priorityColor()"
           >mdi-numeric-{{ todo.priority }}-circle</v-icon
         >
-        {{ todo.title }}
+        <v-toolbar-title>{{ todo.title }}</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-chip
-          small
-          label
-          class="mr-1"
-          v-for="(tag, idx) in todo.tags"
-          :key="idx"
-          >{{ tag }}</v-chip
-        >
-      </v-card-title>
-      <v-card-subtitle>
+        <v-btn small icon @click="close()">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-app-bar>
+      <v-card-subtitle class="pl-4 pb-1">
         <v-icon :color="todo.is_complete ? 'green' : ''"
           >mdi-checkbox-{{ todo.is_complete ? "marked" : "blank" }}</v-icon
         >
@@ -45,9 +40,16 @@
         class="pt-3"
         style="height: 250px"
       ></v-card-text>
+      <v-divider></v-divider>
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="success" @click="close()">Close</v-btn>
+        <v-chip
+          small
+          label
+          class="pa-1 mr-1"
+          v-for="(tag, idx) in todo.tags"
+          :key="idx"
+          >{{ tag }}</v-chip
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>

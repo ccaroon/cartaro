@@ -1,9 +1,13 @@
 <template>
   <v-dialog :value="value" persistent max-width="75%" max-height="90%">
     <v-card>
-      <v-card-title>
-        <span class="headline">Secret Editor</span>
-      </v-card-title>
+      <v-app-bar dense flat>
+        <v-toolbar-title>Secret Editor</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn small icon @click="close()">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-app-bar>
       <v-card-text>
         <v-form ref="secretForm">
           <v-container>
