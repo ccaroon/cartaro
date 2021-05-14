@@ -2,184 +2,170 @@
   <v-container>
     <AppBar
       v-bind:name="'Work Days'"
-      v-bind:numPages="Math.ceil(totalDays / perPage)"
       v-bind:buttons="appBarButtons"
       v-bind:refresh="refresh"
     ></AppBar>
-    <v-list>
-      <v-list-item
-        v-for="(workDay, idx) in workDays"
-        :key="workDay.id"
-        :class="rowColor(idx)"
-      >
-        <v-list-item-avatar>
-          <v-icon>{{ workDay.icon() }}</v-icon>
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title
-            :class="workDay.isDeleted() ? 'text-decoration-line-through' : ''"
-            ><strong>{{ displayTitle(workDay) }}</strong></v-list-item-title
-          >
-          <v-list-item-subtitle>
-            {{ displaySubtitle(workDay) }}
-          </v-list-item-subtitle>
-          <v-list-item-subtitle>
-            {{ displayHoursWorked(workDay) }}
-          </v-list-item-subtitle>
-        </v-list-item-content>
-        <v-row dense align="center" justify="space-around">
-          <v-col cols="2">
-            <v-menu
-              ref="timeInPicker"
-              v-model="showTimeInMenu[idx]"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              max-width="290px"
-              min-width="290px"
-              :disabled="workDay.isDeleted()"
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-model="workDay.time_in"
-                  label="IN"
-                  prepend-icon="mdi-clock-outline"
-                  readonly
-                  v-on="on"
-                  :disabled="workDay.isDeleted()"
-                ></v-text-field>
-              </template>
-              <v-time-picker
-                v-model="workDay.time_in"
-                color="green"
-                ampm-in-title
-                scrollable
-              ></v-time-picker>
-              <v-sheet width="100%">
-                <v-row dense align="center" justify="space-around">
-                  <v-col cols="2">
-                    <v-btn
-                      color="green"
-                      small
-                      rounded
-                      @click="
-                        save(workDay);
-                        $set(showTimeInMenu, idx, false);
-                      "
-                      >OK</v-btn
-                    >
-                  </v-col>
-                  <v-col cols="3">
-                    <v-btn
-                      color="red"
-                      text
-                      @click="$set(showTimeInMenu, idx, false)"
-                      >Cancel</v-btn
-                    >
-                  </v-col>
-                </v-row>
-              </v-sheet>
-            </v-menu>
-          </v-col>
-          <v-col cols="2">
-            <v-menu
-              ref="timeOutPicker"
-              v-model="showTimeOutMenu[idx]"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              max-width="290px"
-              min-width="290px"
-              :disabled="workDay.isDeleted()"
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-model="workDay.time_out"
-                  label="OUT"
-                  prepend-icon="mdi-clock-outline"
-                  readonly
-                  v-on="on"
-                  :disabled="workDay.isDeleted()"
-                ></v-text-field>
-              </template>
-              <v-time-picker
-                v-model="workDay.time_out"
+    <div>
+      <v-sheet tile class="d-flex">
+        <v-btn icon @click="$refs.calendar.prev()">
+          <v-icon>mdi-chevron-left</v-icon>
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn icon @click="goToToday()">
+          <v-icon>mdi-calendar-today</v-icon>
+        </v-btn>
+        <span class="text-h4">{{
+          format.formatDate(calDate, "MMMM YYYY")
+        }}</span>
+        <v-spacer></v-spacer>
+        <v-btn icon @click="$refs.calendar.next()">
+          <v-icon>mdi-chevron-right</v-icon>
+        </v-btn>
+      </v-sheet>
+      <v-sheet height="850">
+        <v-calendar
+          ref="calendar"
+          v-model="calDate"
+          color="grey"
+          event-text-color="black"
+          :event-more="false"
+          :events="events"
+          @click:event="showEditor"
+          @click:date="addDay"
+        >
+        </v-calendar>
+        <v-menu
+          v-model="editorOpen"
+          :close-on-content-click="false"
+          :activator="eventElement"
+        >
+          <v-card>
+            <v-toolbar :color="selectedCalEvent.color" dense>
+              <v-btn-toggle
+                v-model="selectedWorkDay.type"
+                dense
+                borderless
+                :background-color="selectedCalEvent.color + ' accent-1'"
+                mandatory
+                @change="changeType(selectedWorkDay)"
+              >
+                <v-btn icon small value="normal">
+                  <v-icon>{{ icons.get("workday") }}</v-icon>
+                </v-btn>
+                <v-btn icon small value="holiday">
+                  <v-icon>{{ icons.get("holiday") }}</v-icon>
+                </v-btn>
+                <v-btn icon small value="pto">
+                  <v-icon>{{ icons.get("pto") }}</v-icon>
+                </v-btn>
+                <v-btn icon small value="sick">
+                  <v-icon>{{ icons.get("sick") }}</v-icon>
+                </v-btn>
+              </v-btn-toggle>
+              <v-spacer></v-spacer>
+              <v-toolbar-title>{{
+                format.formatDate(selectedWorkDay.date * 1000)
+              }}</v-toolbar-title>
+              <v-spacer></v-spacer>
+
+              <v-menu
+                ref="timeInPicker"
+                v-model="showTimeInMenu"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                offset-x
+                min-width="290px"
+                max-width="290px"
+              >
+                <template v-slot:activator="{ on }">
+                  <v-btn fab x-small color="green" v-on="on">{{
+                    selectedWorkDay.time_in
+                  }}</v-btn>
+                </template>
+                <v-time-picker
+                  v-model="selectedWorkDay.time_in"
+                  color="green"
+                  ampm-in-title
+                  scrollable
+                >
+                  <v-btn
+                    color="green"
+                    small
+                    rounded
+                    @click="
+                      save(selectedWorkDay);
+                      showTimeInMenu = false;
+                    "
+                    >OK</v-btn
+                  >
+                  <v-btn color="red" text @click="showTimeInMenu = false"
+                    >Cancel</v-btn
+                  >
+                </v-time-picker>
+              </v-menu>
+              <v-menu
+                ref="timeOutPicker"
+                v-model="showTimeOutMenu"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                offset-x
+                max-width="290px"
+                min-width="290px"
+              >
+                <template v-slot:activator="{ on }">
+                  <v-btn fab x-small color="red" v-on="on">{{
+                    selectedWorkDay.time_out
+                  }}</v-btn>
+                </template>
+                <v-time-picker
+                  v-model="selectedWorkDay.time_out"
+                  color="red"
+                  ampm-in-title
+                  scrollable
+                >
+                  <v-btn
+                    color="green"
+                    small
+                    rounded
+                    @click="
+                      save(selectedWorkDay);
+                      showTimeOutMenu = false;
+                    "
+                    >OK</v-btn
+                  >
+                  <v-btn color="red" text @click="showTimeOutMenu = false"
+                    >Cancel</v-btn
+                  >
+                </v-time-picker>
+              </v-menu>
+            </v-toolbar>
+            <v-card-text>
+              <v-text-field
+                v-model="selectedWorkDay.note"
+                placeholder="Note"
+                @change="save(selectedWorkDay)"
+              ></v-text-field>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn
                 color="red"
-                ampm-in-title
-                scrollable
-              ></v-time-picker>
-              <v-sheet width="100%">
-                <v-row dense align="center" justify="space-around">
-                  <v-col cols="2">
-                    <v-btn
-                      color="green"
-                      small
-                      rounded
-                      @click="
-                        save(workDay);
-                        $set(showTimeOutMenu, idx, false);
-                      "
-                      >OK</v-btn
-                    >
-                  </v-col>
-                  <v-col cols="3">
-                    <v-btn
-                      color="red"
-                      text
-                      @click="$set(showTimeOutMenu, idx, false)"
-                      >Cancel</v-btn
-                    >
-                  </v-col>
-                </v-row>
-              </v-sheet>
-            </v-menu>
-          </v-col>
-          <v-col cols="2">
-            <v-btn-toggle
-              v-model="workDay.type"
-              dense
-              rounded
-              mandatory
-              @change="changeType(workDay)"
-            >
-              <v-btn icon value="normal" :disabled="workDay.isDeleted()">
-                <v-icon>{{ icons.get("workday") }}</v-icon>
+                @click="
+                  remove(selectedWorkDay);
+                  editorOpen = false;
+                "
+              >
+                Delete
               </v-btn>
-              <v-btn icon value="holiday" :disabled="workDay.isDeleted()">
-                <v-icon>{{ icons.get("holiday") }}</v-icon>
+              <v-spacer></v-spacer>
+              <v-btn text color="green" @click="editorOpen = false">
+                Close
               </v-btn>
-              <v-btn icon value="pto" :disabled="workDay.isDeleted()">
-                <v-icon>{{ icons.get("pto") }}</v-icon>
-              </v-btn>
-              <v-btn icon value="sick" :disabled="workDay.isDeleted()">
-                <v-icon>{{ icons.get("sick") }}</v-icon>
-              </v-btn>
-            </v-btn-toggle>
-          </v-col>
-          <v-col cols="5" full-width>
-            <v-text-field
-              v-model="workDay.note"
-              placeholder="Note"
-              autofocus
-              :disabled="workDay.isDeleted()"
-              @change="save(workDay)"
-            ></v-text-field>
-          </v-col>
-        </v-row>
-        <Actions
-          v-bind:actions="{
-            onArchiveDelete: (event, item) => {
-              if (event.startsWith('post-')) {
-                refresh();
-              }
-            },
-          }"
-          v-bind:item="workDay"
-        ></Actions>
-      </v-list-item>
-    </v-list>
+            </v-card-actions>
+          </v-card>
+        </v-menu>
+      </v-sheet>
+    </div>
+
     <v-footer absolute>
       {{ displayWorkDates() }}
       <v-spacer></v-spacer>
@@ -193,23 +179,19 @@
 import Moment from 'moment'
 import Mousetrap from 'mousetrap'
 
-import Constants from '../lib/Constants'
 import Format from '../lib/Format'
 import Icon from '../lib/Icon'
 import Notification from '../lib/Notification'
-import Utils from '../lib/Utils'
 
-import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
 
 import WorkDay from '../models/WorkDay'
 
-const DAYS_PER_WEEK = 7
-const WEEKS_TO_SHOW = 5
+const DAYS_PER_MONTH = 31
 
 export default {
   name: 'workDays-main',
-  components: { Actions, AppBar },
+  components: { AppBar },
   mounted: function () {
     this.bindShortcutKeys()
     this.load()
@@ -225,115 +207,114 @@ export default {
       })
     },
 
-    displayTitle: function (workDay) {
-      return Format.formatDate(workDay.date * 1000, 'dddd')
-    },
-
-    displaySubtitle: function (workDay) {
-      return Format.formatDate(workDay.date * 1000, 'MMM DD, YYYY')
-    },
-
-    displayHoursWorked: function (workDay) {
-      const duration = workDay.hoursWorked()
-      return `${duration.hours()}h ${duration.minutes()}m`
-    },
-
     displayWorkDates: function () {
       let dateStr = ''
-      if (this.workDays[0] && this.workDays[4]) {
-        const start = Format.formatDate(this.workDays[0].date * 1000, 'MMM DD, YYYY')
-        const end = Format.formatDate(this.workDays[4].date * 1000, 'MMM DD, YYYY')
+      const start = Format.formatDate(this.weekStart, 'MMM DD, YYYY')
+      const end = Format.formatDate(this.weekEnd, 'MMM DD, YYYY')
 
-        dateStr = `${start} to ${end}`
-      }
+      dateStr = `${start} to ${end}`
+
       return dateStr
     },
 
     displayYearWeek: function () {
-      let weekStr = ''
-      if (this.workDays[0]) {
-        weekStr = `Week ${Format.formatDate(this.workDays[0].date * 1000, 'WW')}`
-      }
-      return weekStr
+      return `Week ${Format.formatDate(new Date(), 'WW')}`
+    },
+
+    goToToday: function () {
+      this.calDate = Format.formatDate(new Date(), 'YYYY-MM-DD')
     },
 
     totalHours: function () {
       let total = 0
-      this.workDays.forEach(day => {
-        const duration = day.hoursWorked()
-        total += duration.asHours()
+      this.workDays.forEach(workDay => {
+        const day = Moment(workDay.date * 1000)
+        if (day.isBetween(this.weekStart, this.weekEnd)) {
+          const duration = workDay.hoursWorked()
+          total += duration.asHours()
+        }
       })
 
       return total.toFixed(1)
     },
 
-    refresh: function (page = null, searchText = '') {
-      if (page !== null) {
-        this.page = page
-        this.currWeek = Moment().startOf('week').subtract((this.page - 1) * 7, 'days')
-      }
-
-      if (searchText !== '') {
-        this.searchText = searchText
-      }
-
+    refresh: function () {
       this.load()
     },
 
     load: function () {
-      if (this.searchText) {
-        this.search()
-      } else {
-        this.loadWeek()
-      }
+      this.loadMonth()
     },
 
-    search: function () {
+    eventColor: function (day) {
+      let color = 'blue'
+
+      if (day.type === WorkDay.TYPE_PTO) {
+        color = 'green accent-4'
+      } else if (day.type === WorkDay.TYPE_SICK) {
+        color = 'red'
+      } else if (day.type === WorkDay.TYPE_HOLIDAY) {
+        color = 'indigo lighten-3'
+      }
+
+      return color
+    },
+
+    addDay: function (dateEvent) {
       const self = this
-      this.perPage = 10
+      this.newDay(Moment(dateEvent.date))
+        .then(() => {
+          self.refresh()
+        })
+        .catch((err) => {
+          Notification.error(`WD.Main.addDay: ${err.toString()}`)
+        })
+    },
 
-      const query = {
-        page: this.page,
-        pp: this.perPage
-      }
+    showEditor: function (event) {
+      this.selectedCalEvent = event.event
+      this.selectedWorkDay = event.event.workDay
+      this.eventElement = event.nativeEvent.target
+      // Dunno. Make is open attached to the correct element
+      requestAnimationFrame(() => requestAnimationFrame(() => { this.editorOpen = true }))
+    },
 
-      const parts = this.searchText.split(':', 2)
-      if (parts.length === 2) {
-        query[parts[0].trim()] = parts[1].trim()
-      } else {
-        query.note = this.searchText
-      }
-
-      WorkDay.fetch(query, '/', {
-        handlers: {
-          onSuccess: function (days, totalCount) {
-            self.totalDays = totalCount
-            self.workDays = days
-          },
-          onError: (err) => {
-            Notification.error(`WD.Main.search: ${err.toString()}`)
-          }
+    createEvents: function (days) {
+      const events = []
+      days.forEach((day) => {
+        let name = day.typeCode()
+        if (day.note) {
+          name += ` - ${day.note}`
         }
+        events.push({
+          name: name,
+          start: day.start().toDate(),
+          end: day.end().toDate(),
+          color: this.eventColor(day),
+          timed: !day.allDay(),
+          workDay: day
+        })
       })
+
+      return events
     },
 
-    loadWeek: function () {
+    loadMonth: function () {
       const self = this
-      this.perPage = DAYS_PER_WEEK
       const query = {
-        pp: this.perPage,
-        start: this.currWeek.format('YYYY-MM-DD'),
-        days: DAYS_PER_WEEK
+        pp: DAYS_PER_MONTH,
+        start: Format.formatDate(Moment(this.calDate).startOf('month'), 'YYYY-MM-DD'),
+        days: DAYS_PER_MONTH
       }
 
       WorkDay.fetch(query, '/range', {
         handlers: {
           onSuccess: function (days, totalCount) {
-            self.totalDays = WEEKS_TO_SHOW * DAYS_PER_WEEK
             self.workDays = days
+            self.events = self.createEvents(days)
           },
           onError: (err) => {
-            Notification.error(`WD.Main.loadWeek: ${err.toString()}`)
+            Notification.error(`WD.Main.loadMonth: ${err.toString()}`)
           }
         }
       })
@@ -376,38 +357,52 @@ export default {
     save: function (workDay) {
       workDay.save({
         handlers: {
-          onSuccess: null,
+          onSuccess: () => {
+            this.refresh()
+          },
           onError: (err) => Notification.error(`WD.Main.save: ${err.toString()}`)
         }
       })
     },
 
-    rowColor: function (idx) {
-      const workDay = this.workDays[idx]
-      let color = Utils.rowColor(idx)
+    remove: function (workDay) {
+      const self = this
 
-      if (workDay && Moment().isSame(Moment.unix(workDay.date), 'day')) {
-        color = Constants.COLORS.ITEM_HIGHLIGHT
+      workDay.delete({
+        safe: 0,
+        handlers: {
+          onSuccess: () => {
+            self.refresh()
+          },
+          onError: (err) => { Notification.error(`WD.Main.delete: ${err.toString()}`) }
+        }
+      })
+    }
+  },
+
+  watch: {
+    calDate: function (newDate, oldDate) {
+      if (!Moment(oldDate).isSame(newDate, 'month')) {
+        this.refresh()
       }
-
-      return color
     }
   },
 
   data () {
     return {
-      // Note: start of the week is a Sunday
-      currWeek: Moment().startOf('week'),
-      workDays: [], // a Week
-      page: 1,
-      perPage: DAYS_PER_WEEK,
-      totalDays: 0,
-      constants: Constants,
+      calDate: Format.formatDate(new Date(), 'YYYY-MM-DD'),
+      weekStart: Moment().startOf('week'),
+      weekEnd: Moment().endOf('week'),
+      events: [],
+      editorOpen: false,
+      selectedCalEvent: { },
+      selectedWorkDay: new WorkDay({ type: WorkDay.TYPE_NORMAL }),
+      eventElement: null,
+      workDays: [],
       format: Format,
       icons: Icon,
-      searchText: null,
-      showTimeInMenu: [],
-      showTimeOutMenu: [],
+      showTimeInMenu: false,
+      showTimeOutMenu: false,
       appBarButtons: [
         { name: 'New Week', icon: 'mdi-calendar-plus', action: this.newWeek }
       ]

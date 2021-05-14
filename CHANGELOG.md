@@ -10,6 +10,7 @@
   - Moved "Close" button to an "X" in the app bar
   - Moved dialog title to app bar
   - Generally nicer looking dialogs
+* WorkDays are now represented by a monthly calendar
 
 ### Fixed
 ...
