@@ -11,6 +11,11 @@
   - Moved dialog title to app bar
   - Generally nicer looking dialogs
 * WorkDays are now represented by a monthly calendar
+* Updated the look of the WorkDays on Home screen
+  - Tightened up a bit
+  - Only show hours if a normal day
+  - Show time in and time out
+  - Show note for non-normal days
 
 ### Fixed
 ...

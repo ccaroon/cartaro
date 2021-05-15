@@ -1,10 +1,10 @@
 <template>
   <v-sheet width="100%">
-    <v-list dense rounded>
+    <v-list dense class="pa-0">
       <v-row dense no-gutters>
         <v-col cols="2" v-for="(workDay, idx) in workDays" :key="workDay.id">
-          <v-list-item :class="dayColor(idx, workDay)" dense>
-            <v-list-item-avatar>
+          <v-list-item :class="dayColor(idx, workDay) + ' pa-0'" dense>
+            <v-list-item-avatar class="ma-0">
               <v-icon>{{ workDay.icon() }}</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
@@ -12,20 +12,31 @@
                 <strong>{{
                   format.formatDate(workDay.date * 1000, "dddd")
                 }}</strong>
+                <template v-if="!workDay.allDay()">
+                  ({{ displayHoursWorked(workDay) }})
+                </template>
               </v-list-item-title>
               <v-list-item-subtitle>
-                {{ displayHoursWorked(workDay) }}
+                <template v-if="!workDay.allDay()">
+                  {{ format.formatDate(workDay.start(), "h:mma") }} -
+                  {{ format.formatDate(workDay.end(), "h:mma") }}
+                </template>
+                <template v-else>
+                  {{ workDay.note || workDay.type.toUpperCase() }}
+                </template>
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-col>
         <v-col cols="2">
-          <v-list-item class="grey lighten-1">
-            <v-list-item-avatar>
+          <v-list-item class="grey lighten-1 pa-0">
+            <v-list-item-avatar class="ma-0">
               <v-icon>mdi-calendar-week</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title><strong>Total</strong></v-list-item-title>
+              <v-list-item-title
+                ><strong>Total Hours</strong></v-list-item-title
+              >
               <v-list-item-subtitle> {{ totalHours() }} </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
