@@ -678,6 +678,7 @@ __metadata:
     localforage: ^1.9.0
     markdown-it: ^12.0.6
     markdown-it-emoji: ^2.0.0
+    markdown-it-for-inline: ^0.1.1
     markdown-it-task-lists: ^2.1.1
     mini-css-extract-plugin: ^1.6.0
     moment: ^2.29.1
@@ -8201,6 +8202,13 @@ fsevents@~2.3.1:
   version: 2.0.0
   resolution: "markdown-it-emoji@npm:2.0.0"
   checksum: e277818e1434ccbd26485993200dbf6ceed6ffe1927b2573f99c5c7490a497d4b644140648d1f0c3de082e9bc1f482438ca4641fbbe7ef0dc85ed1d5f1b81bb0
+  languageName: node
+  linkType: hard
+
+"markdown-it-for-inline@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "markdown-it-for-inline@npm:0.1.1"
+  checksum: 64f9d7f1afb2f87a9e9703ea5c0a9a3b7ab9b4be963856d701d256e83281df14826673ca3c9ba1b2e91ea44a095a5d3cd00484ac20d1f35987481ebf46f2268b
   languageName: node
   linkType: hard
 

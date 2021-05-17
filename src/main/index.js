@@ -55,6 +55,24 @@ function createWindow () {
   })
   Menu.attach()
 
+  // Properties to be used when Electron open a new browser window
+  // b/c of a `target=_blank` or `window.open`
+  mainWindow.webContents.setWindowOpenHandler(() => {
+    return {
+      action: 'allow',
+      overrideBrowserWindowOptions: {
+        parent: mainWindow,
+        fullscreenable: false,
+        webPreferences: {
+          devTools: false
+        },
+        autoHideMenuBar: true,
+        width: Settings.childWindow.width,
+        height: Settings.childWindow.height
+      }
+    }
+  })
+
   mainWindow.on('closed', () => {
     quitApp()
   })

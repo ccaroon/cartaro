@@ -8,5 +8,9 @@ export default {
     height: 1000,
     minWidth: 900,
     minHeight: 600
+  },
+  childWindow: {
+    width: 1200,
+    height: 900
   }
 }

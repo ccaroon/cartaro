@@ -3,6 +3,7 @@ import axios from 'axios'
 
 import MarkdownIt from 'markdown-it'
 import MDItEmoji from 'markdown-it-emoji'
+import MDItForInline from 'markdown-it-for-inline'
 import MDItTasks from 'markdown-it-task-lists'
 import hljs from 'highlight.js'
 
@@ -50,9 +51,20 @@ const mdItOpts = {
   //   return block
   // }
 }
+
 Vue.markdown = Vue.prototype.$markdown = new MarkdownIt(mdItOpts)
   .use(MDItEmoji)
   .use(MDItTasks, { enabled: true })
+  // Add `target=_blank` to a hrefs
+  .use(MDItForInline, 'url_new_win', 'link_open', function (tokens, idx) {
+    const aIndex = tokens[idx].attrIndex('target')
+
+    if (aIndex < 0) {
+      tokens[idx].attrPush(['target', '_blank'])
+    } else {
+      tokens[idx].attrs[aIndex][1] = '_blank'
+    }
+  })
 
 Vue.config.productionTip = false
 

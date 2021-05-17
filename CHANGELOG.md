@@ -18,7 +18,9 @@
   - Show note for non-normal days
 
 ### Fixed
-...
+* Links in Markdown now open in a new browser window
+  - previously they would take over the main window
+  - new windows are child windows of the main window
 
 ### Deprecated
 ...
