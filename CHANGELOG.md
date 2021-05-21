@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## UNRELEASED: v1.4.0 - Ouroboros - 2021-??-??
+## v1.4.0 - Ouroboros - 2021-05-21
 ### Added
 * Script to purge empty and unused tags: `server/bin/prune-tags.py`
   - `CARTARO_ENV=dev|prod CARTARO_DOC_PATH=~/... bin/prune-tags.py`
