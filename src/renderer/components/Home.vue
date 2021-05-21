@@ -4,6 +4,7 @@
       v-bind:name="'Home'"
       v-bind:hideSearch="true"
       v-bind:endSlot="format.formatDate(Date.now(), 'dddd MMM Do, YYYY')"
+      v-bind:buttons="appBarButtons"
     ></AppBar>
     <v-row dense no-gutters>
       <WorkDays></WorkDays>
@@ -59,7 +60,8 @@ export default {
 
   data () {
     return {
-      format: Format
+      format: Format,
+      appBarButtons: []
     }
   }
 }

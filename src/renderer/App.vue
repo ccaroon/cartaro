@@ -22,15 +22,13 @@
     <v-main>
       <About />
       <router-view></router-view>
-      <v-snackbar
-        :color="notification.color"
-        :timeout="notification.timeout"
-        v-model="notification.visible"
-      >
-        <v-icon>{{ notification.icon }}</v-icon>
-        {{ notification.message }}
+      <v-snackbar :timeout="notifyTO" v-model="notifyVisible" vertical>
+        <span v-for="(note, idx) in notifications" :key="idx">
+          <v-icon :color="note.color">{{ note.icon }} }}</v-icon>
+          {{ note.message }}<br />
+        </span>
         <template v-slot:action="{ attrs }">
-          <v-btn icon v-bind="attrs" @click="notification.visible = false">
+          <v-btn icon v-bind="attrs" @click="notifyVisible = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </template>
@@ -60,15 +58,25 @@ export default {
     })
 
     ipcRenderer.on('app-show-notification', (event, note) => {
-      this.notification.icon = note.icon || 'mdi-message'
-      this.notification.color = note.color || 'info'
-      this.notification.message = note.message
-      this.notification.timeout = note.timeout || -1
-      this.notification.visible = true
+      this.addNotification(note)
     })
   },
 
   methods: {
+    addNotification: function (note) {
+      if (!this.notifyVisible) {
+        this.notifyTO = note.timeout || -1
+        this.notifications = []
+      } else {
+        // If notifications already exists, set the TO to -1 to cause the
+        // notifcation to stay on screen until manually dismissed.
+        this.notifyTO = -1
+      }
+
+      this.notifications.push(note)
+      this.notifyVisible = true
+    },
+
     goTo: function (page) {
       this.pageName = page.name
       this.$router.push(page.path)
@@ -78,13 +86,13 @@ export default {
   data: () => ({
     drawer: true,
     about: false,
-    notification: {
+    notifications: [{
       icon: null,
       color: null,
-      visible: false,
-      timeout: null,
       message: null
-    },
+    }],
+    notifyVisible: false,
+    notifyTO: -1,
     pageName: 'Home',
     menu: [
       { name: 'Home', path: '/', icon: 'mdi-home' },

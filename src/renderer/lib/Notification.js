@@ -19,11 +19,12 @@ export default {
     })
   },
 
-  warn: function (msg) {
+  warn: function (msg, timeout = -1) {
     this.showNotification({
       icon: 'mdi-alert',
       color: 'warning',
-      message: msg
+      message: msg,
+      timeout: timeout
     })
   },
 
@@ -31,7 +32,8 @@ export default {
     this.showNotification({
       icon: 'mdi-alert-octagram',
       color: 'error',
-      message: msg
+      message: msg,
+      timeout: -1
     })
   },
 

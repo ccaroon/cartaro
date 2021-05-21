@@ -16,6 +16,7 @@
   - Only show hours if a normal day
   - Show time in and time out
   - Show note for non-normal days
+* Allow for multiple Notifications to be displayed at one time.
 
 ### Fixed
 * Links in Markdown now open in a new browser window
