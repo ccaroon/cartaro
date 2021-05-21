@@ -22,7 +22,7 @@
     <v-main>
       <About />
       <router-view></router-view>
-      <v-snackbar :timeout="notifyTO" v-model="notifyVisible" vertical>
+      <v-snackbar :timeout="notifyTO" v-model="notifyVisible">
         <span v-for="(note, idx) in notifications" :key="idx">
           <v-icon :color="note.color">{{ note.icon }} }}</v-icon>
           {{ note.message }}<br />
