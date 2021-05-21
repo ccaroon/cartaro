@@ -6,6 +6,7 @@ In no particular order:
 * van Schagen     -- v1.2.x
 * Anaximenes      -- v1.3.x
 * Ouroboros       -- v1.4.x
+* Cartographer    -- v1.5.x
 * -------------------------
 * Kraken
 * Legendary ...

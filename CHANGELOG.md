@@ -1,5 +1,26 @@
 # CHANGELOG
 
+## UNRELEASED: v1.5.0 - Cartographer - 2021-??-??
+### Added
+...
+
+### Changed
+...
+
+### Fixed
+...
+
+### Deprecated
+...
+
+### Removed
+...
+
+### Security
+...
+
+--------------------------------------------------------------------------------
+
 ## v1.4.0 - Ouroboros - 2021-05-21
 ### Added
 * Script to purge empty and unused tags: `server/bin/prune-tags.py`
