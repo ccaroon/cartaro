@@ -8,6 +8,10 @@
             },
             "token": "0xdeadbeef"
         },
-        "serverPort": 8888
+        "serverPort": 8888,
+        "backup": {
+            "path": "/tmp/CartaroBackup",
+            "keep": 7
+        }
     }
 }
