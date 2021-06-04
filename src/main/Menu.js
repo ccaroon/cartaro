@@ -1,13 +1,12 @@
-import { Menu, BrowserWindow } from 'electron'
+import { Menu } from 'electron'
+import MenuActions from './MenuActions'
 
 const mainMetaKey = process.platform === 'darwin' ? 'Cmd' : 'Ctrl'
 
 const aboutSubMenu = {
   label: 'About Ĉartaro',
   accelerator: mainMetaKey + '+?',
-  click: () => {
-    BrowserWindow.getFocusedWindow().webContents.send('menu-help-about')
-  }
+  click: () => MenuActions.HELP.about()
 }
 
 // const settingsSubMenu = {
@@ -18,6 +17,19 @@ const aboutSubMenu = {
 
 const template = [
   // 0
+  {
+    label: 'File',
+    submenu: [
+      {
+        label: 'Backup',
+        accelerator: mainMetaKey + '+B',
+        click: () => {
+          MenuActions.FILE.backup()
+        }
+      }
+    ]
+  },
+  // 1
   {
     label: 'Edit',
     submenu: [
@@ -30,36 +42,36 @@ const template = [
       { label: 'Select All', accelerator: 'CmdOrCtrl+A', selector: 'selectAll:' }
     ]
   },
-  // 1
+  // 2
   {
     label: 'View',
     submenu: [
       {
         label: 'Main',
         accelerator: mainMetaKey + '+H',
-        click: () => BrowserWindow.getFocusedWindow().webContents.send('menu-view-main')
+        click: () => MenuActions.VIEW.main()
       }
     ]
   },
-  // 2
+  // 3
   {
     role: 'window',
     submenu: [
       { role: 'minimize' }
     ]
   },
-  // 3
+  // 4
   {
     role: 'help',
     submenu: [
       {
         label: 'View on GitHub',
-        click () { require('electron').shell.openExternal('https://github.com/ccaroon/cartaro') }
+        click: () => MenuActions.HELP.github()
       },
       {
         label: 'Dev Tools',
         accelerator: mainMetaKey + '+I',
-        click: () => BrowserWindow.getFocusedWindow().webContents.openDevTools()
+        click: () => MenuActions.HELP.devtools()
       }
     ]
   }
@@ -80,21 +92,21 @@ export default {
         ]
       })
     } else {
-      // Add About to help menu
-      template[3].submenu = template[3].submenu.concat([
-        { type: 'separator' },
-        aboutSubMenu
-      ])
-
-      // Add File Menu
-      template.unshift({
-        label: 'File',
-        submenu: [
-          // settingsSubMenu,
+      // Add Quit to File menu
+      template[0].submenu = template[0].submenu.concat(
+        [
           { type: 'separator' },
           { role: 'quit' }
         ]
-      })
+      )
+
+      // Add About to help menu
+      template[4].submenu = template[4].submenu.concat(
+        [
+          { type: 'separator' },
+          aboutSubMenu
+        ]
+      )
     }
 
     const menu = Menu.buildFromTemplate(template)

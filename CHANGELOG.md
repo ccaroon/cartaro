@@ -2,7 +2,11 @@
 
 ## UNRELEASED: v1.5.0 - Cartographer - 2021-??-??
 ### Added
-...
+* Ability for the server to back up the data files
+  - `utils/archive.py`
+  - `/sys/backup` end point on the `system.py` controller
+* File menu added to UI
+* File -> Backup added to UI. Calls the `/sys/backup` API endpoint.
 
 ### Changed
 ...

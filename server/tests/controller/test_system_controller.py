@@ -14,3 +14,10 @@ class SystemControllerTest(unittest.TestCase):
 
         data = r.get_json()
         self.assertEqual(data, 'pong')
+
+    def test_backup(self):
+        r = self.client.post('/sys/backup')
+        self.assertEqual(r.status_code, 201)
+
+        data = r.get_json()
+        self.assertRegexpMatches(data['message'], "Data in")
