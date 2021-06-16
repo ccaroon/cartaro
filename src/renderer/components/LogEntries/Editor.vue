@@ -279,3 +279,9 @@ export default {
   }
 }
 </script>
+<style lang="css" scoped>
+/* >>> -means- that this style should effect child components */
+>>> .CodeMirror {
+  height: 525px;
+}
+</style>

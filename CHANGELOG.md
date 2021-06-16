@@ -9,7 +9,7 @@
 * File -> Backup added to UI. Calls the `/sys/backup` API endpoint.
 
 ### Changed
-...
+* Maximized the height of the editor for LogEntries and Notes
 
 ### Fixed
 ...
