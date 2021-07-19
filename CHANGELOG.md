@@ -7,9 +7,13 @@
   - `/sys/backup` end point on the `system.py` controller
 * File menu added to UI
 * File -> Backup added to UI. Calls the `/sys/backup` API endpoint.
+* Added the item count to the various lists on the Home Page (Tickets, Todos, Notes & Entries)
+* Added "Erase" button to ScratchPad AppBar -- Erases the active tab
+* Added "Edit" & "Snooze" buttons to Todos on Home Page
 
 ### Changed
 * Maximized the height of the editor for LogEntries and Notes
+* Clicking a Todo on the Home Page now views it instead of editing it.
 
 ### Fixed
 ...

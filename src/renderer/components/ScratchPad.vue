@@ -113,7 +113,12 @@ export default {
       })
     },
 
-    clearAll: function () {
+    erase: function () {
+      this.saveTab(this.activeTab, '')
+      this.contentUpdate('')
+    },
+
+    eraseAll: function () {
       for (let i = 0; i < this.numTabs; i++) {
         this.saveTab(i, '')
       }
@@ -153,9 +158,10 @@ export default {
       },
       appBarButtons: [
         { name: 'Save', icon: 'mdi-content-save', action: this.saveActiveTab },
+        { name: 'Erase', icon: 'mdi-eraser', color: 'pink lighten-3', action: this.erase },
         { name: 'Export', icon: 'mdi-application-export', action: this.convertTabToNote },
         { name: '|' },
-        { name: 'Erase All', icon: 'mdi-nuke', action: this.clearAll }
+        { name: 'Erase All', icon: 'mdi-nuke', color: 'red darken-3', action: this.eraseAll }
       ]
     }
 

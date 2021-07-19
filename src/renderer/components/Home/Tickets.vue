@@ -3,6 +3,9 @@
     <v-card>
       <v-card-title :class="constants.COLORS.GREY"
         >Tickets
+        <span class="text-subtitle-1 grey--text text--darken-1"
+          >({{ tickets.length }})</span
+        >
         <v-btn icon x-small @click="loadTickets"
           ><v-icon>mdi-refresh</v-icon></v-btn
         >
