@@ -22,7 +22,9 @@
               :key="idx"
               @click.stop="button.action()"
             >
-              <v-icon>{{ button.icon }}</v-icon>
+              <v-icon :color="button.color || 'white'">{{
+                button.icon
+              }}</v-icon>
             </v-btn>
           </template>
         </v-toolbar-items>

@@ -8,6 +8,7 @@
 * File menu added to UI
 * File -> Backup added to UI. Calls the `/sys/backup` API endpoint.
 * Added the item count to the various lists on the Home Page (Tickets, Todos, Notes & Entries)
+* Added "Erase" button to ScratchPad AppBar -- Erases the active tab
 
 ### Changed
 * Maximized the height of the editor for LogEntries and Notes
