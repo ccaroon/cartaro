@@ -5,6 +5,12 @@
       v-bind:todo="todo"
       v-on:close="closeEditor"
     ></TodoEditor>
+
+    <TodoViewer
+      v-model="showViewer"
+      v-bind:todo="todo"
+      v-on:close="closeViewer"
+    ></TodoViewer>
     <v-card>
       <v-card-title :class="constants.COLORS.GREY"
         >Todos
@@ -19,12 +25,12 @@
 
       <v-virtual-scroll :items="todos" item-height="45" height="180">
         <template v-slot:default="{ index, item }">
-          <v-list-item :class="item.color(index)" dense @click="edit(item)">
+          <v-list-item :class="item.color(index)" dense @click="view(item)">
             <v-list-item-icon>
               <v-icon :color="item.priorityColor()"
                 >mdi-numeric-{{ item.priority }}-circle</v-icon
               >
-              &nbsp; &nbsp;
+              &nbsp;
               <v-icon
                 :color="item.is_complete ? 'green' : ''"
                 @click.stop="toggleCompleted(item)"
@@ -39,13 +45,22 @@
               </v-list-item-title>
               <v-list-item-subtitle>
                 <span v-if="item.due_at"
-                  >Due {{ format.humanizeDate(item.due_at) }} ({{
-                    format.formatDateTime(item.due_at * 1000)
-                  }})</span
+                  >Due {{ format.humanizeDate(item.due_at) }}</span
                 >
                 <span v-else>No Due Date</span>
               </v-list-item-subtitle>
             </v-list-item-content>
+            <v-list-item-icon>
+              <v-btn x-small icon outlined>
+                <v-icon small @click.stop="edit(item)">mdi-pencil</v-icon>
+              </v-btn>
+              &nbsp;
+              <v-btn x-small icon outlined>
+                <v-icon small @click.stop="snooze(item)"
+                  >mdi-alarm-snooze</v-icon
+                >
+              </v-btn>
+            </v-list-item-icon>
           </v-list-item>
         </template>
       </v-virtual-scroll>
@@ -61,15 +76,17 @@ import Notification from '../../lib/Notification'
 import Utils from '../../lib/Utils'
 
 import TodoEditor from '../Todos/Editor'
+import TodoViewer from '../Todos/Viewer'
 
 import Todo from '../../models/Todo'
 
-// TODO: make this configurable
+// TODO: make these configurable
 const DUE_WITHIN = 5
+const SNOOZE_AMT = 86400
 
 export default {
   name: 'home-todos',
-  components: { TodoEditor },
+  components: { TodoEditor, TodoViewer },
 
   mounted: function () {
     this.load()
@@ -124,6 +141,25 @@ export default {
       this.edit(todo)
     },
 
+    snooze: function (todo) {
+      todo.due_at = todo.due_at + SNOOZE_AMT
+      todo.save({
+        handlers: {
+          onSuccess: (resp) => { this.refresh() }
+        }
+      })
+    },
+
+    view: function (todo) {
+      this.todo = todo
+      this.showViewer = true
+    },
+
+    closeViewer: function () {
+      this.showViewer = false
+      // this.load()
+    },
+
     edit: function (todo) {
       this.todo = todo
       this.showEditor = true
@@ -140,6 +176,7 @@ export default {
       todo: new Todo({}),
       todos: [],
       showEditor: false,
+      showViewer: false,
       constants: Constants,
       format: Format,
       utils: Utils
