@@ -13,6 +13,9 @@
     <v-card>
       <v-card-title :class="constants.COLORS.GREY"
         >Notes
+        <span class="text-subtitle-1 grey--text text--darken-1"
+          >({{ notes.length }})</span
+        >
         <v-btn icon x-small @click="newNote"><v-icon>mdi-plus</v-icon></v-btn>
       </v-card-title>
 

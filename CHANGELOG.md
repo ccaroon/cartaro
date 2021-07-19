@@ -7,6 +7,7 @@
   - `/sys/backup` end point on the `system.py` controller
 * File menu added to UI
 * File -> Backup added to UI. Calls the `/sys/backup` API endpoint.
+* Added the item count to the various lists on the Home Page (Tickets, Todos, Notes & Entries)
 
 ### Changed
 * Maximized the height of the editor for LogEntries and Notes

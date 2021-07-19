@@ -8,6 +8,9 @@
     <v-card>
       <v-card-title :class="constants.COLORS.GREY"
         >Todos
+        <span class="text-subtitle-1 grey--text text--darken-1"
+          >({{ todos.length }})</span
+        >
         <v-btn icon x-small @click="refresh"
           ><v-icon>mdi-refresh</v-icon></v-btn
         >
