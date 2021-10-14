@@ -22,10 +22,14 @@
 ...
 
 ### Removed
-...
+* `yarn` is no longer supported. Just use `npm`
 
 ### Security
 ...
+
+### Misc
+* Lots of minor module updates
+  - electron, vue, vuetify, etc.
 
 --------------------------------------------------------------------------------
 
