@@ -102,7 +102,8 @@ export default {
         { name: 'Cartaro', value: `v${pkgJson.version} | ${pkgJson.codename}`, icon: 'map-legend' },
         { name: 'Platform', value: require('os').platform(), icon: 'laptop' },
         { name: 'Mode', value: process.env.NODE_ENV, icon: 'cogs' },
-        { name: 'Server', value: RestClient.baseUrl(), icon: 'ip-network' }
+        { name: 'Server', value: RestClient.baseUrl(), icon: 'ip-network' },
+        { name: 'Build Date', value: pkgJson.buildDate, icon: 'wrench' }
       ]
     }
 

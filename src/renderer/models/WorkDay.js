@@ -18,19 +18,24 @@ class WorkDay extends Resource {
     return Icon.get(this.type, 'mdi-calendar')
   }
 
-  typeCode () {
+  typeCode (asEmoji = false) {
     let code = '???'
+    let emoji = ''
     if (this.type === WorkDay.TYPE_NORMAL) {
       code = 'NRM'
+      emoji = '😐'
     } else if (this.type === WorkDay.TYPE_PTO) {
       code = 'PTO'
+      emoji = '😴'
     } else if (this.type === WorkDay.TYPE_SICK) {
       code = 'SCK'
+      emoji = '🤒'
     } else if (this.type === WorkDay.TYPE_HOLIDAY) {
       code = 'HDY'
+      emoji = '🥳'
     }
 
-    return code
+    return (asEmoji ? emoji : code)
   }
 
   start () {

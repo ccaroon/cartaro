@@ -1,9 +1,10 @@
 {
   "name": "Cartaro",
-  "version": "1.5.0c",
+  "version": "1.5.0d",
   "codename": "Cartographer",
   "author": "Craig N. Caroon",
   "description": "Work Journal/Chronicler",
+  "buildDate": "Oct 14, 2021 @ 12:48pm",
   "license": "",
   "main": "./dist/electron/main.js",
   "scripts": {

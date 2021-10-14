@@ -10,10 +10,12 @@
 * Added the item count to the various lists on the Home Page (Tickets, Todos, Notes & Entries)
 * Added "Erase" button to ScratchPad AppBar -- Erases the active tab
 * Added "Edit" & "Snooze" buttons to Todos on Home Page
+* Added "Build Date" to About dialog
 
 ### Changed
 * Maximized the height of the editor for LogEntries and Notes
 * Clicking a Todo on the Home Page now views it instead of editing it.
+* Work Day Calendar now shows an emoji for the day type instead of a 3-letter code.
 
 ### Fixed
 ...

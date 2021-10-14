@@ -282,10 +282,11 @@ export default {
     createEvents: function (days) {
       const events = []
       days.forEach((day) => {
-        let name = day.typeCode()
+        let name = day.typeCode(true)
         if (day.note) {
-          name += ` - ${day.note}`
+          name += ` ${day.note}`
         }
+
         events.push({
           name: name,
           start: day.start().toDate(),
