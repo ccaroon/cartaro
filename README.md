@@ -34,7 +34,7 @@ Requires NodeJS v14.15.x and Python 3.8.x
 0. `cd server`
 1. `make dist`
 2. `cd ..`
-3. `yarn build`
+3. `npm run build`
 4. `cd build`
 5. Profit!
 
