@@ -38,6 +38,7 @@ class Icon {
     { icon: new Icon('DNS', 'mdi-dns'), keywords: ['infoblox', 'route53'] },
     { icon: new Icon('Dots', 'mdi-dots-horizontal'), keywords: ['other', 'misc'] },
     { icon: new Icon('Electronics', 'mdi-raspberrypi'), keywords: ['raspi'] },
+    { icon: new Icon('Employee', 'mdi-card-account-details'), keywords: [] },
     { icon: new Icon('Errors', 'mdi-alert-octagon'), keywords: [] },
     { icon: new Icon('Events', 'mdi-calendar-star'), keywords: [] },
     { icon: new Icon('F5', 'mdi-keyboard-f5'), keywords: ['bigip'] },
@@ -51,6 +52,7 @@ class Icon {
     { icon: new Icon('Google', 'mdi-google'), keywords: ['go'] },
     { icon: new Icon('Harddrives', 'mdi-harddisk'), keywords: ['harddisks', 'hard-disks', 'HD', 'hard-drives'] },
     { icon: new Icon('Heart', 'mdi-heart-pulse'), keywords: ['love'] },
+    { icon: new Icon('Health', 'mdi-bottle-tonic-plus-outline'), keywords: ['wellness'] },
     { icon: new Icon('Holiday', 'mdi-flag-variant'), keywords: [] },
     { icon: new Icon('HTML', 'mdi-language-html5'), keywords: ['html5'] },
     { icon: new Icon('iPhone', 'mdi-cellphone-iphone'), keywords: [] },
@@ -61,20 +63,23 @@ class Icon {
     { icon: new Icon('Key', 'mdi-key'), keywords: [] },
     { icon: new Icon('Laptop', 'mdi-laptop'), keywords: ['computer'] },
     { icon: new Icon('Learn', 'mdi-school'), keywords: ['learning'] },
+    { icon: new Icon('License', 'mdi-license'), keywords: [] },
     { icon: new Icon('Log', 'mdi-math-log'), keywords: ['splunk'] },
     { icon: new Icon('MacIntosh', 'mdi-apple-finder'), keywords: ['macos'] },
-    { icon: new Icon('Managers', 'mdi-account-tie'), keywords: ['boss', 'cto', 'cfo', 'ceo'] },
+    { icon: new Icon('Map', 'mdi-map-legend'), keywords: ['cartaro'] },
+    { icon: new Icon('Managers', 'mdi-account-tie'), keywords: ['boss', 'cto', 'cfo', 'ceo', 'manager'] },
     { icon: new Icon('Markdown', 'mdi-language-markdown'), keywords: [] },
-    { icon: new Icon('Medical', 'mdi-medical-bag'), keywords: ['doctor', 'dr', 'sick'] },
+    { icon: new Icon('Medical', 'mdi-medical-bag'), keywords: ['doctor', 'dr', 'sick', 'open enrollment'] },
     { icon: new Icon('Medicine', 'mdi-pill'), keywords: [] },
     { icon: new Icon('Meeting', 'mdi-calendar-star'), keywords: [] },
     { icon: new Icon('Memory', 'mdi-memory'), keywords: ['mem', 'ram'] },
     { icon: new Icon('Misc', 'mdi-dots-horizontal'), keywords: [] },
-    { icon: new Icon('Monitoring', 'mdi-monitor-dashboard'), keywords: ['logic-monitor'] },
-    { icon: new Icon('Mother', 'mdi-mother-heart'), keywords: ['mothers', 'mom', 'mum'] },
+    { icon: new Icon('Monitoring', 'mdi-monitor-dashboard'), keywords: ['logicmonitor', 'dashboard'] },
+    { icon: new Icon('Mother', 'mdi-mother-heart'), keywords: ['mother', 'mother-s', 'mom', 'mum'] },
     { icon: new Icon('Network', 'mdi-lan-connect'), keywords: ['internet'] },
     { icon: new Icon('NodeJS', 'mdi-nodejs'), keywords: ['node.js'] },
     { icon: new Icon('Notes', 'mdi-note'), keywords: [] },
+    { icon: new Icon('Notebook', 'mdi-notebook-outline'), keywords: [] },
     { icon: new Icon('NPM', 'mdi-npm'), keywords: ['package.json'] },
     { icon: new Icon('Outlook', 'mdi-microsoft-outlook'), keywords: [] },
     { icon: new Icon('One up', 'mdi-one-up'), keywords: ['bonus', 'extra'] },
@@ -83,9 +88,11 @@ class Icon {
     { icon: new Icon('PHP', 'mdi-language-php'), keywords: [] },
     { icon: new Icon('Pipeline', 'mdi-pipe'), keywords: [] },
     { icon: new Icon('PTO', 'mdi-island'), keywords: ['vacation'] },
-    { icon: new Icon('Python', 'mdi-language-python'), keywords: [] },
+    { icon: new Icon('Python', 'mdi-language-python'), keywords: ['python2', 'python3'] },
     { icon: new Icon('RedHat', 'mdi-redhat'), keywords: [] },
     { icon: new Icon('Reports', 'mdi-file-chart'), keywords: ['reporting', 'chart'] },
+    { icon: new Icon('Script', 'mdi-script-text-outline'), keywords: ['perl'] },
+    { icon: new Icon('Search', 'mdi-magnify'), keywords: ['find', 'lookup'] },
     { icon: new Icon('Secret', 'mdi-eye-off'), keywords: [] },
     { icon: new Icon('Sick', 'mdi-emoticon-sick'), keywords: [] },
     { icon: new Icon('Slack', 'mdi-slack'), keywords: [] },
@@ -93,12 +100,14 @@ class Icon {
     { icon: new Icon('Story', 'mdi-bookmark'), keywords: [] },
     { icon: new Icon('Support', 'mdi-face-agent'), keywords: [] },
     { icon: new Icon('Task', 'mdi-checkbox-marked'), keywords: [] },
-    { icon: new Icon('Teams', 'mdi-account-multiple'), keywords: [] },
+    { icon: new Icon('Teams', 'mdi-account-multiple'), keywords: ['team'] },
     { icon: new Icon('Terraform', 'mdi-terraform'), keywords: [] },
+    { icon: new Icon('Turkey', 'mdi-turkey'), keywords: ['thanksgiving'] },
     { icon: new Icon('Ticket', 'mdi-ticket-confirmation'), keywords: [] },
     { icon: new Icon('Token', 'mdi-currency-usd-circle'), keywords: [] },
     { icon: new Icon('Tooth', 'mdi-tooth-outline'), keywords: ['dentist', 'teeth', 'dental'] },
     { icon: new Icon('Transfer', 'mdi-transfer'), keywords: ['xfer'] },
+    { icon: new Icon('Tree', 'mdi-pine-tree'), keywords: ['christmas'] },
     { icon: new Icon('Ubuntu', 'mdi-ubuntu'), keywords: [] },
     { icon: new Icon('Users', 'mdi-account-box'), keywords: ['user', 'username'] },
     { icon: new Icon('Vault', 'mdi-safe-square-outline'), keywords: ['safe'] },
@@ -106,6 +115,7 @@ class Icon {
     { icon: new Icon('Weekly', 'mdi-calendar-range'), keywords: ['weeks', 'week'] },
     { icon: new Icon('WiFi', 'mdi-wifi'), keywords: [] },
     { icon: new Icon('Workday', 'mdi-calendar'), keywords: [] },
+    { icon: new Icon('Workflow', 'mdi-sitemap'), keywords: [] },
     { icon: new Icon('Virus', 'mdi-virus'), keywords: ['covid', 'covid-19'] },
     { icon: new Icon('XRay', 'mdi-radiology-box'), keywords: [] }
   ]
@@ -119,27 +129,37 @@ class Icon {
 
   static superSearch (terms, defaultIcon = null, options = {}) {
     let parts = null
-    if (typeof (terms) === 'string') {
-      parts = terms.split(options.sep || ' ')
-    } else {
-      parts = terms || []
-    }
-
-    if (options.rev) {
-      parts.reverse()
-    }
-
     let foundIcon = null
-    for (let i = 0; i < parts.length; i++) {
-      foundIcon = this.search(parts[i], null)
 
-      if (foundIcon) {
-        break
-      }
+    // Find an Icon based on entire string
+    if (typeof (terms) === 'string') {
+      foundIcon = this.search(terms)
+      parts = terms.split(options.sep || ' ')
+    } else if (typeof (terms) === 'object' && terms instanceof Array) {
+      foundIcon = this.search(terms.join(' '))
+      parts = terms
+    } else {
+      parts = []
     }
 
-    if (!foundIcon && defaultIcon) {
-      foundIcon = new Icon('Default', defaultIcon)
+    // Nothing found for entire string,
+    // find and icon based on the words the string contains
+    if (!foundIcon) {
+      if (options.rev) {
+        parts.reverse()
+      }
+
+      for (let i = 0; i < parts.length; i++) {
+        foundIcon = this.search(parts[i], null)
+
+        if (foundIcon) {
+          break
+        }
+      }
+
+      if (!foundIcon && defaultIcon) {
+        foundIcon = new Icon('Default', defaultIcon)
+      }
     }
 
     return foundIcon
@@ -162,7 +182,7 @@ class Icon {
   }
 
   static normalize (name) {
-    return name.replaceAll(/\W/g, '')
+    return name.replaceAll(/\W/g, '-')
   }
 
   // TODO: use the longest match found?

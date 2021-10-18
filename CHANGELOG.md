@@ -16,6 +16,8 @@
 * Maximized the height of the editor for LogEntries and Notes
 * Clicking a Todo on the Home Page now views it instead of editing it.
 * Work Day Calendar now shows an emoji for the day type instead of a 3-letter code.
+* Added a few new icons
+* Improvements to Icon searching
 
 ### Fixed
 ...
