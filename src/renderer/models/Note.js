@@ -6,12 +6,13 @@ class Note extends Resource {
 
   icon () {
     let icon = null
-    if (this.tags) {
-      icon = Icon.superSearch(this.tags)
+
+    if (this.title) {
+      icon = Icon.superSearch(this.title)
     }
 
-    if (icon === null) {
-      icon = Icon.superSearch(this.title, 'mdi-note')
+    if (icon === null && this.tags) {
+      icon = Icon.superSearch(this.tags, 'mdi-note')
     }
 
     return icon

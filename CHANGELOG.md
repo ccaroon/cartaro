@@ -18,6 +18,7 @@
 * Work Day Calendar now shows an emoji for the day type instead of a 3-letter code.
 * Added a few new icons
 * Improvements to Icon searching
+* Note icons are now first based on the title, then the tags
 
 ### Fixed
 ...

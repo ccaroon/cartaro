@@ -1,5 +1,6 @@
 // -----------------------------------------------------------------------------
 class Icon {
+  static MIN_MATCH_LEN = 3
   static SKIP_WORDS = [
     'a', 'the', 'but', 'and', 'or', 'do', 'then', 'of', 'to', 'for', 'in', 'as'
   ]
@@ -37,6 +38,7 @@ class Icon {
     { icon: new Icon('Docker', 'mdi-docker'), keywords: [] },
     { icon: new Icon('DNS', 'mdi-dns'), keywords: ['infoblox', 'route53'] },
     { icon: new Icon('Dots', 'mdi-dots-horizontal'), keywords: ['other', 'misc'] },
+    { icon: new Icon('DST', 'mdi-brightness-6'), keywords: ['daylight-savings-time'] },
     { icon: new Icon('Electronics', 'mdi-raspberrypi'), keywords: ['raspi'] },
     { icon: new Icon('Employee', 'mdi-card-account-details'), keywords: [] },
     { icon: new Icon('Errors', 'mdi-alert-octagon'), keywords: [] },
@@ -50,7 +52,7 @@ class Icon {
     { icon: new Icon('Goal', 'mdi-flag-checkered'), keywords: ['goals'] },
     { icon: new Icon('GoLang', 'mdi-language-go'), keywords: ['go'] },
     { icon: new Icon('Google', 'mdi-google'), keywords: ['go'] },
-    { icon: new Icon('Harddrives', 'mdi-harddisk'), keywords: ['harddisks', 'hard-disks', 'HD', 'hard-drives'] },
+    { icon: new Icon('Harddrives', 'mdi-harddisk'), keywords: ['harddisks', 'hard-disks', 'HD', 'HDD', 'hard-drives'] },
     { icon: new Icon('Heart', 'mdi-heart-pulse'), keywords: ['love'] },
     { icon: new Icon('Health', 'mdi-bottle-tonic-plus-outline'), keywords: ['wellness'] },
     { icon: new Icon('Holiday', 'mdi-flag-variant'), keywords: [] },
@@ -69,7 +71,7 @@ class Icon {
     { icon: new Icon('Map', 'mdi-map-legend'), keywords: ['cartaro'] },
     { icon: new Icon('Managers', 'mdi-account-tie'), keywords: ['boss', 'cto', 'cfo', 'ceo', 'manager'] },
     { icon: new Icon('Markdown', 'mdi-language-markdown'), keywords: [] },
-    { icon: new Icon('Medical', 'mdi-medical-bag'), keywords: ['doctor', 'dr', 'sick', 'open enrollment'] },
+    { icon: new Icon('Medical', 'mdi-medical-bag'), keywords: ['doctor', 'dr', 'open enrollment'] },
     { icon: new Icon('Medicine', 'mdi-pill'), keywords: [] },
     { icon: new Icon('Meeting', 'mdi-calendar-star'), keywords: [] },
     { icon: new Icon('Memory', 'mdi-memory'), keywords: ['mem', 'ram'] },
@@ -101,7 +103,7 @@ class Icon {
     { icon: new Icon('Support', 'mdi-face-agent'), keywords: [] },
     { icon: new Icon('Task', 'mdi-checkbox-marked'), keywords: [] },
     { icon: new Icon('Teams', 'mdi-account-multiple'), keywords: ['team'] },
-    { icon: new Icon('Terraform', 'mdi-terraform'), keywords: [] },
+    { icon: new Icon('Terraform', 'mdi-terraform'), keywords: ['hashicorp-terraform'] },
     { icon: new Icon('Turkey', 'mdi-turkey'), keywords: ['thanksgiving'] },
     { icon: new Icon('Ticket', 'mdi-ticket-confirmation'), keywords: [] },
     { icon: new Icon('Token', 'mdi-currency-usd-circle'), keywords: [] },
@@ -110,7 +112,7 @@ class Icon {
     { icon: new Icon('Tree', 'mdi-pine-tree'), keywords: ['christmas'] },
     { icon: new Icon('Ubuntu', 'mdi-ubuntu'), keywords: [] },
     { icon: new Icon('Users', 'mdi-account-box'), keywords: ['user', 'username'] },
-    { icon: new Icon('Vault', 'mdi-safe-square-outline'), keywords: ['safe'] },
+    { icon: new Icon('Safe', 'mdi-safe-square-outline'), keywords: ['vault', 'hashicorp-vault'] },
     { icon: new Icon('VPN', 'mdi-vpn'), keywords: [] },
     { icon: new Icon('Weekly', 'mdi-calendar-range'), keywords: ['weeks', 'week'] },
     { icon: new Icon('WiFi', 'mdi-wifi'), keywords: [] },
@@ -127,39 +129,51 @@ class Icon {
     this.code = code
   }
 
-  static superSearch (terms, defaultIcon = null, options = {}) {
-    let parts = null
+  static superSearch (searchTerms, defaultIcon = null, options = {}) {
     let foundIcon = null
+    let termsIsArray = false
+    let parts = null
 
-    // Find an Icon based on entire string
-    if (typeof (terms) === 'string') {
-      foundIcon = this.search(terms)
-      parts = terms.split(options.sep || ' ')
-    } else if (typeof (terms) === 'object' && terms instanceof Array) {
-      foundIcon = this.search(terms.join(' '))
-      parts = terms
-    } else {
-      parts = []
+    if (searchTerms instanceof Array) {
+      termsIsArray = true
     }
 
-    // Nothing found for entire string,
-    // find and icon based on the words the string contains
+    // --Longest String Match--
+    // Check entire searchTerms string for a match...
+    // ...if not found decrease searchTerms length by 1 word
+    // ...keep trying until it's just a single word
+    // ** Example **
+    // Start: "Open Enrollment 2021"
+    // -----> "Open Enrollment"
+    // -----> "Open"
+    // -----> END
+    // I.e. Find a match for the longest possible "whole" string
+    if (!termsIsArray) {
+      parts = searchTerms.split(options.sep || ' ')
+      do {
+        const searchTerm = parts.join(options.sep || ' ')
+        foundIcon = this.search(searchTerm)
+        parts.pop()
+      } while (parts.length >= 1 && !foundIcon)
+    }
+
+    // --Keyword Match--
+    // Look for a match by using each word in the
+    // searchTerms as a keyword
     if (!foundIcon) {
-      if (options.rev) {
-        parts.reverse()
-      }
-
+      parts = termsIsArray ? searchTerms : searchTerms.split(options.sep || ' ')
       for (let i = 0; i < parts.length; i++) {
-        foundIcon = this.search(parts[i], null)
-
+        foundIcon = this.search(parts[i])
         if (foundIcon) {
           break
         }
       }
+    }
 
-      if (!foundIcon && defaultIcon) {
-        foundIcon = new Icon('Default', defaultIcon)
-      }
+    // --No Match--
+    // Use default
+    if (!foundIcon && defaultIcon) {
+      foundIcon = new Icon('Default', defaultIcon)
     }
 
     return foundIcon
@@ -185,12 +199,11 @@ class Icon {
     return name.replaceAll(/\W/g, '-')
   }
 
-  // TODO: use the longest match found?
   static search (name, defaultIcon = null) {
     let foundData = null
     const searchName = this.normalize(name)
 
-    if (searchName.length > 1 && !this.SKIP_WORDS.includes(searchName.toLowerCase())) {
+    if (searchName.length >= this.MIN_MATCH_LEN && !this.SKIP_WORDS.includes(searchName.toLowerCase())) {
       const pattern = new RegExp(`^${searchName}$`, 'i')
       foundData = this.ICONS.find((iconData) => {
         if (iconData.icon.name.match(pattern)) {
