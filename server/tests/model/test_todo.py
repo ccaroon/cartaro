@@ -24,10 +24,10 @@ class TodoTest(unittest.TestCase):
 
         self.assertEqual(self.todo.priority, data['priority'])
         self.assertEqual(self.todo.repeat, data['repeat'])
-        self.assertEqual(self.todo.due_at.timestamp, data['due_at'])
+        self.assertEqual(self.todo.due_at.int_timestamp, data['due_at'])
 
         self.assertEqual(self.todo.is_complete, data['is_complete'])
-        self.assertEqual(self.todo.completed_at.timestamp, data['completed_at'])
+        self.assertEqual(self.todo.completed_at.int_timestamp, data['completed_at'])
 
 
     def test_tagging(self):

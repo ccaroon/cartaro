@@ -35,6 +35,11 @@
 ### Misc
 * Lots of minor module updates
   - electron, vue, vuetify, etc.
+* Updated to use Python 3.9.x
+* Updated a bunch of python requirements to the latest versions
+  - `arrow` 1.2.1 has some breaking changes from 0.17.0
+    - `.timestamp` properly became a method and returned a float
+    - Updated the code to use `.int_timestamp`
 
 --------------------------------------------------------------------------------
 

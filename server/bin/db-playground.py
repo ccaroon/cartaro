@@ -12,13 +12,13 @@ now = arrow.now()
 ago = now.shift(days=-3)
 later = now.shift(days=+3)
 print(now, " | ", ago, " | ", later)
-# print(now.timestamp)
+# print(now.int_timestamp)
 # docs = db.all()
 # for doc in docs:
 #     pprint.pprint(doc)
 
 query = Query()
-# items = db.search(query.due_at < now.timestamp)
+# items = db.search(query.due_at < now.int_timestamp)
 items = db.search(query.due_at > 3)
 # print(len(items))
 
@@ -32,7 +32,7 @@ def cmp_lt(doc_val, test_val):
 # items = db.search(
 #     (query.is_complete == False)
 #     &
-#     (query.due_at.test(cmp_lt, later.timestamp))
+#     (query.due_at.test(cmp_lt, later.int_timestamp))
 # )
 
 # print("---------------------------")

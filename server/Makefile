@@ -1,3 +1,11 @@
+usage:
+	@echo "Usage: "
+	@echo "  * test | test-file"
+	@echo "  * cover | cover-file"
+	@echo "  * dev"
+	@echo "  * dist | package"
+	@echo "  * clean | dist-clean"
+
 test:
 	CARTARO_ENV=test \
 	CARTARO_DOC_PATH=tests/tmp \
@@ -35,7 +43,6 @@ cover-file:
 			--cover-package cartaro
 
 dev:
-	. ./venv/bin/activate; \
 	CARTARO_DOC_PATH=${HOME}/Documents/Cartaro \
 	CARTARO_ENV=dev       \
 	FLASK_ENV=development \
@@ -43,7 +50,7 @@ dev:
 	flask run -p 7777
 
 bin/python:
-	cp `which python` bin
+	cp `pyenv which python` bin
 
 dist: bin/python requirements-prod.txt $(shell find cartaro -name "*.py")
 	rm -rf dist/
@@ -63,5 +70,6 @@ clean:
 
 dist-clean: clean
 	rm -rf dist/
+	rm -f bin/python
 
 .PHONY: test test-file cover cover-file dev package clean

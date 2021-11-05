@@ -5,7 +5,7 @@ import unittest
 from cartaro.utils.db_helper import DbHelper
 class UtilTest(unittest.TestCase):
 
-    FAKER = faker.Faker()
+    FAKER = faker.Faker('en_US')
 
     def setUp(self):
         self.FAKER.seed_instance(time.time())

@@ -141,7 +141,7 @@ class Base(ABC):
                 if safe:
                     # Mark as deleted by setting the `deleted_at` date instead of
                     # actually removing the record.
-                    self._database().update(tyops.set('deleted_at', self.__deleted_at.timestamp), doc_ids=[self.id])
+                    self._database().update(tyops.set('deleted_at', self.__deleted_at.int_timestamp), doc_ids=[self.id])
                 else:
                     self._database().remove(doc_ids=[self.id])
                     self.__id = None
@@ -159,9 +159,9 @@ class Base(ABC):
     def serialize(self, omit_id=False):
         # Shared Fields
         data = {
-            "created_at": self.created_at.timestamp if self.created_at else None,
-            "updated_at": self.updated_at.timestamp if self.updated_at else None,
-            "deleted_at": self.deleted_at.timestamp if self.deleted_at else None
+            "created_at": self.created_at.int_timestamp if self.created_at else None,
+            "updated_at": self.updated_at.int_timestamp if self.updated_at else None,
+            "deleted_at": self.deleted_at.int_timestamp if self.deleted_at else None
         }
 
         if not omit_id:

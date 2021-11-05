@@ -11,7 +11,7 @@ notes = base.create_controller("notes", Note)
 #       add a command-line action.
 # import click
 # import faker
-# FAKER = faker.Faker()
+# FAKER = faker.Faker('en_US)
 
 # @notes.cli.command('bulk-create')
 # @click.option('-c', '--count', default=25)

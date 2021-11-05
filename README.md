@@ -11,12 +11,12 @@ Esperanto for Chronicle. Ĉartaro is a journal or chronicle of your work.
 * Vuetify
 
 ## Back-end / Server
-* Python 3.8
+* Python 3.8+
 * Flask
 * TinyDB
 
 ## Development
-Requires NodeJS v14.15.x and Python 3.8.x
+Requires NodeJS v14.15.x and Python 3.8+
 
 ### Setup
 0. `cd server`

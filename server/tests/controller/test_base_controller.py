@@ -26,7 +26,7 @@ class Snippet(cartaro.model.taggable.Taggable, cartaro.model.base.Base):
 # ------------------------------------------------------------------------------
 class BaseControllerTest(unittest.TestCase):
 
-    FAKER = faker.Faker()
+    FAKER = faker.Faker('en_US')
 
     def __gen_snippets(self, count, title=None, ts='', cs=''):
         for i in range(0, count):

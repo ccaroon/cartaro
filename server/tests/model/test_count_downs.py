@@ -38,6 +38,6 @@ class CountDownTest(unittest.TestCase):
         data = self.countdown.serialize()
 
         self.assertEqual(self.countdown.name, data['name'])
-        self.assertEqual(self.countdown.start_at.timestamp, data['start_at'])
-        self.assertEqual(self.countdown.end_at.timestamp, data['end_at'])
+        self.assertEqual(self.countdown.start_at.int_timestamp, data['start_at'])
+        self.assertEqual(self.countdown.end_at.int_timestamp, data['end_at'])
         self.assertEqual(self.countdown.duration, data['duration'])

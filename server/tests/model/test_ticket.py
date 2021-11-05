@@ -4,7 +4,7 @@ from cartaro.model.ticket import Ticket
 
 class TicketTest(unittest.TestCase):
 
-    FAKER = faker.Faker()
+    FAKER = faker.Faker('en_US')
 
     def _gen_ticket(self, count):
         tickets = []

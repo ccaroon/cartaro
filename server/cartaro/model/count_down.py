@@ -31,15 +31,15 @@ class CountDown(Base):
     def duration(self):
         duration = None
         if self.start_at and self.end_at:
-            duration = self.end_at.timestamp - self.start_at.timestamp
+            duration = self.end_at.int_timestamp - self.start_at.int_timestamp
 
         return duration
 
     def _serialize(self):
         return {
             'name': self.name,
-            'start_at': self.start_at.timestamp if self.start_at else None,
-            'end_at': self.end_at.timestamp if self.end_at else None,
+            'start_at': self.start_at.int_timestamp if self.start_at else None,
+            'end_at': self.end_at.int_timestamp if self.end_at else None,
             'is_favorite': self.is_favorite,
             'duration': self.duration
         }

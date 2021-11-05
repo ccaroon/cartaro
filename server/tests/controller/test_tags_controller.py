@@ -6,7 +6,7 @@ from cartaro.model.tag import Tag
 # ------------------------------------------------------------------------------
 class TagsControllerTest(unittest.TestCase):
 
-    FAKER = faker.Faker()
+    FAKER = faker.Faker('en_US')
 
     def __gen_tags(self, count, prefix='', suffix=''):
         for i in range(0, count):

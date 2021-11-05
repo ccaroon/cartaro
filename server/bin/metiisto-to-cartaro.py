@@ -93,7 +93,7 @@ class DataConverter:
                 value = raw_value
                 if raw_value and name.endswith('_at'):
                     date = arrow.get(raw_value, Base.TIMEZONE)
-                    value = date.timestamp
+                    value = date.int_timestamp
                 elif name.startswith('is_'):
                     value = True if raw_value else False
 
@@ -114,7 +114,7 @@ class DataConverter:
 
             # Metiisto side does not have TS, Added `created_at` to Cartaro data
             if not self.opts.get('has_datestamps', True):
-                record['created_at'] = record['created_at'] if 'created_at' in record else arrow.now(Base.TIMEZONE).timestamp
+                record['created_at'] = record['created_at'] if 'created_at' in record else arrow.now(Base.TIMEZONE).int_timestamp
                 record['updated_at'] = None
                 record['deleted_at'] = None
 
@@ -327,7 +327,7 @@ CONVERSION_MAP = {
         },
         'options': {
             'has_datestamps': False,
-            'date_transformer': lambda date_str, **kwargs: arrow.get(date_str, Base.TIMEZONE).timestamp,
+            'date_transformer': lambda date_str, **kwargs: arrow.get(date_str, Base.TIMEZONE).int_timestamp,
             'time_in_transformer': lambda delta, **kwargs:  str(delta)[:4] if len(str(delta)) == 7 else str(delta)[:5],
             'time_out_transformer': lambda delta, **kwargs: str(delta)[:4] if len(str(delta)) == 7 else str(delta)[:5],
             'type_transformer': xform_work_day_type

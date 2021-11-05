@@ -35,8 +35,8 @@ class WorkDaysControllerTest(unittest.TestCase):
         data = r.get_json()
         work_days = data.get('work_days', [])
         self.assertEqual(len(work_days), 29)
-        self.assertEqual(work_days[0]['date'], arrow.get("1980-02-01").replace(tzinfo=WorkDay.TIMEZONE).timestamp)
-        self.assertEqual(work_days[28]['date'], arrow.get("1980-02-29").replace(tzinfo=WorkDay.TIMEZONE).timestamp)
+        self.assertEqual(work_days[0]['date'], arrow.get("1980-02-01").replace(tzinfo=WorkDay.TIMEZONE).int_timestamp)
+        self.assertEqual(work_days[28]['date'], arrow.get("1980-02-29").replace(tzinfo=WorkDay.TIMEZONE).int_timestamp)
 
         #  Start & Days
         r = self.client.get('/work_days/range?start=1980-01-01&days=5')
@@ -45,8 +45,8 @@ class WorkDaysControllerTest(unittest.TestCase):
         data = r.get_json()
         work_days = data.get('work_days', [])
         self.assertEqual(len(work_days), 6)
-        self.assertEqual(work_days[0]['date'], arrow.get("1980-01-01").replace(tzinfo=WorkDay.TIMEZONE).timestamp)
-        self.assertEqual(work_days[5]['date'], arrow.get("1980-01-06").replace(tzinfo=WorkDay.TIMEZONE).timestamp)
+        self.assertEqual(work_days[0]['date'], arrow.get("1980-01-01").replace(tzinfo=WorkDay.TIMEZONE).int_timestamp)
+        self.assertEqual(work_days[5]['date'], arrow.get("1980-01-06").replace(tzinfo=WorkDay.TIMEZONE).int_timestamp)
 
         # Missing params - NO start
         r = self.client.get('/work_days/range?end=1980-02-01')
