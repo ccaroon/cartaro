@@ -19,6 +19,7 @@
 * Added a few new icons
 * Improvements to Icon searching
 * Note icons are now first based on the title, then the tags
+* Work Day Calendar "edit" pop-up now emphasizes the Close button instead of Delete
 
 ### Fixed
 ...

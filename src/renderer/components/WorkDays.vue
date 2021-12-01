@@ -148,6 +148,7 @@
             </v-card-text>
             <v-card-actions>
               <v-btn
+                text
                 color="red"
                 @click="
                   remove(selectedWorkDay);
@@ -157,9 +158,7 @@
                 Delete
               </v-btn>
               <v-spacer></v-spacer>
-              <v-btn text color="green" @click="editorOpen = false">
-                Close
-              </v-btn>
+              <v-btn color="green" @click="editorOpen = false"> Close </v-btn>
             </v-card-actions>
           </v-card>
         </v-menu>
