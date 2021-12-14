@@ -261,7 +261,7 @@ export default {
 
     addDay: function (dateEvent) {
       const self = this
-      this.newDay(Moment(dateEvent.date))
+      this.newDay(Moment(dateEvent.date), 'EDIT ME')
         .then(() => {
           self.refresh()
         })
@@ -320,12 +320,12 @@ export default {
       })
     },
 
-    newDay: function (day = Moment().startOf('week').add(1, 'day')) {
+    newDay: function (day = Moment().startOf('week').add(1, 'day'), note = null) {
       const workDay = new WorkDay({
         date: day.unix(),
         time_in: WorkDay.DEFAULT_IN,
         time_out: WorkDay.DEFAULT_OUT,
-        note: null,
+        note: note,
         type: WorkDay.TYPE_NORMAL
       })
 
