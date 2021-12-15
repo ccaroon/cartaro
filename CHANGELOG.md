@@ -11,6 +11,7 @@
 * Added "Erase" button to ScratchPad AppBar -- Erases the active tab
 * Added "Edit" & "Snooze" buttons to Todos on Home Screen
 * Added "Build Date" to About dialog
+* Added a few convenience methods to the Countdown class
 
 ### Changed
 * Maximized the height of the editor for LogEntries and Notes
@@ -26,6 +27,10 @@
   hours not worked.
 * New entries created on the WorkDay Calendar by clicking the Date number will
   have "EDIT ME" in the note field.
+* Reduced the height of the Log Entries list on the Home Screen and increased
+  the number of entries it loads from 10 to 25.
+* Added a ToolTip to each of the Countdowns on the Home Screen
+  - Appears when you hover over the icon
 
 ### Fixed
 ...

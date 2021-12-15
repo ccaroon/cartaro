@@ -13,14 +13,39 @@ export default {
     return (Moment(date).format(format))
   },
 
+  formatTimePeriod: function (start, end) {
+    const duration = Moment.duration(end - start)
+    return this.formatDuration(duration)
+  },
+
+  formatDuration: function (duration) {
+    const ymd = [
+      duration.years() + 'y',
+      duration.months() + 'm',
+      duration.days() + 'd'
+    ]
+    const hms = [
+      this.zeroPad(duration.hours()),
+      this.zeroPad(duration.minutes()),
+      this.zeroPad(duration.seconds())
+    ]
+
+    return ymd.join(' ') + ' ' + hms.join(':')
+  },
+
   monthNumberToName: function (monthNumber) {
     return (Moment().month(monthNumber).format('MMMM'))
+  },
+
+  zeroPad: function (num, places = 2) {
+    return String(num).padStart(places, '0')
   },
 
   humanizeDateRange: function (startDate, endDate) {
     const now = Moment()
     let value = null
 
+    // TODO: Update to use new CountDown methods
     if (startDate && !endDate) {
       const start = Moment.unix(startDate)
 

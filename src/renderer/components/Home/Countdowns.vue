@@ -6,8 +6,17 @@
         v-for="(countDown, idx) in countDowns"
         :key="idx"
       >
-        <v-icon left> {{ countDown.icon() }} </v-icon>
-        {{ countDown.name }}<br />
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-icon left v-on="on"> {{ countDown.icon() }} </v-icon>
+          </template>
+          <span>
+            <v-icon color="white">{{ toolTipIcon(countDown) }}</v-icon>
+            {{ toolTip(countDown) }}
+          </span>
+        </v-tooltip>
+        {{ countDown.name }}
+        <br />
         ~{{ format.humanizeDateRange(countDown.start_at, countDown.end_at) }}~
       </v-chip>
     </div>
@@ -45,6 +54,61 @@ export default {
           onError: (err) => { Notification.error(`HM.CntDwn.loadCountDowns: ${err}`) }
         }
       })
+    },
+
+    toolTipIcon: function (countDown) {
+      let icon = 'mdi-anchor'
+
+      if (!countDown.hasStarted()) {
+        icon = 'mdi-timer-sand-empty'
+      } else {
+        if (countDown.isDuration()) {
+          if (countDown.hasEnded()) {
+            icon = 'mdi-timer-sand-complete'
+          } else {
+            icon = 'mdi-timer-sand'
+          }
+        } else {
+          icon = 'mdi-infinity'
+        }
+      }
+
+      return icon
+    },
+
+    toolTip: function (countDown) {
+      let tip = null
+      if (countDown.isDuration()) {
+        // ** start + end **
+        if (countDown.hasEnded()) {
+          // - has-ended -> count up till NOW
+          // between end_at & now
+          tip = Format.formatTimePeriod(countDown.end_at * 1000, Date.now())
+        } else {
+          if (countDown.hasStarted()) {
+            // - has-started -> count down till end
+            // between now & end_at
+            tip = Format.formatTimePeriod(Date.now(), countDown.end_at * 1000)
+          } else {
+            // - not-started -> count down till start
+            // between now & start_at
+            tip = Format.formatTimePeriod(Date.now(), countDown.start_at * 1000)
+          }
+        }
+      } else {
+        // ** start only **
+        if (countDown.hasStarted()) {
+          // - has-started -> count up to NOW
+          // between start_at & now
+          tip = Format.formatTimePeriod(countDown.start_at * 1000, Date.now())
+        } else {
+          // - not-started -> count down till start
+          // between now & start_at
+          tip = Format.formatTimePeriod(Date.now(), countDown.start_at * 1000)
+        }
+      }
+
+      return tip
     }
   },
 
