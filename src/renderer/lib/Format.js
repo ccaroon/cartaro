@@ -45,7 +45,6 @@ export default {
     const now = Moment()
     let value = null
 
-    // TODO: Update to use new CountDown methods
     if (startDate && !endDate) {
       const start = Moment.unix(startDate)
 

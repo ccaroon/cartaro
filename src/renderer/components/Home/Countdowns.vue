@@ -17,7 +17,7 @@
         </v-tooltip>
         {{ countDown.name }}
         <br />
-        ~{{ format.humanizeDateRange(countDown.start_at, countDown.end_at) }}~
+        ~{{ countDown.humanize() }}~
       </v-chip>
     </div>
   </v-footer>
@@ -57,7 +57,7 @@ export default {
     },
 
     toolTipIcon: function (countDown) {
-      let icon = 'mdi-anchor'
+      let icon = 'mdi-timer-sand-empty'
 
       if (!countDown.hasStarted()) {
         icon = 'mdi-timer-sand-empty'
