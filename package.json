@@ -1,7 +1,7 @@
 {
   "name": "Cartaro",
-  "version": "1.5.0f",
-  "buildDate": "Oct 22, 2021 @ 12:16pm",
+  "version": "1.5.0k",
+  "buildDate": "Dec 16, 2021 @ 12:50pm",
   "codename": "Cartographer",
   "author": "Craig N. Caroon",
   "description": "Work Journal/Chronicler",
@@ -60,7 +60,7 @@
   },
   "dependencies": {
     "@electron/remote": "^1.2.2",
-    "@mdi/font": "^5.9.55",
+    "@mdi/font": "^6.5.95",
     "axios": "^0.21.4",
     "fernet": "^0.3.1",
     "highlight.js": "^10.7.3",

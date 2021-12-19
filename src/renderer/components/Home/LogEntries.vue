@@ -19,7 +19,7 @@
         <v-btn icon x-small @click="newEntry"><v-icon>mdi-plus</v-icon></v-btn>
       </v-card-title>
 
-      <v-virtual-scroll :items="logEntries" item-height="50" height="500">
+      <v-virtual-scroll :items="logEntries" item-height="45" height="495">
         <template v-slot:default="{ index, item }">
           <v-list-item
             :class="rowColor(item, index)"
@@ -104,6 +104,7 @@ export default {
       const self = this
       const startOfWeek = Moment().startOf('week')
       const query = {
+        pp: 25,
         logged_at: `gte:${startOfWeek.unix()}`,
         sort_by: 'logged_at:desc'
       }

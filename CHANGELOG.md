@@ -7,18 +7,30 @@
   - `/sys/backup` end point on the `system.py` controller
 * File menu added to UI
 * File -> Backup added to UI. Calls the `/sys/backup` API endpoint.
-* Added the item count to the various lists on the Home Page (Tickets, Todos, Notes & Entries)
+* Added the item count to the various lists on the Home Screen (Tickets, Todos, Notes & Entries)
 * Added "Erase" button to ScratchPad AppBar -- Erases the active tab
-* Added "Edit" & "Snooze" buttons to Todos on Home Page
+* Added "Edit" & "Snooze" buttons to Todos on Home Screen
 * Added "Build Date" to About dialog
+* Added a few convenience methods to the Countdown class
 
 ### Changed
 * Maximized the height of the editor for LogEntries and Notes
-* Clicking a Todo on the Home Page now views it instead of editing it.
+* Clicking a Todo on the Home Screen now views it instead of editing it.
 * Work Day Calendar now shows an emoji for the day type instead of a 3-letter code.
 * Added a few new icons
 * Improvements to Icon searching
 * Note icons are now first based on the title, then the tags
+* Work Day Calendar "edit" pop-up now emphasizes the Close button instead of Delete
+* If the same WorkDay has multiple entries, the Home Screen will now show them
+  listed under the same day instead of multiple entries in the list.
+* The WorkDay list Weekly Total on the Home Screen now show hours worked and
+  hours not worked.
+* New entries created on the WorkDay Calendar by clicking the Date number will
+  have "EDIT ME" in the note field.
+* Reduced the height of the Log Entries list on the Home Screen and increased
+  the number of entries it loads from 10 to 25.
+* Added a ToolTip to each of the Countdowns on the Home Screen
+  - Appears when you hover over the icon
 
 ### Fixed
 ...

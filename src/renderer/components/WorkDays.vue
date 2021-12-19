@@ -148,6 +148,7 @@
             </v-card-text>
             <v-card-actions>
               <v-btn
+                text
                 color="red"
                 @click="
                   remove(selectedWorkDay);
@@ -157,9 +158,7 @@
                 Delete
               </v-btn>
               <v-spacer></v-spacer>
-              <v-btn text color="green" @click="editorOpen = false">
-                Close
-              </v-btn>
+              <v-btn color="green" @click="editorOpen = false"> Close </v-btn>
             </v-card-actions>
           </v-card>
         </v-menu>
@@ -262,7 +261,7 @@ export default {
 
     addDay: function (dateEvent) {
       const self = this
-      this.newDay(Moment(dateEvent.date))
+      this.newDay(Moment(dateEvent.date), 'EDIT ME')
         .then(() => {
           self.refresh()
         })
@@ -321,12 +320,12 @@ export default {
       })
     },
 
-    newDay: function (day = Moment().startOf('week').add(1, 'day')) {
+    newDay: function (day = Moment().startOf('week').add(1, 'day'), note = null) {
       const workDay = new WorkDay({
         date: day.unix(),
         time_in: WorkDay.DEFAULT_IN,
         time_out: WorkDay.DEFAULT_OUT,
-        note: null,
+        note: note,
         type: WorkDay.TYPE_NORMAL
       })
 
