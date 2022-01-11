@@ -106,7 +106,7 @@ class Icon {
     { icon: new Icon('Terraform', 'mdi-terraform'), keywords: ['hashicorp-terraform'] },
     { icon: new Icon('Turkey', 'mdi-turkey'), keywords: ['thanksgiving'] },
     { icon: new Icon('Ticket', 'mdi-ticket-confirmation'), keywords: [] },
-    { icon: new Icon('Token', 'mdi-currency-usd-circle'), keywords: [] },
+    { icon: new Icon('Token', 'mdi-star-circle'), keywords: ['token'] },
     { icon: new Icon('Tooth', 'mdi-tooth-outline'), keywords: ['dentist', 'teeth', 'dental'] },
     { icon: new Icon('Transfer', 'mdi-transfer'), keywords: ['xfer'] },
     { icon: new Icon('Tree', 'mdi-pine-tree'), keywords: ['christmas'] },
