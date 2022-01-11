@@ -29,8 +29,8 @@ class WorkDayTest(unittest.TestCase):
         self.work_day.date = arrow.now()
         self.assertIsInstance(self.work_day.date, arrow.Arrow)
 
-        with self.assertRaisesRegex(TypeError, 'must be of type INT or Arrow'):
-            self.work_day.date = "now"
+        with self.assertRaisesRegex(TypeError, 'must be of type INT, STR or Arrow'):
+            self.work_day.date = [2021, 1, 18]
 
     def test_serialize(self):
         data = self.work_day.serialize()

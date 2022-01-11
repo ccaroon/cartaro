@@ -46,8 +46,8 @@ class LogEntryTest(unittest.TestCase):
         self.entry.logged_at = arrow.now()
         self.assertIsInstance(self.entry.logged_at, arrow.Arrow)
 
-        with self.assertRaisesRegex(TypeError, 'must be of type INT or Arrow'):
-            self.entry.logged_at = "now"
+        with self.assertRaisesRegex(TypeError, 'must be of type INT, STR or Arrow'):
+            self.entry.logged_at = (2021, 2, 19)
 
 
 

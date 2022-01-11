@@ -27,12 +27,7 @@ class WorkDay(Taggable, Base):
 
     @date.setter
     def date(self, new_date):
-        if isinstance(new_date, arrow.Arrow) or new_date is None:
-            self.__date = new_date
-        elif isinstance(new_date, int):
-            self.__date = self._epoch_to_date_obj(new_date)
-        else:
-            raise TypeError("'date' must be of type INT or Arrow")
+        self.__date = self._date_setter(new_date)
 
     def update(self, data):
         self.date = data.get('date', self.date)

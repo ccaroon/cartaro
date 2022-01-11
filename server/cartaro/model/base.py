@@ -29,11 +29,22 @@ class Base(ABC):
     # TODO: Don't hard-code TZ
     TIMEZONE = 'US/Eastern'
 
+    DATABASE_NAME = None
+    TABLE_NAME = "_default"
+
     __DATABASE = None
 
     def __init__(self, id=None, **kwargs):
         kwargs['id'] = id
         self.__unserialize(kwargs)
+
+    @classmethod
+    def __db_name(cls):
+        if cls.DATABASE_NAME is None:
+            inflect = inflector.Inflector()
+            cls.DATABASE_NAME = inflect.pluralize(cls.__name__)
+
+        return cls.DATABASE_NAME
 
     @property
     def id(self):
@@ -58,30 +69,31 @@ class Base(ABC):
     @classmethod
     def _database(cls):
         if not cls.__DATABASE:
-            inflect = inflector.Inflector()
-
             env = os.environ.get("CARTARO_ENV", "dev")
             doc_dir = os.environ.get("CARTARO_DOC_PATH", ".")
 
-            db_name = inflect.pluralize(cls.__name__)
+            db_name = cls.__db_name()
             if (env != "prod"):
                 db_name += F"-{env}"
 
             cls.__DATABASE = TinyDB(F"{doc_dir}/{db_name}.json")
 
-        return cls.__DATABASE
+        return cls.__DATABASE.table(cls.TABLE_NAME)
 
     def _date_setter(self, date_value, null_ok=False):
         new_date = None
 
         if isinstance(date_value, arrow.Arrow):
             new_date = date_value
+        elif isinstance(date_value, str):
+            new_date = arrow.get(date_value)
+            # new_date.replace(tzinfo=Base.TIMEZONE)
         elif isinstance(date_value, int):
             new_date = self._epoch_to_date_obj(date_value)
         elif not date_value and null_ok:
             new_date = None
         else:
-            raise TypeError(F"Date must be of type INT or Arrow; Got: {type(date_value)}")
+            raise TypeError(F"Date must be of type INT, STR or Arrow; Got: {type(date_value)}")
 
         return new_date
 
