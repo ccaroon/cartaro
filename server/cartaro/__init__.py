@@ -32,13 +32,17 @@ from cartaro.controller.notes import notes
 from cartaro.controller.secrets import secrets
 from cartaro.controller.system import system
 from cartaro.controller.tags import tags
+from cartaro.controller.time_off.holidays import holidays
+from cartaro.controller.time_off.personal import personal
 from cartaro.controller.todos import todos
 from cartaro.controller.work_days import work_days
 
 flask_app.register_blueprint(count_downs, url_prefix="/count_downs")
 flask_app.register_blueprint(log_entries, url_prefix="/log_entries")
+flask_app.register_blueprint(holidays, url_prefix="/time_off/holidays")
 flask_app.register_blueprint(jira, url_prefix="/jira")
 flask_app.register_blueprint(notes, url_prefix="/notes")
+flask_app.register_blueprint(personal, url_prefix="/time_off/personal")
 flask_app.register_blueprint(secrets, url_prefix="/secrets")
 flask_app.register_blueprint(system, url_prefix="/sys")
 flask_app.register_blueprint(tags, url_prefix="/tags")

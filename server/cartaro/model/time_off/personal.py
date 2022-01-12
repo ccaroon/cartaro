@@ -1,17 +1,14 @@
+import arrow
 from . import TimeOff
 
 class Personal(TimeOff):
     TABLE_NAME = "personal"
 
-    # All time off reflected in hours
-    # accrual period reflected in months
     def __init__(self, id=None, **kwargs):
         self.type = None
-        self.accrual_rate = None
-        self.accrual_period = None
+        self.accrual_rate = None # in hours
+        self.accrual_period = None # in months
         self.rollover = 0.0
-
-        # rethink accrual vs. when given (once per year)
 
         super().__init__(id=id, **kwargs)
 
@@ -31,6 +28,16 @@ class Personal(TimeOff):
         self.accrual_period = data.get('accrual_period', self.accrual_period)
         self.rollover = data.get('rollover', self.rollover)
 
-    def balance(self):
-        # TODO: fix this math
-        return self.accrual_rate * self.accrual_period
+    def total(self, period=12):
+        """Total PTO accrued for the given period of time"""
+        
+        accruable = self.accrual_rate * (self.accrual_period * period)
+        return accruable + self.rollover
+
+    def available(self):
+        """Available PTO given the current month"""
+        total = self.total()
+        curr_month = arrow.now().month
+
+        avail = total * (curr_month/self.accrual_period)
+        return avail

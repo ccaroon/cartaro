@@ -4,3 +4,4 @@ flask ~= 1.1.2
 inflector ~= 3.0.1
 requests ~= 2.25.1
 tinydb ~= 4.3.0
+wheel ~= 0.37.1
