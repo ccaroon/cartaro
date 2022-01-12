@@ -1,32 +1,59 @@
 <template>
-  <v-container>
-    <v-list dense>
-      <v-list-item
-        v-for="(holiday, idx) in holidays"
-        :key="holiday.id"
-        :class="utils.rowColor(idx)"
-      >
-        <v-list-item-avatar>
-          <v-icon>{{ holiday.icon() }}</v-icon>
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title>{{ holiday.name }}</v-list-item-title>
-          <v-list-item-subtitle>{{
-            format.humanizeDate(holiday.date * 1000)
-          }}</v-list-item-subtitle>
-        </v-list-item-content>
+  <div>
+    <v-card>
+      <v-card-title :class="constants.COLORS.GREY"
+        >Holidays
+        <span class="text-subtitle-1 grey--text text--darken-1"
+          >({{ holidays.length }})</span
+        >
+        <v-btn icon x-small @click="refresh"
+          ><v-icon>mdi-refresh</v-icon></v-btn
+        >
+        <v-btn icon x-small @click="newHoliday"
+          ><v-icon>mdi-plus</v-icon></v-btn
+        >
+      </v-card-title>
 
-        <v-list-item-content>
-          <v-list-item-title>
-            {{ displayDate(holiday) }}
-          </v-list-item-title>
-        </v-list-item-content>
+      <v-virtual-scroll :items="holidays" item-height="55" height="400">
+        <template v-slot:default="{ index, item }">
+          <v-list-item dense :class="utils.rowColor(index)">
+            <v-list-item-avatar>
+              <v-icon>{{ item.icon() }}</v-icon>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title
+                :class="item.isDeleted() ? 'text-decoration-line-through' : ''"
+                >{{ item.name }}</v-list-item-title
+              >
+              <v-list-item-subtitle>{{
+                format.humanizeDate(item.date * 1000)
+              }}</v-list-item-subtitle>
+            </v-list-item-content>
 
-        <v-list-item-icon>
-          <v-icon>mdi-calendar-icon</v-icon>
-        </v-list-item-icon>
-      </v-list-item>
-    </v-list>
+            <v-list-item-content>
+              <v-list-item-title
+                :class="item.isDeleted() ? 'text-decoration-line-through' : ''"
+              >
+                {{ displayDate(item) }}
+              </v-list-item-title>
+            </v-list-item-content>
+            <Actions
+              v-bind:actions="{
+                onEdit: (item) => {
+                  edit(item);
+                },
+                onArchiveDelete: (event, item) => {
+                  if (event.startsWith('post-')) {
+                    refresh();
+                  }
+                },
+              }"
+              v-bind:item="item"
+            ></Actions>
+          </v-list-item>
+        </template>
+      </v-virtual-scroll>
+    </v-card>
     <div class="text-center">
       <v-bottom-sheet v-model="showEditor">
         <v-card>
@@ -97,7 +124,6 @@
                   </v-sheet>
                 </v-menu>
               </v-col>
-
               <v-col cols="1" text-center>
                 <v-btn fab color="success" small @click="save(holiday)">
                   <v-icon>mdi-content-save</v-icon>
@@ -108,7 +134,7 @@
         </v-card>
       </v-bottom-sheet>
     </div>
-  </v-container>
+  </div>
 </template>
 <script>
 import Moment from 'moment'
@@ -121,12 +147,11 @@ import Utils from '../../lib/Utils'
 
 import Holiday from '../../models/Holiday'
 
-// import Actions from './Shared/Actions'
-// import AppBar from './Shared/AppBar'
+import Actions from '../Shared/Actions'
 
 export default {
   name: 'timeoff-holidays',
-  components: { },
+  components: { Actions },
   mounted: function () {
     this.bindShortcutKeys()
     this.load()
@@ -203,7 +228,7 @@ export default {
     },
 
     displayDate: function (holiday) {
-      return Format.formatDate(holiday.date * 1000)
+      return Format.formatDate(holiday.date * 1000, 'ddd MMM DD, YYYY')
     },
 
     save: function (holiday, validate = true) {

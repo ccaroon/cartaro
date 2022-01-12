@@ -48,10 +48,6 @@
           </template>
         </v-list-item-content>
 
-        <v-list-item-icon>
-          <v-icon>mdi-calendar-icon</v-icon>
-        </v-list-item-icon>
-
         <Actions
           v-bind:actions="{
             onEdit: (item) => {
