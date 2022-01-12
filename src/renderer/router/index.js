@@ -36,6 +36,11 @@ export default new Router({
       component: require('@/components/Secrets').default
     },
     {
+      path: '/timeoff',
+      name: 'timeoff',
+      component: require('@/components/TimeOff').default
+    },
+    {
       path: '/todos',
       name: 'todos',
       component: require('@/components/Todos').default

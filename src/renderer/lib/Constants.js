@@ -23,6 +23,7 @@ const constants = {
   },
 
   FORMATS: {
+    dateOnly: 'YYYY-MM-DD',
     entryDate: 'YYYY-MM-DD',
     countDownDate: 'YYYY-MM-DD @ HH:mm'
   },

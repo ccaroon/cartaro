@@ -16,6 +16,10 @@ class RestClient {
     return `${this.HOST}:${this.PORT}`
   }
 
+  dataName () {
+    return this.resource.split('/').pop()
+  }
+
   create (obj, options = {}) {
     const p = axios.post(`${RestClient.baseUrl()}/${this.resource}/`, obj)
     return this.__resolve(p, options)

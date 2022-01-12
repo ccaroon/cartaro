@@ -71,11 +71,12 @@ export default {
   },
 
   humanizeDate: function (date, defMsg = 'N/A') {
+    const targetDate = Moment(date)
     const now = Moment()
     let value = defMsg
 
     if (date != null) {
-      value = Moment.unix(date).from(now)
+      value = targetDate.from(now)
     }
     return value
   },

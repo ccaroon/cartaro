@@ -75,4 +75,4 @@ clean:
 dist-clean: clean
 	rm -rf dist/
 
-.PHONY: usage test test-file cover cover-file dev dist package clean dist-clean
+.PHONY: usage test test-file cover cover-file dev package clean dist-clean

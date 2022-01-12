@@ -24,7 +24,7 @@ class Resource {
       handlers: {
         onSuccess: (resp) => {
           let items = null
-          const itemData = resp.data[client.resource]
+          const itemData = resp.data[client.dataName()]
           if (itemData instanceof Array) {
             items = []
             itemData.forEach(data => {
