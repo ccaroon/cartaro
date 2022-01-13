@@ -1,3 +1,5 @@
+import Moment from 'moment'
+
 import Format from '../lib/Format'
 import Icon from '../lib/Icon'
 import Resource from './Resource'
@@ -15,6 +17,16 @@ class Holiday extends Resource {
     }
 
     return icon
+  }
+
+  // Make a duplicate of this holiday 1 year from now
+  duplicate () {
+    const dup = new Holiday({
+      name: this.name,
+      date: Moment(this.date * 1000).add(1, 'y').unix()
+    })
+
+    return dup
   }
 
   toString () {

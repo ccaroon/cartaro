@@ -16,7 +16,9 @@
         <span class="text-subtitle-1 grey--text text--darken-1"
           >({{ logEntries.length }})</span
         >
-        <v-btn icon x-small @click="newEntry"><v-icon>mdi-plus</v-icon></v-btn>
+        <v-btn icon x-small @click="newEntry()"
+          ><v-icon>mdi-plus</v-icon></v-btn
+        >
       </v-card-title>
 
       <v-virtual-scroll :items="logEntries" item-height="45" height="495">

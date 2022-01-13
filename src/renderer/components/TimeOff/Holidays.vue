@@ -2,15 +2,25 @@
   <div>
     <v-card>
       <v-card-title :class="constants.COLORS.GREY"
-        >Holidays
+        >Holidays {{ currYear }}
         <span class="text-subtitle-1 grey--text text--darken-1"
           >({{ holidays.length }})</span
         >
-        <v-btn icon x-small @click="refresh"
+        <v-btn icon x-small @click="refresh()"
           ><v-icon>mdi-refresh</v-icon></v-btn
         >
-        <v-btn icon x-small @click="newHoliday"
+        <v-btn icon x-small @click="newHoliday()"
           ><v-icon>mdi-plus</v-icon></v-btn
+        >
+        <v-divider vertical></v-divider>
+        <v-btn icon x-small @click="gotoYear(-1)"
+          ><v-icon>mdi-chevron-left</v-icon></v-btn
+        >
+        <v-btn icon x-small @click="gotoYear(0)"
+          ><v-icon>mdi-calendar-today</v-icon></v-btn
+        >
+        <v-btn icon x-small @click="gotoYear(+1)"
+          ><v-icon>mdi-chevron-right</v-icon></v-btn
         >
       </v-card-title>
 
@@ -37,6 +47,30 @@
                 {{ displayDate(item) }}
               </v-list-item-title>
             </v-list-item-content>
+            <v-list-item-action>
+              <v-row no-gutters>
+                <v-col class="mr-1">
+                  <v-btn
+                    icon
+                    outlined
+                    @click="addToCalendar(item)"
+                    :disabled="item.isDeleted()"
+                  >
+                    <v-icon>mdi-calendar-plus</v-icon>
+                  </v-btn>
+                </v-col>
+                <v-col class="mr-1">
+                  <v-btn
+                    icon
+                    outlined
+                    @click="duplicate(item)"
+                    :disabled="item.isDeleted()"
+                  >
+                    <v-icon>mdi-content-duplicate</v-icon>
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-list-item-action>
             <Actions
               v-bind:actions="{
                 onEdit: (item) => {
@@ -181,11 +215,13 @@ export default {
 
     load: function () {
       const self = this
-      const startOfYear = Moment().startOf('year')
+      const start = Moment(this.currYear, 'YYYY').startOf('year')
+      const end = Moment(this.currYear, 'YYYY').endOf('year')
+
       const query = {
         page: this.page,
         pp: this.perPage,
-        date: `gte:${startOfYear.unix()}`,
+        date: `btw:${start.unix()}:${end.unix()}`,
         sort_by: 'date'
       }
 
@@ -202,6 +238,25 @@ export default {
           onError: (err) => { Notification.error(`PTO.Holidays.load: ${err.toString()}`) }
         }
       })
+    },
+
+    addToCalendar: function (holiday) {
+      alert(`Add To Calender: ${holiday.name}`)
+    },
+
+    gotoYear: function (offset) {
+      if (offset === 0) {
+        this.currYear = Moment().year()
+      } else {
+        this.currYear += offset
+      }
+
+      this.refresh()
+    },
+
+    duplicate: function (holiday) {
+      const dup = holiday.duplicate()
+      this.save(dup, false, `${holiday.name} duplicated to ${this.displayDate(dup)}`)
     },
 
     edit: function (item) {
@@ -231,9 +286,12 @@ export default {
       return Format.formatDate(holiday.date * 1000, 'ddd MMM DD, YYYY')
     },
 
-    save: function (holiday, validate = true) {
+    save: function (holiday, validate = true, successMsg = null) {
       const self = this
-      holiday.date = Moment(`${holiday.targetDate}`, Constants.FORMATS.dateOnly).unix()
+
+      if (holiday.targetDate) {
+        holiday.date = Moment(`${holiday.targetDate}`, Constants.FORMATS.dateOnly).unix()
+      }
 
       let doSave = true
       if (validate) {
@@ -247,6 +305,10 @@ export default {
               this.showEditor = false
               self.initDate(holiday)
               self.load()
+
+              if (successMsg) {
+                Notification.success(successMsg)
+              }
             },
             onError: (err) => { Notification.error(`PTO.Holidays.save: ${err.toString()}`) }
           }
@@ -259,6 +321,7 @@ export default {
     return {
       holiday: new Holiday({}),
       holidays: [],
+      currYear: Moment().year(),
       page: 1,
       perPage: 15,
       totalHolidays: 0,

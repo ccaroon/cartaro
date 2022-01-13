@@ -242,9 +242,10 @@ class Base(ABC):
         for (field, value) in kwargs.items():
             # field=value
             # field=cmp:value
-            # cmp can be eq|ne|gt|gte|lt|lte
+            # cmp can be eq|ne|gt|gte|lt|lte|btw
+            #   - btw format: field=btw:value1:value2
             # NOTE: Currently `cmp` only valid for numeric searches
-            parts = value.split(':', 2)
+            parts = value.split(':', 1)
             if len(parts) == 1:
                 test_op = 'eq'
                 test_value = parts[0]
@@ -262,8 +263,7 @@ class Base(ABC):
                 if re.match("(true|false)", query_value, flags=re.IGNORECASE):
                     query_value = True if query_value.lower() == 'true' else False
                     query_parts.append(query_builder[field] == query_value)
-                elif query_value.isdecimal():
-                    query_value = int(query_value)
+                elif query_value.isdecimal() or re.match('\d+:\d+', query_value):
                     query_parts.append(query_builder[field].test(DbHelper.cmp_integer, test_op, query_value))
                 elif query_value == 'null':
                     query_parts.append(query_builder[field] == None)

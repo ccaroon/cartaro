@@ -17,10 +17,10 @@
         <span class="text-subtitle-1 grey--text text--darken-1"
           >({{ todos.length }})</span
         >
-        <v-btn icon x-small @click="refresh"
+        <v-btn icon x-small @click="refresh()"
           ><v-icon>mdi-refresh</v-icon></v-btn
         >
-        <v-btn icon x-small @click="newTodo"><v-icon>mdi-plus</v-icon></v-btn>
+        <v-btn icon x-small @click="newTodo()"><v-icon>mdi-plus</v-icon></v-btn>
       </v-card-title>
 
       <v-virtual-scroll :items="todos" item-height="45" height="180">

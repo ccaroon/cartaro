@@ -460,6 +460,13 @@ class BaseTest(unittest.TestCase):
         tickets = Ticket.find(use_count="lte:50")
         self.assertEquals(len(tickets), counts['lt50'] + counts['eq50'])
 
+        # Between
+        val1 = 15
+        val2 = 42
+        tickets = Ticket.find(use_count=F"btw:{val1}:{val2}")
+        for tix in tickets:
+            self.assertTrue(val1 <= tix.use_count <= val2, tix.id)
+
     def test_find_sort_by(self):
         total_count = random.randint(1, 100)
         for i in range(0, total_count):
