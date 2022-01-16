@@ -190,6 +190,9 @@ class Base(ABC):
 
     @classmethod
     def fetch(cls, offset=0, count=None, sort_by=None):
+        """
+        Load all or a sub-set of the records.
+        """
         docs = cls._database().all()
         # sort_by: attr1,attr2,attr3:asc|desc
         if sort_by:
@@ -223,7 +226,11 @@ class Base(ABC):
         return len(cls._database())
 
     @classmethod
+    # (title=~Ghoti OR priority>=4) AND deleted_at~=null
     def find(cls, op="or", sort_by=None, **kwargs):
+        """
+        Use a query to find records.
+        """
         query_parts = []
         query_builder = Query()
 

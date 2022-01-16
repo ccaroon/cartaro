@@ -80,6 +80,9 @@ import RestClient from '../lib/RestClient'
 const { ipcRenderer } = require('electron')
 const pkgJson = require('../../../package.json')
 
+// TODO: Get this from `bin/python --version`
+const PYTHON_VERSION = '3.9.9'
+
 export default {
   mounted () {
     ipcRenderer.on('menu-help-about', (event, arg) => {
@@ -94,7 +97,7 @@ export default {
       builtWith: [
         { name: 'Electron', value: process.versions.electron, icon: 'atom' },
         { name: 'NodeJS', value: process.versions.node, icon: 'nodejs' },
-        { name: 'Python', value: '3.8.2', icon: 'language-python' },
+        { name: 'Python', value: PYTHON_VERSION, icon: 'language-python' },
         { name: 'Chrome', value: process.versions.chrome, icon: 'google-chrome' },
         { name: 'Vue Version', value: require('vue/package.json').version, icon: 'vuejs' }
       ],

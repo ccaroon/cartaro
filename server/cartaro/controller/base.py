@@ -44,19 +44,47 @@ def create_controller(controller_name, Model):
 
         return jsonify(resp), status
 
+    # ...OLD..
+    # ?page=1&pp=10&op=AND&sort_by=date&group_by=priority&title=Ghoti&priority=4
+    #
+    # ...PROPOSED...
+    # ?meta=page=1:pp=10:sort_by=date:group_by=priority&query=(title=~Ghoti OR priority>=4) AND deleted_at~=null
+    #
     @controller.route('/', methods=['GET'])
     def find():
+        """
+        Find records based on query string info
+        """
         resp = None
         status = 200
 
         try:
             query_string = request.args.copy()
 
-            page     = int(query_string.pop('page', 1))
-            per_page = int(query_string.pop('pp', 10))
-            operator = query_string.pop('op', 'or')
-            sort_by  = query_string.pop('sort_by', None)
-            group_by = query_string.pop('group_by', None)
+            # meta data
+            ## -- fields: page, pp, sort_by, group_by
+            ## -- example: meta=page=1:pp=10:sort_by=date:group_by=priority
+            ## Convert meta data string to list
+            # TODO: need a better default...not x=x
+            meta_data = query_string.pop('meta', 'x=x').split(':')
+            ## ['page=1', 'pp=10', 'sort_by=date']
+            ## Convert meta data list to dict
+            splitter = lambda meta_field: meta_field.split('=', 2)
+            meta = { splitter(m)[0]: splitter(m)[1] for m in meta_data }
+
+            page     = int(meta.get('page', 1))
+            per_page = int(meta.get('pp', 10))
+            # TODO: don't need operator
+            operator = meta.get('op', 'or')
+            sort_by  = meta.get('sort_by', None)
+            group_by = meta.get('group_by', None)
+
+            # print(page, per_page, operator, sort_by, group_by)
+
+            # the query
+            ## -- query - get passed directly to TinyDB
+            ## -- example - query=(title=~Ghoti OR priority>=4) AND deleted_at~=null
+            search_query = query_string.pop('query', "")
 
             num_objs = None
             objs = None
