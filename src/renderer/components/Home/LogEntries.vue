@@ -122,16 +122,7 @@ export default {
     },
 
     rowColor: function (entry, index) {
-      let color = Utils.rowColor(index)
-
-      if (Moment(entry.logged_at * 1000).isSame(Moment(), 'day')) {
-        color = 'light-green accent-1'
-        if (index % 2 === 1) {
-          color = 'light-green accent-2'
-        }
-      }
-
-      return color
+      return Utils.rowColor(index, entry.isToday())
     }
   },
 

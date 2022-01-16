@@ -19,6 +19,14 @@ class Holiday extends Resource {
     return icon
   }
 
+  thisMonth () {
+    return Moment().isSame(Moment(this.date * 1000), 'month')
+  }
+
+  isPast () {
+    return this.date < Moment().unix()
+  }
+
   // Make a duplicate of this holiday 1 year from now
   duplicate () {
     const dup = new Holiday({

@@ -31,7 +31,7 @@
                   }}</v-icon
                 >
                 <template v-if="todo.is_complete">
-                  Completed {{ format.humanizeDate(todo.completed_at) }}
+                  Completed {{ format.humanizeDate(todo.completed_at * 1000) }}
                   <br />
                   <v-icon>mdi-calendar-check</v-icon>
                   {{ format.formatDateTime(todo.completed_at * 1000) }}

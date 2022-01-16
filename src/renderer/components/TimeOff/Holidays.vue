@@ -26,13 +26,23 @@
 
       <v-virtual-scroll :items="holidays" item-height="55" height="400">
         <template v-slot:default="{ index, item }">
-          <v-list-item dense :class="utils.rowColor(index)">
+          <v-list-item dense :class="rowColor(item, index)">
             <v-list-item-avatar>
-              <v-icon>{{ item.icon() }}</v-icon>
+              <v-icon v-if="item.isPast()" color="green">{{
+                icon.get("marked off")
+              }}</v-icon>
+              <v-icon v-else-if="item.isDeleted()" color="red">{{
+                icon.get("deleted")
+              }}</v-icon>
+              <v-icon v-else>{{ item.icon() }}</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title
-                :class="item.isDeleted() ? 'text-decoration-line-through' : ''"
+                :class="
+                  item.isDeleted() || item.isPast()
+                    ? 'text-decoration-line-through'
+                    : ''
+                "
                 >{{ item.name }}</v-list-item-title
               >
               <v-list-item-subtitle>{{
@@ -42,7 +52,11 @@
 
             <v-list-item-content>
               <v-list-item-title
-                :class="item.isDeleted() ? 'text-decoration-line-through' : ''"
+                :class="
+                  item.isDeleted() || item.isPast()
+                    ? 'text-decoration-line-through'
+                    : ''
+                "
               >
                 {{ displayDate(item) }}
               </v-list-item-title>
@@ -176,6 +190,7 @@ import Mousetrap from 'mousetrap'
 
 import Constants from '../../lib/Constants'
 import Format from '../../lib/Format'
+import Icon from '../../lib/Icon'
 import Notification from '../../lib/Notification'
 import Utils from '../../lib/Utils'
 
@@ -199,6 +214,10 @@ export default {
         self.newHoliday()
         return false
       })
+    },
+
+    rowColor: function (holiday, index) {
+      return Utils.rowColor(index, holiday.thisMonth())
     },
 
     refresh: function (page = null, searchText = '') {
@@ -330,6 +349,7 @@ export default {
       showDateMenu: false,
       constants: Constants,
       format: Format,
+      icon: Icon,
       utils: Utils,
       rules: {
         name: [

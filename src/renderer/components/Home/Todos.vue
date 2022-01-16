@@ -45,7 +45,7 @@
               </v-list-item-title>
               <v-list-item-subtitle>
                 <span v-if="item.due_at"
-                  >Due {{ format.humanizeDate(item.due_at) }}</span
+                  >Due {{ format.humanizeDate(item.due_at * 1000) }}</span
                 >
                 <span v-else>No Due Date</span>
               </v-list-item-subtitle>

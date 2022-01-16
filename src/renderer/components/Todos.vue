@@ -43,13 +43,13 @@
           </v-list-item-title>
           <v-list-item-subtitle>
             <template v-if="todo.is_complete">
-              Completed {{ format.humanizeDate(todo.completed_at) }} ({{
+              Completed {{ format.humanizeDate(todo.completed_at * 1000) }} ({{
                 format.formatDateTime(todo.completed_at * 1000)
               }})
             </template>
             <template v-else>
               <span v-if="todo.due_at"
-                >Due {{ format.humanizeDate(todo.due_at) }} ({{
+                >Due {{ format.humanizeDate(todo.due_at * 1000) }} ({{
                   format.formatDateTime(todo.due_at * 1000)
                 }})</span
               >

@@ -7,6 +7,7 @@ const constants = {
     TOOLBAR: 'grey darken-2',
 
     ITEM_HIGHLIGHT: 'light-green accent-1',
+    ITEM_HIGHLIGHT_ALT: 'light-green accent-2',
 
     GREY: 'grey lighten-2',
     GREY_ALT: 'grey lighten-4',
