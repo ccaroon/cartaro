@@ -282,6 +282,7 @@ export default {
         note: holiday.name
       }
 
+      // TODO: re-write to use workday.exists()
       // Check to see if entry already exists
       WorkDay.fetch(query, '/', {
         handlers: {
@@ -321,7 +322,21 @@ export default {
 
     duplicate: function (holiday) {
       const dup = holiday.duplicate()
-      this.save(dup, false, `${holiday.name} duplicated to ${this.displayDate(dup)}`)
+
+      dup.exists(['date', 'name'], {
+        handlers: {
+          onSuccess: (exists) => {
+            if (!exists) {
+              this.save(dup, false, `${holiday.name} duplicated to ${this.displayDate(dup)}`)
+            } else {
+              Notification.warn(`'${holiday.name}' already exists for ${this.displayDate(dup)}`)
+            }
+          },
+          onError: (err) => {
+            Notification.error(`PTO.Holidays.duplicate: ${err.toString()}`)
+          }
+        }
+      })
     },
 
     duplicateYear: function () {

@@ -17,6 +17,29 @@ class Resource {
     return this.CLIENT
   }
 
+  exists (fields, options = {}) {
+    const query = {
+      pp: 5,
+      op: 'and'
+    }
+
+    fields.forEach((fld) => {
+      query[fld] = this[fld]
+    })
+
+    console.log(query)
+
+    this.constructor.fetch(query, '/', {
+      handlers: {
+        onSuccess: (_, count) => {
+          const exists = count > 0
+          options.handlers.onSuccess(exists)
+        },
+        onError: options.handlers.onError
+      }
+    })
+  }
+
   static fetch (query, endpoint = '/', options = {}) {
     const client = this.getClient()
 
