@@ -12,7 +12,13 @@
         <v-btn icon x-small @click="newHoliday()"
           ><v-icon>mdi-plus</v-icon></v-btn
         >
+
         <v-divider vertical></v-divider>
+        <v-btn icon x-small @click="duplicateYear()"
+          ><v-icon>mdi-content-duplicate</v-icon></v-btn
+        >
+        <v-divider vertical></v-divider>
+
         <v-btn icon x-small @click="gotoYear(-1)"
           ><v-icon>mdi-chevron-left</v-icon></v-btn
         >
@@ -195,6 +201,7 @@ import Notification from '../../lib/Notification'
 import Utils from '../../lib/Utils'
 
 import Holiday from '../../models/Holiday'
+import WorkDay from '../../models/WorkDay'
 
 import Actions from '../Shared/Actions'
 
@@ -260,7 +267,46 @@ export default {
     },
 
     addToCalendar: function (holiday) {
-      alert(`Add To Calender: ${holiday.name}`)
+      const workDay = new WorkDay({
+        type: 'holiday',
+        date: holiday.date,
+        time_in: '00:00',
+        time_out: '00:00',
+        note: holiday.name
+      })
+
+      const query = {
+        pp: 5,
+        op: 'and',
+        date: holiday.date,
+        note: holiday.name
+      }
+
+      // Check to see if entry already exists
+      WorkDay.fetch(query, '/', {
+        handlers: {
+          onSuccess: function (_, totalCount) {
+            if (totalCount > 0) {
+              Notification.warn(`'${holiday.name}' already exists on WorkDay Calendar.`)
+            } else {
+              // If not, add it
+              workDay.save({
+                handlers: {
+                  onSuccess: (_) => {
+                    Notification.info(`'${holiday.name}' added to WorkDay Calendar.`)
+                  },
+                  onError: (err) => {
+                    Notification.error(`PTO.Holidays.addToCalendar#save: ${err.toString()}`)
+                  }
+                }
+              })
+            }
+          },
+          onError: (err) => {
+            Notification.error(`PTO.Holidays.addToCalendar#fetch: ${err.toString()}`)
+          }
+        }
+      })
     },
 
     gotoYear: function (offset) {
@@ -278,6 +324,16 @@ export default {
       this.save(dup, false, `${holiday.name} duplicated to ${this.displayDate(dup)}`)
     },
 
+    duplicateYear: function () {
+      // const self = this
+
+      alert('Not Yet Implemented!')
+      // TODO: saves to fast. need to wrap in promises
+      // this.holidays.forEach((holiday) => {
+      //   self.duplicate(holiday)
+      // })
+    },
+
     edit: function (item) {
       this.holiday = item
       this.showEditor = true
@@ -286,7 +342,7 @@ export default {
     newHoliday: function () {
       this.holiday = new Holiday({
         name: '',
-        date: Moment().unix(),
+        date: Moment().startOf('day').unix(),
         deleted_at: null
       })
       this.initDate(this.holiday)
@@ -309,7 +365,7 @@ export default {
       const self = this
 
       if (holiday.targetDate) {
-        holiday.date = Moment(`${holiday.targetDate}`, Constants.FORMATS.dateOnly).unix()
+        holiday.date = Moment(`${holiday.targetDate}`, Constants.FORMATS.dateOnly).startOf('day').unix()
       }
 
       let doSave = true
@@ -322,6 +378,12 @@ export default {
           handlers: {
             onSuccess: () => {
               this.showEditor = false
+
+              // If new holiday, auto-add to WD calendar
+              if (!holiday.id) {
+                self.addToCalendar(holiday)
+              }
+
               self.initDate(holiday)
               self.load()
 

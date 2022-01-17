@@ -27,7 +27,7 @@ class WorkDay(Taggable, Base):
 
     @date.setter
     def date(self, new_date):
-        self.__date = self._date_setter(new_date)
+        self.__date = self._date_setter(new_date, null_ok=True)
 
     def update(self, data):
         self.date = data.get('date', self.date)
@@ -45,7 +45,7 @@ class WorkDay(Taggable, Base):
             "note": self.note,
             "type": self.type
         }
-        
+
         # Tags
         data.update(super()._serialize())
 
@@ -55,7 +55,7 @@ class WorkDay(Taggable, Base):
     def range(cls, start, end=None, days=None):
         start_date = start
         end_date = end
-        
+
         if not isinstance(start, arrow.Arrow):
             start_date = arrow.get(start).replace(tzinfo=cls.TIMEZONE)
 
