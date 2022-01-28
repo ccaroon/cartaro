@@ -3,7 +3,7 @@
     <v-list dense class="pa-0">
       <v-row dense no-gutters>
         <v-col cols="2" v-for="(entries, idx) in workDays" :key="idx">
-          <v-list-item :class="dayColor(idx, entries[0]) + ' pa-0'" dense>
+          <v-list-item :class="dayColor(entries[0]) + ' pa-0'" dense>
             <v-list-item-content class="pl-2">
               <v-list-item-title>
                 <strong
@@ -31,7 +31,7 @@
           </v-list-item>
         </v-col>
         <v-col cols="2">
-          <v-list-item class="grey lighten-1 pa-0">
+          <v-list-item class="grey lighten-2 pa-0">
             <v-list-item-avatar class="ma-0">
               <v-icon>mdi-sigma</v-icon>
             </v-list-item-avatar>
@@ -143,8 +143,8 @@ export default {
       return total.toFixed(1)
     },
 
-    dayColor: function (idx, workDay) {
-      let color = Utils.rowColor(idx)
+    dayColor: function (workDay) {
+      let color = workDay.color() + ' lighten-4'
 
       if (Moment().startOf('day').isSame(workDay.date * 1000)) {
         color = Constants.COLORS.ITEM_HIGHLIGHT

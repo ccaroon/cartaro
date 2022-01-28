@@ -245,20 +245,6 @@ export default {
       this.loadMonth()
     },
 
-    eventColor: function (day) {
-      let color = 'blue'
-
-      if (day.type === WorkDay.TYPE_PTO) {
-        color = 'green accent-4'
-      } else if (day.type === WorkDay.TYPE_SICK) {
-        color = 'red'
-      } else if (day.type === WorkDay.TYPE_HOLIDAY) {
-        color = 'indigo lighten-3'
-      }
-
-      return color
-    },
-
     addDay: function (dateEvent) {
       const self = this
       this.newDay(Moment(dateEvent.date), 'EDIT ME')
@@ -290,7 +276,7 @@ export default {
           name: name,
           start: day.start().toDate(),
           end: day.end().toDate(),
-          color: this.eventColor(day),
+          color: day.color() + ' accent-1',
           timed: !day.allDay(),
           workDay: day
         })

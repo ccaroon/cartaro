@@ -14,6 +14,20 @@ class WorkDay extends Resource {
   static TYPE_SICK = 'sick'
   static TYPE_HOLIDAY = 'holiday'
 
+  color () {
+    let color = 'blue'
+
+    if (this.type === WorkDay.TYPE_PTO) {
+      color = 'green'
+    } else if (this.type === WorkDay.TYPE_SICK) {
+      color = 'red'
+    } else if (this.type === WorkDay.TYPE_HOLIDAY) {
+      color = 'indigo'
+    }
+
+    return color
+  }
+
   icon () {
     return Icon.get(this.type, 'mdi-calendar')
   }
