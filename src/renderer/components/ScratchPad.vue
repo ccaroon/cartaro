@@ -15,7 +15,7 @@
             :content="activeContent"
             @update="contentUpdate"
             v-bind:keyMap="keyMap"
-            theme="lesser-dark"
+            :theme="config.get('markdown:scratch-pad')"
           ></Markdown>
         </v-tab-item>
       </v-tabs-items>
@@ -26,6 +26,7 @@
 import Mousetrap from 'mousetrap'
 
 import AppBar from './Shared/AppBar'
+import Config from '../../Config'
 import Format from '../lib/Format'
 import LocalForage from 'localforage'
 import Markdown from './Shared/Markdown'
@@ -152,6 +153,7 @@ export default {
       numTabs: 5,
       activeContent: '',
       dirty: false,
+      config: Config,
       keyMap: {
         'Cmd-S': () => { this.saveActiveTab() },
         'Ctrl-S': () => { this.saveActiveTab() }

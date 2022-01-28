@@ -12,6 +12,7 @@
 * Added "Edit" & "Snooze" buttons to Todos on Home Screen
 * Added "Build Date" to About dialog
 * Added a few convenience methods to the Countdown class
+* All the markdown editors are individually theme-able via the JSON config file.
 
 ### Changed
 * Maximized the height of the editor for LogEntries and Notes

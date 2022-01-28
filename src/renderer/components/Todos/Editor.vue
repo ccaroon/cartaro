@@ -95,6 +95,7 @@
                 <Markdown
                   :content="todo.description"
                   @update="(newContent) => (todo.description = newContent)"
+                  :theme="config.get('markdown:todo')"
                 >
                 </Markdown>
               </v-col>
@@ -239,6 +240,7 @@ import Constants from '../../lib/Constants'
 import Notification from '../../lib/Notification'
 import Tag from '../../models/Tag'
 
+import Config from '../../../Config'
 import Markdown from '../Shared/Markdown'
 
 export default {
@@ -360,6 +362,7 @@ export default {
 
   data () {
     return {
+      config: Config,
       showDateMenu: false,
       showTimeMenu: false,
       dueDate: null,

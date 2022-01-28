@@ -64,6 +64,7 @@
                   <Markdown
                     :content="secret.data[fld]"
                     @update="(newContent) => (secret.data[fld] = newContent)"
+                    :theme="config.get('markdown:secret')"
                   ></Markdown>
                 </template>
                 <template v-else>
@@ -85,6 +86,7 @@
                 <Markdown
                   :content="secret.note"
                   @update="(newContent) => (secret.note = newContent)"
+                  :theme="config.get('markdown:secret')"
                 ></Markdown>
               </v-col>
             </v-row>
@@ -133,6 +135,7 @@
 
 <script>
 import Constants from '../../lib/Constants'
+import Config from '../../../Config'
 import Notification from '../../lib/Notification'
 import Markdown from '../Shared/Markdown'
 import Tag from '../../models/Tag'
@@ -226,6 +229,7 @@ export default {
     return {
       allTags: [],
       constants: Constants,
+      config: Config,
       errorMsg: null,
       secretTypeVal: null,
       rules: {

@@ -88,6 +88,7 @@
                 <Markdown
                   :content="logEntry.content"
                   @update="(newContent) => (logEntry.content = newContent)"
+                  :theme="config.get('markdown:log-entry')"
                 ></Markdown>
               </v-col>
             </v-row>
@@ -139,6 +140,7 @@ import Moment from 'moment'
 import Format from '../../lib/Format'
 import Notification from '../../lib/Notification'
 
+import Config from '../../../Config'
 import JiraTicket from '../../models/JiraTicket'
 import Tag from '../../models/Tag'
 
@@ -261,6 +263,7 @@ export default {
     return {
       showDateMenu: false,
       allTags: [],
+      config: Config,
       jiraTickets: [],
       chosenTicket: null,
       errorMsg: null,

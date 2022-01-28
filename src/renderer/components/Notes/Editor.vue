@@ -34,6 +34,7 @@
                 <Markdown
                   :content="note.content"
                   @update="(newContent) => (note.content = newContent)"
+                  :theme="config.get('markdown:note')"
                 ></Markdown>
               </v-col>
             </v-row>
@@ -84,6 +85,7 @@
 import Notification from '../../lib/Notification'
 import Markdown from '../Shared/Markdown'
 
+import Config from '../../../Config'
 import Tag from '../../models/Tag'
 
 export default {
@@ -146,6 +148,7 @@ export default {
   data () {
     return {
       allTags: [],
+      config: Config,
       errorMsg: null,
       rules: {
         title: [
