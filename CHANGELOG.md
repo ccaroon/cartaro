@@ -31,6 +31,8 @@
   the number of entries it loads from 10 to 25.
 * Added a ToolTip to each of the Countdowns on the Home Screen
   - Appears when you hover over the icon
+* Updated WorkDay colors on Home Page and WD Calendar
+  - Home Page now shows the color in alternating form related to the WD type.
 
 ### Fixed
 ...
