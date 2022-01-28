@@ -14,7 +14,7 @@ class WorkDay extends Resource {
   static TYPE_SICK = 'sick'
   static TYPE_HOLIDAY = 'holiday'
 
-  color () {
+  color (hint = null, alt = false) {
     let color = 'blue'
 
     if (this.type === WorkDay.TYPE_PTO) {
@@ -22,7 +22,13 @@ class WorkDay extends Resource {
     } else if (this.type === WorkDay.TYPE_SICK) {
       color = 'red'
     } else if (this.type === WorkDay.TYPE_HOLIDAY) {
-      color = 'indigo'
+      color = 'deep-purple'
+    }
+
+    if (hint === 'accent') {
+      color += alt ? ' accent-4' : ' accent-2'
+    } else if (hint === 'light') {
+      color += alt ? ' lighten-4' : ' lighten-3'
     }
 
     return color

@@ -276,7 +276,7 @@ export default {
           name: name,
           start: day.start().toDate(),
           end: day.end().toDate(),
-          color: day.color() + ' accent-1',
+          color: day.color('accent'),
           timed: !day.allDay(),
           workDay: day
         })
