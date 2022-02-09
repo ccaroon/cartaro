@@ -26,17 +26,11 @@
       <v-virtual-scroll :items="todos" item-height="45" height="180">
         <template v-slot:default="{ index, item }">
           <v-list-item :class="item.color(index)" dense @click="view(item)">
-            <v-list-item-icon>
-              <v-icon :color="item.priorityColor()"
-                >mdi-numeric-{{ item.priority }}-circle</v-icon
-              >
-              &nbsp;
+            <v-list-item-icon class="mr-3">
               <v-icon
-                :color="item.is_complete ? 'green' : ''"
+                :color="item.priorityColor()"
                 @click.stop="toggleCompleted(item)"
-                >mdi-checkbox-{{
-                  item.is_complete ? "marked" : "blank"
-                }}</v-icon
+                >mdi-numeric-{{ item.priority }}-box-outline</v-icon
               >
             </v-list-item-icon>
             <v-list-item-content>

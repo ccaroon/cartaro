@@ -1,53 +1,82 @@
 # CHANGELOG
 
 ## UNRELEASED: v1.5.0 - Cartographer - 2021-??-??
-### Added
+### General UI
+* File menu added to UI
+* File -> Backup added to UI. Calls the `/sys/backup` API endpoint.
+* Added "Build Date" to About dialog
+* All the markdown editors are individually theme-able via the JSON config file.
+
+### Home
+* Added the item count to the various lists (Tickets, Todos, Notes & Entries)
+
+#### CountDowns
+* Added a ToolTip to each of the Countdowns. Appears when you hover over the icon.
+
+#### LogEntries
+* Reduced the height of the list and increased the number of entries it loads from 10 to 25.
+
+#### Notes
+* Adjusted the spacing between the icon and the Note name on the Home screen.
+
+#### ToDos
+* Added "Edit" & "Snooze" buttons.
+* Removed the gray, clickable checkbox.
+* Changed the priority number from a circle to a box that is now clickable and will mark the item as complete.
+* Adjusted the spacing between the priority icon and the title.
+* Clicking a Todo now views it instead of editing it.
+
+#### WorkDays
+* If the same WorkDay has multiple entries, the Home Screen will now show them
+  listed under the same day instead of multiple entries in the list.
+* The Weekly Total now show hours worked and hours not worked.
+* Non-Normal WorkDays will appear in their specific types color, e.g. Sick Days
+  will display in red.
+
+### LogEntries
+* Maximized the height of the editor.
+  
+### WorkDays
+* Calendar now shows an emoji for the day type instead of a 3-letter code.
+* Calendar "edit" pop-up now emphasizes the Close button instead of Delete
+* New entries created on the Calendar by clicking the Date number will
+  have "EDIT ME" in the note field.
+* Updated the colors on the Calendar
+
+### Notes
+* Note icons are now first based on the title, then the tags
+* Maximized the height of the editor.
+
+### ToDos
+* Removed the gray, clickable checkbox.
+* Changed the priority number from a circle to a box that is now clickable and will mark the item as complete.
+  
+### Secrets
+n/a
+
+### Countdowns
+* Added a few convenience methods to the Countdown class
+
+### Scratchpad
+* Added "Erase" button to the AppBar -- Erases the active tab
+
+### TimeOff (**NEW**)
+***STILL A WORK IN PROGRESS***
+
+Added TimeOff tracking. This includes the tracking of Holidays and other TimeOff
+balances like PTO and Sick days.
+
+Can be access by clicking the new TimeOff icon at the bottom of the side bar.
+
+### Server
 * Ability for the server to back up the data files
   - `utils/archive.py`
   - `/sys/backup` end point on the `system.py` controller
-* File menu added to UI
-* File -> Backup added to UI. Calls the `/sys/backup` API endpoint.
-* Added the item count to the various lists on the Home Screen (Tickets, Todos, Notes & Entries)
-* Added "Erase" button to ScratchPad AppBar -- Erases the active tab
-* Added "Edit" & "Snooze" buttons to Todos on Home Screen
-* Added "Build Date" to About dialog
-* Added a few convenience methods to the Countdown class
-* All the markdown editors are individually theme-able via the JSON config file.
-
-### Changed
-* Maximized the height of the editor for LogEntries and Notes
-* Clicking a Todo on the Home Screen now views it instead of editing it.
-* Work Day Calendar now shows an emoji for the day type instead of a 3-letter code.
-* Added a few new icons
-* Improvements to Icon searching
-* Note icons are now first based on the title, then the tags
-* Work Day Calendar "edit" pop-up now emphasizes the Close button instead of Delete
-* If the same WorkDay has multiple entries, the Home Screen will now show them
-  listed under the same day instead of multiple entries in the list.
-* The WorkDay list Weekly Total on the Home Screen now show hours worked and
-  hours not worked.
-* New entries created on the WorkDay Calendar by clicking the Date number will
-  have "EDIT ME" in the note field.
-* Reduced the height of the Log Entries list on the Home Screen and increased
-  the number of entries it loads from 10 to 25.
-* Added a ToolTip to each of the Countdowns on the Home Screen
-  - Appears when you hover over the icon
-* Updated WorkDay colors on Home Page and WD Calendar
-  - Home Page now shows the color in alternating form related to the WD type.
-
-### Fixed
-...
-
-### Deprecated
-...
-
-### Removed
-* `yarn` is no longer supported. Just use `npm`
-
-### Security
-...
 
 ### Misc
+* `yarn` is no longer supported. Just use `npm`
+* Added a few new icons
+* Improvements to Icon searching
 * Lots of minor module updates
   - electron, vue, vuetify, etc.
 

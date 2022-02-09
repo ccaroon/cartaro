@@ -149,6 +149,8 @@ export default {
 
       if (Moment().startOf('day').isSame(workDay.date * 1000)) {
         color = Constants.COLORS.ITEM_HIGHLIGHT
+      } else if (workDay.isNormal()) {
+        color = alt ? Constants.COLORS.GREY_ALT : Constants.COLORS.GREY
       }
 
       return color

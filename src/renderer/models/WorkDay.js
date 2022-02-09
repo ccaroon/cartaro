@@ -96,6 +96,10 @@ class WorkDay extends Resource {
     this.time_out = '00:00'
   }
 
+  isNormal () {
+    return this.type === WorkDay.TYPE_NORMAL
+  }
+
   toString () {
     return Format.formatDate(this.date)
   }

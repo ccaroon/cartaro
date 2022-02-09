@@ -26,7 +26,7 @@
             @click="viewNote(item)"
             dense
           >
-            <v-list-item-icon>
+            <v-list-item-icon class="mr-3">
               <v-icon>{{ item.icon() }}</v-icon>
             </v-list-item-icon>
             <v-list-item-content>

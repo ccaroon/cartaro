@@ -24,15 +24,12 @@
         @click.stop
       >
         <v-list-item-avatar>
-          <v-icon :color="todo.priorityColor()"
-            >mdi-numeric-{{ todo.priority }}-circle</v-icon
-          >
-        </v-list-item-avatar>
-        <v-list-item-avatar>
           <v-icon
-            :color="todo.is_complete ? 'green' : ''"
+            :color="todo.is_complete ? 'green' : todo.priorityColor()"
             @click="toggleCompleted(todo)"
-            >mdi-checkbox-{{ todo.is_complete ? "marked" : "blank" }}</v-icon
+            >mdi-numeric-{{ todo.priority }}-box{{
+              todo.is_complete ? "" : "-outline"
+            }}</v-icon
           >
         </v-list-item-avatar>
         <v-list-item-content @click="view(todo)">
