@@ -46,6 +46,11 @@
 ### Notes
 * Note icons are now first based on the title, then the tags
 * Maximized the height of the editor.
+* Cmd-s/Ctl-s, when focused in text area, will save the Note w/out closing it.
+* Added "edit" button (pencil) to Note viewer. Quick switches to editor.
+* Added "view" button (eye) to Note editor. Quick switches to viewer.
+* Added "fullscreen/focus" button to Note editor. Hides all form components
+  except the editor text area.
 
 ### ToDos
 * Removed the gray, clickable checkbox.

@@ -10,11 +10,13 @@
       v-model="showEditor"
       v-bind:note="note"
       v-on:close="closeEditor"
+      v-on:view="closeAndView"
     ></NoteEditor>
     <NoteViewer
       v-model="showViewer"
       v-bind:note="note"
       v-on:close="closeViewer"
+      v-on:edit="closeAndEdit"
     ></NoteViewer>
     <v-list dense>
       <v-list-item
@@ -160,9 +162,20 @@ export default {
       this.refresh()
     },
 
+    closeAndView: function () {
+      this.showEditor = false
+      this.view(this.note)
+    },
+
     closeViewer: function () {
       this.showViewer = false
+    },
+
+    closeAndEdit: function () {
+      this.closeViewer()
+      this.edit(this.note)
     }
+
   },
 
   data () {

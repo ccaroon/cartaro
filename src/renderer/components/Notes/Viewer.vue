@@ -7,8 +7,12 @@
         }}</v-icon>
         <v-toolbar-title>{{ note.title }}</v-toolbar-title>
         <v-spacer></v-spacer>
+        <v-btn small icon @click="edit()">
+          <v-icon color="green" size="20">mdi-pencil</v-icon>
+        </v-btn>
+        <v-divider vertical inset></v-divider>
         <v-btn small icon @click="close()">
-          <v-icon>mdi-close</v-icon>
+          <v-icon color="red">mdi-close</v-icon>
         </v-btn>
       </v-app-bar>
       <v-card-text
@@ -40,6 +44,10 @@ export default {
   methods: {
     close: function () {
       this.$emit('close')
+    },
+
+    edit: function () {
+      this.$emit('edit')
     }
   },
 

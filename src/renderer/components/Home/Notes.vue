@@ -4,11 +4,13 @@
       v-model="showEditor"
       v-bind:note="note"
       v-on:close="closeEditor"
+      v-on:view="closeAndView"
     ></NoteEditor>
     <NoteViewer
       v-model="showViewer"
       v-bind:note="note"
       v-on:close="showViewer = false"
+      v-on:edit="closeAndEdit"
     ></NoteViewer>
     <v-card>
       <v-card-title :class="constants.COLORS.GREY"
@@ -81,6 +83,16 @@ export default {
     editNote: function (note) {
       this.note = note
       this.showEditor = true
+    },
+
+    closeAndEdit: function () {
+      this.showViewer = false
+      this.editNote(this.note)
+    },
+
+    closeAndView: function () {
+      this.showEditor = false
+      this.viewNote(this.note)
     },
 
     closeEditor: function () {
