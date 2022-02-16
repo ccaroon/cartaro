@@ -6,6 +6,7 @@
 * File -> Backup added to UI. Calls the `/sys/backup` API endpoint.
 * Added "Build Date" to About dialog
 * All the markdown editors are individually theme-able via the JSON config file.
+* Icon additions and updates
 
 ### Home
 * Added the item count to the various lists (Tickets, Todos, Notes & Entries)
@@ -64,6 +65,11 @@ n/a
 
 ### Scratchpad
 * Added "Erase" button to the AppBar -- Erases the active tab
+* A tab's icon is determined by keywords in the first line of the content
+  - Defaults to a solid square with the tab's number
+* A tab's icon is white if it is blank otherwise it's green.
+* Each scratch pad is backed by a Note instance
+* Exported scratch pads now include a title (based on the first line)
 
 ### TimeOff (**NEW**)
 ***STILL A WORK IN PROGRESS***
