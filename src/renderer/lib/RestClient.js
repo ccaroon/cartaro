@@ -20,17 +20,17 @@ class RestClient {
     return this.resource.split('/').pop()
   }
 
-  create (obj, options = {}) {
+  create (obj) {
     const p = axios.post(`${RestClient.baseUrl()}/${this.resource}/`, obj)
-    return this.__resolve(p, options)
+    return p
   }
 
-  update (obj, options = {}) {
+  update (obj) {
     const p = axios.put(`${RestClient.baseUrl()}/${this.resource}/${obj.id}`, obj)
-    return this.__resolve(p, options)
+    return p
   }
 
-  fetch (query, endpoint = '/', options = {}) {
+  fetch (query, endpoint = '/') {
     const filters = []
     let key, value
     for ([key, value] of Object.entries(query)) {
@@ -39,54 +39,18 @@ class RestClient {
     const qs = filters.join('&')
 
     const p = axios.get(`${RestClient.baseUrl()}/${this.resource}${endpoint}?${qs}`)
-    return this.__resolve(p, options)
+    return p
   }
 
-  delete (obj, options) {
-    let url = `${RestClient.baseUrl()}/${this.resource}/${obj.id}`
-    if ('safe' in options) {
-      url += `?safe=${options.safe}`
-    }
-
-    const p = axios.delete(url)
-    return this.__resolve(p, options)
+  delete (obj, safe = false) {
+    const safeDel = safe ? 1 : 0
+    const p = axios.delete(`${RestClient.baseUrl()}/${this.resource}/${obj.id}?safe=${safeDel}`)
+    return p
   }
 
-  undelete (obj, options = {}) {
+  undelete (obj) {
     const p = axios.put(`${RestClient.baseUrl()}/${this.resource}/undelete/${obj.id}`)
-    return this.__resolve(p, options)
-  }
-
-  __resolve (promise, options) {
-    let resolvedVal = true
-
-    if (options.asPromise) {
-      resolvedVal = promise
-    } else {
-      const handlers = 'handlers' in options ? options.handlers : {}
-      promise
-        .then(resp => {
-          if (handlers.onSuccess) {
-            handlers.onSuccess(resp)
-          }
-        })
-        .catch(err => {
-          if (handlers.onError) {
-            handlers.onError(err)
-          }
-          this.__handleError(err)
-        })
-    }
-
-    return resolvedVal
-  }
-
-  __handleError (err) {
-    if (err.response) {
-      console.log(`${err.response.status} - ${err.response.data.error}`)
-    } else {
-      console.log(err)
-    }
+    return p
   }
 }
 // -----------------------------------------------------------------------------

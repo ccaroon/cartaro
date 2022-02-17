@@ -83,11 +83,11 @@ export default {
 
     doArchiveDelete: function (prompt = true) {
       const self = this
-      let safe = 1
+      let safe = true
       let msg = `Archive "${this.item}"?`
 
       if (this.item.isDeleted()) {
-        safe = 0
+        safe = false
         msg = `Delete "${this.item}"?`
       }
 

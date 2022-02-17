@@ -11,7 +11,6 @@ class Resource {
 
   static getClient () {
     if (this.CLIENT === null) {
-      // console.log(`Creating new RestClient(${this.RESOURCE_NAME})`)
       this.CLIENT = new RestClient(this.RESOURCE_NAME)
     }
     return this.CLIENT
@@ -27,8 +26,6 @@ class Resource {
       query[fld] = this[fld]
     })
 
-    console.log(query)
-
     this.constructor.fetch(query, '/', {
       handlers: {
         onSuccess: (_, count) => {
@@ -42,8 +39,9 @@ class Resource {
 
   static fetch (query, endpoint = '/', options = {}) {
     const client = this.getClient()
+    const promise = client.fetch(query, endpoint)
 
-    return client.fetch(query, endpoint, {
+    return this.__resolve(promise, {
       handlers: {
         onSuccess: (resp) => {
           let items = null
@@ -72,11 +70,15 @@ class Resource {
   }
 
   create (options = {}) {
-    return this.client.create(this, options)
+    const promise = this.client.create(this)
+    return this.constructor.__resolve(promise, options, (resp) => {
+      this.id = resp.data.id
+    })
   }
 
   update (options = {}) {
-    return this.client.update(this, options)
+    const promise = this.client.update(this)
+    return this.constructor.__resolve(promise, options)
   }
 
   save (options = {}) {
@@ -88,15 +90,53 @@ class Resource {
   }
 
   delete (options = {}) {
-    return this.client.delete(this, options)
+    const promise = this.client.delete(this, options.safe)
+    return this.constructor.__resolve(promise, options)
   }
 
   undelete (options = {}) {
-    return this.client.undelete(this, options)
+    const promise = this.client.undelete(this)
+    return this.constructor.__resolve(promise, options)
   }
 
   isDeleted () {
     return this.deleted_at !== null
+  }
+
+  static __resolve (promise, options, privateCB = null) {
+    let resolvedVal = true
+
+    if (options.asPromise) {
+      resolvedVal = promise
+    } else {
+      const handlers = 'handlers' in options ? options.handlers : {}
+      promise
+        .then(resp => {
+          if (privateCB) {
+            privateCB(resp)
+          }
+
+          if (handlers.onSuccess) {
+            handlers.onSuccess(resp)
+          }
+        })
+        .catch(err => {
+          if (handlers.onError) {
+            handlers.onError(err)
+          }
+          this.__handleError(err)
+        })
+    }
+
+    return resolvedVal
+  }
+
+  static __handleError (err) {
+    if (err.response) {
+      console.log(`${err.response.status} - ${err.response.data.error}`)
+    } else {
+      console.log(err)
+    }
   }
 }
 // -----------------------------------------------------------------------------

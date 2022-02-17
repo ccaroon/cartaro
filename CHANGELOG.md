@@ -1,12 +1,14 @@
 # CHANGELOG
 
 ## UNRELEASED: v1.5.0 - Cartographer - 2021-??-??
-### General UI
+### General UI + Frontend
 * File menu added to UI
 * File -> Backup added to UI. Calls the `/sys/backup` API endpoint.
 * Added "Build Date" to About dialog
 * All the markdown editors are individually theme-able via the JSON config file.
 * Icon additions and updates
+* Refactored bits of `RestClient` into `Resource` where they made more sense to be.
+  - Creating a new instance of an item will now set it's `id`
 
 ### Home
 * Added the item count to the various lists (Tickets, Todos, Notes & Entries)

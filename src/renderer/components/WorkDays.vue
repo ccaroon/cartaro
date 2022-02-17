@@ -40,12 +40,12 @@
           :activator="eventElement"
         >
           <v-card>
-            <v-toolbar :color="selectedCalEvent.color" dense>
+            <v-toolbar :color="selectedWorkDay.color('accent')" dense>
               <v-btn-toggle
                 v-model="selectedWorkDay.type"
                 dense
                 borderless
-                :background-color="selectedCalEvent.color + ' accent-1'"
+                :background-color="selectedWorkDay.color('accent')"
                 mandatory
                 @change="changeType(selectedWorkDay)"
               >
@@ -257,10 +257,9 @@ export default {
     },
 
     showEditor: function (event) {
-      this.selectedCalEvent = event.event
       this.selectedWorkDay = event.event.workDay
       this.eventElement = event.nativeEvent.target
-      // Dunno. Make is open attached to the correct element
+      // Dunno. Makes it open attached to the correct element
       requestAnimationFrame(() => requestAnimationFrame(() => { this.editorOpen = true }))
     },
 
@@ -381,7 +380,6 @@ export default {
       weekEnd: Moment().endOf('week'),
       events: [],
       editorOpen: false,
-      selectedCalEvent: { },
       selectedWorkDay: new WorkDay({ type: WorkDay.TYPE_NORMAL }),
       eventElement: null,
       workDays: [],
