@@ -21,7 +21,7 @@ class Holiday(TimeOff):
     def _serialize(self):
         data =  {
             'name': self.name,
-            'date': self.date.timestamp if self.date else None,
+            'date': self.date.int_timestamp if self.date else None,
         }
 
         return data

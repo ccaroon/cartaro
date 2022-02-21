@@ -1,5 +1,4 @@
 import arrow
-import datetime
 import unittest
 
 from cartaro.model.log_entry import LogEntry
@@ -28,12 +27,12 @@ class LogEntryTest(unittest.TestCase):
             category="Mourning Update"
         )
         self.assertIsNotNone(entry.logged_at)
-        self.assertAlmostEqual(entry.logged_at.timestamp, arrow.now().timestamp)
+        self.assertAlmostEqual(entry.logged_at.int_timestamp, arrow.now().int_timestamp)
 
     def test_serialize(self):
         data = self.entry.serialize()
 
-        self.assertEqual(self.entry.logged_at.timestamp, data['logged_at'])
+        self.assertEqual(self.entry.logged_at.int_timestamp, data['logged_at'])
         self.assertEqual(self.entry.subject, data['subject'])
         self.assertEqual(self.entry.content, data['content'])
         self.assertEqual(self.entry.category, data['category'])
@@ -54,4 +53,4 @@ class LogEntryTest(unittest.TestCase):
 
 
 
-    # 
+    #

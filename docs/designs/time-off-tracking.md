@@ -1,6 +1,6 @@
 # Time Off Tracking
 
-## 
+##
 
 {
     "holidays": {
@@ -9,29 +9,32 @@
         "3": { "name": "Christmas", "date": "2022-12-26" }
     },
     "personal": {
-        { 
-            "type": "vacation", 
-            "accrualRate": "12.5",
-            "accrualPeriod": 1
-            "rollOverHours": 10.0
+        {
+            "type": "vacation",
+            "year": 2022,
+            "accrual": {
+                "rate": 12.5,
+                "period": 1
+            },
+            "startingBalance": 10.0
         },
         {
             "type": "sick",
-            "accrualRate": 337.5,
-            "accrualPeriod": 12
-            "rollOverHours": 0.0
+            "year": 2022,
+            "accrual": null,
+            "startingBalance": 350.0
         },
         {
             "type": "floating",
-            "accrualRate": 15.0,
-            "accrualPeriod": 12
-            "rollOverHours": 0.0
+            "year": 2022,
+            "accrual": null,
+            "startingBalance": 15.0
         },
         {
             "type": "volunteer",
-            "accrualRate": 7.5,
-            "accrualPeriod": 12
-            "rollOverHours": 0.0
+            "year": 2022,
+            "accrual": null,
+            "startingBalance": 7.5
         }
     }
 }

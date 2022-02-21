@@ -47,13 +47,13 @@ class LogEntry(Taggable, Base):
 
     def _serialize(self):
         data = {
-            "logged_at": self.logged_at.timestamp if self.logged_at else None,
+            "logged_at": self.logged_at.int_timestamp if self.logged_at else None,
             "subject": self.subject,
             "content": self.content,
             "category": self.category,
             "ticket_link": self.ticket_link
         }
-        
+
         # Tags
         data.update(super()._serialize())
 

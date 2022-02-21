@@ -35,7 +35,7 @@ class WorkDayTest(unittest.TestCase):
     def test_serialize(self):
         data = self.work_day.serialize()
 
-        self.assertEqual(self.work_day.date.timestamp, data['date'])
+        self.assertEqual(self.work_day.date.int_timestamp, data['date'])
         self.assertEqual(self.work_day.time_in, data['time_in'])
         self.assertEqual(self.work_day.time_out, data['time_out'])
         self.assertEqual(self.work_day.note, data['note'])
@@ -59,22 +59,22 @@ class WorkDayTest(unittest.TestCase):
         day_range = WorkDay.range('2020-01-01', '2020-01-31')
         self.assertEqual(len(day_range), 31)
         self.assertIsInstance(day_range[0], WorkDay)
-        self.assertEqual(day_range[0].date.timestamp, arrow.get("2020-01-01").replace(tzinfo=WorkDay.TIMEZONE).timestamp)
-        self.assertEqual(day_range[30].date.timestamp, arrow.get("2020-01-31").replace(tzinfo=WorkDay.TIMEZONE).timestamp)
+        self.assertEqual(day_range[0].date.int_timestamp, arrow.get("2020-01-01").replace(tzinfo=WorkDay.TIMEZONE).int_timestamp)
+        self.assertEqual(day_range[30].date.int_timestamp, arrow.get("2020-01-31").replace(tzinfo=WorkDay.TIMEZONE).int_timestamp)
 
         # Defined range by date and delta days POSITIVE
         day_range = WorkDay.range('2020-02-19', days=+7)
         self.assertEqual(len(day_range), 8) # 8 b/c inclusive
         self.assertIsInstance(day_range[0], WorkDay)
-        self.assertEqual(day_range[0].date.timestamp, arrow.get("2020-02-19").replace(tzinfo=WorkDay.TIMEZONE).timestamp)
-        self.assertEqual(day_range[7].date.timestamp, arrow.get("2020-02-26").replace(tzinfo=WorkDay.TIMEZONE).timestamp)
+        self.assertEqual(day_range[0].date.int_timestamp, arrow.get("2020-02-19").replace(tzinfo=WorkDay.TIMEZONE).int_timestamp)
+        self.assertEqual(day_range[7].date.int_timestamp, arrow.get("2020-02-26").replace(tzinfo=WorkDay.TIMEZONE).int_timestamp)
 
         # Defined range by date and delta days NEGATIVE
         day_range = WorkDay.range('2020-02-19', days=-7)
         self.assertEqual(len(day_range), 8) # 8 b/c inclusive
         self.assertIsInstance(day_range[0], WorkDay)
-        self.assertEqual(day_range[0].date.timestamp, arrow.get("2020-02-12").replace(tzinfo=WorkDay.TIMEZONE).timestamp)
-        self.assertEqual(day_range[7].date.timestamp, arrow.get("2020-02-19").replace(tzinfo=WorkDay.TIMEZONE).timestamp)
+        self.assertEqual(day_range[0].date.int_timestamp, arrow.get("2020-02-12").replace(tzinfo=WorkDay.TIMEZONE).int_timestamp)
+        self.assertEqual(day_range[7].date.int_timestamp, arrow.get("2020-02-19").replace(tzinfo=WorkDay.TIMEZONE).int_timestamp)
 
 
 
@@ -82,4 +82,4 @@ class WorkDayTest(unittest.TestCase):
 
 
 
-# 
+#

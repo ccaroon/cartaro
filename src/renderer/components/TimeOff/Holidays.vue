@@ -30,7 +30,7 @@
         >
       </v-card-title>
 
-      <v-virtual-scroll :items="holidays" item-height="55" height="400">
+      <v-virtual-scroll :items="holidays" item-height="55" height="450">
         <template v-slot:default="{ index, item }">
           <v-list-item dense :class="rowColor(item, index)">
             <v-list-item-avatar>

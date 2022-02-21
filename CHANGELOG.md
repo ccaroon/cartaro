@@ -38,7 +38,7 @@
 
 ### LogEntries
 * Maximized the height of the editor.
-  
+
 ### WorkDays
 * Calendar now shows an emoji for the day type instead of a 3-letter code.
 * Calendar "edit" pop-up now emphasizes the Close button instead of Delete
@@ -58,7 +58,7 @@
 ### ToDos
 * Removed the gray, clickable checkbox.
 * Changed the priority number from a circle to a box that is now clickable and will mark the item as complete.
-  
+
 ### Secrets
 n/a
 
@@ -85,6 +85,9 @@ Can be access by clicking the new TimeOff icon at the bottom of the side bar.
 * Ability for the server to back up the data files
   - `utils/archive.py`
   - `/sys/backup` end point on the `system.py` controller
+* Upgraded a few python modules
+  - arrow => 1.2.2
+  - Flask => 2.0.3
 
 ### Misc
 * `yarn` is no longer supported. Just use `npm`
@@ -158,7 +161,7 @@ Can be access by clicking the new TimeOff icon at the bottom of the side bar.
 ### Changed
 * Shared/AppBar
   - Removed `newItem` and `newIcon` properties
-  - Added `buttons` property that can be used in a more general way to define 
+  - Added `buttons` property that can be used in a more general way to define
     any number of buttons and their actions.
   - Icon in Top-Left of App indicates if the App is running in development mode.
   - Added `endSlot` option

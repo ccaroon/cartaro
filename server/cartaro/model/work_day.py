@@ -39,7 +39,7 @@ class WorkDay(Taggable, Base):
 
     def _serialize(self):
         data = {
-            "date": self.date.timestamp if self.date else None,
+            "date": self.date.int_timestamp if self.date else None,
             "time_in": self.time_in,
             "time_out": self.time_out,
             "note": self.note,
@@ -72,7 +72,7 @@ class WorkDay(Taggable, Base):
         db = cls._database()
 
         Day = Query()
-        docs = db.search(Day.date.test(lambda value, s, e: s <= value <= e, start_date.timestamp, end_date.timestamp))
+        docs = db.search(Day.date.test(lambda value, s, e: s <= value <= e, start_date.int_timestamp, end_date.int_timestamp))
         docs = DbHelper.sort(docs, 'date')
 
         work_days = []

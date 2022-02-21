@@ -14,4 +14,4 @@ class TimeOffHolidayTest(unittest.TestCase):
         data = self.holiday.serialize()
 
         self.assertEqual(self.holiday.name, data['name'])
-        self.assertEqual(self.holiday.date.timestamp, data['date'])
+        self.assertEqual(self.holiday.date.int_timestamp, data['date'])
