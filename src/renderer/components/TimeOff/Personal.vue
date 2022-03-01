@@ -86,6 +86,35 @@
         </template>
       </v-virtual-scroll>
     </v-card>
+    <v-dialog v-model="showEditor" width="75%">
+      <v-card>
+        <v-app-bar dense flat>
+          <v-toolbar-title>PTO Editor</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn small icon @click="closeEditor()">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-app-bar>
+        <v-card-text>
+          <v-form ref="ptoForm">
+            <v-container>
+              <v-row dense>
+                <v-col>
+                  <v-text-field
+                    label="Type"
+                    v-model="currentPTO.type"
+                    outlined
+                    dense
+                    hide-details
+                    >{{ currentPTO.type }}</v-text-field
+                  >
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-form>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script>
@@ -158,11 +187,15 @@ export default {
     },
 
     newPTO: function () {
-
+      this.showEditor = true
     },
 
     edit: function () {
+      this.showEditor = true
+    },
 
+    closeEditor: function () {
+      this.showEditor = false
     },
 
     duplicate: function () {
@@ -199,8 +232,10 @@ export default {
       perPage: 10,
       totalPTO: 0,
       pto: [],
+      currentPTO: new PTO({}),
       currYear: Moment().year(),
       searchText: null,
+      showEditor: false,
       constants: Constants,
       icon: Icon
     }
