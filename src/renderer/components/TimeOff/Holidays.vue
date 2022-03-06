@@ -217,7 +217,7 @@ export default {
     bindShortcutKeys: function () {
       const self = this
 
-      Mousetrap.bind(['ctrl+n', 'command+n'], () => {
+      Mousetrap.bind(['ctrl+h', 'command+h'], () => {
         self.newHoliday()
         return false
       })
@@ -419,7 +419,7 @@ export default {
       holidays: [],
       currYear: Moment().year(),
       page: 1,
-      perPage: 15,
+      perPage: 50,
       totalHolidays: 0,
       searchText: null,
       showEditor: false,

@@ -86,39 +86,16 @@
         </template>
       </v-virtual-scroll>
     </v-card>
-    <v-dialog v-model="showEditor" width="75%">
-      <v-card>
-        <v-app-bar dense flat>
-          <v-toolbar-title>PTO Editor</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-btn small icon @click="closeEditor()">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-app-bar>
-        <v-card-text>
-          <v-form ref="ptoForm">
-            <v-container>
-              <v-row dense>
-                <v-col>
-                  <v-text-field
-                    label="Type"
-                    v-model="currentPTO.type"
-                    outlined
-                    dense
-                    hide-details
-                    >{{ currentPTO.type }}</v-text-field
-                  >
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-form>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
+    <PTOEditor
+      v-model="showEditor"
+      v-bind:pto="currentPTO"
+      v-on:close="closeEditor"
+    ></PTOEditor>
   </div>
 </template>
 <script>
 import Moment from 'moment'
+import Mousetrap from 'mousetrap'
 
 import Actions from '../Shared/Actions'
 
@@ -128,10 +105,11 @@ import Notification from '../../lib/Notification'
 import Utils from '../../lib/Utils'
 
 import PTO from '../../models/PTO'
+import PTOEditor from './PTOEditor.vue'
 
 export default {
   name: 'timeoff-personal',
-  components: { Actions },
+  components: { Actions, PTOEditor },
 
   mounted: function () {
     this.bindShortcutKeys()
@@ -140,13 +118,12 @@ export default {
 
   methods: {
     bindShortcutKeys: function () {
-      // const self = this
+      const self = this
 
-      // TODO: keep this?
-      // Mousetrap.bind(['ctrl+N', 'command+N'], () => {
-      //   self.newPTO()
-      //   return false
-      // })
+      Mousetrap.bind(['ctrl+t', 'command+t'], () => {
+        self.newPTO()
+        return false
+      })
     },
 
     rowColor: function (pto, index) {
@@ -187,19 +164,22 @@ export default {
     },
 
     newPTO: function () {
+      this.currentPTO = new PTO({
+        year: Moment().year(),
+        starting_balance: 0.0,
+        accrual: { rate: null, period: null }
+      })
       this.showEditor = true
     },
 
-    edit: function () {
+    edit: function (pto) {
+      this.currentPTO = pto
       this.showEditor = true
     },
 
     closeEditor: function () {
       this.showEditor = false
-    },
-
-    duplicate: function () {
-
+      this.refresh()
     },
 
     gotoYear: function (offset) {
@@ -229,10 +209,10 @@ export default {
   data () {
     return {
       page: 1,
-      perPage: 10,
+      perPage: 25,
       totalPTO: 0,
       pto: [],
-      currentPTO: new PTO({}),
+      currentPTO: new PTO({ accrual: null }),
       currYear: Moment().year(),
       searchText: null,
       showEditor: false,
