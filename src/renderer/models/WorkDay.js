@@ -10,14 +10,14 @@ class WorkDay extends Resource {
   static DEFAULT_OUT = '16:30'
 
   static TYPE_NORMAL = 'normal'
-  static TYPE_PTO = 'pto'
+  static TYPE_VACATION = 'vacation'
   static TYPE_SICK = 'sick'
   static TYPE_HOLIDAY = 'holiday'
 
   color (hint = null, alt = false) {
     let color = 'blue'
 
-    if (this.type === WorkDay.TYPE_PTO) {
+    if (this.type === WorkDay.TYPE_VACATION) {
       color = 'green'
     } else if (this.type === WorkDay.TYPE_SICK) {
       color = 'red'
@@ -44,8 +44,8 @@ class WorkDay extends Resource {
     if (this.type === WorkDay.TYPE_NORMAL) {
       code = 'NRM'
       emoji = '😐'
-    } else if (this.type === WorkDay.TYPE_PTO) {
-      code = 'PTO'
+    } else if (this.type === WorkDay.TYPE_VACATION) {
+      code = 'VAC'
       emoji = '😴'
     } else if (this.type === WorkDay.TYPE_SICK) {
       code = 'SCK'

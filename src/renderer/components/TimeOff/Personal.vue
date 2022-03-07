@@ -2,7 +2,7 @@
   <div>
     <v-card>
       <v-card-title :class="constants.COLORS.GREY"
-        >PTO Balances {{ currYear }}
+        >PTO {{ currYear }}
         <span class="text-subtitle-1 grey--text text--darken-1"
           >({{ pto.length }})</span
         >
@@ -44,6 +44,16 @@
             </v-list-item-content>
 
             <v-list-item-content>
+              <v-list-item-title>Available</v-list-item-title>
+              <v-list-item-subtitle
+                >{{ item.available() }} hrs</v-list-item-subtitle
+              >
+            </v-list-item-content>
+            <v-list-item-content>
+              <v-list-item-title>Used</v-list-item-title>
+              <v-list-item-subtitle>{{ item.used() }} hrs</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-content>
               <v-list-item-title
                 :class="item.isDeleted() ? 'text-decoration-line-through' : ''"
               >
@@ -52,7 +62,7 @@
               <v-list-item-subtitle
                 :class="item.isDeleted() ? 'text-decoration-line-through' : ''"
               >
-                {{ displayBalance(item) }}
+                {{ item.balance() }} hrs
               </v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
@@ -195,7 +205,7 @@ export default {
     displayAccrual: function (pto) {
       let accrual = 'Does Not Accrue'
       if (pto.accrual) {
-        accrual = `${pto.accrual.rate} hours / ${pto.accrual.period} month`
+        accrual = `${pto.accrual.rate}h / ${pto.accrual.period}month (${pto.accruedPerYear()}h/year)`
       }
 
       return accrual

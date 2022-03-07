@@ -55,8 +55,8 @@
                 <v-btn icon small value="holiday">
                   <v-icon>{{ icons.get("holiday") }}</v-icon>
                 </v-btn>
-                <v-btn icon small value="pto">
-                  <v-icon>{{ icons.get("pto") }}</v-icon>
+                <v-btn icon small value="vacation">
+                  <v-icon>{{ icons.get("vacation") }}</v-icon>
                 </v-btn>
                 <v-btn icon small value="sick">
                   <v-icon>{{ icons.get("sick") }}</v-icon>
