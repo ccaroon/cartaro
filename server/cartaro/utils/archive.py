@@ -42,7 +42,9 @@ class Archive:
         return os.listdir(self.path)
 
     def remove(self, filename):
-        os.remove(os.path.join(self.path, filename))
+        file_path = os.path.join(self.path, filename)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
 
     def remove_all(self):
         for file in self.files():
