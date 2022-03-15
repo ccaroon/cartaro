@@ -9,19 +9,21 @@ class WorkDay extends Resource {
   static DEFAULT_IN = '09:00'
   static DEFAULT_OUT = '16:30'
 
+  static HOURS_PER_DAY = 7.5
+
   static TYPE_NORMAL = 'normal'
   static TYPE_VACATION = 'vacation'
   static TYPE_SICK = 'sick'
   static TYPE_HOLIDAY = 'holiday'
 
-  color (hint = null, alt = false) {
+  static color (dayType, hint = null, alt = false) {
     let color = 'blue'
 
-    if (this.type === WorkDay.TYPE_VACATION) {
+    if (dayType === WorkDay.TYPE_VACATION) {
       color = 'green'
-    } else if (this.type === WorkDay.TYPE_SICK) {
+    } else if (dayType === WorkDay.TYPE_SICK) {
       color = 'red'
-    } else if (this.type === WorkDay.TYPE_HOLIDAY) {
+    } else if (dayType === WorkDay.TYPE_HOLIDAY) {
       color = 'deep-purple'
     }
 
@@ -32,6 +34,10 @@ class WorkDay extends Resource {
     }
 
     return color
+  }
+
+  color (hint = null, alt = false) {
+    return WorkDay.color(this.type, hint, alt)
   }
 
   icon () {

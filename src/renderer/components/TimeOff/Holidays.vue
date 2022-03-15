@@ -275,22 +275,13 @@ export default {
         note: holiday.name
       })
 
-      const query = {
-        pp: 5,
-        op: 'and',
-        date: holiday.date,
-        note: holiday.name
-      }
-
-      // TODO: re-write to use workday.exists()
       // Check to see if entry already exists
-      WorkDay.fetch(query, '/', {
+      workDay.exists(['date', 'note'], {
         handlers: {
-          onSuccess: function (_, totalCount) {
-            if (totalCount > 0) {
+          onSuccess: function (exists) {
+            if (exists) {
               Notification.warn(`'${holiday.name}' already exists on WorkDay Calendar.`)
             } else {
-              // If not, add it
               workDay.save({
                 handlers: {
                   onSuccess: (_) => {
@@ -304,7 +295,7 @@ export default {
             }
           },
           onError: (err) => {
-            Notification.error(`PTO.Holidays.addToCalendar#fetch: ${err.toString()}`)
+            Notification.error(`PTO.Holidays.addToCalendar#exists: ${err.toString()}`)
           }
         }
       })
@@ -394,10 +385,7 @@ export default {
             onSuccess: () => {
               this.showEditor = false
 
-              // If new holiday, auto-add to WD calendar
-              if (!holiday.id) {
-                self.addToCalendar(holiday)
-              }
+              self.addToCalendar(holiday)
 
               self.initDate(holiday)
               self.load()

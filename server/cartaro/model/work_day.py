@@ -8,9 +8,11 @@ from cartaro.utils.db_helper import DbHelper
 
 class WorkDay(Taggable, Base):
     TYPE_NORMAL = "normal"
-    TYPE_PTO = "pto"
+    TYPE_VACATION = "vacation"
     TYPE_SICK = "sick"
     TYPE_HOLIDAY = "holiday"
+
+    HOURS_PER_DAY = 7.5
 
     def __init__(self, id=None, **kwargs):
         self.__date = None

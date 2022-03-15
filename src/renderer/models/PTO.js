@@ -2,7 +2,6 @@ import Moment from 'moment'
 import Format from '../lib/Format'
 import Icon from '../lib/Icon'
 import Resource from './Resource'
-// import WorkDay from './WorkDay'
 // -----------------------------------------------------------------------------
 class PTO extends Resource {
   static RESOURCE_NAME = 'time_off/personal'
@@ -30,29 +29,26 @@ class PTO extends Resource {
   accruedYTD () {
     let accrued = 0.0
     if (this.accrual) {
-      const currMonth = Moment().month() + 1
-      accrued = (currMonth / this.accrual.period) * this.accrual.rate
+      const now = Moment()
+      let availMonths = null
+      if (this.year < now.year()) {
+        availMonths = 12
+      } else if (this.year === now.year()) {
+        availMonths = now.month() + 1
+      } else if (this.year > now.year()) {
+        availMonths = 0
+      }
+      accrued = (availMonths / this.accrual.period) * this.accrual.rate
     }
     return accrued
   }
 
   available () {
-    return parseInt(this.starting_balance) + this.accruedYTD()
-  }
-
-  // TODO: write this method
-  used () {
-    // const query = {
-    //   pp: 9999,
-    //   type: this.type,
-    //   sort_by: 'due_at,priority,is_complete'
-    // }
-    // await WorkDay.fetch(query, '/', { asPromise: true })
-    return 0.0
+    return parseFloat(this.starting_balance) + this.accruedYTD()
   }
 
   balance () {
-    return this.available() - this.used()
+    return this.available() - this.used
   }
 
   toString () {

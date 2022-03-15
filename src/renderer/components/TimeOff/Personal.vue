@@ -28,43 +28,54 @@
         <template v-slot:default="{ index, item }">
           <v-list-item dense :class="rowColor(item, index)">
             <v-list-item-avatar>
-              <v-icon v-if="item.isDeleted()" color="red">{{
-                icon.get("deleted")
-              }}</v-icon>
-              <v-icon v-else>{{ item.icon() }}</v-icon>
+              <template v-if="item.accrual">
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-badge color="green" offset-x="10" offset-y="10" dot>
+                      <v-icon left v-on="on"> {{ displayIcon(item) }} </v-icon>
+                    </v-badge>
+                  </template>
+                  <span>{{ displayAccrual(item) }}</span>
+                </v-tooltip>
+              </template>
+              <template v-else>
+                <v-icon left> {{ displayIcon(item) }} </v-icon>
+              </template>
             </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title
-                :class="item.isDeleted() ? 'text-decoration-line-through' : ''"
-                >{{ item.type }}</v-list-item-title
-              >
-              <v-list-item-subtitle>{{
-                displayAccrual(item)
-              }}</v-list-item-subtitle>
-            </v-list-item-content>
-
-            <v-list-item-content>
-              <v-list-item-title>Available</v-list-item-title>
-              <v-list-item-subtitle
-                >{{ item.available() }} hrs</v-list-item-subtitle
-              >
-            </v-list-item-content>
-            <v-list-item-content>
-              <v-list-item-title>Used</v-list-item-title>
-              <v-list-item-subtitle>{{ item.used() }} hrs</v-list-item-subtitle>
-            </v-list-item-content>
-            <v-list-item-content>
-              <v-list-item-title
-                :class="item.isDeleted() ? 'text-decoration-line-through' : ''"
-              >
-                Balance
-              </v-list-item-title>
-              <v-list-item-subtitle
-                :class="item.isDeleted() ? 'text-decoration-line-through' : ''"
-              >
-                {{ item.balance() }} hrs
-              </v-list-item-subtitle>
-            </v-list-item-content>
+            <v-row dense no-gutters>
+              <v-col cols="2">
+                <v-list-item-content>
+                  <v-list-item-title
+                    :class="
+                      item.isDeleted() ? 'text-decoration-line-through' : ''
+                    "
+                    >{{ item.type }}</v-list-item-title
+                  >
+                  <v-list-item-subtitle
+                    :class="
+                      item.isDeleted() ? 'text-decoration-line-through' : ''
+                    "
+                    >{{ displayBalance(item) }}</v-list-item-subtitle
+                  >
+                </v-list-item-content>
+              </v-col>
+              <v-col cols="9">
+                <v-list-item-content>
+                  <v-progress-linear
+                    striped
+                    rounded
+                    :color="displayColor(item)"
+                    height="25"
+                    :value="progressValue(item)"
+                  >
+                    <template v-slot:default="{}">
+                      {{ item.used }} / {{ item.available() }} hrs
+                    </template>
+                  </v-progress-linear>
+                </v-list-item-content>
+              </v-col>
+              <v-col cols="1"></v-col>
+            </v-row>
             <v-list-item-action>
               <v-row no-gutters>
                 <v-col class="mr-1">
@@ -115,6 +126,7 @@ import Notification from '../../lib/Notification'
 import Utils from '../../lib/Utils'
 
 import PTO from '../../models/PTO'
+import WorkDay from '../../models/WorkDay'
 import PTOEditor from './PTOEditor.vue'
 
 export default {
@@ -202,17 +214,74 @@ export default {
       this.refresh()
     },
 
+    duplicate: function (pto) {
+      const dup = new PTO(pto)
+      dup.id = null
+      dup.created_at = null
+      dup.year = pto.year + 1
+
+      dup.exists(['type', 'year'], {
+        handlers: {
+          onSuccess: (exists) => {
+            if (!exists) {
+              dup.save({
+                handlers: {
+                  onSuccess: (_) => {
+                    Notification.info(`'${pto.type}' for ${pto.year} duplicated to '${dup.type}' for ${dup.year}`)
+                  }
+                }
+              })
+            } else {
+              Notification.warn(`'${dup.type}' for ${dup.year} already exists`)
+            }
+          },
+          onError: (err) => {
+            Notification.error(`PTO.Personal.duplicate: ${err.toString()}`)
+          }
+        }
+      })
+    },
+
+    progressValue: function (pto) {
+      let percent = 0
+
+      if (pto.available() > 0.0) {
+        percent = (pto.used / pto.available()) * 100
+      }
+
+      return percent
+    },
+
+    displayIcon: function (pto) {
+      let icon = pto.icon()
+      if (pto.isDeleted()) {
+        icon = Icon.get('deleted')
+      }
+      return icon
+    },
+
+    displayColor: function (pto) {
+      let color = WorkDay.color(pto.type.toLowerCase())
+
+      if (pto.isDeleted()) {
+        color = 'grey'
+      }
+
+      return color
+    },
+
     displayAccrual: function (pto) {
       let accrual = 'Does Not Accrue'
       if (pto.accrual) {
-        accrual = `${pto.accrual.rate}h / ${pto.accrual.period}month (${pto.accruedPerYear()}h/year)`
+        accrual = `${pto.accrual.rate} hrs / ${pto.accrual.period} month`
       }
 
       return accrual
     },
 
     displayBalance: function (pto) {
-      return `${pto.used()} / ${pto.available()}`
+      const asDays = pto.balance() / WorkDay.HOURS_PER_DAY
+      return `${Math.round(asDays)} days (${pto.balance()}h)`
     }
   },
 

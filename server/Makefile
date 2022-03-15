@@ -19,7 +19,7 @@ test-file:
 	CARTARO_ENV=test \
 	CARTARO_DOC_PATH=tests/tmp \
 	CARTARO_CFG_PATH=../tests/data \
-	nosetests -v -s $(FILE)
+	nosetests -v -s tests/__init__.py $(FILE)
 
 cover:
 	CARTARO_ENV=test \

@@ -41,7 +41,9 @@ class Resource {
     const client = this.getClient()
     const promise = client.fetch(query, endpoint)
 
-    return this.__resolve(promise, {
+    options.handlers = 'handlers' in options ? options.handlers : {}
+
+    this.__resolve(promise, {
       handlers: {
         onSuccess: (resp) => {
           let items = null
@@ -62,7 +64,9 @@ class Resource {
               items[name] = itemList
             }
           }
-          options.handlers.onSuccess(items, resp.data.total)
+          if (options.handlers.onSuccess) {
+            options.handlers.onSuccess(items, resp.data.total)
+          }
         },
         onError: options.handlers.onError
       }
@@ -104,12 +108,11 @@ class Resource {
   }
 
   static __resolve (promise, options, privateCB = null) {
-    let resolvedVal = true
+    const handlers = options.handlers
 
     if (options.asPromise) {
-      resolvedVal = promise
+      return promise
     } else {
-      const handlers = 'handlers' in options ? options.handlers : {}
       promise
         .then(resp => {
           if (privateCB) {
@@ -127,8 +130,6 @@ class Resource {
           this.__handleError(err)
         })
     }
-
-    return resolvedVal
   }
 
   static __handleError (err) {

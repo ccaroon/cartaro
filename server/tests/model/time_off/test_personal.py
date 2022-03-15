@@ -3,16 +3,12 @@ import faker
 import unittest
 
 from cartaro.model.time_off.personal import Personal
+from cartaro.model.work_day import WorkDay
+
 class TimeOffPersonalTest(unittest.TestCase):
 
     def setUp(self):
         self.faker = faker.Faker()
-        self.vacation = self.__test_instance(
-            accrual = {
-                'period': 1,
-                'rate': 10.0
-            }
-        )
 
     def __test_instance(self, **kwargs):
         data = {
@@ -57,17 +53,80 @@ class TimeOffPersonalTest(unittest.TestCase):
         self.assertIsNone(pto.accrual_period)
         self.assertEqual(pto.starting_balance, data['starting_balance'])
 
-    # def test_total(self):
-    #     total = self.vacation.total()
-    #     accruable = self.vacation.accrual_rate * (self.vacation.accrual_period*12)
+    def test_accrued_ytd(self):
+        now = arrow.now()
+        
+        # Current Year
+        pto = self.__test_instance(accrual={
+            'rate': 12.5, 'period': 1
+        })
+        curr_month = now.month
+        accrued = (curr_month / pto.accrual_period) * pto.accrual_rate
 
-    #     self.assertEqual(total,
-    #         accruable + self.vacation.starting_balance
-    #     )
+        self.assertEqual(pto.accrued_ytd(), accrued)
 
-    # def test_available(self):
-    #     month = arrow.now().month
-    #     total = self.vacation.total()
-    #     avail = self.vacation.available()
+        # Previous Year
+        pto = self.__test_instance(year=now.year-1, accrual={
+            'rate': 12.5, 'period': 1
+        })
+        # All 12 months have been accrued
+        accrued = (12 / pto.accrual_period) * pto.accrual_rate
+        self.assertEqual(pto.accrued_ytd(), accrued)
+        
+        # Future Year
+        pto = self.__test_instance(year=now.year+1, accrual={
+            'rate': 12.5, 'period': 1
+        })
+        # No hours accrued
+        self.assertEqual(pto.accrued_ytd(), 0)
 
-    #     self.assertEqual(avail, total * (month/self.vacation.accrual_period))
+    def test_available(self):
+        curr_month = arrow.now().month
+        pto = self.__test_instance(accrual={
+            'rate': 10.0, 'period': 1
+        })
+
+        used = pto.used
+        accrued = curr_month * pto.accrual_rate
+        sb = pto.starting_balance
+
+        self.assertEqual(pto.available(), (sb+accrued) - used)
+
+    def test_used(self):
+        numDays = 3
+        pto = self.__test_instance(type="Vacation")
+
+        # Add a few in-range NORMAL work days
+        for i in range(0,numDays):
+            day = WorkDay(
+                date=arrow.now().shift(days=i*-1),
+                time_in="9:00",
+                time_out="16:30",
+                note=F"Normal #{i}",
+                type=WorkDay.TYPE_NORMAL
+            )
+            day.save()
+
+        # Add a few in-range Vacation work days
+        for i in range(numDays,numDays+numDays):
+            day = WorkDay(
+                date=arrow.now().shift(days=i*(-1)),
+                time_in="00:00",
+                time_out="00:00",
+                note=F"Vacation #{i}",
+                type=WorkDay.TYPE_VACATION
+            )
+            day.save()
+
+        # Add a few out-of-range Vacation work days
+        for i in range(0, numDays):
+            day = WorkDay(
+                date=arrow.now().shift(days=7+i),
+                time_in="00:00",
+                time_out="00:00",
+                note=F"Future Vacation #{i}",
+                type=WorkDay.TYPE_VACATION
+            )
+            day.save()
+
+        self.assertEqual(pto.used, WorkDay.HOURS_PER_DAY * numDays)
