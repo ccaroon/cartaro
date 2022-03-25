@@ -94,7 +94,7 @@ export default {
       builtWith: [
         { name: 'Electron', value: process.versions.electron, icon: 'atom' },
         { name: 'NodeJS', value: process.versions.node, icon: 'nodejs' },
-        { name: 'Python', value: '3.8.2', icon: 'language-python' },
+        { name: 'Python', value: '3.9.6', icon: 'language-python' },
         { name: 'Chrome', value: process.versions.chrome, icon: 'google-chrome' },
         { name: 'Vue Version', value: require('vue/package.json').version, icon: 'vuejs' }
       ],
