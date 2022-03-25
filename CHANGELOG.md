@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## UNRELEASED: v1.6.0 - Kraken - 2022-??-??
+...
+
 ## v1.5.0 - Cartographer - 2022-03-25
 ### General UI + Frontend
 * File menu added to UI

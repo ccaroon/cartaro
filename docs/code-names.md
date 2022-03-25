@@ -7,8 +7,8 @@ In no particular order:
 * Anaximenes      -- v1.3.x
 * Ouroboros       -- v1.4.x
 * Cartographer    -- v1.5.x
+* Kraken          -- v1.6.x
 * -------------------------
-* Kraken
 * Legendary ...
 * Epic ...
 * Frozen Wilds
