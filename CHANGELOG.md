@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## UNRELEASED: v1.5.0 - Cartographer - 2021-??-??
+## v1.5.0 - Cartographer - 2022-03-25
 ### General UI + Frontend
 * File menu added to UI
 * File -> Backup added to UI. Calls the `/sys/backup` API endpoint.
@@ -73,9 +73,7 @@ n/a
 * Each scratch pad is backed by a Note instance
 * Exported scratch pads now include a title (based on the first line)
 
-### TimeOff (**NEW**)
-***STILL A WORK IN PROGRESS***
-
+### TimeOff
 Added TimeOff tracking. This includes the tracking of Holidays and other TimeOff
 balances like PTO and Sick days.
 
