@@ -40,12 +40,12 @@
           :activator="eventElement"
         >
           <v-card>
-            <v-toolbar :color="selectedCalEvent.color" dense>
+            <v-toolbar :color="selectedWorkDay.color('accent')" dense>
               <v-btn-toggle
                 v-model="selectedWorkDay.type"
                 dense
                 borderless
-                :background-color="selectedCalEvent.color + ' accent-1'"
+                :background-color="selectedWorkDay.color('accent')"
                 mandatory
                 @change="changeType(selectedWorkDay)"
               >
@@ -55,8 +55,8 @@
                 <v-btn icon small value="holiday">
                   <v-icon>{{ icons.get("holiday") }}</v-icon>
                 </v-btn>
-                <v-btn icon small value="pto">
-                  <v-icon>{{ icons.get("pto") }}</v-icon>
+                <v-btn icon small value="vacation">
+                  <v-icon>{{ icons.get("vacation") }}</v-icon>
                 </v-btn>
                 <v-btn icon small value="sick">
                   <v-icon>{{ icons.get("sick") }}</v-icon>
@@ -245,20 +245,6 @@ export default {
       this.loadMonth()
     },
 
-    eventColor: function (day) {
-      let color = 'blue'
-
-      if (day.type === WorkDay.TYPE_PTO) {
-        color = 'green accent-4'
-      } else if (day.type === WorkDay.TYPE_SICK) {
-        color = 'red'
-      } else if (day.type === WorkDay.TYPE_HOLIDAY) {
-        color = 'indigo lighten-3'
-      }
-
-      return color
-    },
-
     addDay: function (dateEvent) {
       const self = this
       this.newDay(Moment(dateEvent.date), 'EDIT ME')
@@ -271,10 +257,9 @@ export default {
     },
 
     showEditor: function (event) {
-      this.selectedCalEvent = event.event
       this.selectedWorkDay = event.event.workDay
       this.eventElement = event.nativeEvent.target
-      // Dunno. Make is open attached to the correct element
+      // Dunno. Makes it open attached to the correct element
       requestAnimationFrame(() => requestAnimationFrame(() => { this.editorOpen = true }))
     },
 
@@ -290,7 +275,7 @@ export default {
           name: name,
           start: day.start().toDate(),
           end: day.end().toDate(),
-          color: this.eventColor(day),
+          color: day.color('accent'),
           timed: !day.allDay(),
           workDay: day
         })
@@ -395,7 +380,6 @@ export default {
       weekEnd: Moment().endOf('week'),
       events: [],
       editorOpen: false,
-      selectedCalEvent: { },
       selectedWorkDay: new WorkDay({ type: WorkDay.TYPE_NORMAL }),
       eventElement: null,
       workDays: [],

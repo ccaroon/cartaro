@@ -9,10 +9,36 @@ class WorkDay extends Resource {
   static DEFAULT_IN = '09:00'
   static DEFAULT_OUT = '16:30'
 
+  static HOURS_PER_DAY = 7.5
+
   static TYPE_NORMAL = 'normal'
-  static TYPE_PTO = 'pto'
+  static TYPE_VACATION = 'vacation'
   static TYPE_SICK = 'sick'
   static TYPE_HOLIDAY = 'holiday'
+
+  static color (dayType, hint = null, alt = false) {
+    let color = 'blue'
+
+    if (dayType === WorkDay.TYPE_VACATION) {
+      color = 'green'
+    } else if (dayType === WorkDay.TYPE_SICK) {
+      color = 'red'
+    } else if (dayType === WorkDay.TYPE_HOLIDAY) {
+      color = 'deep-purple'
+    }
+
+    if (hint === 'accent') {
+      color += alt ? ' accent-4' : ' accent-2'
+    } else if (hint === 'light') {
+      color += alt ? ' lighten-4' : ' lighten-3'
+    }
+
+    return color
+  }
+
+  color (hint = null, alt = false) {
+    return WorkDay.color(this.type, hint, alt)
+  }
 
   icon () {
     return Icon.get(this.type, 'mdi-calendar')
@@ -24,8 +50,8 @@ class WorkDay extends Resource {
     if (this.type === WorkDay.TYPE_NORMAL) {
       code = 'NRM'
       emoji = '😐'
-    } else if (this.type === WorkDay.TYPE_PTO) {
-      code = 'PTO'
+    } else if (this.type === WorkDay.TYPE_VACATION) {
+      code = 'VAC'
       emoji = '😴'
     } else if (this.type === WorkDay.TYPE_SICK) {
       code = 'SCK'
@@ -74,6 +100,10 @@ class WorkDay extends Resource {
   clearInOut () {
     this.time_in = '00:00'
     this.time_out = '00:00'
+  }
+
+  isNormal () {
+    return this.type === WorkDay.TYPE_NORMAL
   }
 
   toString () {

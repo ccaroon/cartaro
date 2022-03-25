@@ -4,20 +4,32 @@
       <v-app-bar dense flat>
         <v-toolbar-title>Note Editor</v-toolbar-title>
         <v-spacer></v-spacer>
+        <v-btn small icon @click="toggleFullscreen()">
+          <v-icon color="blue" size="20"
+            >mdi-{{
+              this.isFullscreen ? "window-maximize" : "overscan"
+            }}</v-icon
+          >
+        </v-btn>
+        <v-btn small icon @click="view()">
+          <v-icon color="green" size="20">mdi-eye</v-icon>
+        </v-btn>
+        <v-divider vertical inset></v-divider>
         <v-btn small icon @click="close()">
-          <v-icon>mdi-close</v-icon>
+          <v-icon color="red">mdi-close</v-icon>
         </v-btn>
       </v-app-bar>
       <v-card-text>
         <v-form ref="noteForm">
           <v-container>
-            <v-row>
+            <v-row v-show="!this.isFullscreen">
               <v-col cols="10">
                 <v-text-field
                   label="Title"
                   v-model="note.title"
                   outlined
                   hide-details
+                  dense
                   :rules="rules.title"
                   >{{ note.title }}</v-text-field
                 >
@@ -26,6 +38,7 @@
                 <v-checkbox
                   v-model="note.is_favorite"
                   label="Favorite"
+                  dense
                 ></v-checkbox>
               </v-col>
             </v-row>
@@ -34,10 +47,12 @@
                 <Markdown
                   :content="note.content"
                   @update="(newContent) => (note.content = newContent)"
+                  :theme="config.get('markdown:note')"
+                  v-bind:keyMap="keyMap"
                 ></Markdown>
               </v-col>
             </v-row>
-            <v-row>
+            <v-row v-show="!this.isFullscreen">
               <v-col>
                 <v-combobox
                   v-model="note.tags"
@@ -69,12 +84,14 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-alert v-show="errorMsg" dense color="error">{{
-          this.errorMsg
-        }}</v-alert>
+        <v-alert dense color="error" v-show="errorMsg"
+          >{{ this.errorMsg }}
+        </v-alert>
         <v-spacer></v-spacer>
-        <v-btn color="success" @click="save()">Save</v-btn>
-        <v-btn color="red" text @click="close()">Close</v-btn>
+        <span v-show="!this.isFullscreen">
+          <v-btn color="success" @click="save()">Save</v-btn>
+          <v-btn color="red" text @click="close()">Close</v-btn>
+        </span>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -84,6 +101,7 @@
 import Notification from '../../lib/Notification'
 import Markdown from '../Shared/Markdown'
 
+import Config from '../../../Config'
 import Tag from '../../models/Tag'
 
 export default {
@@ -103,17 +121,23 @@ export default {
       })
     },
 
-    save: function () {
+    save: function (close = true) {
       const self = this
 
       if (this.$refs.noteForm.validate()) {
+        this.errorMsg = null
         this.note.save({
           handlers: {
-            onSuccess: () => { self.close() },
+            onSuccess: () => {
+              if (close) {
+                self.close()
+              }
+            },
             onError: (err) => { Notification.error(`NT.Editor.save: ${err.toString()}`) }
           }
         })
       } else {
+        this.isFullscreen = false
         this.errorMsg = 'Please fill in the required fields.'
       }
     },
@@ -126,6 +150,17 @@ export default {
     close: function () {
       this.cleanup()
       this.$emit('close')
+      this.isFullscreen = false
+    },
+
+    view: function () {
+      this.save(false)
+      this.cleanup()
+      this.$emit('view')
+    },
+
+    toggleFullscreen: function () {
+      this.isFullscreen = !this.isFullscreen
     },
 
     removeTag: function (tag) {
@@ -146,7 +181,13 @@ export default {
   data () {
     return {
       allTags: [],
+      config: Config,
       errorMsg: null,
+      isFullscreen: false,
+      keyMap: {
+        'Cmd-S': () => { this.save(false) },
+        'Ctrl-S': () => { this.save(false) }
+      },
       rules: {
         title: [
           title => !!title || 'Title is required'

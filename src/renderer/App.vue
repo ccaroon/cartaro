@@ -8,7 +8,19 @@
     <v-navigation-drawer v-model="drawer" app dark mini-variant clipped>
       <v-list dense>
         <v-list-item
-          v-for="(page, index) in menu"
+          v-for="(page, index) in menu_main"
+          @click="goTo(page)"
+          :key="index"
+        >
+          <v-list-item-action>
+            <v-icon>{{ page.icon }}</v-icon>
+          </v-list-item-action>
+        </v-list-item>
+      </v-list>
+      <v-divider></v-divider>
+      <v-list dense>
+        <v-list-item
+          v-for="(page, index) in menu_misc"
           @click="goTo(page)"
           :key="index"
         >
@@ -94,7 +106,7 @@ export default {
     notifyVisible: false,
     notifyTO: -1,
     pageName: 'Home',
-    menu: [
+    menu_main: [
       { name: 'Home', path: '/', icon: 'mdi-home' },
       { name: 'LogEntries', path: '/log_entries', icon: 'mdi-book-open-variant' },
       { name: 'WorkDays', path: '/work_days', icon: 'mdi-calendar-clock' },
@@ -103,6 +115,9 @@ export default {
       { name: 'Secrets', path: '/secrets', icon: 'mdi-lock' },
       { name: 'CountDowns', path: '/count_downs', icon: 'mdi-update' },
       { name: 'ScratchPad', path: '/scratch_pad', icon: 'mdi-square-edit-outline' }
+    ],
+    menu_misc: [
+      { name: 'TimeOff', path: '/timeoff', icon: 'mdi-timetable' }
     ]
   })
 }

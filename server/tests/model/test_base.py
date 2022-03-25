@@ -109,8 +109,8 @@ class BaseTest(unittest.TestCase):
         self.assertIsNone(obj.updated_at)
         self.assertIsNone(obj.deleted_at)
 
-        now = arrow.now().timestamp
-        self.assertTrue(now-5 <= obj.created_at.timestamp <= now)
+        now = arrow.now().int_timestamp
+        self.assertTrue(now-5 <= obj.created_at.int_timestamp <= now)
 
         # Update
         id = obj.id
@@ -126,8 +126,8 @@ class BaseTest(unittest.TestCase):
         self.assertIsNotNone(obj.updated_at)
         self.assertIsNone(obj.deleted_at)
 
-        now = arrow.now().timestamp
-        self.assertTrue(now-5 <= obj.updated_at.timestamp <= now)
+        now = arrow.now().int_timestamp
+        self.assertTrue(now-5 <= obj.updated_at.int_timestamp <= now)
 
     def test_load(self):
         # Success
@@ -170,8 +170,8 @@ class BaseTest(unittest.TestCase):
         self.assertIsNotNone(obj.id)
         self.assertIsNotNone(obj.deleted_at)
 
-        now = arrow.now().timestamp
-        self.assertTrue(now-5 <= obj.deleted_at.timestamp <= now)
+        now = arrow.now().int_timestamp
+        self.assertTrue(now-5 <= obj.deleted_at.int_timestamp <= now)
 
         # with self.assertRaisesRegex(ValueError, 'Valid Object ID required for loading'):
         #     obj.load()
@@ -203,8 +203,8 @@ class BaseTest(unittest.TestCase):
         self.assertIsNone(obj.id)
         self.assertIsNotNone(obj.deleted_at)
 
-        now = arrow.now().timestamp
-        self.assertTrue(now-5 <= obj.deleted_at.timestamp <= now)
+        now = arrow.now().int_timestamp
+        self.assertTrue(now-5 <= obj.deleted_at.int_timestamp <= now)
 
         with self.assertRaisesRegex(ValueError, 'Valid Object ID required for loading'):
             obj.load()
@@ -459,6 +459,13 @@ class BaseTest(unittest.TestCase):
         # Less Than Equal
         tickets = Ticket.find(use_count="lte:50")
         self.assertEquals(len(tickets), counts['lt50'] + counts['eq50'])
+
+        # Between
+        val1 = 15
+        val2 = 42
+        tickets = Ticket.find(use_count=F"btw:{val1}:{val2}")
+        for tix in tickets:
+            self.assertTrue(val1 <= tix.use_count <= val2, tix.id)
 
     def test_find_sort_by(self):
         total_count = random.randint(1, 100)

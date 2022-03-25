@@ -16,7 +16,9 @@
         <span class="text-subtitle-1 grey--text text--darken-1"
           >({{ logEntries.length }})</span
         >
-        <v-btn icon x-small @click="newEntry"><v-icon>mdi-plus</v-icon></v-btn>
+        <v-btn icon x-small @click="newEntry()"
+          ><v-icon>mdi-plus</v-icon></v-btn
+        >
       </v-card-title>
 
       <v-virtual-scroll :items="logEntries" item-height="45" height="495">
@@ -120,16 +122,7 @@ export default {
     },
 
     rowColor: function (entry, index) {
-      let color = Utils.rowColor(index)
-
-      if (Moment(entry.logged_at * 1000).isSame(Moment(), 'day')) {
-        color = 'light-green accent-1'
-        if (index % 2 === 1) {
-          color = 'light-green accent-2'
-        }
-      }
-
-      return color
+      return Utils.rowColor(index, entry.isToday())
     }
   },
 

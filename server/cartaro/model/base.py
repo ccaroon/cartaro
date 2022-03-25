@@ -29,11 +29,22 @@ class Base(ABC):
     # TODO: Don't hard-code TZ
     TIMEZONE = 'US/Eastern'
 
+    DATABASE_NAME = None
+    TABLE_NAME = "_default"
+
     __DATABASE = None
 
     def __init__(self, id=None, **kwargs):
         kwargs['id'] = id
         self.__unserialize(kwargs)
+
+    @classmethod
+    def __db_name(cls):
+        if cls.DATABASE_NAME is None:
+            inflect = inflector.Inflector()
+            cls.DATABASE_NAME = inflect.pluralize(cls.__name__)
+
+        return cls.DATABASE_NAME
 
     @property
     def id(self):
@@ -58,30 +69,31 @@ class Base(ABC):
     @classmethod
     def _database(cls):
         if not cls.__DATABASE:
-            inflect = inflector.Inflector()
-
             env = os.environ.get("CARTARO_ENV", "dev")
             doc_dir = os.environ.get("CARTARO_DOC_PATH", ".")
 
-            db_name = inflect.pluralize(cls.__name__)
+            db_name = cls.__db_name()
             if (env != "prod"):
                 db_name += F"-{env}"
 
             cls.__DATABASE = TinyDB(F"{doc_dir}/{db_name}.json")
 
-        return cls.__DATABASE
+        return cls.__DATABASE.table(cls.TABLE_NAME)
 
     def _date_setter(self, date_value, null_ok=False):
         new_date = None
 
         if isinstance(date_value, arrow.Arrow):
             new_date = date_value
+        elif isinstance(date_value, str):
+            new_date = arrow.get(date_value)
+            # new_date.replace(tzinfo=Base.TIMEZONE)
         elif isinstance(date_value, int):
             new_date = self._epoch_to_date_obj(date_value)
         elif not date_value and null_ok:
             new_date = None
         else:
-            raise TypeError(F"Date must be of type INT or Arrow; Got: {type(date_value)}")
+            raise TypeError(F"Date must be of type INT, STR or Arrow; Got: {type(date_value)}")
 
         return new_date
 
@@ -141,7 +153,7 @@ class Base(ABC):
                 if safe:
                     # Mark as deleted by setting the `deleted_at` date instead of
                     # actually removing the record.
-                    self._database().update(tyops.set('deleted_at', self.__deleted_at.timestamp), doc_ids=[self.id])
+                    self._database().update(tyops.set('deleted_at', self.__deleted_at.int_timestamp), doc_ids=[self.id])
                 else:
                     self._database().remove(doc_ids=[self.id])
                     self.__id = None
@@ -159,9 +171,9 @@ class Base(ABC):
     def serialize(self, omit_id=False):
         # Shared Fields
         data = {
-            "created_at": self.created_at.timestamp if self.created_at else None,
-            "updated_at": self.updated_at.timestamp if self.updated_at else None,
-            "deleted_at": self.deleted_at.timestamp if self.deleted_at else None
+            "created_at": self.created_at.int_timestamp if self.created_at else None,
+            "updated_at": self.updated_at.int_timestamp if self.updated_at else None,
+            "deleted_at": self.deleted_at.int_timestamp if self.deleted_at else None
         }
 
         if not omit_id:
@@ -230,9 +242,10 @@ class Base(ABC):
         for (field, value) in kwargs.items():
             # field=value
             # field=cmp:value
-            # cmp can be eq|ne|gt|gte|lt|lte
+            # cmp can be eq|ne|gt|gte|lt|lte|btw
+            #   - btw format: field=btw:value1:value2
             # NOTE: Currently `cmp` only valid for numeric searches
-            parts = value.split(':', 2)
+            parts = value.split(':', 1)
             if len(parts) == 1:
                 test_op = 'eq'
                 test_value = parts[0]
@@ -250,8 +263,7 @@ class Base(ABC):
                 if re.match("(true|false)", query_value, flags=re.IGNORECASE):
                     query_value = True if query_value.lower() == 'true' else False
                     query_parts.append(query_builder[field] == query_value)
-                elif query_value.isdecimal():
-                    query_value = int(query_value)
+                elif query_value.isdecimal() or re.match('\d+:\d+', query_value):
                     query_parts.append(query_builder[field].test(DbHelper.cmp_integer, test_op, query_value))
                 elif query_value == 'null':
                     query_parts.append(query_builder[field] == None)

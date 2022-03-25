@@ -31,7 +31,7 @@
           </v-list-item>
         </v-col>
         <v-col cols="2">
-          <v-list-item class="grey lighten-1 pa-0">
+          <v-list-item class="grey lighten-2 pa-0">
             <v-list-item-avatar class="ma-0">
               <v-icon>mdi-sigma</v-icon>
             </v-list-item-avatar>
@@ -144,10 +144,13 @@ export default {
     },
 
     dayColor: function (idx, workDay) {
-      let color = Utils.rowColor(idx)
+      const alt = idx % 2 === 0
+      let color = workDay.color('light', alt)
 
       if (Moment().startOf('day').isSame(workDay.date * 1000)) {
         color = Constants.COLORS.ITEM_HIGHLIGHT
+      } else if (workDay.isNormal()) {
+        color = alt ? Constants.COLORS.GREY_ALT : Constants.COLORS.GREY
       }
 
       return color

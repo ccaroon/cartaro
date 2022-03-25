@@ -8,9 +8,11 @@ from cartaro.utils.db_helper import DbHelper
 
 class WorkDay(Taggable, Base):
     TYPE_NORMAL = "normal"
-    TYPE_PTO = "pto"
+    TYPE_VACATION = "vacation"
     TYPE_SICK = "sick"
     TYPE_HOLIDAY = "holiday"
+
+    HOURS_PER_DAY = 7.5
 
     def __init__(self, id=None, **kwargs):
         self.__date = None
@@ -27,12 +29,7 @@ class WorkDay(Taggable, Base):
 
     @date.setter
     def date(self, new_date):
-        if isinstance(new_date, arrow.Arrow) or new_date is None:
-            self.__date = new_date
-        elif isinstance(new_date, int):
-            self.__date = self._epoch_to_date_obj(new_date)
-        else:
-            raise TypeError("'date' must be of type INT or Arrow")
+        self.__date = self._date_setter(new_date, null_ok=True)
 
     def update(self, data):
         self.date = data.get('date', self.date)
@@ -44,13 +41,13 @@ class WorkDay(Taggable, Base):
 
     def _serialize(self):
         data = {
-            "date": self.date.timestamp if self.date else None,
+            "date": self.date.int_timestamp if self.date else None,
             "time_in": self.time_in,
             "time_out": self.time_out,
             "note": self.note,
             "type": self.type
         }
-        
+
         # Tags
         data.update(super()._serialize())
 
@@ -60,7 +57,7 @@ class WorkDay(Taggable, Base):
     def range(cls, start, end=None, days=None):
         start_date = start
         end_date = end
-        
+
         if not isinstance(start, arrow.Arrow):
             start_date = arrow.get(start).replace(tzinfo=cls.TIMEZONE)
 
@@ -77,7 +74,7 @@ class WorkDay(Taggable, Base):
         db = cls._database()
 
         Day = Query()
-        docs = db.search(Day.date.test(lambda value, s, e: s <= value <= e, start_date.timestamp, end_date.timestamp))
+        docs = db.search(Day.date.test(lambda value, s, e: s <= value <= e, start_date.int_timestamp, end_date.int_timestamp))
         docs = DbHelper.sort(docs, 'date')
 
         work_days = []

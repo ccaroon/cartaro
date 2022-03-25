@@ -61,17 +61,21 @@ class DbHelper:
     def cmp_integer(doc_val, op, test_val):
         result = False
         if doc_val is not None:
+            values = test_val.split(':')
+            values = [int(val) for val in values]
             if op == 'ne':
-                result = doc_val != test_val
+                result = doc_val != values[0]
             elif op == 'gt':
-                result = doc_val > test_val
+                result = doc_val > values[0]
             elif op == 'gte':
-                result = doc_val >= test_val
+                result = doc_val >= values[0]
             elif op == 'lt':
-                result = doc_val < test_val
+                result = doc_val < values[0]
             elif op == 'lte':
-                result = doc_val <= test_val
+                result = doc_val <= values[0]
+            elif op == 'btw':
+                result = values[0] <= doc_val <= values[1]
             else:
-                result = doc_val == test_val
+                result = doc_val == values[0]
 
         return result

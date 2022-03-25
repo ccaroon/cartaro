@@ -3,16 +3,21 @@ import Resource from './Resource'
 // -----------------------------------------------------------------------------
 class Note extends Resource {
   static RESOURCE_NAME = 'notes'
+  static DEFAULT_ICON = 'mdi-note'
 
-  icon () {
+  icon (defIcon = Note.DEFAULT_ICON) {
     let icon = null
 
     if (this.title) {
       icon = Icon.superSearch(this.title)
     }
 
-    if (icon === null && this.tags) {
-      icon = Icon.superSearch(this.tags, 'mdi-note')
+    if (icon === null) {
+      if (this.tags) {
+        icon = Icon.superSearch(this.tags, defIcon)
+      } else {
+        icon = defIcon
+      }
     }
 
     return icon

@@ -50,7 +50,7 @@
             clearable
             placeholder="Search..."
             prepend-inner-icon="mdi-magnify"
-            @click:clear="clearSearch"
+            @click:clear="clearSearch()"
             @keyup.enter="search()"
             @keyup.esc="clearSearch()"
           ></v-text-field>

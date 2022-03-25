@@ -11,20 +11,43 @@ class Resource {
 
   static getClient () {
     if (this.CLIENT === null) {
-      // console.log(`Creating new RestClient(${this.RESOURCE_NAME})`)
       this.CLIENT = new RestClient(this.RESOURCE_NAME)
     }
     return this.CLIENT
   }
 
+  exists (fields, options = {}) {
+    const query = {
+      pp: 5,
+      op: 'and'
+    }
+
+    fields.forEach((fld) => {
+      query[fld] = this[fld]
+    })
+
+    this.constructor.fetch(query, '/', {
+      handlers: {
+        onSuccess: (_, count) => {
+          const exists = count > 0
+          options.handlers.onSuccess(exists)
+        },
+        onError: options.handlers.onError
+      }
+    })
+  }
+
   static fetch (query, endpoint = '/', options = {}) {
     const client = this.getClient()
+    const promise = client.fetch(query, endpoint)
 
-    return client.fetch(query, endpoint, {
+    options.handlers = 'handlers' in options ? options.handlers : {}
+
+    this.__resolve(promise, {
       handlers: {
         onSuccess: (resp) => {
           let items = null
-          const itemData = resp.data[client.resource]
+          const itemData = resp.data[client.dataName()]
           if (itemData instanceof Array) {
             items = []
             itemData.forEach(data => {
@@ -41,7 +64,9 @@ class Resource {
               items[name] = itemList
             }
           }
-          options.handlers.onSuccess(items, resp.data.total)
+          if (options.handlers.onSuccess) {
+            options.handlers.onSuccess(items, resp.data.total)
+          }
         },
         onError: options.handlers.onError
       }
@@ -49,11 +74,15 @@ class Resource {
   }
 
   create (options = {}) {
-    return this.client.create(this, options)
+    const promise = this.client.create(this)
+    return this.constructor.__resolve(promise, options, (resp) => {
+      this.id = resp.data.id
+    })
   }
 
   update (options = {}) {
-    return this.client.update(this, options)
+    const promise = this.client.update(this)
+    return this.constructor.__resolve(promise, options)
   }
 
   save (options = {}) {
@@ -65,15 +94,50 @@ class Resource {
   }
 
   delete (options = {}) {
-    return this.client.delete(this, options)
+    const promise = this.client.delete(this, options.safe)
+    return this.constructor.__resolve(promise, options)
   }
 
   undelete (options = {}) {
-    return this.client.undelete(this, options)
+    const promise = this.client.undelete(this)
+    return this.constructor.__resolve(promise, options)
   }
 
   isDeleted () {
     return this.deleted_at !== null
+  }
+
+  static __resolve (promise, options, privateCB = null) {
+    const handlers = options.handlers
+
+    if (options.asPromise) {
+      return promise
+    } else {
+      promise
+        .then(resp => {
+          if (privateCB) {
+            privateCB(resp)
+          }
+
+          if (handlers.onSuccess) {
+            handlers.onSuccess(resp)
+          }
+        })
+        .catch(err => {
+          if (handlers.onError) {
+            handlers.onError(err)
+          }
+          this.__handleError(err)
+        })
+    }
+  }
+
+  static __handleError (err) {
+    if (err.response) {
+      console.log(`${err.response.status} - ${err.response.data.error}`)
+    } else {
+      console.log(err)
+    }
   }
 }
 // -----------------------------------------------------------------------------

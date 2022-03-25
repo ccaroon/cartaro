@@ -7,10 +7,12 @@ const constants = {
     TOOLBAR: 'grey darken-2',
 
     ITEM_HIGHLIGHT: 'light-green accent-1',
+    ITEM_HIGHLIGHT_ALT: 'light-green accent-2',
 
     GREY: 'grey lighten-2',
     GREY_ALT: 'grey lighten-4',
 
+    // TODO: move to Todo class
     PRIORITY_1: 'red',
     PRIORITY_2: 'orange',
     PRIORITY_3: 'yellow darken-1',
@@ -22,7 +24,9 @@ const constants = {
     PRIORITY_9: 'black'
   },
 
+  // TODO; move to Format class
   FORMATS: {
+    dateOnly: 'YYYY-MM-DD',
     entryDate: 'YYYY-MM-DD',
     countDownDate: 'YYYY-MM-DD @ HH:mm'
   },

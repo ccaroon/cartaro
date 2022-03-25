@@ -1,50 +1,98 @@
 # CHANGELOG
 
 ## UNRELEASED: v1.5.0 - Cartographer - 2021-??-??
-### Added
+### General UI + Frontend
+* File menu added to UI
+* File -> Backup added to UI. Calls the `/sys/backup` API endpoint.
+* Added "Build Date" to About dialog
+* All the markdown editors are individually theme-able via the JSON config file.
+* Icon additions and updates
+* Refactored bits of `RestClient` into `Resource` where they made more sense to be.
+  - Creating a new instance of an item will now set it's `id`
+
+### Home
+* Added the item count to the various lists (Tickets, Todos, Notes & Entries)
+
+#### CountDowns
+* Added a ToolTip to each of the Countdowns. Appears when you hover over the icon.
+
+#### LogEntries
+* Reduced the height of the list and increased the number of entries it loads from 10 to 25.
+
+#### Notes
+* Adjusted the spacing between the icon and the Note name on the Home screen.
+
+#### ToDos
+* Added "Edit" & "Snooze" buttons.
+* Removed the gray, clickable checkbox.
+* Changed the priority number from a circle to a box that is now clickable and will mark the item as complete.
+* Adjusted the spacing between the priority icon and the title.
+* Clicking a Todo now views it instead of editing it.
+
+#### WorkDays
+* If the same WorkDay has multiple entries, the Home Screen will now show them
+  listed under the same day instead of multiple entries in the list.
+* The Weekly Total now show hours worked and hours not worked.
+* Non-Normal WorkDays will appear in their specific types color, e.g. Sick Days
+  will display in red.
+
+### LogEntries
+* Maximized the height of the editor.
+
+### WorkDays
+* Calendar now shows an emoji for the day type instead of a 3-letter code.
+* Calendar "edit" pop-up now emphasizes the Close button instead of Delete
+* New entries created on the Calendar by clicking the Date number will
+  have "EDIT ME" in the note field.
+* Updated the colors on the Calendar
+
+### Notes
+* Note icons are now first based on the title, then the tags
+* Maximized the height of the editor.
+* Cmd-s/Ctl-s, when focused in text area, will save the Note w/out closing it.
+* Added "edit" button (pencil) to Note viewer. Quick switches to editor.
+* Added "view" button (eye) to Note editor. Quick switches to viewer.
+* Added "fullscreen/focus" button to Note editor. Hides all form components
+  except the editor text area.
+
+### ToDos
+* Removed the gray, clickable checkbox.
+* Changed the priority number from a circle to a box that is now clickable and will mark the item as complete.
+
+### Secrets
+n/a
+
+### Countdowns
+* Added a few convenience methods to the Countdown class
+
+### Scratchpad
+* Added "Erase" button to the AppBar -- Erases the active tab
+* A tab's icon is determined by keywords in the first line of the content
+  - Defaults to a solid square with the tab's number
+* A tab's icon is white if it is blank otherwise it's green.
+* Each scratch pad is backed by a Note instance
+* Exported scratch pads now include a title (based on the first line)
+
+### TimeOff (**NEW**)
+***STILL A WORK IN PROGRESS***
+
+Added TimeOff tracking. This includes the tracking of Holidays and other TimeOff
+balances like PTO and Sick days.
+
+Can be access by clicking the new TimeOff icon at the bottom of the side bar.
+
+### Server
 * Ability for the server to back up the data files
   - `utils/archive.py`
   - `/sys/backup` end point on the `system.py` controller
-* File menu added to UI
-* File -> Backup added to UI. Calls the `/sys/backup` API endpoint.
-* Added the item count to the various lists on the Home Screen (Tickets, Todos, Notes & Entries)
-* Added "Erase" button to ScratchPad AppBar -- Erases the active tab
-* Added "Edit" & "Snooze" buttons to Todos on Home Screen
-* Added "Build Date" to About dialog
-* Added a few convenience methods to the Countdown class
-
-### Changed
-* Maximized the height of the editor for LogEntries and Notes
-* Clicking a Todo on the Home Screen now views it instead of editing it.
-* Work Day Calendar now shows an emoji for the day type instead of a 3-letter code.
-* Added a few new icons
-* Improvements to Icon searching
-* Note icons are now first based on the title, then the tags
-* Work Day Calendar "edit" pop-up now emphasizes the Close button instead of Delete
-* If the same WorkDay has multiple entries, the Home Screen will now show them
-  listed under the same day instead of multiple entries in the list.
-* The WorkDay list Weekly Total on the Home Screen now show hours worked and
-  hours not worked.
-* New entries created on the WorkDay Calendar by clicking the Date number will
-  have "EDIT ME" in the note field.
-* Reduced the height of the Log Entries list on the Home Screen and increased
-  the number of entries it loads from 10 to 25.
-* Added a ToolTip to each of the Countdowns on the Home Screen
-  - Appears when you hover over the icon
-
-### Fixed
-...
-
-### Deprecated
-...
-
-### Removed
-* `yarn` is no longer supported. Just use `npm`
-
-### Security
-...
+* Upgraded a few python modules
+  - arrow => 1.2.2
+  - Flask => 2.0.3
 
 ### Misc
+* `yarn` is no longer supported. Just use `npm`
+* Added a few new icons
+* Improvements to Icon searching
 * Lots of minor module updates
   - electron, vue, vuetify, etc.
 
@@ -113,7 +161,7 @@
 ### Changed
 * Shared/AppBar
   - Removed `newItem` and `newIcon` properties
-  - Added `buttons` property that can be used in a more general way to define 
+  - Added `buttons` property that can be used in a more general way to define
     any number of buttons and their actions.
   - Icon in Top-Left of App indicates if the App is running in development mode.
   - Added `endSlot` option

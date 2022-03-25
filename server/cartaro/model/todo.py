@@ -19,7 +19,7 @@ class Todo(Taggable, Base):
         self.repeat = 0
         self.is_complete = False
         self.__completed_at = None
-        
+
         super().__init__(id=id, **kwargs)
 
     @property
@@ -43,10 +43,10 @@ class Todo(Taggable, Base):
             'title': self.title,
             'description': self.description,
             'priority': self.priority,
-            'due_at': self.due_at.timestamp if self.due_at else None,
+            'due_at': self.due_at.int_timestamp if self.due_at else None,
             'repeat': self.repeat,
             'is_complete': self.is_complete,
-            'completed_at': self.completed_at.timestamp if self.completed_at else None,
+            'completed_at': self.completed_at.int_timestamp if self.completed_at else None,
         }
 
         # Tags
@@ -68,4 +68,4 @@ class Todo(Taggable, Base):
 
 
 
-# 
+#

@@ -4,11 +4,13 @@
       v-model="showEditor"
       v-bind:note="note"
       v-on:close="closeEditor"
+      v-on:view="closeAndView"
     ></NoteEditor>
     <NoteViewer
       v-model="showViewer"
       v-bind:note="note"
       v-on:close="showViewer = false"
+      v-on:edit="closeAndEdit"
     ></NoteViewer>
     <v-card>
       <v-card-title :class="constants.COLORS.GREY"
@@ -16,7 +18,7 @@
         <span class="text-subtitle-1 grey--text text--darken-1"
           >({{ notes.length }})</span
         >
-        <v-btn icon x-small @click="newNote"><v-icon>mdi-plus</v-icon></v-btn>
+        <v-btn icon x-small @click="newNote()"><v-icon>mdi-plus</v-icon></v-btn>
       </v-card-title>
 
       <v-virtual-scroll :items="notes" item-height="45" height="180">
@@ -26,7 +28,7 @@
             @click="viewNote(item)"
             dense
           >
-            <v-list-item-icon>
+            <v-list-item-icon class="mr-3">
               <v-icon>{{ item.icon() }}</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
@@ -81,6 +83,16 @@ export default {
     editNote: function (note) {
       this.note = note
       this.showEditor = true
+    },
+
+    closeAndEdit: function () {
+      this.showViewer = false
+      this.editNote(this.note)
+    },
+
+    closeAndView: function () {
+      this.showEditor = false
+      this.viewNote(this.note)
     },
 
     closeEditor: function () {

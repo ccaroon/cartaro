@@ -28,12 +28,13 @@ export default {
     child.loadURL(url)
   },
 
-  rowColor: function (idx) {
-    let color = Constants.COLORS.GREY
+  rowColor: function (idx, hilite = false) {
+    let color = hilite ? Constants.COLORS.ITEM_HIGHLIGHT : Constants.COLORS.GREY
 
-    if (idx % 2 === 0) {
-      color = Constants.COLORS.GREY_ALT
+    if (idx % 2 !== 0) {
+      color = hilite ? Constants.COLORS.ITEM_HIGHLIGHT_ALT : Constants.COLORS.GREY_ALT
     }
+
     return color
   }
 

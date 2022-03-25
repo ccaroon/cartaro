@@ -17,26 +17,20 @@
         <span class="text-subtitle-1 grey--text text--darken-1"
           >({{ todos.length }})</span
         >
-        <v-btn icon x-small @click="refresh"
+        <v-btn icon x-small @click="refresh()"
           ><v-icon>mdi-refresh</v-icon></v-btn
         >
-        <v-btn icon x-small @click="newTodo"><v-icon>mdi-plus</v-icon></v-btn>
+        <v-btn icon x-small @click="newTodo()"><v-icon>mdi-plus</v-icon></v-btn>
       </v-card-title>
 
       <v-virtual-scroll :items="todos" item-height="45" height="180">
         <template v-slot:default="{ index, item }">
           <v-list-item :class="item.color(index)" dense @click="view(item)">
-            <v-list-item-icon>
-              <v-icon :color="item.priorityColor()"
-                >mdi-numeric-{{ item.priority }}-circle</v-icon
-              >
-              &nbsp;
+            <v-list-item-icon class="mr-3">
               <v-icon
-                :color="item.is_complete ? 'green' : ''"
+                :color="item.priorityColor()"
                 @click.stop="toggleCompleted(item)"
-                >mdi-checkbox-{{
-                  item.is_complete ? "marked" : "blank"
-                }}</v-icon
+                >mdi-numeric-{{ item.priority }}-box-outline</v-icon
               >
             </v-list-item-icon>
             <v-list-item-content>
@@ -45,7 +39,7 @@
               </v-list-item-title>
               <v-list-item-subtitle>
                 <span v-if="item.due_at"
-                  >Due {{ format.humanizeDate(item.due_at) }}</span
+                  >Due {{ format.humanizeDate(item.due_at * 1000) }}</span
                 >
                 <span v-else>No Due Date</span>
               </v-list-item-subtitle>

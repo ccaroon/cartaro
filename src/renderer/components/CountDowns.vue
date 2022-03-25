@@ -20,7 +20,7 @@
           </v-btn>
         </v-list-item-avatar>
         <v-list-item-avatar v-else>
-          <v-icon color="red">mdi-cancel</v-icon>
+          <v-icon color="red">{{ icon.get("deleted") }}</v-icon>
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title
@@ -47,10 +47,6 @@
             </v-list-item-subtitle>
           </template>
         </v-list-item-content>
-
-        <v-list-item-icon>
-          <v-icon>mdi-calendar-icon</v-icon>
-        </v-list-item-icon>
 
         <Actions
           v-bind:actions="{
@@ -239,6 +235,7 @@ import Mousetrap from 'mousetrap'
 
 import Constants from '../lib/Constants'
 import Format from '../lib/Format'
+import Icon from '../lib/Icon'
 import Notification from '../lib/Notification'
 import Utils from '../lib/Utils'
 
@@ -401,6 +398,7 @@ export default {
       perPage: 15,
       totalCountDowns: 0,
       format: Format,
+      icon: Icon,
       utils: Utils,
       searchText: null,
       showEditor: false,
