@@ -69,7 +69,7 @@
     "markdown-it-emoji": "^2.0.0",
     "markdown-it-for-inline": "^0.1.1",
     "markdown-it-task-lists": "^2.1.1",
-    "moment": "^2.29.1",
+    "moment": "^2.29.2",
     "mousetrap": "^1.6.5",
     "vue": "^2.6.14",
     "vue-codemirror": "^4.0.6",
