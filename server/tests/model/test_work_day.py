@@ -32,6 +32,24 @@ class WorkDayTest(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, 'must be of type INT, STR or Arrow'):
             self.work_day.date = [2021, 1, 18]
 
+    def test_hours(self):
+        self.assertEqual(self.work_day.hours, 7.5)
+
+        wd = WorkDay(time_in='10:30', time_out='10:31')
+        self.assertEqual(wd.hours, 0.02)
+
+        wd = WorkDay(time_in='10:30', time_out='11:00')
+        self.assertEqual(wd.hours, 0.5)
+
+        wd = WorkDay(time_in='10:45', time_out='11:00')
+        self.assertEqual(wd.hours, 0.25)
+
+        wd = WorkDay(time_in='9:00', time_out='15:40')
+        self.assertEqual(wd.hours, 6.67)
+
+        wd = WorkDay(time_in='9:05', time_out='17:05')
+        self.assertEqual(wd.hours, 8.0)
+
     def test_serialize(self):
         data = self.work_day.serialize()
 

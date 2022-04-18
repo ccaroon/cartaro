@@ -73,7 +73,11 @@ class Personal(TimeOff):
 
     def __compute_used(self):
         days = self.__loadWorkDays()
-        used = len(days) * WorkDay.HOURS_PER_DAY
+
+        used = 0.0
+        for day in days:
+            used += day.hours
+
         return used
 
     def available(self):
