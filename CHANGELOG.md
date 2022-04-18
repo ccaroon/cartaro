@@ -3,6 +3,11 @@
 ## UNRELEASED: v1.6.0 - Kraken - 2022-??-??
 ...
 
+## v1.5.1 - Cartographer - 2022-04-18
+### Features
+* PTO Tracking is now by the hour instead of assuming a Vacation or Sick day
+  uses the entire day.
+
 ## v1.5.0 - Cartographer - 2022-03-25
 ### General UI + Frontend
 * File menu added to UI

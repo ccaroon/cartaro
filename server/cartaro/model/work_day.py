@@ -31,6 +31,38 @@ class WorkDay(Taggable, Base):
     def date(self, new_date):
         self.__date = self._date_setter(new_date, null_ok=True)
 
+    @property
+    def hours(self):
+        """Compute number of hours between `time_in` & `time_out`"""
+        total_hours = None
+
+        # Full day PTOs have in & out of '00:00'
+        if self.time_in == '00:00' and self.time_out == '00:00':
+            total_hours = self.HOURS_PER_DAY
+        else:
+            t_in = self.time_in.split(':', 2)
+            t_out = self.time_out.split(':', 2)
+
+            time_in_hour = int(t_in[0])
+            time_in_min = int(t_in[1])
+
+            time_out_hour = int(t_out[0])
+            time_out_min = int(t_out[1])
+
+            # 16 - 9 = 7 | 11 - 10 = 1
+            hours = time_out_hour - time_in_hour
+            
+            # 30 - 00 = 30 | 00 - 30 = -30
+            mins = time_out_min - time_in_min
+
+            #  30 / 60 = 0.5 | -30 / 60 = -0.5
+            mins_diff = mins / 60
+
+            # 7 + 0.5 = 7.5 | 1 + -0.5 = 0.5
+            total_hours = hours + round(mins_diff, 2)
+
+        return total_hours
+
     def update(self, data):
         self.date = data.get('date', self.date)
         self.time_in = data.get('time_in', self.time_in)
