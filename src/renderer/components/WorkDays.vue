@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <AppBar
       v-bind:name="'Work Days'"
       v-bind:buttons="appBarButtons"
@@ -22,7 +22,7 @@
           <v-icon>mdi-chevron-right</v-icon>
         </v-btn>
       </v-sheet>
-      <v-sheet height="850">
+      <v-sheet :height="calHeight">
         <v-calendar
           ref="calendar"
           v-model="calDate"
@@ -387,6 +387,7 @@ export default {
       icons: Icon,
       showTimeInMenu: false,
       showTimeOutMenu: false,
+      calHeight: Math.round(window.innerHeight * 0.85),
       appBarButtons: [
         { name: 'New Week', icon: 'mdi-calendar-plus', action: this.newWeek }
       ]

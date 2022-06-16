@@ -11,7 +11,7 @@
         >
       </v-card-title>
 
-      <v-virtual-scroll :items="tickets" item-height="40" height="180">
+      <v-virtual-scroll :items="tickets" item-height="40" :height="listHeight">
         <template v-slot:default="{ index, item }">
           <v-list-item :class="utils.rowColor(index)" dense>
             <v-list-item-icon>
@@ -79,6 +79,7 @@ export default {
   data () {
     return {
       tickets: [],
+      listHeight: Math.round(window.innerHeight * 0.25),
       constants: Constants,
       utils: Utils
     }

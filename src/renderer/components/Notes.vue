@@ -179,11 +179,13 @@ export default {
   },
 
   data () {
+    const itemHeight = 65
+
     return {
       note: new Note({}),
       notes: [],
       page: 1,
-      perPage: 15,
+      perPage: Math.round(window.innerHeight / itemHeight) - 1,
       totalNotes: 0,
       showEditor: false,
       showViewer: false,

@@ -30,7 +30,7 @@
         >
       </v-card-title>
 
-      <v-virtual-scroll :items="holidays" item-height="55" height="450">
+      <v-virtual-scroll :items="holidays" item-height="50" :height="listHeight">
         <template v-slot:default="{ index, item }">
           <v-list-item dense :class="rowColor(item, index)">
             <v-list-item-avatar>
@@ -409,6 +409,7 @@ export default {
       page: 1,
       perPage: 50,
       totalHolidays: 0,
+      listHeight: Math.round(window.innerHeight * 0.55),
       searchText: null,
       showEditor: false,
       showDateMenu: false,
