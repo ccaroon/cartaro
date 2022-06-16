@@ -21,7 +21,7 @@
         <v-btn icon x-small @click="newNote()"><v-icon>mdi-plus</v-icon></v-btn>
       </v-card-title>
 
-      <v-virtual-scroll :items="notes" item-height="45" height="180">
+      <v-virtual-scroll :items="notes" item-height="45" :height="listHeight">
         <template v-slot:default="{ index, item }">
           <v-list-item
             :class="utils.rowColor(index)"
@@ -123,6 +123,7 @@ export default {
   data () {
     return {
       notes: [],
+      listHeight: Math.round(window.innerHeight * 0.25),
       note: new Note({}),
       showEditor: false,
       showViewer: false,

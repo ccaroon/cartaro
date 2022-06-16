@@ -1,5 +1,5 @@
 <template>
-  <v-container class="black">
+  <v-container fluid class="black">
     <AppBar
       v-bind:name="'Scratch Pad'"
       v-bind:buttons="appBarButtons"
@@ -244,6 +244,6 @@ export default {
 /* >>> -means- that this style should effect child components */
 >>> .CodeMirror {
   border: 1px solid rgb(0, 0, 0);
-  height: 850px;
+  height: 1100px;
 }
 </style>

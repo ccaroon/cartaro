@@ -23,7 +23,7 @@
         <v-btn icon x-small @click="newTodo()"><v-icon>mdi-plus</v-icon></v-btn>
       </v-card-title>
 
-      <v-virtual-scroll :items="todos" item-height="45" height="180">
+      <v-virtual-scroll :items="todos" item-height="45" :height="listHeight">
         <template v-slot:default="{ index, item }">
           <v-list-item :class="item.color(index)" dense @click="view(item)">
             <v-list-item-icon class="mr-3">
@@ -169,6 +169,7 @@ export default {
     return {
       todo: new Todo({}),
       todos: [],
+      listHeight: Math.round(window.innerHeight * 0.25),
       showEditor: false,
       showViewer: false,
       constants: Constants,

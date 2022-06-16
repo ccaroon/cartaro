@@ -21,7 +21,11 @@
         >
       </v-card-title>
 
-      <v-virtual-scroll :items="logEntries" item-height="45" height="495">
+      <v-virtual-scroll
+        :items="logEntries"
+        item-height="45"
+        :height="listHeight"
+      >
         <template v-slot:default="{ index, item }">
           <v-list-item
             :class="rowColor(item, index)"
@@ -130,6 +134,7 @@ export default {
     return {
       logEntries: [],
       logEntry: {},
+      listHeight: Math.round(window.innerHeight * 0.50),
       showEditor: false,
       showViewer: false,
       constants: Constants,

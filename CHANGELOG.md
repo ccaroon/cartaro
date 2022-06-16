@@ -1,7 +1,11 @@
 # CHANGELOG
 
 ## UNRELEASED: v1.6.0 - Kraken - 2022-??-??
-...
+### Misc
+* Changed window default width and height
+* Made the various screens more responsive to the windows size
+  - Stopped hard-coding component heights
+  - Stopped hard-coding list page items per page
 
 ## v1.5.1 - Cartographer - 2022-04-18
 ### Features

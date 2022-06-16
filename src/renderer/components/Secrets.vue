@@ -206,6 +206,8 @@ export default {
   },
 
   data () {
+    const itemHeight = 20
+
     return {
       secret: new Secret({}),
       secrets: [],
@@ -213,7 +215,7 @@ export default {
       // trigging UI updates on changes
       isHidden: [],
       page: 1,
-      perPage: 30,
+      perPage: Math.round(window.innerHeight / itemHeight) - 1,
       totalSecrets: 0,
       showEditor: false,
       showViewer: false,

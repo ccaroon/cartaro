@@ -24,7 +24,7 @@
         >
       </v-card-title>
 
-      <v-virtual-scroll :items="pto" item-height="55" height="300">
+      <v-virtual-scroll :items="pto" item-height="50" :height="listHeight">
         <template v-slot:default="{ index, item }">
           <v-list-item dense :class="rowColor(item, index)">
             <v-list-item-avatar>
@@ -291,6 +291,7 @@ export default {
       perPage: 25,
       totalPTO: 0,
       pto: [],
+      listHeight: Math.round(window.innerHeight * 0.25),
       currentPTO: new PTO({ accrual: null }),
       currYear: Moment().year(),
       searchText: null,
