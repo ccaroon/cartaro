@@ -1,0 +1,71 @@
+#!/bin/bash
+################################################################################
+DIR=`dirname $0`
+APP_DIR=$DIR/..
+PID_FILE=$HOME/cartaro.pid
+PORT=4242
+WORKERS=1
+################################################################################
+function app_start
+{
+    cd $APP_DIR;
+
+    if [ -f $PID_FILE ]; then
+        echo "Already running: `cat $PID_FILE`";
+    else
+        gunicorn --bind :$PORT --pid $PID_FILE  --daemon cartaro:flask_app
+
+        sleep 1
+
+        if [ -f $PID_FILE ]; then
+            echo "Started: `cat $PID_FILE`"
+        else
+            echo "Unable to start.";
+        fi
+
+    fi
+}
+################################################################################
+function app_stop
+{
+    if [ -f $PID_FILE ]; then
+        kill -TERM `cat $PID_FILE`
+        echo "Stopped.";
+    else
+        echo "Not running.";
+    fi
+}
+################################################################################
+function app_status
+{
+    if [ -f $PID_FILE ]; then
+        ps -fp `cat $PID_FILE`
+    else
+        echo "Not running.";
+    fi
+}
+################################################################################
+function usage
+{
+    echo "$0: Unknown command [$1]";
+    echo "Usage: $0 start|stop|restart|status"
+}
+################################################################################
+case $1 in
+    start)
+        app_start;
+    ;;
+    stop)
+        app_stop;
+    ;;
+    restart)
+        app_stop;
+        sleep 1
+        app_start;
+    ;;
+    status)
+        app_status;
+    ;;
+    *) usage $1;
+esac
+################################################################################

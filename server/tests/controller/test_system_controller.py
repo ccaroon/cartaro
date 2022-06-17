@@ -16,7 +16,7 @@ class SystemControllerTest(unittest.TestCase):
         self.assertEqual(data, 'pong')
 
     def test_backup(self):
-        r = self.client.post('/sys/backup')
+        r = self.client.post('/sys/backup', json={})
         self.assertEqual(r.status_code, 201)
 
         data = r.get_json()
