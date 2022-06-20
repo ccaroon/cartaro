@@ -5,7 +5,7 @@ class ConfigTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        Config.initialize('tests/data/CartaroCfg.json')
+        Config.initialize('tests/data/CartaroCfg-test.json')
 
     def setUp(self):
         self.config = Config()
@@ -16,7 +16,7 @@ class ConfigTest(unittest.TestCase):
 
     def test_get(self):
         # non-default
-        port = self.config.get('CARTARO:serverPort')
+        port = self.config.get('CARTARO:server:port')
         self.assertEqual(port, 8888)
 
         # not found - return default

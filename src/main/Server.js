@@ -10,7 +10,7 @@ import Settings from './Settings'
 class Server {
   static __instance = null
 
-  static PORT = Config.get('serverPort', 4242)
+  static PORT = Config.get('server:port', 4242)
   static LOGGER = Logger.getInstance()
   static HEALTHCHECK_TRIES = 5
   static HEALTHCHECK_SLEEP = 750

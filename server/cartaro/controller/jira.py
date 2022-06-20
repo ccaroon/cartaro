@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 import requests
 
 from cartaro.model.ticket import Ticket
-from cartaro import flask_app
+from cartaro.main import flask_app
 
 jira = Blueprint("jira", __name__)
 

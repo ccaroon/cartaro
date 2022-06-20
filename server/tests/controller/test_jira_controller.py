@@ -1,29 +1,29 @@
 import unittest
 import unittest.mock as mock
-import cartaro
 
+import cartaro
 # ------------------------------------------------------------------------------
 class JiraControllerTest(unittest.TestCase):
     def setUp(self):
         # Setup Flask Testing
-        cartaro.flask_app.config['TESTING'] = True
-        self.client = cartaro.flask_app.test_client()
+        cartaro.main.flask_app.config['TESTING'] = True
+        self.client = cartaro.main.flask_app.test_client()
         # Backup Jira config
-        self._cfg_jira = cartaro.flask_app.config['CARTARO']['jira'].copy()
+        self._cfg_jira = cartaro.main.flask_app.config['CARTARO']['jira'].copy()
 
     def tearDown(self):
         # Restore Jira config
-        cartaro.flask_app.config['CARTARO']['jira']['host'] = self._cfg_jira['host']
-        cartaro.flask_app.config['CARTARO']['jira']['token'] = self._cfg_jira['token']
+        cartaro.main.flask_app.config['CARTARO']['jira']['host'] = self._cfg_jira['host']
+        cartaro.main.flask_app.config['CARTARO']['jira']['token'] = self._cfg_jira['token']
 
     def __set_cfg_jira(self, host, token):
-        cartaro.flask_app.config['CARTARO']['jira']['host'] = host
-        cartaro.flask_app.config['CARTARO']['jira']['token'] = token
-    
+        cartaro.main.flask_app.config['CARTARO']['jira']['host'] = host
+        cartaro.main.flask_app.config['CARTARO']['jira']['token'] = token
+
     def test_cfg_missing_host(self):
         self.__set_cfg_jira(None, 'TOKEN')
         r = self.client.get('/jira/search')
-        
+
         self.assertEqual(r.status_code, 500)
 
         body = r.get_json()
@@ -33,9 +33,9 @@ class JiraControllerTest(unittest.TestCase):
     def test_cfg_missing_token(self):
         self.__set_cfg_jira('HOST', None)
 
-        cartaro.flask_app.config['CARTARO']['jira']['token'] = None
+        cartaro.main.flask_app.config['CARTARO']['jira']['token'] = None
         r = self.client.get('/jira/search')
-        
+
         self.assertEqual(r.status_code, 500)
 
         body = r.get_json()

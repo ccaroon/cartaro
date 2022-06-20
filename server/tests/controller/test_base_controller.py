@@ -1,5 +1,8 @@
 import unittest
-import cartaro
+import cartaro.main
+import cartaro.controller.base
+import cartaro.model.base
+import cartaro.model.taggable
 import faker
 
 # ------------------------------------------------------------------------------
@@ -44,8 +47,8 @@ class BaseControllerTest(unittest.TestCase):
     def setUpClass(cls):
         # Setup Flask Testing
         snippets = cartaro.controller.base.create_controller("snippets", Snippet)
-        cartaro.flask_app.register_blueprint(snippets, url_prefix="/snippets")
-        cartaro.flask_app.config['TESTING'] = True
+        cartaro.main.flask_app.register_blueprint(snippets, url_prefix="/snippets")
+        cartaro.main.flask_app.config['TESTING'] = True
 
     def setUp(self):
         Snippet.purge()
@@ -57,7 +60,7 @@ class BaseControllerTest(unittest.TestCase):
         # )
         # self.snippet.save()
 
-        self.client = cartaro.flask_app.test_client()
+        self.client = cartaro.main.flask_app.test_client()
 
     def test_create(self):
         data = {
@@ -90,7 +93,7 @@ class BaseControllerTest(unittest.TestCase):
             tags=['thing-1', 'thing-2']
         )
         a_snippet.save()
-        
+
         # Normal
         r = self.client.get(F'/snippets/{a_snippet.id}')
         self.assertEqual(r.status_code, 200)
@@ -227,7 +230,7 @@ class BaseControllerTest(unittest.TestCase):
     def test_find_group_by(self):
         self.__gen_snippets(8, title='MurderOfCrows')
         self.__gen_snippets(5, title='HerdOfCattle')
-        
+
         r = self.client.get('/snippets/?group_by=title')
         self.assertEqual(r.status_code, 200)
 

@@ -1,4 +1,3 @@
-import arrow
 from flask import request, jsonify
 
 from cartaro.model.work_day import WorkDay
@@ -13,7 +12,7 @@ def range():
 
     try:
         query_string = request.args.copy()
-        
+
         start = query_string.pop('start', None)
         end = query_string.pop('end', None)
         days = int(query_string.pop('days', 0))

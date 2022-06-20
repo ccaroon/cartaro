@@ -1,2 +1,5 @@
 bin/python
 dist/
+tests/tmp
+tests/tmpBackup
+cartaro.egg-info/

@@ -1,8 +1,7 @@
-from genericpath import exists
 from flask import Blueprint, request, jsonify
 import os
 
-from cartaro import flask_app
+from cartaro.main import flask_app
 from cartaro.utils.archive import Archive
 
 system = Blueprint("system", __name__)
@@ -30,7 +29,7 @@ def backup():
     backup_cfg = flask_app.config.get('CARTARO', {}).get('backup', {})
     try:
         data = request.json or {}
-        
+
         keep = data.get('keep', backup_cfg.get('keep', 7))
 
         archive_path = data.get('path',

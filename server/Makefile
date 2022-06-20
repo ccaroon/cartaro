@@ -66,6 +66,9 @@ dist: bin/python requirements-prod.txt $(shell find cartaro -name "*.py")
 package: dist
 	cd dist && zip -r ../cartaro-server.zip * && cd ..
 
+pip-package:
+	python setup.py sdist
+
 clean:
 	rm -f `find . -name "*.pyc"`
 	rm -f tests/tmp/*.json

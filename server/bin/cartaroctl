@@ -2,9 +2,20 @@
 ################################################################################
 DIR=`dirname $0`
 APP_DIR=$DIR/..
-PID_FILE=$HOME/cartaro.pid
-PORT=4242
-WORKERS=1
+
+export CARTARO_ENV=$2
+if [ "X$CARTARO_ENV" == "X" ]; then
+    export CARTARO_ENV="prod"
+fi
+
+if [ "X$XDG_RUNTIME_DIR" == "X" ]; then
+    XDG_RUNTIME_DIR=/run/user/$UID
+fi
+PID_FILE=$XDG_RUNTIME_DIR/cartaro-${CARTARO_ENV}.pid
+
+if [ "X$XDG_CONFIG_HOME" == "X" ]; then
+    XDG_CONFIG_HOME=$HOME/.config
+fi
 ################################################################################
 function app_start
 {
@@ -13,7 +24,7 @@ function app_start
     if [ -f $PID_FILE ]; then
         echo "Already running: `cat $PID_FILE`";
     else
-        gunicorn --bind :$PORT --pid $PID_FILE  --daemon cartaro:flask_app
+        gunicorn --config $XDG_CONFIG_HOME/cartaro-server.py --pid $PID_FILE cartaro.main:flask_app
 
         sleep 1
 
@@ -48,10 +59,11 @@ function app_status
 function usage
 {
     echo "$0: Unknown command [$1]";
-    echo "Usage: $0 start|stop|restart|status"
+    echo "Usage: $0 start|stop|restart|status [ENV]"
 }
 ################################################################################
-case $1 in
+action=$1
+case $action in
     start)
         app_start;
     ;;
@@ -66,6 +78,6 @@ case $1 in
     status)
         app_status;
     ;;
-    *) usage $1;
+    *) usage $action;
 esac
 ################################################################################

@@ -20,8 +20,8 @@ class WorkDaysControllerTest(unittest.TestCase):
 
     def setUp(self):
         # Setup Flask Testing
-        cartaro.flask_app.config['TESTING'] = True
-        self.client = cartaro.flask_app.test_client()
+        cartaro.main.flask_app.config['TESTING'] = True
+        self.client = cartaro.main.flask_app.test_client()
 
         WorkDay.purge()
 
