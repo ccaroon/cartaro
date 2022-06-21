@@ -31,7 +31,7 @@ def search():
             resp = requests.get(
                 url,
                 headers = {
-                    'Authorization': F"Basic {token}"
+                    'Authorization': F"Bearer {token}"
                 }
             )
 
