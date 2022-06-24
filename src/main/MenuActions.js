@@ -3,7 +3,7 @@ import { BrowserWindow } from 'electron'
 import http from 'axios'
 import Config from '../Config'
 
-const PORT = Config.get('serverPort', 4242)
+const PORT = Config.get('server:port', 4242)
 
 export default {
   FILE: {

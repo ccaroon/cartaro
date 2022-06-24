@@ -5,10 +5,12 @@ import path from 'path'
 
 import { app, ipcMain, BrowserWindow } from 'electron'
 
+import Config from '../Config'
 import Settings from './Settings'
 import Logger from './Logger'
 import Menu from './Menu'
-import Server from './Server'
+import EmbeddedServer from './EmbeddedServer'
+import ExternalServer from './ExternalServer'
 
 require('@electron/remote/main').initialize()
 // -----------------------------------------------------------------------------
@@ -80,9 +82,13 @@ function createWindow () {
 }
 // -----------------------------------------------------------------------------
 function quitApp () {
-  logger.info(`Shutting Down! Server PID: [${Server.pid()}]`)
   mainWindow = null
-  Server.stop()
+
+  if (Config.get('server:mode', 'embedded') === 'embedded') {
+    logger.info(`Shutting Down! Server PID: [${EmbeddedServer.pid()}]`)
+    EmbeddedServer.stop()
+  }
+
   app.quit()
 }
 // -----------------------------------------------------------------------------
@@ -91,12 +97,18 @@ function quitApp () {
 app.on('ready', () => {
   initApp()
 
-  Server.start()
-    .then(() => {
-      createWindow()
-    })
-    .catch((err) => {
-      logger.error(`Failed to start server: ${err}`)
-      quitApp()
-    })
+  if (Config.get('server:mode', 'embedded') === 'embedded') {
+    EmbeddedServer.start()
+      .then(() => {
+        createWindow()
+      })
+      .catch((err) => {
+        logger.error(`Failed to start server: ${err}`)
+        quitApp()
+      })
+  } else {
+    logger.info('"server:mode" set to "embedded". Waiting for Server to become available.')
+    createWindow()
+    ExternalServer.start(mainWindow)
+  }
 })

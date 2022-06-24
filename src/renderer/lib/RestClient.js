@@ -6,7 +6,7 @@ class RestClient {
   resource = null
 
   static HOST = 'http://127.0.0.1'
-  static PORT = config.get('serverPort', 4242)
+  static PORT = config.get('server:port', 4242)
 
   constructor(resource) {
     this.resource = resource

@@ -7,14 +7,14 @@ import Config from '../Config'
 import Logger from './Logger'
 import Settings from './Settings'
 // -----------------------------------------------------------------------------
-class Server {
+class EmbeddedServer {
   static __instance = null
 
   static PORT = Config.get('server:port', 4242)
   static LOGGER = Logger.getInstance()
   static HEALTHCHECK_TRIES = 5
   static HEALTHCHECK_SLEEP = 750
-  static COMMAND = `./bin/python ./bin/flask run -p ${Server.PORT}`
+  static COMMAND = `./bin/python ./bin/flask run -p ${EmbeddedServer.PORT}`
 
   static __start () {
     const self = this
@@ -32,7 +32,7 @@ class Server {
     const env = {} // process.env
     env.PYTHONPATH = serverPath
     env.FLASK_ENV = process.env.NODE_ENV
-    env.FLASK_APP = 'cartaro'
+    env.FLASK_APP = 'cartaro.main'
     env.CARTARO_DOC_PATH = Settings.docPath
     env.CARTARO_ENV = process.env.NODE_ENV === 'development' ? 'dev' : 'prod'
 
@@ -114,4 +114,4 @@ class Server {
   }
 }
 // -----------------------------------------------------------------------------
-export default Server
+export default EmbeddedServer
