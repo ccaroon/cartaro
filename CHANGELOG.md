@@ -1,11 +1,22 @@
 # CHANGELOG
 
 ## UNRELEASED: v1.6.0 - Kraken - 2022-??-??
+### General
+* Added Client/Server Mode
+  - This mode, which can be set in the `CartarCfg.json` file, enables users to
+    manage the running of the server separately from the UI (client). The server
+    is no longer started when the application starts. If the server is not
+    running, the UI will wait until it detects the server before becoming
+    fully ready for use.
+
 ### Misc
 * Changed window default width and height
 * Made the various screens more responsive to the windows size
   - Stopped hard-coding component heights
   - Stopped hard-coding list page items per page
+
+### Server
+* Added `/sys/version` API endpoint
 
 ## v1.5.1 - Cartographer - 2022-04-18
 ### Features

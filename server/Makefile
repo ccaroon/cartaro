@@ -50,7 +50,7 @@ dev:
 	CARTARO_DOC_PATH=${HOME}/Documents/Cartaro \
 	CARTARO_ENV=dev       \
 	FLASK_ENV=development \
-	FLASK_APP=cartaro     \
+	FLASK_APP=cartaro.main     \
 	flask run -p 7777
 
 bin/python:

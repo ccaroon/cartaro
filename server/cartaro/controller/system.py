@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 import os
 
+import cartaro.version
 from cartaro.main import flask_app
 from cartaro.utils.archive import Archive
 
@@ -12,6 +13,20 @@ def ping():
     status = 200
     try:
         resp = 'pong'
+    except Exception as e:
+        status = 500
+        resp = {
+            'error': str(e)
+        }
+
+    return jsonify(resp), status
+
+@system.route('/version', methods=['GET'])
+def version():
+    resp = None
+    status = 200
+    try:
+        resp = cartaro.version.VERSION
     except Exception as e:
         status = 500
         resp = {

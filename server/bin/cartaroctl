@@ -9,7 +9,12 @@ if [ "X$CARTARO_ENV" == "X" ]; then
 fi
 
 if [ "X$XDG_RUNTIME_DIR" == "X" ]; then
-    XDG_RUNTIME_DIR=/run/user/$UID
+    if [ -d /run/user ]; then
+        XDG_RUNTIME_DIR=/run/user/$UID
+    else
+        XDG_RUNTIME_DIR=$HOME/.run
+        mkdir -p $XDG_RUNTIME_DIR
+    fi
 fi
 PID_FILE=$XDG_RUNTIME_DIR/cartaro-${CARTARO_ENV}.pid
 
