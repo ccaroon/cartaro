@@ -10,7 +10,7 @@ class ExternalServer {
 
   static PORT = Config.get('server:port', 4242)
   static LOGGER = Logger.getInstance()
-  static HEARTBEAT_INTERVAL = 1000
+  static HEARTBEAT_INTERVAL = 1000 * 5
 
   static __heartBeat (mainWindow) {
     const self = this
