@@ -107,7 +107,7 @@ app.on('ready', () => {
         quitApp()
       })
   } else {
-    logger.info('"server:mode" set to "embedded". Waiting for Server to become available.')
+    logger.info('"server:mode" set to "external". Waiting for Server to become available.')
     createWindow()
     ExternalServer.start(mainWindow)
   }

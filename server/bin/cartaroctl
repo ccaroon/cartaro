@@ -26,10 +26,14 @@ function app_start
 {
     cd $APP_DIR;
 
+    cfg_file=$XDG_CONFIG_HOME/cartaro-server.py
+
     if [ -f $PID_FILE ]; then
         echo "Already running: `cat $PID_FILE`";
+    elif [ -z $cfg_file ]; then
+        echo "Cannot start. Missing server config file: '$cfg_file'"
     else
-        gunicorn --config $XDG_CONFIG_HOME/cartaro-server.py --pid $PID_FILE cartaro.main:flask_app
+        gunicorn --config $cfg_file --pid $PID_FILE cartaro.main:flask_app
 
         sleep 1
 

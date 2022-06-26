@@ -6,6 +6,7 @@ usage:
 	@echo "* dist: Create distribution directory"
 	@echo "* dist-clean: Clean up 'dist' droppings."
 	@echo "* package: Build distribution package"
+	@echo "* pip-package: Build PIP installable package"
 	@echo "* test: Run Unit Tests"
 	@echo "* test-file: Run Unit Tests for a single file"
 
@@ -51,7 +52,7 @@ dev:
 	CARTARO_ENV=dev       \
 	FLASK_ENV=development \
 	FLASK_APP=cartaro.main     \
-	flask run -p 7777
+	flask run -p 2424
 
 bin/python:
 	cp `which python` bin

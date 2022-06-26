@@ -75,6 +75,7 @@
 
 <script>
 // import config from '../../Config'
+import System from '../models/System'
 import RestClient from '../lib/RestClient'
 
 const { ipcRenderer } = require('electron')
@@ -82,15 +83,27 @@ const pkgJson = require('../../../package.json')
 
 export default {
   mounted () {
-    ipcRenderer.on('menu-help-about', (event, arg) => {
-      this.showDialog = true
+    System.versionInfo({
+      onSuccess: (data) => {
+        console.log(data)
+        ipcRenderer.on('menu-help-about', (event, arg) => {
+          this.showDialog = true
+        })
+      },
+      onError: (err) => {
+        console.log(`About Version info error: ${err}`)
+      }
     })
+    // ipcRenderer.on('menu-help-about', (event, arg) => {
+    //   this.showDialog = true
+    // })
   },
 
   data () {
     const data = {
       showDialog: false,
       appInfo: pkgJson,
+      sysInfo: {},
       builtWith: [
         { name: 'Electron', value: process.versions.electron, icon: 'atom' },
         { name: 'NodeJS', value: process.versions.node, icon: 'nodejs' },

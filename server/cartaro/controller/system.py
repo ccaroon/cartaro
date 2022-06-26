@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 import os
+import platform
 
 import cartaro.version
 from cartaro.main import flask_app
@@ -26,7 +27,12 @@ def version():
     resp = None
     status = 200
     try:
-        resp = cartaro.version.VERSION
+        resp = {
+            'system': {
+                'server_version': cartaro.version.VERSION,
+                'python_version': platform.python_version()
+            }
+        }
     except Exception as e:
         status = 500
         resp = {
