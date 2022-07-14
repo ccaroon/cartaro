@@ -14,6 +14,8 @@ import router from './router'
 import Vuetify from 'vuetify'
 import('vuetify/dist/vuetify.min.css')
 import('@mdi/font/css/materialdesignicons.min.css')
+import('material-design-icons-iconfont/dist/material-design-icons.css')
+import('@fortawesome/fontawesome-free/css/all.css')
 import('highlight.js/styles/atom-one-dark.css')
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))

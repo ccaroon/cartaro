@@ -24,7 +24,7 @@
                 <tbody>
                   <tr v-for="item in items" :key="item.name">
                     <td>
-                      <v-icon>mdi-{{ item.icon }}</v-icon>
+                      <v-icon>{{ item.icon }}</v-icon>
                       {{ item.name }}
                     </td>
                     <td
@@ -52,7 +52,7 @@
                 <tbody>
                   <tr v-for="item in items" :key="item.name">
                     <td>
-                      <v-icon>mdi-{{ item.icon }}</v-icon>
+                      <v-icon>{{ item.icon }}</v-icon>
                       {{ item.name }}
                     </td>
                     <td
@@ -92,27 +92,27 @@ export default {
       showDialog: false,
       appInfo: pkgJson,
       builtWith: [
-        { name: 'Electron', value: process.versions.electron, icon: 'atom' },
-        { name: 'NodeJS', value: process.versions.node, icon: 'nodejs' },
-        { name: 'Python', value: '3.9.6', icon: 'language-python' },
-        { name: 'Chrome', value: process.versions.chrome, icon: 'google-chrome' },
-        { name: 'Vue Version', value: require('vue/package.json').version, icon: 'vuejs' }
+        { name: 'Electron', value: process.versions.electron, icon: 'mdi-atom' },
+        { name: 'NodeJS', value: process.versions.node, icon: 'mdi-nodejs' },
+        { name: 'Python', value: '3.9.6', icon: 'mdi-language-python' },
+        { name: 'Chrome', value: process.versions.chrome, icon: 'mdi-google-chrome' },
+        { name: 'Vue Version', value: require('vue/package.json').version, icon: 'mdi-vuejs' }
       ],
       systemInfo: [
-        { name: 'Cartaro', value: `v${pkgJson.version} | ${pkgJson.codename}`, icon: 'map-legend' },
-        { name: 'Platform', value: require('os').platform(), icon: 'laptop' },
-        { name: 'Mode', value: process.env.NODE_ENV, icon: 'cogs' },
-        { name: 'Server', value: RestClient.baseUrl(), icon: 'ip-network' },
-        { name: 'Build Date', value: pkgJson.buildDate, icon: 'wrench' }
+        { name: 'Cartaro', value: `v${pkgJson.version} | ${pkgJson.codename}`, icon: pkgJson.icon },
+        { name: 'Platform', value: require('os').platform(), icon: 'mdi-laptop' },
+        { name: 'Mode', value: process.env.NODE_ENV, icon: 'mdi-cogs' },
+        { name: 'Server', value: RestClient.baseUrl(), icon: 'mdi-ip-network' },
+        { name: 'Build Date', value: pkgJson.buildDate, icon: 'mdi-wrench' }
       ]
     }
 
     if (process.platform === 'darwin') {
-      data.systemInfo[1].icon = 'apple'
+      data.systemInfo[1].icon = 'mdi-apple'
     } else if (process.platform === 'win32') {
-      data.systemInfo[1].icon = 'windows'
+      data.systemInfo[1].icon = 'mdi-windows'
     } else if (process.platform === 'linux') {
-      data.systemInfo[1].icon = 'linux'
+      data.systemInfo[1].icon = 'mdi-linux'
     }
 
     return (data)
