@@ -1,8 +1,9 @@
 {
   "name": "Cartaro",
   "version": "1.6.0b",
-  "buildDate": "Jun 21, 2022 @ 1:48pm",
+  "buildDate": "Jul 14, 2022 @ 11:40am",
   "codename": "Kraken",
+  "icon": "fab fa-gitkraken",
   "author": "Craig N. Caroon",
   "description": "Work Journal/Chronicler",
   "license": "",
@@ -60,6 +61,7 @@
   },
   "dependencies": {
     "@electron/remote": "^1.2.2",
+    "@fortawesome/fontawesome-free": "^6.1.1",
     "@mdi/font": "^6.5.95",
     "axios": "^0.21.4",
     "fernet": "^0.3.1",
@@ -69,6 +71,7 @@
     "markdown-it-emoji": "^2.0.0",
     "markdown-it-for-inline": "^0.1.1",
     "markdown-it-task-lists": "^2.1.1",
+    "material-design-icons-iconfont": "^6.7.0",
     "moment": "^2.29.1",
     "mousetrap": "^1.6.5",
     "vue": "^2.6.14",

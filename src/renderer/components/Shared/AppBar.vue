@@ -1,8 +1,7 @@
 <template>
   <v-app-bar app dense fixed dark clipped-left>
     <v-app-bar-nav-icon>
-      <v-icon v-if="env === 'development'" color="red">mdi-dev-to</v-icon>
-      <v-icon v-else>mdi-map-legend</v-icon>
+      <v-icon :color="iconColor">{{ icon }}</v-icon>
     </v-app-bar-nav-icon>
     <v-toolbar-title>Ĉartaro - {{ name }}</v-toolbar-title>
     <v-divider class="mx-4" vertical></v-divider>
@@ -65,6 +64,7 @@
 </template>
 <script>
 import Mousetrap from 'mousetrap'
+const pkgJson = require('../../../../package.json')
 
 export default {
   name: 'shared-app-bar',
@@ -129,6 +129,8 @@ export default {
   data () {
     return {
       page: 1,
+      icon: pkgJson.icon,
+      iconColor: process.env.NODE_ENV === 'development' ? 'red' : '',
       searchText: null,
       env: process.env.NODE_ENV
     }
