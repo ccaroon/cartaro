@@ -31,6 +31,15 @@
       </v-list>
     </v-navigation-drawer>
 
+    <v-bottom-sheet
+      inset
+      overlay-color="black"
+      overlay-opacity="0.75"
+      v-model="showConsole"
+    >
+      <Console></Console>
+    </v-bottom-sheet>
+
     <v-main>
       <About />
       <router-view></router-view>
@@ -57,13 +66,15 @@
 </template>
 
 <script>
+import Mousetrap from 'mousetrap'
+import Console from './components/Console'
 import About from './components/About'
 
 const { ipcRenderer } = require('electron')
 
 export default {
   name: 'Cartaro',
-  components: { About },
+  components: { About, Console },
   mounted () {
     ipcRenderer.on('menu-view-main', (event, arg) => {
       this.$router.push('/')
@@ -72,6 +83,8 @@ export default {
     ipcRenderer.on('app-show-notification', (event, note) => {
       this.addNotification(note)
     })
+
+    this.bindShortcutKeys()
   },
 
   methods: {
@@ -81,12 +94,21 @@ export default {
         this.notifications = []
       } else {
         // If notifications already exists, set the TO to -1 to cause the
-        // notifcation to stay on screen until manually dismissed.
+        // notification to stay on screen until manually dismissed.
         this.notifyTO = -1
       }
 
       this.notifications.push(note)
       this.notifyVisible = true
+    },
+
+    bindShortcutKeys: function () {
+      const self = this
+
+      Mousetrap.bind(['ctrl+shift+`', 'shift+`'], () => {
+        self.showConsole = true
+        return false
+      })
     },
 
     goTo: function (page) {
@@ -98,6 +120,7 @@ export default {
   data: () => ({
     drawer: true,
     about: false,
+    showConsole: false,
     notifications: [{
       icon: null,
       color: null,
