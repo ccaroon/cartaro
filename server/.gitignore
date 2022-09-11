@@ -1,0 +1,8 @@
+bin/python
+dist/
+
+server.log
+server.pid
+.coverage
+
+htmlcov

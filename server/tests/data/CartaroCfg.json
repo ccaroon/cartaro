@@ -1,0 +1,17 @@
+{
+    "CARTARO": {
+        "encryption_password": "42",
+        "jira": {
+            "host": "https://jira.company.com",
+            "searches": {
+                "default": "project in (Stuff) AND issuetype in (standardIssueTypes()) AND assignee = currentUser() AND Sprint in openSprints()"
+            },
+            "token": "0xdeadbeef"
+        },
+        "serverPort": 8888,
+        "backup": {
+            "path": "/tmp/CartaroBackup",
+            "keep": 7
+        }
+    }
+}
