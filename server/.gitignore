@@ -6,3 +6,5 @@ server.pid
 .coverage
 
 htmlcov
+
+__pycache__/
