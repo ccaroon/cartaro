@@ -1,12 +1,21 @@
 'use strict'
 
-import { app, protocol, screen, BrowserWindow, Menu, MenuItem } from 'electron'
+import { app, ipcMain, protocol, screen, BrowserWindow, Menu, MenuItem } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+
+import fs from 'fs'
 import path from 'path'
 
+import Config from './lib/Config'
 import IPC from './lib/ipc'
+// import Logger from './lib/Logger'
+// import Server from './lib/Server'
 import WindowHelper from './lib/window'
+
+// -----------------------------------------------------------------------------
+let mainWindow = null
+// const logger = Logger.getInstance()
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -15,11 +24,36 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
+// -----------------------------------------------------------------------------
+function initApp () {
+  // Create data directory
+  if (!fs.existsSync(Config.docPath())) {
+    fs.mkdirSync(Config.docPath(), '0750')
+  }
+
+  ipcMain.on('app-show-notification', (event, args) => {
+    mainWindow.webContents.send('app-show-notification', args)
+  })
+
+  app.on('window-all-closed', () => {
+    quitApp()
+  })
+}
+
+// -----------------------------------------------------------------------------
+function quitApp () {
+  // logger.info(`Shutting Down! Server PID: [${Server.pid()}]`)
+  mainWindow = null
+  // Server.stop()
+  app.quit()
+}
+
+// -----------------------------------------------------------------------------
 async function createWindow () {
   const display = screen.getPrimaryDisplay()
 
   // Create the browser window.
-  const win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: display.size.width * 0.70,
     height: display.size.height * 0.90,
     webPreferences: {
@@ -50,50 +84,36 @@ async function createWindow () {
     role: 'toggleDevTools'
   }))
 
-  win.webContents.on('context-menu',
+  mainWindow.webContents.on('context-menu',
     (event, click) => {
       event.preventDefault()
-      menu.popup(win.webContents)
+      menu.popup(mainWindow.webContents)
     },
     false
   )
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
-    await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
-    // if (!process.env.IS_TEST) win.webContents.openDevTools()
+    await mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
+    // if (!process.env.IS_TEST) mainWindow.webContents.openDevTools()
   } else {
     createProtocol('app')
     // Load the index.html when not in development
-    win.loadURL('app://./index.html')
+    mainWindow.loadURL('app://./index.html')
   }
 
   // Links that open new windows on target="_blank" use this
-  win.webContents.on('new-window', function (event, url) {
+  mainWindow.webContents.on('new-window', function (event, url) {
     event.preventDefault()
     // shell.openExternal(url) // Open in system default browser
     WindowHelper.new(url)
   })
 }
-
-// Quit when all windows are closed.
-app.on('window-all-closed', () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
-
-app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) createWindow()
-})
-
+// -----------------------------------------------------------------------------
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
+// -----------------------------------------------------------------------------
 app.on('ready', async () => {
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
@@ -104,21 +124,34 @@ app.on('ready', async () => {
     }
   }
 
-  IPC.registerHandlers()
-  createWindow()
-})
+  initApp()
 
+  createWindow()
+  IPC.registerHandlers()
+
+  // Server.start()
+  //   .then(() => {
+  //     createWindow()
+  //     IPC.registerHandlers()
+  //   })
+  //   .catch((err) => {
+  //     logger.error(`Failed to start server: ${err}`)
+  //     quitApp()
+  //   })
+})
+// -----------------------------------------------------------------------------
 // Exit cleanly on request from parent process in development mode.
+// -----------------------------------------------------------------------------
 if (isDevelopment) {
   if (process.platform === 'win32') {
     process.on('message', (data) => {
       if (data === 'graceful-exit') {
-        app.quit()
+        quitApp()
       }
     })
   } else {
     process.on('SIGTERM', () => {
-      app.quit()
+      quitApp()
     })
   }
 }
