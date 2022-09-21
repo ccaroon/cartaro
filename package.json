@@ -78,7 +78,7 @@
     "vue-codemirror": "^4.0.6",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.5.2",
-    "vuetify": "^2.5.10",
+    "vuetify": "^2.6.10",
     "vuex": "^3.6.2",
     "vuex-electron": "^1.0.3",
     "winston": "^3.3.3"
