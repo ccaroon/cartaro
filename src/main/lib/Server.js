@@ -6,18 +6,28 @@ import { dialog } from 'electron'
 import Config from './Config'
 import Logger from './Logger'
 // -----------------------------------------------------------------------------
+const PORT = Config.get('serverPort', 4242)
+// -----------------------------------------------------------------------------
 class Server {
-  static __instance = null
+  constructor (port, hcTries, hcSleep, logger = null) {
+    this.__port = port
+    this.__healthCheckTries = hcTries
+    this.__healthCheckSleep = hcSleep
+    this.__logger = logger
+    this.__process = null
+  }
 
-  static PORT = Config.get('serverPort', 4242)
-  static LOGGER = Logger.getInstance()
-  static HEALTHCHECK_TRIES = 5
-  static HEALTHCHECK_SLEEP = 750
-  static COMMAND = `./bin/python ./bin/flask run -p ${Server.PORT}`
+  __log (level, msg) {
+    if (this.__logger) {
+      this.__logger.log(level, msg)
+    }
+  }
 
-  static __start () {
+  __start () {
     const self = this
     const basePath = path.resolve(path.dirname(__dirname))
+
+    const srvCmd = `./bin/python ./bin/flask run -p ${this.__port}`
 
     // Default for DEV mode
     let serverPath = path.join(basePath, './server/dist')
@@ -36,26 +46,26 @@ class Server {
     env.CARTARO_ENV = process.env.NODE_ENV === 'development' ? 'dev' : 'prod'
 
     // SEE: https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
-    this.__instance = require('child_process').spawn(
-      this.COMMAND,
+    this.__process = require('child_process').spawn(
+      srvCmd,
       null,
       { cwd: serverPath, env, shell: true }
     )
-    this.LOGGER.info(`Server PID: [${this.__instance.pid}]`)
+    this.__log('info', `Server PID: [${this.__process.pid}]`)
 
-    this.__instance.stdout.on('data', function (data) {
-      self.LOGGER.info(data.toString('utf8'))
+    this.__process.stdout.on('data', function (data) {
+      self.__log('info', data.toString('utf8'))
     })
 
-    this.__instance.stderr.on('data', function (data) {
-      self.LOGGER.info(data.toString('utf8'))
+    this.__process.stderr.on('data', function (data) {
+      self.__log('info', data.toString('utf8'))
     })
 
-    this.__instance.on('error', function (err) {
-      self.LOGGER.error(err.toString('utf8'))
+    this.__process.on('error', function (err) {
+      self.__log('error', err.toString('utf8'))
     })
 
-    this.__instance.on('exit', function (code, signal) {
+    this.__process.on('exit', function (code, signal) {
       if (code) {
         dialog.showMessageBoxSync(null, {
           type: 'error',
@@ -68,29 +78,29 @@ class Server {
     })
   }
 
-  static __waitTilHealthy (resolve, reject, iteration = 1) {
+  __waitTilHealthy (resolve, reject, iteration = 1) {
     const self = this
 
     this.ping()
       .then(() => {
-        self.LOGGER.info(`Server Healthy After ${iteration} Tries.`)
+        self.__log('info', `Server Healthy After ${iteration} Tries.`)
         resolve()
       })
       .catch(() => {
-        self.LOGGER.error(`Health Check Failed: ${iteration}/${self.HEALTHCHECK_TRIES}`)
-        if (iteration > self.HEALTHCHECK_TRIES) {
-          reject(`Server not healthy after ${self.HEALTHCHECK_TRIES} tries.`)
+        self.__log('error', `Health Check Failed: ${iteration}/${self.__healthCheckTries}`)
+        if (iteration > self.__healthCheckTries) {
+          reject(`Server not healthy after ${self.__healthCheckTries} tries.`)
         } else {
           setTimeout(() => {
             self.__waitTilHealthy(resolve, reject, iteration + 1)
-          }, self.HEALTHCHECK_SLEEP)
+          }, self.__healthCheckSleep)
         }
       })
   }
 
-  static start () {
+  start () {
     const self = this
-    if (this.__instance == null) {
+    if (this.__process == null) {
       return new Promise((resolve, reject) => {
         self.__start()
         self.__waitTilHealthy(resolve, reject)
@@ -98,19 +108,22 @@ class Server {
     }
   }
 
-  static stop () {
-    if (this.__instance) {
-      this.__instance.kill()
+  stop () {
+    if (this.__process) {
+      this.__process.kill()
     }
   }
 
-  static pid () {
-    return this.__instance.pid
+  pid () {
+    return this.__process.pid
   }
 
-  static ping () {
-    return http.get(`http://localhost:${this.PORT}/sys/ping`)
+  ping () {
+    return http.get(`http://localhost:${this.__port}/sys/ping`)
   }
 }
 // -----------------------------------------------------------------------------
-export default Server
+const defaultServer = new Server(PORT, 5, 1000, new Logger())
+export default {
+  instance: defaultServer
+}

@@ -8,15 +8,15 @@ import fs from 'fs'
 import path from 'path'
 
 import settings from './lib/settings'
-// import Config from './lib/Config'
 import ipc from './lib/ipc'
-// import Logger from './lib/Logger'
-// import Server from './lib/Server'
+import Logger from './lib/Logger'
+import Server from './lib/Server'
 import windowHelper from './lib/windowHelper'
 
 // -----------------------------------------------------------------------------
 let mainWindow = null
-// const logger = Logger.getInstance()
+const logger = new Logger()
+const server = Server.instance
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -27,6 +27,7 @@ protocol.registerSchemesAsPrivileged([
 
 // -----------------------------------------------------------------------------
 function initApp () {
+  logger.info('Initializing App...')
   // Create data directory
   if (!fs.existsSync(settings.docPath)) {
     fs.mkdirSync(settings.docPath, '0750')
@@ -43,14 +44,15 @@ function initApp () {
 
 // -----------------------------------------------------------------------------
 function quitApp () {
-  // logger.info(`Shutting Down! Server PID: [${Server.pid()}]`)
+  logger.info(`Shutting Down! Server PID: [${server.pid()}]`)
   mainWindow = null
-  // Server.stop()
+  server.stop()
   app.quit()
 }
 
 // -----------------------------------------------------------------------------
 async function createWindow () {
+  logger.info('Creating Main Window...')
   const display = screen.getPrimaryDisplay()
 
   // Create the browser window.
@@ -127,18 +129,18 @@ app.on('ready', async () => {
 
   initApp()
 
-  createWindow()
-  ipc.registerHandlers()
+  // createWindow()
+  // ipc.registerHandlers()
 
-  // Server.start()
-  //   .then(() => {
-  //     createWindow()
-  //     ipc.registerHandlers()
-  //   })
-  //   .catch((err) => {
-  //     logger.error(`Failed to start server: ${err}`)
-  //     quitApp()
-  //   })
+  server.start()
+    .then(() => {
+      createWindow()
+      ipc.registerHandlers()
+    })
+    .catch((err) => {
+      logger.error(`Failed to start server: ${err}`)
+      quitApp()
+    })
 })
 // -----------------------------------------------------------------------------
 // Exit cleanly on request from parent process in development mode.
