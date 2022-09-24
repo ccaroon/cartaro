@@ -1,14 +1,16 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
-const config = require('./lib/Config')
-
 contextBridge.exposeInMainWorld('Main', {
   newWindow: (location, width, height) => {
     ipcRenderer.invoke('main:newWindow', location, width, height)
   }
 })
 
-contextBridge.exposeInMainWorld('Config', { config })
+contextBridge.exposeInMainWorld('Config', {
+  get: (path, defValue = null, isTransient = false) => {
+    return ipcRenderer.invoke('config:get', path, defValue, isTransient)
+  }
+})
 
 contextBridge.exposeInMainWorld('NodeJS', { process })
 

@@ -1,7 +1,7 @@
 import path from 'path'
 
 import Winston from 'winston'
-import Settings from './settings'
+import settings from './settings'
 // -----------------------------------------------------------------------------
 class Logger {
   static __instance = null
@@ -19,7 +19,7 @@ class Logger {
         ),
         transports: [
           new Winston.transports.File({
-            filename: path.join(Settings.docPath, `CartaroLog${logSuffix}.json`)
+            filename: path.join(settings.docPath, `CartaroLog${logSuffix}.json`)
           })
         ]
       })

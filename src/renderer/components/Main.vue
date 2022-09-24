@@ -9,6 +9,7 @@
             src="../assets/logo.png"
           ></v-img>
         </a>
+        <span>{{ theAnswer }}</span>
       </v-col>
       <v-col>
         <div class="text-h1">Cartaro</div>
@@ -25,12 +26,25 @@
 export default {
   name: 'MainScreen',
 
+  mounted () {
+    const self = this
+    window.Config.get('theAnswer', '007')
+      .then((value) => {
+        self.theAnswer = value
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  },
+
   methods: {
     openGitHub: function () {
       window.Main.newWindow('https://github.com/ccaroon/cartaro')
     }
   },
 
-  data: () => ({})
+  data: () => ({
+    theAnswer: 'not-set-yet'
+  })
 }
 </script>

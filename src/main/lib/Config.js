@@ -1,25 +1,13 @@
 // Config
 // -----------------------------------------------------------------------------
-const app = require('electron').app
-// const fs = require('fs')
-const path = require('node:path')
-
+import fs from 'fs'
+import settings from './settings'
 // -----------------------------------------------------------------------------
 class Config {
-  // static DEFAULTS = {}
-  // static DOCPATH = path.join(app.getPath('documents'), 'Cartaro')
-
-  // path = null
-  // data = null
-
   constructor (configPath) {
     this.path = configPath
+    this.data = null
     this.load()
-  }
-
-  docPath () {
-    // return this.DOCPATH
-    return path.join(app.getPath('documents'), 'Cartaro')
   }
 
   get (path, defValue = null, isTransient = false) {
@@ -63,32 +51,32 @@ class Config {
   }
 
   load () {
-    // if (this.data === null) {
-    //   if (fs.existsSync(this.path)) {
-    //     const contents = fs.readFileSync(this.path)
-    //     const data = JSON.parse(contents)
+    if (this.data === null) {
+      if (fs.existsSync(this.path)) {
+        const contents = fs.readFileSync(this.path)
+        const data = JSON.parse(contents)
 
-    //     this.data = Object.assign({}, {}, data.CARTARO)
-    //   } else {
-    //     this.data = {} // Config.DEFAULTS
-    //   }
+        this.data = Object.assign({}, {}, data.CARTARO)
+      } else {
+        this.data = {}
+      }
 
-    //   this.data.__transient = {}
-    // }
+      this.data.__transient = {}
+    }
   }
 
   save () {
-    // delete this.data.__transient
-    // const data = {
-    //   CARTARO: this.data
-    // }
-    // const json = JSON.stringify(data)
-    // fs.writeFileSync(this.path, json)
+    delete this.data.__transient
+    const data = {
+      CARTARO: this.data
+    }
+    const json = JSON.stringify(data)
+    fs.writeFileSync(this.path, json)
   }
 }
 // -----------------------------------------------------------------------------
 const suffix = process.env.NODE_ENV === 'development' ? '-dev' : ''
-const configFile = `${Config.docPath}/CartaroCfg${suffix}.json`
+const configFile = `${settings.docPath}/CartaroCfg${suffix}.json`
 const __instance = new Config(configFile)
 // -----------------------------------------------------------------------------
 export default __instance

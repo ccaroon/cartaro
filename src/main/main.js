@@ -7,11 +7,12 @@ import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import fs from 'fs'
 import path from 'path'
 
-import Config from './lib/Config'
-import IPC from './lib/ipc'
+import settings from './lib/settings'
+// import Config from './lib/Config'
+import ipc from './lib/ipc'
 // import Logger from './lib/Logger'
 // import Server from './lib/Server'
-import WindowHelper from './lib/window'
+import windowHelper from './lib/windowHelper'
 
 // -----------------------------------------------------------------------------
 let mainWindow = null
@@ -27,8 +28,8 @@ protocol.registerSchemesAsPrivileged([
 // -----------------------------------------------------------------------------
 function initApp () {
   // Create data directory
-  if (!fs.existsSync(Config.docPath())) {
-    fs.mkdirSync(Config.docPath(), '0750')
+  if (!fs.existsSync(settings.docPath)) {
+    fs.mkdirSync(settings.docPath, '0750')
   }
 
   ipcMain.on('app-show-notification', (event, args) => {
@@ -106,7 +107,7 @@ async function createWindow () {
   mainWindow.webContents.on('new-window', function (event, url) {
     event.preventDefault()
     // shell.openExternal(url) // Open in system default browser
-    WindowHelper.new(url)
+    windowHelper.new(url)
   })
 }
 // -----------------------------------------------------------------------------
@@ -127,12 +128,12 @@ app.on('ready', async () => {
   initApp()
 
   createWindow()
-  IPC.registerHandlers()
+  ipc.registerHandlers()
 
   // Server.start()
   //   .then(() => {
   //     createWindow()
-  //     IPC.registerHandlers()
+  //     ipc.registerHandlers()
   //   })
   //   .catch((err) => {
   //     logger.error(`Failed to start server: ${err}`)

@@ -1,12 +1,12 @@
 import { Menu } from 'electron'
-import MenuActions from './menu-actions'
+import menuActions from './menuActions'
 
 const mainMetaKey = process.platform === 'darwin' ? 'Cmd' : 'Ctrl'
 
 const aboutSubMenu = {
   label: 'About Ĉartaro',
   accelerator: mainMetaKey + '+?',
-  click: () => MenuActions.HELP.about()
+  click: () => menuActions.HELP.about()
 }
 
 // const settingsSubMenu = {
@@ -24,7 +24,7 @@ const template = [
         label: 'Backup',
         accelerator: mainMetaKey + '+B',
         click: () => {
-          MenuActions.FILE.backup()
+          menuActions.FILE.backup()
         }
       }
     ]
@@ -49,7 +49,7 @@ const template = [
       {
         label: 'Main',
         accelerator: mainMetaKey + '+H',
-        click: () => MenuActions.VIEW.main()
+        click: () => menuActions.VIEW.main()
       }
     ]
   },
@@ -66,12 +66,12 @@ const template = [
     submenu: [
       {
         label: 'View on GitHub',
-        click: () => MenuActions.HELP.github()
+        click: () => menuActions.HELP.github()
       },
       {
         label: 'Dev Tools',
         accelerator: mainMetaKey + '+I',
-        click: () => MenuActions.HELP.devtools()
+        click: () => menuActions.HELP.devtools()
       }
     ]
   }
