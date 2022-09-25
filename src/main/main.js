@@ -15,7 +15,7 @@ import windowHelper from './lib/windowHelper'
 
 // -----------------------------------------------------------------------------
 let mainWindow = null
-const logger = new Logger()
+const logger = new Logger('debug')
 const server = Server.instance
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -27,7 +27,7 @@ protocol.registerSchemesAsPrivileged([
 
 // -----------------------------------------------------------------------------
 function initApp () {
-  logger.info('Initializing App...')
+  logger.debug('Initializing App...')
   // Create data directory
   if (!fs.existsSync(settings.docPath)) {
     fs.mkdirSync(settings.docPath, '0750')
@@ -37,8 +37,14 @@ function initApp () {
     mainWindow.webContents.send('app-show-notification', args)
   })
 
-  app.on('window-all-closed', () => {
+  app.on('quit', () => {
+    logger.debug('App Event: quit')
     quitApp()
+  })
+
+  app.on('window-all-closed', () => {
+    logger.debug('App Event: window-all-closed')
+    app.quit()
   })
 }
 
@@ -47,12 +53,11 @@ function quitApp () {
   logger.info(`Shutting Down! Server PID: [${server.pid()}]`)
   mainWindow = null
   server.stop()
-  app.quit()
 }
 
 // -----------------------------------------------------------------------------
 async function createWindow () {
-  logger.info('Creating Main Window...')
+  logger.debug('Creating Main Window...')
   const display = screen.getPrimaryDisplay()
 
   // Create the browser window.
@@ -105,6 +110,8 @@ async function createWindow () {
     mainWindow.loadURL('app://./index.html')
   }
 
+  // TODO: The new-window event is deprecated and will be removed.
+  //       Please use contents.setWindowOpenHandler() instead.
   // Links that open new windows on target="_blank" use this
   mainWindow.webContents.on('new-window', function (event, url) {
     event.preventDefault()
@@ -123,14 +130,11 @@ app.on('ready', async () => {
     try {
       await installExtension(VUEJS_DEVTOOLS)
     } catch (e) {
-      console.error('Vue Devtools failed to install:', e.toString())
+      logger.error('Vue Devtools failed to install:', e.toString())
     }
   }
 
   initApp()
-
-  // createWindow()
-  // ipc.registerHandlers()
 
   server.start()
     .then(() => {
@@ -139,7 +143,7 @@ app.on('ready', async () => {
     })
     .catch((err) => {
       logger.error(`Failed to start server: ${err}`)
-      quitApp()
+      app.quit()
     })
 })
 // -----------------------------------------------------------------------------
@@ -149,12 +153,12 @@ if (isDevelopment) {
   if (process.platform === 'win32') {
     process.on('message', (data) => {
       if (data === 'graceful-exit') {
-        quitApp()
+        app.quit()
       }
     })
   } else {
     process.on('SIGTERM', () => {
-      quitApp()
+      app.quit()
     })
   }
 }

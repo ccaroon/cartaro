@@ -3,13 +3,13 @@ import path from 'path'
 
 import { dialog } from 'electron'
 
-import Config from './Config'
+import config from './Config'
 import Logger from './Logger'
-// -----------------------------------------------------------------------------
-const PORT = Config.get('serverPort', 4242)
+import settings from './settings'
 // -----------------------------------------------------------------------------
 class Server {
-  constructor (port, hcTries, hcSleep, logger = null) {
+  constructor (docPath, port, hcTries, hcSleep, logger = null) {
+    this.__docPath = docPath
     this.__port = port
     this.__healthCheckTries = hcTries
     this.__healthCheckSleep = hcSleep
@@ -27,11 +27,8 @@ class Server {
     const self = this
     const basePath = path.resolve(path.dirname(__dirname))
 
-    const srvCmd = `./bin/python ./bin/flask run -p ${this.__port}`
-
     // Default for DEV mode
     let serverPath = path.join(basePath, './server/dist')
-
     // Electron launched as bundled app
     // TODO: is the serverPath correct?
     if (basePath.match(/\/Resources/i)) {
@@ -42,14 +39,14 @@ class Server {
     env.PYTHONPATH = serverPath
     env.FLASK_ENV = process.env.NODE_ENV
     env.FLASK_APP = 'cartaro'
-    env.CARTARO_DOC_PATH = Config.DOCPATH
+    env.CARTARO_DOC_PATH = this.__docPath
     env.CARTARO_ENV = process.env.NODE_ENV === 'development' ? 'dev' : 'prod'
 
     // SEE: https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
     this.__process = require('child_process').spawn(
-      srvCmd,
-      null,
-      { cwd: serverPath, env, shell: true }
+      './bin/python',
+      ['./bin/flask', 'run', '-p', this.__port],
+      { cwd: serverPath, env }
     )
     this.__log('info', `Server PID: [${this.__process.pid}]`)
 
@@ -123,7 +120,8 @@ class Server {
   }
 }
 // -----------------------------------------------------------------------------
-const defaultServer = new Server(PORT, 5, 1000, new Logger())
+const PORT = config.get('serverPort', 4242)
+const defaultServer = new Server(settings.docPath, PORT, 5, 1000, new Logger())
 export default {
   instance: defaultServer
 }

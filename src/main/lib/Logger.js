@@ -4,11 +4,11 @@ import Winston from 'winston'
 import settings from './settings'
 // -----------------------------------------------------------------------------
 class Logger {
-  constructor () {
+  constructor (level = 'debug') {
     const logSuffix = process.env.NODE_ENV === 'development' ? '-dev' : ''
 
     this.__winston = Winston.createLogger({
-      level: 'info',
+      level,
       format: Winston.format.combine(
         Winston.format.timestamp({ format: 'YYYY-MM-DD@HH:mm:ss' }),
         Winston.format.uncolorize(),
@@ -37,6 +37,10 @@ class Logger {
 
   error (msg) {
     this.log('error', msg)
+  }
+
+  debug (msg) {
+    this.log('debug', msg)
   }
 
   info (msg) {
