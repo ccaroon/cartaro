@@ -2,7 +2,7 @@
 
 ## Where Am I?
 * [ ] 20220925:
-  - ...
+  - Time to start porting over the UI
 * [x] 20220924:
   - Server not shutting down on quit
     - [x] File -> Quit             | Does not call quitApp ... app.quit event
@@ -24,7 +24,7 @@
   - See: https://www.electronjs.org/docs/latest/tutorial/sandbox
 * [x] Consistent casing for Class vs Module
 * [ ] Can IPC invocations be synchronous?
-* [ ] Replace `new-window` event with call to `setWindowOpenHandler`
+* [x] Replace `new-window` event with call to `setWindowOpenHandler`
       - The new-window event is deprecated and will be removed.
         Please use contents.setWindowOpenHandler() instead.
 

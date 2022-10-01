@@ -110,13 +110,12 @@ async function createWindow () {
     mainWindow.loadURL('app://./index.html')
   }
 
-  // TODO: The new-window event is deprecated and will be removed.
-  //       Please use contents.setWindowOpenHandler() instead.
   // Links that open new windows on target="_blank" use this
-  mainWindow.webContents.on('new-window', function (event, url) {
-    event.preventDefault()
-    // shell.openExternal(url) // Open in system default browser
-    windowHelper.new(url)
+  mainWindow.webContents.setWindowOpenHandler((details) => {
+    // Open a new window like **we** want
+    windowHelper.new(details.url)
+    // Prevent the default window from opening.
+    return { action: 'deny' }
   })
 }
 // -----------------------------------------------------------------------------
