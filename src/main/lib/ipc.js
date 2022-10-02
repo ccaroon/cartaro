@@ -15,6 +15,9 @@ export default {
       const value = Config.get(path, defValue, isTransient)
       return value
     })
+    ipcMain.handle('config:instance', (event) => {
+      return Config
+    })
 
     // Other Handlers
   }

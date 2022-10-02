@@ -9,6 +9,9 @@ contextBridge.exposeInMainWorld('Main', {
 contextBridge.exposeInMainWorld('Config', {
   get: (path, defValue = null, isTransient = false) => {
     return ipcRenderer.invoke('config:get', path, defValue, isTransient)
+  },
+  instance: () => {
+    return ipcRenderer.invoke('config:instance')
   }
 })
 

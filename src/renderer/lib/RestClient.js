@@ -6,22 +6,16 @@ class RestClient {
   static HOST = 'http://127.0.0.1'
   static PORT = null
 
+  // TODO: need to get this from config
   static {
-    this.PORT = window.craig.get('serverPort', 4242)
+    this.PORT = 2424
   }
 
   constructor (resource) {
     this.resource = resource
   }
 
-  // static async initPort () {
-  //   console.log('initPort -> start')
-  //   this.PORT = await window.Config.get('serverPort', 4242)
-  //   console.log(`initPort -> end [${this.PORT}]`)
-  // }
-
   static baseUrl () {
-    console.log('baseUrl -> called')
     return `${this.HOST}:${this.PORT}`
   }
 

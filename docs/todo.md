@@ -1,7 +1,13 @@
 # ToDo
 
 ## Where Am I?
-* [ ] 20220925:
+* [ ] 20221002:
+  - Think I might need to turn `nodeIntegration` back on to get things working again
+    then have a new task to un-integrate node
+  - need to deal with lint errors
+    + `vue/no-mutating-props`
+  - Pick a UI screen to get working. Home depends on too many other components
+* [x] 20220925:
   - Time to start porting over the UI
 * [x] 20220924:
   - Server not shutting down on quit
@@ -23,10 +29,21 @@
   - 'fs' & 'path', for instance, cannot be used
   - See: https://www.electronjs.org/docs/latest/tutorial/sandbox
 * [x] Consistent casing for Class vs Module
-* [ ] Can IPC invocations be synchronous?
+* [x] Can IPC invocations be synchronous? Yes. Just use `await`
 * [x] Replace `new-window` event with call to `setWindowOpenHandler`
       - The new-window event is deprecated and will be removed.
         Please use contents.setWindowOpenHandler() instead.
+* [ ] Need to figure out how to expose the Config instance to the render process
+      w/out having to wait on a promise resolving for every `get` call
+      - About -> RestClient.baseUrl -> Config -> not quick enough to resolve
+      - Crypto
+* [ ] Stuff that depends on `nodeIntegration` & NO `contextIsolation`
+  - menu actions
+  - notifications
+  - config get/set
+
+## UI
+* [ ] `the >>> and /deep/ combinators have been deprecated. Use :deep() instead.`
 
 ## Server
 * [ ] Replace `nose` with `nose2`
