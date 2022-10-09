@@ -24,15 +24,15 @@
     "fernet": "^0.4.0",
     "highlight.js": "^11.6.0",
     "localforage": "^1.10.0",
+    "markdown-it": "^13.0.1",
     "markdown-it-emoji": "^2.0.0",
     "markdown-it-for-inline": "^0.1.1",
     "markdown-it-task-lists": "^2.1.1",
-    "markdown-it": "^13.0.1",
     "moment": "^2.29.1",
     "mousetrap": "^1.6.5",
+    "vue": "^2.7.8",
     "vue-codemirror": "^4.0.6",
     "vue-router": "^3.5.2",
-    "vue": "^2.7.8",
     "vuetify": "^2.6.9",
     "winston": "^3.3.3"
   },
@@ -76,7 +76,9 @@
     "parserOptions": {
       "parser": "@babel/eslint-parser"
     },
-    "rules": {}
+    "rules": {
+      "vue/no-mutating-props": "warn"
+    }
   },
   "browserslist": [
     "> 1%",

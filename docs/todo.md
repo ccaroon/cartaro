@@ -4,8 +4,6 @@
 * [ ] 20221002:
   - Think I might need to turn `nodeIntegration` back on to get things working again
     then have a new task to un-integrate node
-  - need to deal with lint errors
-    + `vue/no-mutating-props`
   - Pick a UI screen to get working. Home depends on too many other components
 * [x] 20220925:
   - Time to start porting over the UI
@@ -43,7 +41,7 @@
   - config get/set
 
 ## UI
-* [ ] `the >>> and /deep/ combinators have been deprecated. Use :deep() instead.`
+
 
 ## Server
 * [ ] Replace `nose` with `nose2`
@@ -56,3 +54,23 @@
 
 ## Build
 * [ ] Bundling of server code. See Seiche
+
+
+## Tickets for Later
+* [ ] Disable `nodeIntegration`
+  - About: `process`
+* [ ] Fix `vue/no-mutating-props` issues. Currently set as "warn" for eslint
+* [ ] `the >>> and /deep/ combinators have been deprecated. Use :deep() instead.`
+
+
+
+
+
+
+
+
+
+
+
+
+EOF

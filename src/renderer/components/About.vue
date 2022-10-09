@@ -62,6 +62,7 @@
 <script>
 import pkgJson from '../../../package.json'
 import RestClient from '../lib/RestClient'
+import vuePkg from 'vue/package.json'
 
 export default {
   name: 'AboutDialog',
@@ -84,7 +85,7 @@ export default {
         { name: 'NodeJS', value: process.versions.node, icon: 'mdi-nodejs' },
         { name: 'Python', value: '3.10.4', icon: 'mdi-language-python' },
         { name: 'Chrome', value: process.versions.chrome, icon: 'mdi-google-chrome' },
-        { name: 'Vue Version', value: window.Modules.vuejs.version, icon: 'mdi-vuejs' }
+        { name: 'Vue Version', value: vuePkg.version, icon: 'mdi-vuejs' }
       ],
       systemInfo: [
         { name: pkgJson.name, value: `v${pkgJson.version} | ${pkgJson.codename}`, icon: pkgJson.icon },

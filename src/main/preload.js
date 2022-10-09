@@ -7,18 +7,12 @@ contextBridge.exposeInMainWorld('Main', {
 })
 
 contextBridge.exposeInMainWorld('Config', {
-  get: (path, defValue = null, isTransient = false) => {
-    return ipcRenderer.invoke('config:get', path, defValue, isTransient)
-  },
-  instance: () => {
-    return ipcRenderer.invoke('config:instance')
+  // get: (path, defValue = null, isTransient = false) => {
+  //   return ipcRenderer.invoke('config:get', path, defValue, isTransient)
+  // },
+  data: () => {
+    return ipcRenderer.invoke('config:data')
   }
 })
 
 contextBridge.exposeInMainWorld('NodeJS', { process })
-
-contextBridge.exposeInMainWorld('Modules', {
-  vuejs: {
-    version: require('vue/package.json').version
-  }
-})

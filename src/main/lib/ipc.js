@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 
-import Config from './Config'
+import config from './config'
 import windowHelper from './windowHelper'
 
 export default {
@@ -11,12 +11,12 @@ export default {
     })
 
     // Config Handlers
-    ipcMain.handle('config:get', (event, path, defValue, isTransient) => {
-      const value = Config.get(path, defValue, isTransient)
-      return value
-    })
-    ipcMain.handle('config:instance', (event) => {
-      return Config
+    // ipcMain.handle('config:get', (event, path, defValue, isTransient) => {
+    //   const value = config.get(path, defValue, isTransient)
+    //   return value
+    // })
+    ipcMain.handle('config:data', (event) => {
+      return config.data
     })
 
     // Other Handlers

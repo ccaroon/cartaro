@@ -1,4 +1,5 @@
 import axios from 'axios'
+
 // -----------------------------------------------------------------------------
 class RestClient {
   resource = null
@@ -6,13 +7,12 @@ class RestClient {
   static HOST = 'http://127.0.0.1'
   static PORT = null
 
-  // TODO: need to get this from config
-  static {
-    this.PORT = 2424
-  }
-
   constructor (resource) {
     this.resource = resource
+  }
+
+  static init (port) {
+    this.PORT = port
   }
 
   static baseUrl () {

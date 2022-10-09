@@ -3,7 +3,7 @@ import path from 'path'
 
 import { dialog } from 'electron'
 
-import config from './Config'
+import config from './config'
 import Logger from './Logger'
 import settings from './settings'
 // -----------------------------------------------------------------------------
@@ -120,7 +120,7 @@ class Server {
   }
 }
 // -----------------------------------------------------------------------------
-const PORT = config.get('serverPort', 4242)
+const PORT = config.get('server:port', 4242)
 const defaultServer = new Server(settings.docPath, PORT, 5, 1000, new Logger())
 export default {
   instance: defaultServer

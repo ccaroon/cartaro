@@ -13,6 +13,8 @@ import router from './router'
 import vuetify from './plugins/vuetify'
 
 import '@fortawesome/fontawesome-free/js/all.js'
+import Config from '@/shared/Config'
+import RestClient from './lib/RestClient'
 import('highlight.js/styles/atom-one-dark.css')
 
 Vue.config.productionTip = false
@@ -74,8 +76,21 @@ Vue.markdown = Vue.prototype.$markdown = new MarkdownIt(mdItOpts)
 
 Vue.config.productionTip = false
 
-new Vue({
-  router,
-  vuetify,
-  render: h => h(App)
-}).$mount('#app')
+async function loadConfig () {
+  const configData = await window.Config.data()
+  const config = new Config(configData)
+
+  RestClient.init(config.get('server:port', 8888))
+
+  global.Cartaro = {
+    config
+  }
+}
+
+loadConfig().then(() => {
+  new Vue({
+    router,
+    vuetify,
+    render: h => h(App)
+  }).$mount('#app')
+})
