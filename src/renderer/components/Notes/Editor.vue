@@ -101,7 +101,6 @@
 import Notification from '../../lib/Notification'
 import Markdown from '../Shared/Markdown'
 
-import Config from '../../../Config'
 import Tag from '../../models/Tag'
 
 export default {
@@ -181,7 +180,7 @@ export default {
   data () {
     return {
       allTags: [],
-      config: Config,
+      config: global.Cartaro.config,
       errorMsg: null,
       isFullscreen: false,
       keyMap: {

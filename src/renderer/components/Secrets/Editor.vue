@@ -135,7 +135,6 @@
 
 <script>
 import Constants from '../../lib/Constants'
-import Config from '../../../Config'
 import Notification from '../../lib/Notification'
 import Markdown from '../Shared/Markdown'
 import Tag from '../../models/Tag'
@@ -229,7 +228,7 @@ export default {
     return {
       allTags: [],
       constants: Constants,
-      config: Config,
+      config: global.Cartaro.config,
       errorMsg: null,
       secretTypeVal: null,
       rules: {

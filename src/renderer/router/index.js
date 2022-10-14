@@ -1,8 +1,16 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-// import Home from '../components/Home'
-import BlankSlate from '../components/BlankSlate'
+// import BlankSlate from '../components/BlankSlate'
+import Home from '../components/Home'
+import CountDowns from '../components/CountDowns'
+import LogEntries from '../components/LogEntries'
+import Notes from '../components/Notes'
+import ScratchPad from '../components/ScratchPad'
+import Secrets from '../components/Secrets'
+import TimeOff from '../components/TimeOff'
+import Todos from '../components/Todos'
+import WorkDays from '../components/WorkDays'
 
 Vue.use(Router)
 
@@ -11,56 +19,47 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      // component: Home
-      component: BlankSlate
+      component: Home
     },
     {
       path: '/count_downs',
       name: 'count_downs',
-      // component: require('@/components/CountDowns').default
-      component: BlankSlate
+      component: CountDowns
     },
     {
       path: '/log_entries',
       name: 'log_entries',
-      // component: require('@/components/LogEntries').default
-      component: BlankSlate
+      component: LogEntries
     },
     {
       path: '/notes',
       name: 'notes',
-      // component: require('@/components/Notes').default
-      component: BlankSlate
+      component: Notes
     },
     {
       path: '/scratch_pad',
       name: 'scratch_pad',
-      // component: require('@/components/ScratchPad').default
-      component: BlankSlate
+      component: ScratchPad
     },
     {
       path: '/secrets',
       name: 'secrets',
-      // component: require('@/components/Secrets').default
-      component: BlankSlate
+      component: Secrets
     },
     {
       path: '/timeoff',
       name: 'timeoff',
-      // component: require('@/components/TimeOff').default
-      component: BlankSlate
+      component: TimeOff
     },
     {
       path: '/todos',
       name: 'todos',
-      // component: require('@/components/Todos').default
-      component: BlankSlate
+      component: Todos
     },
     {
       path: '/work_days',
       name: 'work_days',
-      // component: require('@/components/WorkDays').default
-      component: BlankSlate
+      component: WorkDays
     },
     {
       path: '*',

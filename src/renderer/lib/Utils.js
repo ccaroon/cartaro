@@ -1,7 +1,5 @@
 import Constants from './Constants'
 
-const { BrowserWindow } = require('@electron/remote')
-
 export default {
   copyToClipboard: function (name, data) {
     navigator.clipboard.writeText(data)
@@ -11,21 +9,8 @@ export default {
       })
   },
 
-  openLink: function (title, url, width = 1200, height = 900) {
-    const main = BrowserWindow.getFocusedWindow()
-    const child = new BrowserWindow({
-      parent: main,
-      title,
-      fullscreenable: false,
-      webPreferences: {
-        devTools: false
-      },
-      autoHideMenuBar: true,
-      width,
-      height
-    })
-
-    child.loadURL(url)
+  openLink: function (url, width = null, height = null) {
+    window.Main.newWindow(url, width, height)
   },
 
   rowColor: function (idx, hilite = false) {

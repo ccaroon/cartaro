@@ -1,7 +1,10 @@
 # ToDo
 
 ## Where Am I?
-* [ ] 20221002:
+* [ ] ReDo this ToDo List
+  - Cull it
+  - Move it to Trello
+* [x] 20221002:
   - Think I might need to turn `nodeIntegration` back on to get things working again
     then have a new task to un-integrate node
   - Pick a UI screen to get working. Home depends on too many other components
@@ -41,7 +44,18 @@
   - config get/set
 
 ## UI
-
+* [-] Home
+* [-] LogEntries
+* [-] WorkDays
+* [-] Notes
+* [-] ToDos
+* [ ] Secrets
+  - fernet issues
+* [-] Countdowns
+* [-] ScratchPad
+* [-] TimeOff
+* [ ] Notification system w/o nodeIntegration or ipcRender
+* [ ] Backup short-cut key
 
 ## Server
 * [ ] Replace `nose` with `nose2`
@@ -57,7 +71,7 @@
 
 
 ## Tickets for Later
-* [ ] Disable `nodeIntegration`
+* [x] Disable `nodeIntegration`
   - About: `process`
 * [ ] Fix `vue/no-mutating-props` issues. Currently set as "warn" for eslint
 * [ ] `the >>> and /deep/ combinators have been deprecated. Use :deep() instead.`

@@ -240,7 +240,6 @@ import Constants from '../../lib/Constants'
 import Notification from '../../lib/Notification'
 import Tag from '../../models/Tag'
 
-import Config from '../../../Config'
 import Markdown from '../Shared/Markdown'
 
 export default {
@@ -362,7 +361,7 @@ export default {
 
   data () {
     return {
-      config: Config,
+      config: global.Cartaro.config,
       showDateMenu: false,
       showTimeMenu: false,
       dueDate: null,

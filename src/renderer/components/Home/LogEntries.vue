@@ -35,7 +35,7 @@
             <v-list-item-icon>
               <v-icon
                 v-if="item.ticket_link"
-                @click.stop="utils.openLink('Jira', item.ticket_link)"
+                @click.stop="utils.openLink(item.ticket_link)"
                 color="blue"
                 >{{ item.icon() }}</v-icon
               >

@@ -20,7 +20,6 @@
 import Mousetrap from 'mousetrap'
 
 import AppBar from './Shared/AppBar'
-import Config from '../../Config'
 import Format from '../lib/Format'
 import LocalForage from 'localforage'
 import Markdown from './Shared/Markdown'
@@ -202,7 +201,7 @@ export default {
       numPads: 5,
       scratchPads: [],
       dirty: false,
-      config: Config,
+      config: global.Cartaro.config,
       keyMap: {
         'Cmd-S': () => { this.saveActiveTab() },
         'Ctrl-S': () => { this.saveActiveTab() }

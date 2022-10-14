@@ -15,7 +15,7 @@ import vuetify from './plugins/vuetify'
 import '@fortawesome/fontawesome-free/js/all.js'
 import Config from '@/shared/Config'
 import RestClient from './lib/RestClient'
-import('highlight.js/styles/atom-one-dark.css')
+import('highlight.js/styles/panda-syntax-dark.css')
 
 Vue.config.productionTip = false
 
@@ -33,8 +33,8 @@ const mdItOpts = {
   typographer: true,
   langPrefix: 'language-',
   highlight: function (str, lang) {
-    const prefix = '<pre class="hljs"><code>'
-    const suffix = '</code></pre>'
+    const prefix = '<pre class="hljs">'
+    const suffix = '</pre>'
     let block = str
     if (lang && hljs.getLanguage(lang)) {
       try {

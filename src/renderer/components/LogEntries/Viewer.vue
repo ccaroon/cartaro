@@ -10,7 +10,7 @@
       </v-app-bar>
       <v-card-subtitle class="pl-4 pb-1">
         <template v-if="logEntry.category === 'Ticket'">
-          <span style="cursor: pointer" class="blue--text" @click="utils.openLink('Jira', logEntry.ticket_link)">
+          <span style="cursor: pointer" class="blue--text" @click="utils.openLink(logEntry.ticket_link)">
             {{ logEntry.category }}
             <v-icon x-small color="blue">mdi-open-in-new</v-icon>
           </span>

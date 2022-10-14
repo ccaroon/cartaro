@@ -19,7 +19,7 @@
               <span
                 style="cursor: pointer"
                 class="blue--text"
-                @click="utils.openLink('Jira', item.link)"
+                @click="utils.openLink(item.link)"
               >
                 {{ item.key }}
                 <v-icon x-small color="blue">mdi-open-in-new</v-icon>

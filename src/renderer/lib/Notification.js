@@ -1,4 +1,4 @@
-import { ipcRenderer } from 'electron'
+// import { ipcRenderer } from 'electron'
 
 export default {
   info: function (msg, timeout = 10000) {
@@ -38,6 +38,7 @@ export default {
   },
 
   showNotification: function (opts) {
-    ipcRenderer.send('app-show-notification', opts)
+    // ipcRenderer.send('app-show-notification', opts)
+    console.log(`[${opts.color}] --${opts.message}-- (${opts.icon})`)
   }
 }

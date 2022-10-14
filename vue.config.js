@@ -9,7 +9,11 @@ module.exports = defineConfig({
     //     .loader(['style-loader', 'css-loader', 'sass-loader'])
     //     .end()
     // },
-    // chainWebpackRenderProcess: (config) => { },
+    chainWebpackRenderProcess: (config) => {
+      config.resolve.fallback = {
+        crypto: require.resolve('crypto-browserify')
+      }
+    },
     electronBuilder: {
       preload: 'src/main/preload.js',
       mainProcessFile: 'src/main/main.js',

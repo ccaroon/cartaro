@@ -140,7 +140,6 @@ import Moment from 'moment'
 import Format from '../../lib/Format'
 import Notification from '../../lib/Notification'
 
-import Config from '../../../Config'
 import JiraTicket from '../../models/JiraTicket'
 import Tag from '../../models/Tag'
 
@@ -263,7 +262,7 @@ export default {
     return {
       showDateMenu: false,
       allTags: [],
-      config: Config,
+      config: global.Cartaro.config,
       jiraTickets: [],
       chosenTicket: null,
       errorMsg: null,
