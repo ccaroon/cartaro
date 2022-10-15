@@ -38,5 +38,10 @@ Requires NodeJS v16.16.x and Python 3.8.x
 4. `cd build`
 5. Profit!
 
+## Tech
+* https://cli.vuejs.org/
+* https://nklayman.github.io/vue-cli-plugin-electron-builder/
+* https://www.electron.build/
+
 ## Tools
 [Image Converter](https://anyconv.com/png-to-icns-converter/)

@@ -15,6 +15,7 @@ import vuetify from './plugins/vuetify'
 import '@fortawesome/fontawesome-free/js/all.js'
 import Config from '@/shared/Config'
 import RestClient from './lib/RestClient'
+import Crypto from './lib/Crypto'
 import('highlight.js/styles/panda-syntax-dark.css')
 
 Vue.config.productionTip = false
@@ -80,6 +81,7 @@ async function loadConfig () {
   const configData = await window.Config.data()
   const config = new Config(configData)
 
+  Crypto.init(config.get('encryption_password'))
   RestClient.init(config.get('server:port', 8888))
 
   global.Cartaro = {

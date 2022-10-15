@@ -1,18 +1,18 @@
 // https://github.com/csquared/fernet.js
 import fernet from 'fernet'
 
-function _passwordToKey (password) {
+function init (passwd) {
+  const keyStr = passwordToKey(passwd)
+  fernet.setSecret(keyStr)
+}
+
+function passwordToKey (password) {
   const paddedPwd = password.padEnd(32, ' ')
   return btoa(paddedPwd)
 }
-
-const config = global.Cartaro.config
-const keyStr = _passwordToKey(config.get('encryption_password'))
-// Set Secret Key Globally for all Fernet opts
-fernet.setSecret(keyStr)
-
 // -----------------------------------------------------------------------------
 export default {
+  init,
   decrypt: function (data) {
     let result = null
     if (data) {

@@ -49,13 +49,14 @@
 * [-] WorkDays
 * [-] Notes
 * [-] ToDos
-* [ ] Secrets
-  - fernet issues
+* [-] Secrets
+  - [x] fernet issues
 * [-] Countdowns
 * [-] ScratchPad
 * [-] TimeOff
 * [ ] Notification system w/o nodeIntegration or ipcRender
 * [ ] Backup short-cut key
+* [ ] Lowercase modules (things not classes)
 
 ## Server
 * [ ] Replace `nose` with `nose2`
