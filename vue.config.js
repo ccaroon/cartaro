@@ -37,8 +37,14 @@ module.exports = defineConfig({
       rendererProcessFile: 'src/renderer/main.js',
       nodeIntegration: false,
       builderOptions: {
-        // options here will be merged with default electron-builder options
         // https://www.electron.build/configuration/configuration
+        // options here will be merged with default electron-builder options
+        extraResources: [
+          {
+            from: 'server/dist',
+            to: 'server'
+          }
+        ]
       }
     }
   },

@@ -27,12 +27,12 @@ class Server {
     const self = this
     const basePath = path.resolve(path.dirname(__dirname))
 
-    // Default for DEV mode
-    let serverPath = path.join(basePath, './server/dist')
+    // Default is for DEV mode
+    let serverPath = path.join(basePath, 'server/dist')
+
     // Electron launched as bundled app
-    // TODO: is the serverPath correct?
     if (basePath.match(/\/Resources/i)) {
-      serverPath = path.join(basePath, './server/dist')
+      serverPath = path.join(basePath, 'server')
     }
 
     const env = {}
