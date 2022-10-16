@@ -232,9 +232,8 @@ export default {
 }
 </script>
 <style lang="css" scoped>
-/* >>> -means- that this style should effect child components */
->>>.CodeMirror {
-  border: 1px solid rgb(0, 0, 0);
-  height: 1100px;
+:deep(.CodeMirror) {
+    border: 1px solid rgb(0, 0, 0);
+    height: 1100px;
 }
 </style>
