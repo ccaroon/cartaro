@@ -1,5 +1,4 @@
 // Config Instance
-// TODO: Should this module be a sub-class of shared/Config.js?
 // -----------------------------------------------------------------------------
 import fs from 'fs'
 import settings from './settings'

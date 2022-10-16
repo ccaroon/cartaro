@@ -98,13 +98,13 @@
 </template>
 
 <script>
-import Notification from '../../lib/Notification'
+import notification from '../../lib/notification'
 import Markdown from '../Shared/Markdown'
 
 import Tag from '../../models/Tag'
 
 export default {
-  name: 'note-editor',
+  name: 'notes-editor',
   components: { Markdown },
   props: ['note', 'value'],
 
@@ -116,7 +116,7 @@ export default {
     loadTags: function () {
       Tag.loadAll({
         onSuccess: (tags) => { this.allTags = tags },
-        onError: (err) => Notification.error(`NT.Editor.loadTags: ${err.toString()}`)
+        onError: (err) => notification.error(`NT.Editor.loadTags: ${err.toString()}`)
       })
     },
 
@@ -132,7 +132,7 @@ export default {
                 self.close()
               }
             },
-            onError: (err) => { Notification.error(`NT.Editor.save: ${err.toString()}`) }
+            onError: (err) => { notification.error(`NT.Editor.save: ${err.toString()}`) }
           }
         })
       } else {

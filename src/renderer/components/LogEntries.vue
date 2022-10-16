@@ -43,9 +43,10 @@
 import Moment from 'moment'
 import Mousetrap from 'mousetrap'
 
-import Constants from '../lib/Constants'
-import Format from '../lib/Format'
-import Utils from '../lib/Utils'
+import constants from '../lib/constants'
+import format from '../lib/format'
+import notification from '../lib/notification'
+import utils from '../lib/utils'
 
 import LogEntry from '../models/LogEntry'
 
@@ -53,11 +54,10 @@ import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
 import LogEntryEditor from './LogEntries/Editor'
 import LogEntryViewer from './LogEntries/Viewer'
-import Notification from '../lib/Notification'
 import Tags from './Shared/Tags'
 
 export default {
-  name: 'LogEntries',
+  name: 'log-entries-main',
   components: { Actions, AppBar, LogEntryEditor, LogEntryViewer, Tags },
   mounted: function () {
     this.bindShortcutKeys()
@@ -110,7 +110,7 @@ export default {
             self.totalEntries = total
             self.logEntries = items
           },
-          onError: (err) => { Notification.error(`LE.Main.load: ${err.toString()}`) }
+          onError: (err) => { notification.error(`LE.Main.load: ${err.toString()}`) }
         }
       })
     },
@@ -153,9 +153,9 @@ export default {
       totalEntries: 0,
       showEditor: false,
       showViewer: false,
-      constants: Constants,
-      format: Format,
-      utils: Utils,
+      constants: constants,
+      format: format,
+      utils: utils,
       searchText: null,
       appBarButtons: [
         { name: 'New', icon: 'mdi-newspaper-plus', action: this.newEntry }

@@ -142,11 +142,11 @@
 import Moment from 'moment'
 import Mousetrap from 'mousetrap'
 
-import Constants from '../lib/Constants'
-import Format from '../lib/Format'
+import constants from '../lib/constants'
+import format from '../lib/format'
 import Icon from '../lib/Icon'
-import Notification from '../lib/Notification'
-import Utils from '../lib/Utils'
+import notification from '../lib/notification'
+import utils from '../lib/utils'
 
 import Countdown from '../models/Countdown'
 
@@ -154,7 +154,7 @@ import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
 
 export default {
-  name: 'CountDowns',
+  name: 'countdowns-main',
   components: { Actions, AppBar },
   mounted: function () {
     this.bindShortcutKeys()
@@ -210,7 +210,7 @@ export default {
               self.initDate(cd)
             })
           },
-          onError: (err) => { Notification.error(`CD.Main.load: ${err.toString()}`) }
+          onError: (err) => { notification.error(`CD.Main.load: ${err.toString()}`) }
         }
       })
     },
@@ -246,14 +246,14 @@ export default {
 
     // Init dates for use with date-picker / time-picker
     initDate: function (countDown) {
-      this.$set(countDown, 'startDate', Format.formatDate(countDown.start_at * 1000, 'YYYY-MM-DD'))
-      this.$set(countDown, 'startTime', Format.formatDate(countDown.start_at * 1000, 'HH:mm'))
+      this.$set(countDown, 'startDate', format.formatDate(countDown.start_at * 1000, 'YYYY-MM-DD'))
+      this.$set(countDown, 'startTime', format.formatDate(countDown.start_at * 1000, 'HH:mm'))
 
       let endDate = null
       let endTime = null
       if (countDown.end_at) {
-        endDate = Format.formatDate(countDown.end_at * 1000, 'YYYY-MM-DD')
-        endTime = Format.formatDate(countDown.end_at * 1000, 'HH:mm')
+        endDate = format.formatDate(countDown.end_at * 1000, 'YYYY-MM-DD')
+        endTime = format.formatDate(countDown.end_at * 1000, 'HH:mm')
       }
 
       this.$set(countDown, 'endDate', endDate)
@@ -292,7 +292,7 @@ export default {
               this.showEditor = false
               self.load()
             },
-            onError: (err) => { Notification.error(`CD.Main.save: ${err.toString()}`) }
+            onError: (err) => { notification.error(`CD.Main.save: ${err.toString()}`) }
           }
         })
       }
@@ -308,9 +308,9 @@ export default {
       page: 1,
       perPage: Math.round(window.innerHeight / itemHeight) - 1,
       totalCountDowns: 0,
-      format: Format,
+      format: format,
       icon: Icon,
-      utils: Utils,
+      utils: utils,
       searchText: null,
       showEditor: false,
       showStartDateMenu: false,
@@ -326,7 +326,7 @@ export default {
         ],
         date: [
           date => !!date || 'Date is required',
-          date => (Moment(date, Constants.FORMATS.countDownDate, true).isValid()) || 'Format as ' + Constants.FORMATS.countDownDate
+          date => (Moment(date, constants.FORMATS.countDownDate, true).isValid()) || 'format as ' + constants.FORMATS.countDownDate
         ]
       }
     }

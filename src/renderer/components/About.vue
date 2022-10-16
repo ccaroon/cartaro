@@ -65,7 +65,7 @@ import RestClient from '../lib/RestClient'
 import vuePkg from 'vue/package.json'
 
 export default {
-  name: 'AboutDialog',
+  name: 'app-about',
   props: ['value'],
   mounted () { },
 

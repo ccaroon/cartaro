@@ -40,10 +40,10 @@ import Tickets from './Home/Tickets'
 import Todos from './Home/Todos'
 import WorkDays from './Home/WorkDays'
 
-import Format from '../lib/Format'
+import format from '../lib/format'
 
 export default {
-  name: 'HomeScreen',
+  name: 'home-main',
   components: { AppBar, Countdowns, LogEntries, Notes, Tickets, Todos, WorkDays },
 
   mounted: function () {
@@ -56,7 +56,7 @@ export default {
 
   data () {
     return {
-      format: Format,
+      format: format,
       appBarButtons: []
     }
   }

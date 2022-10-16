@@ -1,5 +1,5 @@
 import Moment from 'moment'
-import Format from '../lib/Format'
+import format from '../lib/format'
 import Icon from '../lib/Icon'
 import Resource from './Resource'
 // -----------------------------------------------------------------------------
@@ -107,7 +107,7 @@ class WorkDay extends Resource {
   }
 
   toString () {
-    return Format.formatDate(this.date)
+    return format.formatDate(this.date)
   }
 }
 // -----------------------------------------------------------------------------

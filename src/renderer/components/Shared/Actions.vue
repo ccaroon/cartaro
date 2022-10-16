@@ -32,7 +32,7 @@
   </div>
 </template>
 <script>
-import Notification from '../../lib/Notification'
+import notification from '../../lib/notification'
 
 export default {
   name: 'shared-actions',
@@ -61,7 +61,7 @@ export default {
             this.showArchiveDelete = false
             self.actions.onArchiveDelete('post-undelete', self.item)
           },
-          onError: (err) => { Notification.error(`SH.Actions.unArchive: ${err.toString()}`) }
+          onError: (err) => { notification.error(`SH.Actions.unArchive: ${err.toString()}`) }
         }
       })
     },
@@ -96,7 +96,7 @@ export default {
               this.showArchiveDelete = false
               self.actions.onArchiveDelete(`post-${event}`, self.item)
             },
-            onError: (err) => { Notification.error(`SH.Actions.archiveDelete: ${err.toString()}`) }
+            onError: (err) => { notification.error(`SH.Actions.archiveDelete: ${err.toString()}`) }
           }
         })
       }

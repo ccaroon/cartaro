@@ -35,11 +35,11 @@
   </v-dialog>
 </template>
 <script>
-import Format from '../../lib/Format'
-import Utils from '../../lib/Utils'
+import format from '../../lib/format'
+import utils from '../../lib/utils'
 
 export default {
-  name: 'logEntry-viewer',
+  name: 'log-entries-viewer',
   components: {},
   props: ['logEntry', 'value'],
 
@@ -51,8 +51,8 @@ export default {
 
   data () {
     return {
-      format: Format,
-      utils: Utils
+      format: format,
+      utils: utils
     }
   }
 }

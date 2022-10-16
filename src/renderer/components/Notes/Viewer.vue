@@ -27,7 +27,7 @@
 
 <script>
 export default {
-  name: 'note-viewer',
+  name: 'notes-viewer',
   components: {},
   props: ['note', 'value'],
 

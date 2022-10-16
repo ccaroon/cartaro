@@ -56,11 +56,11 @@
 <script>
 import Mousetrap from 'mousetrap'
 
-import Constants from '../lib/Constants'
-import Format from '../lib/Format'
+import constants from '../lib/constants'
+import format from '../lib/format'
 import Icon from '../lib/Icon'
-import Notification from '../lib/Notification'
-import Utils from '../lib/Utils'
+import notification from '../lib/notification'
+import utils from '../lib/utils'
 
 import Secret from '../models/Secret'
 
@@ -71,7 +71,7 @@ import SecretViewer from './Secrets/Viewer'
 import Tags from './Shared/Tags'
 
 export default {
-  name: 'SecretsScreen',
+  name: 'secrets-main',
   components: { Actions, AppBar, SecretViewer, SecretEditor, Tags },
   mounted: function () {
     this.bindShortcutKeys()
@@ -134,7 +134,7 @@ export default {
               })
             }
           },
-          onError: (err) => { Notification.error(`SE.Main.load: ${err.toString()}`) }
+          onError: (err) => { notification.error(`SE.Main.load: ${err.toString()}`) }
         }
       })
     },
@@ -183,10 +183,10 @@ export default {
       totalSecrets: 0,
       showEditor: false,
       showViewer: false,
-      format: Format,
-      constants: Constants,
+      format: format,
+      constants: constants,
       icons: Icon,
-      utils: Utils,
+      utils: utils,
       searchText: null,
       appBarButtons: [
         { name: 'New', icon: 'mdi-lock-plus', action: this.newSecret }

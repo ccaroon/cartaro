@@ -235,22 +235,22 @@
 
 <script>
 import Moment from 'moment'
-import Format from '../../lib/Format'
-import Constants from '../../lib/Constants'
-import Notification from '../../lib/Notification'
+import format from '../../lib/format'
+import constants from '../../lib/constants'
+import notification from '../../lib/notification'
 import Tag from '../../models/Tag'
 
 import Markdown from '../Shared/Markdown'
 
 export default {
-  name: 'todo-editor',
+  name: 'todos-editor',
   components: { Markdown },
   props: ['todo', 'value'],
 
   updated: function () {
     if (this.todo.due_at) {
-      this.dueDate = Format.formatDate(this.todo.due_at * 1000, 'YYYY-MM-DD')
-      this.dueTime = Format.formatDate(this.todo.due_at * 1000, 'HH:mm')
+      this.dueDate = format.formatDate(this.todo.due_at * 1000, 'YYYY-MM-DD')
+      this.dueTime = format.formatDate(this.todo.due_at * 1000, 'HH:mm')
     } else {
       this.dueDate = null
       this.dueTime = null
@@ -284,7 +284,7 @@ export default {
     loadTags: function () {
       Tag.loadAll({
         onSuccess: (tags) => { this.allTags = tags },
-        onError: (err) => Notification.error(`TD.Editor.loadTags: ${err.toString()}`)
+        onError: (err) => notification.error(`TD.Editor.loadTags: ${err.toString()}`)
       })
     },
 
@@ -368,8 +368,8 @@ export default {
       dueTime: null,
       allTags: [],
       errorMsg: null,
-      constants: Constants,
-      format: Format,
+      constants: constants,
+      format: format,
       rules: {
         title: [
           title => !!title || 'Title is required'

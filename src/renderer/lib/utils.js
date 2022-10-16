@@ -1,4 +1,4 @@
-import Constants from './Constants'
+import constants from './constants'
 
 export default {
   copyToClipboard: function (name, data) {
@@ -14,10 +14,10 @@ export default {
   },
 
   rowColor: function (idx, hilite = false) {
-    let color = hilite ? Constants.COLORS.ITEM_HIGHLIGHT : Constants.COLORS.GREY
+    let color = hilite ? constants.COLORS.ITEM_HIGHLIGHT : constants.COLORS.GREY
 
     if (idx % 2 !== 0) {
-      color = hilite ? Constants.COLORS.ITEM_HIGHLIGHT_ALT : Constants.COLORS.GREY_ALT
+      color = hilite ? constants.COLORS.ITEM_HIGHLIGHT_ALT : constants.COLORS.GREY_ALT
     }
 
     return color

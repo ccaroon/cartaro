@@ -15,17 +15,11 @@ import vuetify from './plugins/vuetify'
 import '@fortawesome/fontawesome-free/js/all.js'
 import Config from '@/shared/Config'
 import RestClient from './lib/RestClient'
-import Crypto from './lib/Crypto'
+import crypto from './lib/crypto'
 import('highlight.js/styles/panda-syntax-dark.css')
 
 Vue.config.productionTip = false
 
-// import Vuetify from 'vuetify'
-// import('vuetify/dist/vuetify.min.css')
-// import('@mdi/font/css/materialdesignicons.min.css')
-// import('material-design-icons-iconfont/dist/material-design-icons.css')
-
-// if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 
 const mdItOpts = {
@@ -47,18 +41,6 @@ const mdItOpts = {
 
     return `${prefix}${block}${suffix}`
   }
-  // highlight: (str, lang) => {
-  //   let block = ''
-  //   if (lang && hljs.getLanguage(lang)) {
-  //     try {
-  //       block = hljs.highlight(str, { language: lang }).value
-  //     } catch (err) {
-  //       console.log(err)
-  //     }
-  //   }
-
-  //   return block
-  // }
 }
 
 Vue.markdown = Vue.prototype.$markdown = new MarkdownIt(mdItOpts)
@@ -81,7 +63,7 @@ async function loadConfig () {
   const configData = await window.Config.data()
   const config = new Config(configData)
 
-  Crypto.init(config.get('encryption_password'))
+  crypto.init(config.get('encryption_password'))
   RestClient.init(config.get('server:port', 8888))
 
   global.Cartaro = {

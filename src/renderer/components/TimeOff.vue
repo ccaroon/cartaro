@@ -19,7 +19,7 @@ import PTOHolidays from './TimeOff/Holidays'
 import PTOPersonal from './TimeOff/Personal'
 
 export default {
-  name: 'TimeOff',
+  name: 'timeoff-main',
   components: { AppBar, PTOHolidays, PTOPersonal },
 
   mounted: function () {

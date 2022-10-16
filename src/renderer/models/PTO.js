@@ -1,5 +1,5 @@
 import Moment from 'moment'
-import Format from '../lib/Format'
+import format from '../lib/format'
 import Icon from '../lib/Icon'
 import Resource from './Resource'
 // -----------------------------------------------------------------------------
@@ -11,7 +11,7 @@ class PTO extends Resource {
     let icon = Icon.superSearch(this.type)
 
     if (icon === null) {
-      const month = Format.formatDate(new Date(), 'MMMM')
+      const month = format.formatDate(new Date(), 'MMMM')
       icon = Icon.superSearch(month, PTO.DEFAULT_ICON)
     }
 

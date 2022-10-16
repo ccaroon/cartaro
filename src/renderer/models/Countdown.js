@@ -2,14 +2,14 @@ import Moment from 'moment'
 
 import Resource from './Resource'
 
-import Format from '../lib/Format'
+import format from '../lib/format'
 import Icon from '../lib/Icon'
 // -----------------------------------------------------------------------------
 class Countdown extends Resource {
   static RESOURCE_NAME = 'count_downs'
   static DEFAULT_ICON = 'mdi-timer'
   humanize () {
-    return Format.humanizeDateRange(this.start_at, this.end_at)
+    return format.humanizeDateRange(this.start_at, this.end_at)
   }
 
   icon () {

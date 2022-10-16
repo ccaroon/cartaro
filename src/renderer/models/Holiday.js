@@ -1,6 +1,6 @@
 import Moment from 'moment'
 
-import Format from '../lib/Format'
+import format from '../lib/format'
 import Icon from '../lib/Icon'
 import Resource from './Resource'
 // -----------------------------------------------------------------------------
@@ -12,7 +12,7 @@ class Holiday extends Resource {
     let icon = Icon.superSearch(this.name)
 
     if (icon === null) {
-      const month = Format.formatDate(new Date(), 'MMMM')
+      const month = format.formatDate(new Date(), 'MMMM')
       icon = Icon.superSearch(month, Holiday.DEFAULT_ICON)
     }
 

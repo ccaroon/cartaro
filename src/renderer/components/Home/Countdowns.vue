@@ -23,8 +23,8 @@
   </v-footer>
 </template>
 <script>
-import Format from '../../lib/Format'
-import Notification from '../../lib/Notification'
+import format from '../../lib/format'
+import notification from '../../lib/notification'
 
 import Countdown from '../../models/Countdown'
 
@@ -51,7 +51,7 @@ export default {
           onSuccess: (items) => {
             self.countDowns = items
           },
-          onError: (err) => { Notification.error(`HM.CntDwn.loadCountDowns: ${err}`) }
+          onError: (err) => { notification.error(`HM.CntDwn.loadCountDowns: ${err}`) }
         }
       })
     },
@@ -83,16 +83,16 @@ export default {
         if (countDown.hasEnded()) {
           // - has-ended -> count up till NOW
           // between end_at & now
-          tip = Format.formatTimePeriod(countDown.end_at * 1000, Date.now())
+          tip = format.formatTimePeriod(countDown.end_at * 1000, Date.now())
         } else {
           if (countDown.hasStarted()) {
             // - has-started -> count down till end
             // between now & end_at
-            tip = Format.formatTimePeriod(Date.now(), countDown.end_at * 1000)
+            tip = format.formatTimePeriod(Date.now(), countDown.end_at * 1000)
           } else {
             // - not-started -> count down till start
             // between now & start_at
-            tip = Format.formatTimePeriod(Date.now(), countDown.start_at * 1000)
+            tip = format.formatTimePeriod(Date.now(), countDown.start_at * 1000)
           }
         }
       } else {
@@ -100,11 +100,11 @@ export default {
         if (countDown.hasStarted()) {
           // - has-started -> count up to NOW
           // between start_at & now
-          tip = Format.formatTimePeriod(countDown.start_at * 1000, Date.now())
+          tip = format.formatTimePeriod(countDown.start_at * 1000, Date.now())
         } else {
           // - not-started -> count down till start
           // between now & start_at
-          tip = Format.formatTimePeriod(Date.now(), countDown.start_at * 1000)
+          tip = format.formatTimePeriod(Date.now(), countDown.start_at * 1000)
         }
       }
 
@@ -115,7 +115,7 @@ export default {
   data () {
     return {
       countDowns: [],
-      format: Format
+      format: format
     }
   }
 }

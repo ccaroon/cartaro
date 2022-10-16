@@ -14,7 +14,7 @@
 
 <script>
 export default {
-  name: 'BlankSlate',
+  name: 'blank-slate',
 
   methods: { },
 

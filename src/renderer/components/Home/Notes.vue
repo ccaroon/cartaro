@@ -56,10 +56,10 @@ import NoteViewer from '../Notes/Viewer'
 
 import Note from '../../models/Note'
 
-import Constants from '../../lib/Constants'
-import Format from '../../lib/Format'
-import Notification from '../../lib/Notification'
-import Utils from '../../lib/Utils'
+import constants from '../../lib/constants'
+import format from '../../lib/format'
+import notification from '../../lib/notification'
+import utils from '../../lib/utils'
 
 export default {
   name: 'home-notes',
@@ -114,7 +114,7 @@ export default {
           onSuccess: (items) => {
             self.notes = items
           },
-          onError: (err) => { Notification.error(`HM.Notes.loadNotes: ${err}`) }
+          onError: (err) => { notification.error(`HM.Notes.loadNotes: ${err}`) }
         }
       })
     }
@@ -127,9 +127,9 @@ export default {
       note: new Note({}),
       showEditor: false,
       showViewer: false,
-      constants: Constants,
-      format: Format,
-      utils: Utils
+      constants: constants,
+      format: format,
+      utils: utils
     }
   }
 }

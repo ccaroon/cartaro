@@ -70,10 +70,10 @@ import LogEntryViewer from '../LogEntries/Viewer'
 
 import LogEntry from '../../models/LogEntry'
 
-import Constants from '../../lib/Constants'
-import Format from '../../lib/Format'
-import Notification from '../../lib/Notification'
-import Utils from '../../lib/Utils'
+import constants from '../../lib/constants'
+import format from '../../lib/format'
+import notification from '../../lib/notification'
+import utils from '../../lib/utils'
 
 export default {
   name: 'home-log-entries',
@@ -120,13 +120,13 @@ export default {
           onSuccess: (items) => {
             self.logEntries = items
           },
-          onError: (err) => { Notification.error(`HM.LogEnt.loadEntries: ${err}`) }
+          onError: (err) => { notification.error(`HM.LogEnt.loadEntries: ${err}`) }
         }
       })
     },
 
     rowColor: function (entry, index) {
-      return Utils.rowColor(index, entry.isToday())
+      return utils.rowColor(index, entry.isToday())
     }
   },
 
@@ -137,9 +137,9 @@ export default {
       listHeight: Math.round(window.innerHeight * 0.50),
       showEditor: false,
       showViewer: false,
-      constants: Constants,
-      format: Format,
-      utils: Utils
+      constants: constants,
+      format: format,
+      utils: utils
     }
   }
 }

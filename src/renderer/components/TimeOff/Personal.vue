@@ -120,10 +120,10 @@ import Mousetrap from 'mousetrap'
 
 import Actions from '../Shared/Actions'
 
-import Constants from '../../lib/Constants'
+import constants from '../../lib/constants'
 import Icon from '../../lib/Icon'
-import Notification from '../../lib/Notification'
-import Utils from '../../lib/Utils'
+import notification from '../../lib/notification'
+import utils from '../../lib/utils'
 
 import PTO from '../../models/PTO'
 import WorkDay from '../../models/WorkDay'
@@ -149,7 +149,7 @@ export default {
     },
 
     rowColor: function (pto, index) {
-      return Utils.rowColor(index)
+      return utils.rowColor(index)
     },
 
     refresh: function (page = null, searchText = '') {
@@ -180,7 +180,7 @@ export default {
             self.totalPTO = total
             self.pto = items
           },
-          onError: (err) => { Notification.error(`PTO.Personal.load: ${err.toString()}`) }
+          onError: (err) => { notification.error(`PTO.Personal.load: ${err.toString()}`) }
         }
       })
     },
@@ -227,16 +227,16 @@ export default {
               dup.save({
                 handlers: {
                   onSuccess: (_) => {
-                    Notification.info(`'${pto.type}' for ${pto.year} duplicated to '${dup.type}' for ${dup.year}`)
+                    notification.info(`'${pto.type}' for ${pto.year} duplicated to '${dup.type}' for ${dup.year}`)
                   }
                 }
               })
             } else {
-              Notification.warn(`'${dup.type}' for ${dup.year} already exists`)
+              notification.warn(`'${dup.type}' for ${dup.year} already exists`)
             }
           },
           onError: (err) => {
-            Notification.error(`PTO.Personal.duplicate: ${err.toString()}`)
+            notification.error(`PTO.Personal.duplicate: ${err.toString()}`)
           }
         }
       })
@@ -296,7 +296,7 @@ export default {
       currYear: Moment().year(),
       searchText: null,
       showEditor: false,
-      constants: Constants,
+      constants: constants,
       icon: Icon
     }
   }

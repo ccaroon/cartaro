@@ -137,8 +137,8 @@
 
 <script>
 import Moment from 'moment'
-import Format from '../../lib/Format'
-import Notification from '../../lib/Notification'
+import format from '../../lib/format'
+import notification from '../../lib/notification'
 
 import JiraTicket from '../../models/JiraTicket'
 import Tag from '../../models/Tag'
@@ -146,7 +146,7 @@ import Tag from '../../models/Tag'
 import Markdown from '../Shared/Markdown'
 
 export default {
-  name: 'logEntry-editor',
+  name: 'log-entries-editor',
   components: { Markdown },
   props: ['logEntry', 'value'],
 
@@ -158,7 +158,7 @@ export default {
   computed: {
     loggedAt: {
       get: function () {
-        return Format.formatDate(this.logEntry.logged_at * 1000, 'YYYY-MM-DD')
+        return format.formatDate(this.logEntry.logged_at * 1000, 'YYYY-MM-DD')
       },
 
       set: function (newDate) {
@@ -176,7 +176,7 @@ export default {
           onSuccess: (tickets) => {
             self.jiraTickets = tickets
           },
-          onError: (err) => { Notification.error(`LE.Editor.loadTickets: ${err.toString()}`) }
+          onError: (err) => { notification.error(`LE.Editor.loadTickets: ${err.toString()}`) }
         }
       })
     },
@@ -184,7 +184,7 @@ export default {
     loadTags: function () {
       Tag.loadAll({
         onSuccess: (tags) => { this.allTags = tags },
-        onError: (err) => Notification.error(`LE.Editor.loadTags: ${err.toString()}`)
+        onError: (err) => notification.error(`LE.Editor.loadTags: ${err.toString()}`)
       })
     },
 

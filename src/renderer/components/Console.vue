@@ -7,7 +7,7 @@
 import Mousetrap from 'mousetrap'
 
 export default {
-  name: 'QuakeConsole',
+  name: 'app-quake-console',
   components: {},
   props: [],
   mounted () {

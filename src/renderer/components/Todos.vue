@@ -56,9 +56,9 @@ import Mousetrap from 'mousetrap'
 
 import Todo from '../models/Todo'
 
-import Format from '../lib/Format'
-import Notification from '../lib/Notification'
-import Utils from '../lib/Utils'
+import format from '../lib/format'
+import notification from '../lib/notification'
+import utils from '../lib/utils'
 
 import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
@@ -67,7 +67,7 @@ import TodoViewer from './Todos/Viewer'
 import Tags from './Shared/Tags'
 
 export default {
-  name: 'ToDos',
+  name: 'todos-main',
   components: { Actions, AppBar, TodoEditor, TodoViewer, Tags },
   mounted: function () {
     this.bindShortcutKeys()
@@ -122,7 +122,7 @@ export default {
             self.todos = todos
           },
           onError: (err) => {
-            Notification.error(`TD.Main.load: ${err.toString()}`)
+            notification.error(`TD.Main.load: ${err.toString()}`)
           }
         }
       })
@@ -134,7 +134,7 @@ export default {
         handlers: {
           onSuccess: (resp) => { this.refresh() },
           onError: (err) => {
-            Notification.error(`TD.Main.toggleCompleted: ${err.toString()}`)
+            notification.error(`TD.Main.toggleCompleted: ${err.toString()}`)
           }
         }
       })
@@ -177,8 +177,8 @@ export default {
       page: 1,
       perPage: Math.round(window.innerHeight / itemHeight) - 1,
       totalTodos: 0,
-      format: Format,
-      utils: Utils,
+      format: format,
+      utils: utils,
       searchText: null,
       showViewer: false,
       showEditor: false,

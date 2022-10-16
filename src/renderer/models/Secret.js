@@ -1,4 +1,4 @@
-import Crypto from '../lib/Crypto'
+import crypto from '../lib/crypto'
 import Icon from '../lib/Icon'
 import Resource from './Resource'
 // -----------------------------------------------------------------------------
@@ -47,7 +47,7 @@ class Secret extends Resource {
   decrypt () {
     if (this.__encrypted) {
       this.keys(key => {
-        this.data[key] = Crypto.decrypt(this.data[key])
+        this.data[key] = crypto.decrypt(this.data[key])
       })
       this.__encrypted = false
     }

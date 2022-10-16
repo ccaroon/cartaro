@@ -37,9 +37,9 @@
   </v-sheet>
 </template>
 <script>
-import Constants from '../../lib/Constants'
-import Notification from '../../lib/Notification'
-import Utils from '../../lib/Utils'
+import constants from '../../lib/constants'
+import notification from '../../lib/notification'
+import utils from '../../lib/utils'
 import JiraTicket from '../../models/JiraTicket'
 
 export default {
@@ -59,7 +59,7 @@ export default {
           onSuccess: (items) => {
             self.tickets = items
           },
-          onError: (err) => { Notification.error(`HM.Tickts.loadTickets: ${err}`) }
+          onError: (err) => { notification.error(`HM.Tickts.loadTickets: ${err}`) }
         }
       })
     },
@@ -80,8 +80,8 @@ export default {
     return {
       tickets: [],
       listHeight: Math.round(window.innerHeight * 0.25),
-      constants: Constants,
-      utils: Utils
+      constants: constants,
+      utils: utils
     }
   }
 }

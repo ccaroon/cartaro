@@ -194,11 +194,11 @@
 import Moment from 'moment'
 import Mousetrap from 'mousetrap'
 
-import Constants from '../../lib/Constants'
-import Format from '../../lib/Format'
+import constants from '../../lib/constants'
+import format from '../../lib/format'
 import Icon from '../../lib/Icon'
-import Notification from '../../lib/Notification'
-import Utils from '../../lib/Utils'
+import notification from '../../lib/notification'
+import utils from '../../lib/utils'
 
 import Holiday from '../../models/Holiday'
 import WorkDay from '../../models/WorkDay'
@@ -224,7 +224,7 @@ export default {
     },
 
     rowColor: function (holiday, index) {
-      return Utils.rowColor(index, holiday.thisMonth())
+      return utils.rowColor(index, holiday.thisMonth())
     },
 
     refresh: function (page = null, searchText = '') {
@@ -261,7 +261,7 @@ export default {
               self.initDate(hd)
             })
           },
-          onError: (err) => { Notification.error(`PTO.Holidays.load: ${err.toString()}`) }
+          onError: (err) => { notification.error(`PTO.Holidays.load: ${err.toString()}`) }
         }
       })
     },
@@ -280,22 +280,22 @@ export default {
         handlers: {
           onSuccess: function (exists) {
             if (exists) {
-              Notification.warn(`'${holiday.name}' already exists on WorkDay Calendar.`)
+              notification.warn(`'${holiday.name}' already exists on WorkDay Calendar.`)
             } else {
               workDay.save({
                 handlers: {
                   onSuccess: (_) => {
-                    Notification.info(`'${holiday.name}' added to WorkDay Calendar.`)
+                    notification.info(`'${holiday.name}' added to WorkDay Calendar.`)
                   },
                   onError: (err) => {
-                    Notification.error(`PTO.Holidays.addToCalendar#save: ${err.toString()}`)
+                    notification.error(`PTO.Holidays.addToCalendar#save: ${err.toString()}`)
                   }
                 }
               })
             }
           },
           onError: (err) => {
-            Notification.error(`PTO.Holidays.addToCalendar#exists: ${err.toString()}`)
+            notification.error(`PTO.Holidays.addToCalendar#exists: ${err.toString()}`)
           }
         }
       })
@@ -320,11 +320,11 @@ export default {
             if (!exists) {
               this.save(dup, false, `${holiday.name} duplicated to ${this.displayDate(dup)}`)
             } else {
-              Notification.warn(`'${holiday.name}' already exists for ${this.displayDate(dup)}`)
+              notification.warn(`'${holiday.name}' already exists for ${this.displayDate(dup)}`)
             }
           },
           onError: (err) => {
-            Notification.error(`PTO.Holidays.duplicate: ${err.toString()}`)
+            notification.error(`PTO.Holidays.duplicate: ${err.toString()}`)
           }
         }
       })
@@ -358,20 +358,20 @@ export default {
 
     // Init dates for use with date-picker / time-picker
     initDate: function (holiday) {
-      this.$set(holiday, 'targetDate', Format.formatDate(
-        holiday.date * 1000, Constants.FORMATS.dateOnly
+      this.$set(holiday, 'targetDate', format.formatDate(
+        holiday.date * 1000, constants.FORMATS.dateOnly
       ))
     },
 
     displayDate: function (holiday) {
-      return Format.formatDate(holiday.date * 1000, 'ddd MMM DD, YYYY')
+      return format.formatDate(holiday.date * 1000, 'ddd MMM DD, YYYY')
     },
 
     save: function (holiday, validate = true, successMsg = null) {
       const self = this
 
       if (holiday.targetDate) {
-        holiday.date = Moment(`${holiday.targetDate}`, Constants.FORMATS.dateOnly).startOf('day').unix()
+        holiday.date = Moment(`${holiday.targetDate}`, constants.FORMATS.dateOnly).startOf('day').unix()
       }
 
       let doSave = true
@@ -391,10 +391,10 @@ export default {
               self.load()
 
               if (successMsg) {
-                Notification.success(successMsg)
+                notification.success(successMsg)
               }
             },
-            onError: (err) => { Notification.error(`PTO.Holidays.save: ${err.toString()}`) }
+            onError: (err) => { notification.error(`PTO.Holidays.save: ${err.toString()}`) }
           }
         })
       }
@@ -413,17 +413,17 @@ export default {
       searchText: null,
       showEditor: false,
       showDateMenu: false,
-      constants: Constants,
-      format: Format,
+      constants: constants,
+      format: format,
       icon: Icon,
-      utils: Utils,
+      utils: utils,
       rules: {
         name: [
           name => !!name || 'Name is required'
         ],
         date: [
           date => !!date || 'Date is required',
-          date => (Moment(date, Constants.FORMATS.dateOnly, true).isValid()) || 'Format as ' + Constants.FORMATS.dateOnly
+          date => (Moment(date, constants.FORMATS.dateOnly, true).isValid()) || 'format as ' + constants.FORMATS.dateOnly
         ]
       }
     }

@@ -85,13 +85,9 @@
 </template>
 <script>
 import Moment from 'moment'
-// import Format from '../../lib/Format'
-// import Notification from '../../lib/Notification'
-
-// import Config from '../../../Config'
 
 export default {
-  name: 'pto-editor',
+  name: 'timeoff-pto-editor',
   components: { },
   props: ['pto', 'value'],
 

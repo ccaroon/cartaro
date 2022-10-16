@@ -55,10 +55,10 @@
 <script>
 import Moment from 'moment'
 
-import Constants from '../../lib/Constants'
-import Format from '../../lib/Format'
-import Notification from '../../lib/Notification'
-import Utils from '../../lib/Utils'
+import constants from '../../lib/constants'
+import format from '../../lib/format'
+import notification from '../../lib/notification'
+import utils from '../../lib/utils'
 
 import WorkDay from '../../models/WorkDay'
 
@@ -109,7 +109,7 @@ export default {
             })
           },
           onError: function (err) {
-            Notification.error(`HM.WDays.load: ${err}`)
+            notification.error(`HM.WDays.load: ${err}`)
           }
         }
       })
@@ -148,9 +148,9 @@ export default {
       let color = workDay.color('light', alt)
 
       if (Moment().startOf('day').isSame(workDay.date * 1000)) {
-        color = Constants.COLORS.ITEM_HIGHLIGHT
+        color = constants.COLORS.ITEM_HIGHLIGHT
       } else if (workDay.isNormal()) {
-        color = alt ? Constants.COLORS.GREY_ALT : Constants.COLORS.GREY
+        color = alt ? constants.COLORS.GREY_ALT : constants.COLORS.GREY
       }
 
       return color
@@ -161,9 +161,9 @@ export default {
     return {
       // List of day entries. Each day can contain more than 1 entry.
       workDays: [],
-      constants: Constants,
-      format: Format,
-      utils: Utils
+      constants: constants,
+      format: format,
+      utils: utils
     }
   }
 }

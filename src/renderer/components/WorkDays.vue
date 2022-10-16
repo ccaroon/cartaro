@@ -109,9 +109,9 @@
 import Moment from 'moment'
 import Mousetrap from 'mousetrap'
 
-import Format from '../lib/Format'
+import format from '../lib/format'
 import Icon from '../lib/Icon'
-import Notification from '../lib/Notification'
+import notification from '../lib/notification'
 
 import AppBar from './Shared/AppBar'
 
@@ -120,7 +120,7 @@ import WorkDay from '../models/WorkDay'
 const DAYS_PER_MONTH = 31
 
 export default {
-  name: 'WorkDays',
+  name: 'work-days-main',
   components: { AppBar },
   mounted: function () {
     this.bindShortcutKeys()
@@ -139,8 +139,8 @@ export default {
 
     displayWorkDates: function () {
       let dateStr = ''
-      const start = Format.formatDate(this.weekStart, 'MMM DD, YYYY')
-      const end = Format.formatDate(this.weekEnd, 'MMM DD, YYYY')
+      const start = format.formatDate(this.weekStart, 'MMM DD, YYYY')
+      const end = format.formatDate(this.weekEnd, 'MMM DD, YYYY')
 
       dateStr = `${start} to ${end}`
 
@@ -148,11 +148,11 @@ export default {
     },
 
     displayYearWeek: function () {
-      return `Week ${Format.formatDate(new Date(), 'WW')}`
+      return `Week ${format.formatDate(new Date(), 'WW')}`
     },
 
     goToToday: function () {
-      this.calDate = Format.formatDate(new Date(), 'YYYY-MM-DD')
+      this.calDate = format.formatDate(new Date(), 'YYYY-MM-DD')
     },
 
     totalHours: function () {
@@ -183,7 +183,7 @@ export default {
           self.refresh()
         })
         .catch((err) => {
-          Notification.error(`WD.Main.addDay: ${err.toString()}`)
+          notification.error(`WD.Main.addDay: ${err.toString()}`)
         })
     },
 
@@ -219,7 +219,7 @@ export default {
       const self = this
       const query = {
         pp: DAYS_PER_MONTH,
-        start: Format.formatDate(Moment(this.calDate).startOf('month'), 'YYYY-MM-DD'),
+        start: format.formatDate(Moment(this.calDate).startOf('month'), 'YYYY-MM-DD'),
         days: DAYS_PER_MONTH
       }
 
@@ -230,7 +230,7 @@ export default {
             self.events = self.createEvents(days)
           },
           onError: (err) => {
-            Notification.error(`WD.Main.loadMonth: ${err.toString()}`)
+            notification.error(`WD.Main.loadMonth: ${err.toString()}`)
           }
         }
       })
@@ -276,7 +276,7 @@ export default {
           onSuccess: () => {
             this.refresh()
           },
-          onError: (err) => Notification.error(`WD.Main.save: ${err.toString()}`)
+          onError: (err) => notification.error(`WD.Main.save: ${err.toString()}`)
         }
       })
     },
@@ -290,7 +290,7 @@ export default {
           onSuccess: () => {
             self.refresh()
           },
-          onError: (err) => { Notification.error(`WD.Main.delete: ${err.toString()}`) }
+          onError: (err) => { notification.error(`WD.Main.delete: ${err.toString()}`) }
         }
       })
     }
@@ -306,7 +306,7 @@ export default {
 
   data () {
     return {
-      calDate: Format.formatDate(new Date(), 'YYYY-MM-DD'),
+      calDate: format.formatDate(new Date(), 'YYYY-MM-DD'),
       weekStart: Moment().startOf('week'),
       weekEnd: Moment().endOf('week'),
       events: [],
@@ -314,7 +314,7 @@ export default {
       selectedWorkDay: new WorkDay({ type: WorkDay.TYPE_NORMAL }),
       eventElement: null,
       workDays: [],
-      format: Format,
+      format: format,
       icons: Icon,
       showTimeInMenu: false,
       showTimeOutMenu: false,

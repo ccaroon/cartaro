@@ -64,10 +64,10 @@
 <script>
 import Moment from 'moment'
 
-import Constants from '../../lib/Constants'
-import Format from '../../lib/Format'
-import Notification from '../../lib/Notification'
-import Utils from '../../lib/Utils'
+import constants from '../../lib/constants'
+import format from '../../lib/format'
+import notification from '../../lib/notification'
+import utils from '../../lib/utils'
 
 import TodoEditor from '../Todos/Editor'
 import TodoViewer from '../Todos/Viewer'
@@ -112,7 +112,7 @@ export default {
             self.todos = todos
           },
           onError: (err) => {
-            Notification.error(`HM.Todos.load: ${err}`)
+            notification.error(`HM.Todos.load: ${err}`)
           }
         }
       })
@@ -172,9 +172,9 @@ export default {
       listHeight: Math.round(window.innerHeight * 0.25),
       showEditor: false,
       showViewer: false,
-      constants: Constants,
-      format: Format,
-      utils: Utils
+      constants: constants,
+      format: format,
+      utils: utils
     }
   }
 }

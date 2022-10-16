@@ -44,9 +44,9 @@
 <script>
 import Mousetrap from 'mousetrap'
 
-import Format from '../lib/Format'
-import Notification from '../lib/Notification'
-import Utils from '../lib/Utils'
+import format from '../lib/format'
+import notification from '../lib/notification'
+import utils from '../lib/utils'
 
 import Note from '../models/Note'
 
@@ -57,7 +57,7 @@ import NoteViewer from './Notes/Viewer'
 import Tags from './Shared/Tags'
 
 export default {
-  name: 'NotesScreen',
+  name: 'notes-main',
   components: { Actions, AppBar, NoteEditor, NoteViewer, Tags },
   mounted: function () {
     this.bindShortcutKeys()
@@ -110,7 +110,7 @@ export default {
             self.totalNotes = total
             self.notes = items
           },
-          onError: (err) => { Notification.error(`NT.Main.load: ${err.toString()}`) }
+          onError: (err) => { notification.error(`NT.Main.load: ${err.toString()}`) }
         }
       })
     },
@@ -161,8 +161,8 @@ export default {
       totalNotes: 0,
       showEditor: false,
       showViewer: false,
-      format: Format,
-      utils: Utils,
+      format: format,
+      utils: utils,
       searchText: null,
       appBarButtons: [
         { name: 'New', icon: 'mdi-file-plus', action: this.newNote }

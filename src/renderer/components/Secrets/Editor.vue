@@ -134,13 +134,13 @@
 </template>
 
 <script>
-import Constants from '../../lib/Constants'
-import Notification from '../../lib/Notification'
+import constants from '../../lib/constants'
+import notification from '../../lib/notification'
 import Markdown from '../Shared/Markdown'
 import Tag from '../../models/Tag'
 
 export default {
-  name: 'secret-editor',
+  name: 'secrets-editor',
   components: { Markdown },
   props: ['secret', 'value'],
 
@@ -164,7 +164,7 @@ export default {
     loadTags: function () {
       Tag.loadAll({
         onSuccess: (tags) => { this.allTags = tags },
-        onError: (err) => Notification.error(`SE.Editor.loadTags: ${err.toString()}`)
+        onError: (err) => notification.error(`SE.Editor.loadTags: ${err.toString()}`)
       })
     },
 
@@ -188,7 +188,7 @@ export default {
         this.secret.save({
           handlers: {
             onSuccess: () => { self.close() },
-            onError: (err) => { Notification.error(`SE.Editor.save: ${err.toString()}`) }
+            onError: (err) => { notification.error(`SE.Editor.save: ${err.toString()}`) }
           }
         })
       } else {
@@ -227,7 +227,7 @@ export default {
   data () {
     return {
       allTags: [],
-      constants: Constants,
+      constants: constants,
       config: global.Cartaro.config,
       errorMsg: null,
       secretTypeVal: null,

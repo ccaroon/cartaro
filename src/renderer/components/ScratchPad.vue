@@ -20,14 +20,14 @@
 import Mousetrap from 'mousetrap'
 
 import AppBar from './Shared/AppBar'
-import Format from '../lib/Format'
+import format from '../lib/format'
 import LocalForage from 'localforage'
 import Markdown from './Shared/Markdown'
 import Note from '../models/Note'
-import Notification from '../lib/Notification'
+import notification from '../lib/notification'
 
 export default {
-  name: 'ScratchPad',
+  name: 'scratch-pad-main',
   components: { AppBar, Markdown },
   mounted: function () {
     const self = this
@@ -85,7 +85,7 @@ export default {
             postLoad(value)
           })
           .catch((err) => {
-            Notification.error(`ScratchPad.loadTab(${tabNum}): ${err.toString()}`)
+            notification.error(`ScratchPad.loadTab(${tabNum}): ${err.toString()}`)
           })
       } else {
         return LocalForage.getItem(storageKey)
@@ -117,7 +117,7 @@ export default {
           }
         })
         .catch((err) => {
-          Notification.error(`ScratchPad.saveTab(${tabNum}): ${err.toString()}`)
+          notification.error(`ScratchPad.saveTab(${tabNum}): ${err.toString()}`)
         })
     },
 
@@ -143,7 +143,7 @@ export default {
 
     saveTabToNotes: function () {
       const pad = this.scratchPads[this.activePadNum]
-      const dtStamp = Format.formatDateTime(new Date(), 'MMM DD, YYYY HH:mm:ss')
+      const dtStamp = format.formatDateTime(new Date(), 'MMM DD, YYYY HH:mm:ss')
 
       const note = this.contentToNote(pad.content)
       note.title = `${note.title} (${dtStamp})`
@@ -151,10 +151,10 @@ export default {
       note.save({
         handlers: {
           onSuccess: () => {
-            Notification.success(`Exported Tab #${this.activePadNum + 1} to "${note.title}"`, 4000)
+            notification.success(`Exported Tab #${this.activePadNum + 1} to "${note.title}"`, 4000)
             this.contentUpdate('')
           },
-          onError: (err) => { Notification.error(`SP.Editor.saveTabToNotes: ${err.toString()}`) }
+          onError: (err) => { notification.error(`SP.Editor.saveTabToNotes: ${err.toString()}`) }
         }
       })
     },

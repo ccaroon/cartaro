@@ -41,12 +41,12 @@
 </template>
 
 <script>
-import Format from '../../lib/Format'
-import Constants from '../../lib/Constants'
-import Utils from '../../lib/Utils'
+import format from '../../lib/format'
+import constants from '../../lib/constants'
+import utils from '../../lib/utils'
 
 export default {
-  name: 'secret-viewer',
+  name: 'secrets-viewer',
   components: {},
   props: ['secret', 'isHidden', 'value'],
 
@@ -73,9 +73,9 @@ export default {
 
   data () {
     return {
-      constants: Constants,
-      format: Format,
-      utils: Utils,
+      constants: constants,
+      format: format,
+      utils: utils,
       hideData: true
     }
   }

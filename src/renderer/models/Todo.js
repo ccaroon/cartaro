@@ -1,6 +1,6 @@
 import Moment from 'moment'
 
-import Constants from '../lib/Constants'
+import constants from '../lib/constants'
 import Resource from './Resource'
 // -----------------------------------------------------------------------------
 class Todo extends Resource {
@@ -60,12 +60,12 @@ class Todo extends Resource {
 
   priorityColor () {
     const key = `PRIORITY_${this.priority}`
-    return Constants.COLORS[key]
+    return constants.COLORS[key]
   }
 
   color (idx) {
     const colors = {
-      default: [Constants.COLORS.GREY, Constants.COLORS.GREY_ALT],
+      default: [constants.COLORS.GREY, constants.COLORS.GREY_ALT],
       dueSoon: ['yellow lighten-2', 'yellow lighten-4'],
       overdue: ['red lighten-2', 'red lighten-4']
     }

@@ -41,10 +41,10 @@
 </template>
 
 <script>
-import Format from '../../lib/Format'
+import format from '../../lib/format'
 
 export default {
-  name: 'todo-viewer',
+  name: 'todos-viewer',
   components: {},
   props: ['todo', 'value'],
 
@@ -56,7 +56,7 @@ export default {
 
   data () {
     return {
-      format: Format
+      format: format
     }
   }
 }
