@@ -1,6 +1,8 @@
 # CHANGELOG
 
-## UNRELEASED: v1.6.0 - Kraken - 2022-??-??
+## UNRELEASED: v1.6.0 - DEAD-WEIGHT - NEVER
+**NEVER RELEASED. CHANGES IN 1.6 ARE ALSO IN `master` and 2.0**
+
 ### Server
 * Changed Jira (`jira.py`) to use Personal Access Token for API calls
 
