@@ -39,6 +39,8 @@ export default {
 
   showNotification: function (opts) {
     // ipcRenderer.send('app-show-notification', opts)
-    console.log(`[${opts.color}] --${opts.message}-- (${opts.icon})`)
+    const msg = `[${opts.color}] --${opts.message}-- (${opts.icon})`
+    console.log(msg)
+    alert(msg)
   }
 }
