@@ -58,6 +58,7 @@ class Icon {
     { icon: new Icon('Goal', 'mdi-flag-checkered'), keywords: ['goals'] },
     { icon: new Icon('GoLang', 'mdi-language-go'), keywords: [] },
     { icon: new Icon('Google', 'mdi-google'), keywords: [] },
+    { icon: new Icon('Halloween', 'mdi-halloween'), keywords: ['jack-o-lantern'] },
     { icon: new Icon('Harddrives', 'mdi-harddisk'), keywords: ['harddisks', 'hard-disks', 'HD', 'HDD', 'hard-drives'] },
     { icon: new Icon('Health-Check', 'mdi-heart-pulse'), keywords: ['healthcheck'] },
     { icon: new Icon('Heart', 'mdi-heart'), keywords: ['love', 'valentine', 'valentine\'s'] },
