@@ -4,7 +4,7 @@
   "author": "Craig N. Caroon",
   "codename": "Kraken",
   "icon": "fab fa-gitkraken",
-  "buildDate": "September 11, 2022",
+  "buildDate": "October 18, 2022",
   "description": "Work Journal/Chronicler",
   "private": true,
   "scripts": {

@@ -2,7 +2,10 @@
 
 ## UNRELEASED: v2.0.0 - Kraken - 2022-??-??
 ### UI
-TODO: changed to use Daikon as a base for the application
+* Updated to use vue-cli, electron-builder and friends. Completely re-created
+  the app and electron framework & tooling to run and build it. Started from 
+  scratch using my example Vue/Electron App Daikon.
+  - Includes many new features and lots of bug fixes.
 
 ### Server
 * Changed Jira (`jira.py`) to use Personal Access Token for API calls
@@ -10,7 +13,6 @@ TODO: changed to use Daikon as a base for the application
   - Changed from `nose` to `nose2` for unit test running.
 
 ### Misc
-* Changed window default width and height
 * Made the various screens more responsive to the windows size
   - Stopped hard-coding component heights
   - Stopped hard-coding list page items per page
