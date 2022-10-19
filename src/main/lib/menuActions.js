@@ -2,7 +2,7 @@ import { Notification } from 'electron'
 import http from 'axios'
 import config from './config'
 
-const PORT = config.get('serverPort', 4242)
+const PORT = config.get('server:port')
 
 export default {
   FILE: {
@@ -16,12 +16,14 @@ export default {
       )
         .then(resp => {
           const msg = resp.status === 201 ? resp.data.message : resp.data.error
+          // console.log(`Backup Success: ${msg}`)
           new Notification({
             title: 'Backup Success',
             body: msg
           }).show()
         })
         .catch(err => {
+          // console.log(`Backup Failed: ${err}`)
           new Notification({
             title: 'Backup Failed',
             body: err
