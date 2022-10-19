@@ -6,6 +6,7 @@
   the app and electron framework & tooling to run and build it. Started from 
   scratch using my example Vue/Electron App Daikon.
   - Includes many new features and lots of bug fixes.
+* Notifications are now implemented using the [Notifications WebAPI](https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API)
 
 ### Server
 * Changed Jira (`jira.py`) to use Personal Access Token for API calls
