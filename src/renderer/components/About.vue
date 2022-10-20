@@ -8,13 +8,18 @@
       </v-card-title>
       <v-card-text>
         {{ appInfo.description }} &mdash; &copy; {{ appInfo.author }} 2022-{{
-        new Date().getFullYear()
+          new Date().getFullYear()
         }}
         <v-divider></v-divider>
         <v-row>
           <v-col>
             <v-subheader>System Info</v-subheader>
-            <v-data-table :items="systemInfo" hide-default-footer hide-default-header dark>
+            <v-data-table
+              :items="systemInfo"
+              hide-default-footer
+              hide-default-header
+              dark
+            >
               <template v-slot:body="{ items }">
                 <tbody>
                   <tr v-for="item in items" :key="item.name">
@@ -22,10 +27,12 @@
                       <v-icon>{{ item.icon }}</v-icon>
                       {{ item.name }}
                     </td>
-                    <td :id="
-                      'about-sysinfo-' +
-                      item.name.toLowerCase().replace(' ', '')
-                    ">
+                    <td
+                      :id="
+                        'about-sysinfo-' +
+                        item.name.toLowerCase().replace(' ', '')
+                      "
+                    >
                       {{ item.value }}
                     </td>
                   </tr>
@@ -35,7 +42,12 @@
           </v-col>
           <v-col>
             <v-subheader>Built With</v-subheader>
-            <v-data-table :items="builtWith" hide-default-footer hide-default-header dark>
+            <v-data-table
+              :items="builtWith"
+              hide-default-footer
+              hide-default-header
+              dark
+            >
               <template v-slot:body="{ items }">
                 <tbody>
                   <tr v-for="item in items" :key="item.name">
@@ -43,9 +55,11 @@
                       <v-icon>{{ item.icon }}</v-icon>
                       {{ item.name }}
                     </td>
-                    <td :id="
-                      'about-tech-' + item.name.toLowerCase().replace(' ', '')
-                    ">
+                    <td
+                      :id="
+                        'about-tech-' + item.name.toLowerCase().replace(' ', '')
+                      "
+                    >
                       {{ item.value }}
                     </td>
                   </tr>
@@ -77,6 +91,9 @@ export default {
 
   data () {
     const process = window.NodeJS.process
+    const mode = process.env.NODE_ENV === 'development'
+      ? 'Development'
+      : 'Production'
 
     const data = {
       appInfo: pkgJson,
@@ -90,7 +107,7 @@ export default {
       systemInfo: [
         { name: pkgJson.name, value: `v${pkgJson.version} | ${pkgJson.codename}`, icon: pkgJson.icon },
         { name: 'Platform', value: process.platform, icon: 'mdi-laptop' },
-        { name: 'Mode', value: process.env.NODE_ENV, icon: 'mdi-cogs' },
+        { name: 'Mode', value: mode, icon: 'mdi-cogs' },
         { name: 'Server', value: RestClient.baseUrl(), icon: 'mdi-ip-network' },
         { name: 'Build Date', value: pkgJson.buildDate, icon: 'mdi-wrench' }
       ]
