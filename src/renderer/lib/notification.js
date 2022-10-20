@@ -1,8 +1,6 @@
-// import { ipcRenderer } from 'electron'
-
 export default {
   info: function (msg, timeout = 10000) {
-    this.showNotification({
+    this.showNotification('Info', {
       icon: 'mdi-information',
       color: 'info',
       message: msg,
@@ -11,7 +9,7 @@ export default {
   },
 
   success: function (msg, timeout = 10000) {
-    this.showNotification({
+    this.showNotification('Success', {
       icon: 'mdi-information',
       color: 'success',
       message: msg,
@@ -20,7 +18,7 @@ export default {
   },
 
   warn: function (msg, timeout = -1) {
-    this.showNotification({
+    this.showNotification('Warning', {
       icon: 'mdi-alert',
       color: 'warning',
       message: msg,
@@ -29,7 +27,7 @@ export default {
   },
 
   error: function (msg) {
-    this.showNotification({
+    this.showNotification('Error', {
       icon: 'mdi-alert-octagram',
       color: 'error',
       message: msg,
@@ -37,10 +35,12 @@ export default {
     })
   },
 
-  showNotification: function (opts) {
-    // ipcRenderer.send('app-show-notification', opts)
-    const msg = `[${opts.color}] --${opts.message}-- (${opts.icon})`
-    console.log(msg)
-    alert(msg)
+  showNotification: function (type, opts) {
+    console.log(`[${opts.color}] --${opts.message}-- (${opts.icon})`)
+    const note = new Notification(type, {
+      body: opts.message,
+      requireInteraction: opts.timeout < 0
+    })
+    return note
   }
 }

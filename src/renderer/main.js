@@ -64,7 +64,7 @@ async function loadConfig () {
   const config = new Config(configData)
 
   crypto.init(config.get('encryption_password'))
-  RestClient.init(config.get('server:port', 8888))
+  RestClient.init(config.get('server:port'))
 
   global.Cartaro = {
     config

@@ -120,7 +120,7 @@ class Server {
   }
 }
 // -----------------------------------------------------------------------------
-const PORT = config.get('server:port', 4242)
+const PORT = config.get('server:port')
 const defaultServer = new Server(settings.docPath, PORT, 5, 1000, new Logger())
 export default {
   instance: defaultServer

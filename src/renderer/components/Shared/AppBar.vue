@@ -1,6 +1,6 @@
 <template>
   <v-app-bar app dense fixed dark clipped-left>
-    <v-app-bar-nav-icon>
+    <v-app-bar-nav-icon @click="showNotice">
       <v-icon :color="iconColor">{{ icon }}</v-icon>
     </v-app-bar-nav-icon>
     <v-toolbar-title>Ĉartaro - {{ name }}</v-toolbar-title>
@@ -66,6 +66,8 @@
 import Mousetrap from 'mousetrap'
 import pkgJson from '../../../../package.json'
 
+import notification from '../../lib/notification'
+
 export default {
   name: 'shared-app-bar',
   components: {},
@@ -113,6 +115,10 @@ export default {
         }
         self.refresh(self.page, self.searchText)
       })
+    },
+
+    showNotice: function () {
+      notification.info(`Cartaro - ${this.name}`)
     },
 
     clearSearch: function () {

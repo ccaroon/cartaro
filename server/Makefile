@@ -1,4 +1,4 @@
-usage:
+help:
 	@echo "* clean: Clean up a bit."
 	@echo "* cover: Run Code Coverage"
 	@echo "* cover-module: Run Code Coverage for a single test module"

@@ -1,16 +1,17 @@
 'use strict'
 
-import { app, ipcMain, protocol, screen, BrowserWindow, Menu, MenuItem } from 'electron'
+import { app, ipcMain, protocol, screen, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 
 import fs from 'fs'
 import path from 'path'
 
-import settings from './lib/settings'
 import ipc from './lib/ipc'
 import Logger from './lib/Logger'
+import menu from './lib/menu'
 import Server from './lib/Server'
+import settings from './lib/settings'
 import windowHelper from './lib/windowHelper'
 
 // -----------------------------------------------------------------------------
@@ -74,31 +75,11 @@ async function createWindow () {
     }
   })
 
-  // Add Context Menu
-  const menu = new Menu()
-  menu.append(new MenuItem({
-    label: 'Copy',
-    role: 'copy'
-  }))
-  menu.append(new MenuItem({
-    label: 'Paste',
-    role: 'paste'
-  }))
-  menu.append(new MenuItem({
-    type: 'separator'
-  }))
-  menu.append(new MenuItem({
-    label: 'Dev Tools',
-    role: 'toggleDevTools'
-  }))
+  // Application Menu
+  menu.setApplicationMenu()
 
-  mainWindow.webContents.on('context-menu',
-    (event, click) => {
-      event.preventDefault()
-      menu.popup(mainWindow.webContents)
-    },
-    false
-  )
+  // Add Context Menu
+  menu.addContext(mainWindow)
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
