@@ -28,6 +28,17 @@ if __name__ == "__main__":
     secrets = Secret.fetch()
 
     for secret in secrets:
+        was_deleted = secret.deleted_at
+        if was_deleted:
+            print(f"Undeleting '{secret.name}'")
+            # B/c can't save a deleted object
+            secret.undelete()
+        
+        print(f"Rekeying '{secret.name}'")
         secret.rekey(args.new_key)
+
+        if was_deleted:
+            print(f"Re-Deleting '{secret.name}'")
+            secret.delete(safe=True)
 
     print(F"*** Remember to update your CartaroCfg.json file! ***")

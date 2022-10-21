@@ -1,4 +1,5 @@
 import os
+import json
 from flask import Flask
 
 # ------------------------------------------------------------------------------
@@ -6,15 +7,35 @@ from flask import Flask
 # ------------------------------------------------------------------------------
 flask_app = Flask(__name__)
 
+# ------------------------------------------------------------------------------
+# Configure Flask's JSONEncoder to look for a "serialize" method when 
+# serializing Cartaro model class instances.
+# ------------------------------------------------------------------------------
+# Define a function to handle Cartaro models by calling their "serialize"
+# method...
+# ...for other obj's that don't have a "serialize" method, use the default
+# json encoder
+def __json_encoder(cls, obj):
+    return getattr(obj.__class__, "serialize", __json_encoder.default)(obj)
+# Set an attribute named 'default' on the __json_encoder function
+# to the method that we are going to be overriding, i.e. the default
+# JSONProvider.default method.
+# __json_encoder.default is then used as the fallback encoder if the object
+# being encoded does NOT have a "serialize" method.
+__json_encoder.default = flask_app.json_provider_class.default
+
+# Then override the flask.json.provider.DefaultJSONProvider.default
+# method to __json_encoder.
+flask_app.json_provider_class.default = __json_encoder
+# ------------------------------------------------------------------------------
 doc_path = os.environ.get('CARTARO_DOC_PATH', '.')
 cfg_path = os.environ.get('CARTARO_CFG_PATH', doc_path)
 # NOTE: Top-level keys in CartaroCfg.json MUST be UPPERCASE for Flask to store them
 # TODO: Make use of config.py, somehow, for the SERVER part of the config
-flask_app.config.from_json(F"{cfg_path}/CartaroCfg.json", silent=True)
+suffix = "-dev" if os.environ.get('CARTARO_ENV') == "dev" else ""
+flask_app.config.from_file(
+    F"{cfg_path}/CartaroCfg{suffix}.json", load=json.load, silent=False)
 flask_app.config['DOC_PATH'] = doc_path
-
-# import pprint
-# pprint.pprint(flask_app.config)
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------

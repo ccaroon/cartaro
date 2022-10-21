@@ -44,7 +44,7 @@ cover-module:
 dev:
 	CARTARO_DOC_PATH=${HOME}/Documents/Cartaro \
 	CARTARO_ENV=dev       \
-	FLASK_ENV=development \
+	FLASK_DEBUG=1         \
 	FLASK_APP=cartaro     \
 	flask run -p 7777
 
