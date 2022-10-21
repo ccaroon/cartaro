@@ -18,13 +18,20 @@
     <v-list-item-action>
       <v-row no-gutters>
         <v-col class="mr-1" v-if="actions.hasOwnProperty('onEdit')">
-          <v-btn icon outlined @click="actions['onEdit'](item)" :disabled="item.isDeleted()">
+          <v-btn
+            icon
+            outlined
+            @click="actions['onEdit'](item)"
+            :disabled="item.isDeleted()"
+          >
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-col>
         <v-col class="mr-1" v-if="actions.hasOwnProperty('onArchiveDelete')">
           <v-btn icon outlined @click="archiveDelete()">
-            <v-icon :color="archiveDeleteColor">mdi-{{ archiveDeleteIcon }}</v-icon>
+            <v-icon :color="archiveDeleteColor"
+              >mdi-{{ archiveDeleteIcon }}</v-icon
+            >
           </v-btn>
         </v-col>
       </v-row>
@@ -53,6 +60,7 @@ export default {
     unArchive: function () {
       const self = this
 
+      /* eslint-disable-next-line vue/no-mutating-props */
       this.item.deleted_at = null
       self.actions.onArchiveDelete('pre-undelete', self.item)
       this.item.undelete({

@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable vue/no-mutating-props -->
   <v-dialog :value="value" persistent max-width="75%" max-height="90%">
     <v-card>
       <v-app-bar dense flat>
@@ -98,6 +99,7 @@
 </template>
 
 <script>
+/* eslint-disable vue/no-mutating-props */
 import notification from '../../lib/notification'
 import Markdown from '../Shared/Markdown'
 
