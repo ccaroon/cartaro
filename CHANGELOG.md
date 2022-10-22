@@ -3,7 +3,7 @@
 ## UNRELEASED: v2.0.0 - Kraken - 2022-??-??
 ### UI
 * Updated to use vue-cli, electron-builder and friends. Completely re-created
-  the app and electron framework & tooling to run and build it. Started from 
+  the app and electron framework & tooling to run and build it. Started from
   scratch using my example Vue/Electron App Daikon.
   - Includes many new features and lots of bug fixes.
 * Notifications are now implemented using the [Notifications WebAPI](https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API)
@@ -12,6 +12,11 @@
 * Changed Jira (`jira.py`) to use Personal Access Token for API calls
 * Updated to use Python 3.10.x
   - Changed from `nose` to `nose2` for unit test running.
+* Updated Third-Party package
+  - cryptography ~= 38.0.1
+  - flask ~= 2.2.2
+  - requests ~= 2.28.1
+  - tinydb ~= 4.7.0
 
 ### Misc
 * Made the various screens more responsive to the windows size
