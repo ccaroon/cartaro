@@ -22,24 +22,19 @@ test-module:
 	nose2 -v $(MODULE)
 
 cover:
-	CARTARO_ENV=test \
-	CARTARO_DOC_PATH=tests/tmp \
-	CARTARO_CFG_PATH=../tests/data \
-	nose2 -v -s tests \
-			--with-coverage	\
-			--coverage-report html \
-			--coverage-report term
-			# --cover-min-percentage 95 \
+	CARTARO_ENV=test                  \
+	CARTARO_DOC_PATH=tests/tmp        \
+	CARTARO_CFG_PATH=../tests/data    \
+	coverage run -m nose2 -v -s tests
+	coverage report
+	coverage html
 
 cover-module:
-	CARTARO_ENV=test \
-	CARTARO_DOC_PATH=tests/tmp \
+	CARTARO_ENV=test               \
+	CARTARO_DOC_PATH=tests/tmp     \
 	CARTARO_CFG_PATH=../tests/data \
-	nose2 -v $(MODULE) \
-			--with-coverage \
-			--coverage-report html \
-			--coverage-report term
-			# --cover-min-percentage 95 \
+	coverage run -m nose2 -v $(MODULE)
+	coverage report
 
 dev:
 	CARTARO_DOC_PATH=${HOME}/Documents/Cartaro \

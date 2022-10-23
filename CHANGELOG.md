@@ -13,7 +13,9 @@
 * Updated to use Python 3.10.x
   - Changed from `nose` to `nose2` for unit test running.
 * Updated Third-Party package
+  - coverage ~= 6.5.0
   - cryptography ~= 38.0.1
+  - faker ~= 15.1.1
   - flask ~= 2.2.2
   - requests ~= 2.28.1
   - tinydb ~= 4.7.0
