@@ -1,7 +1,6 @@
 import arrow
 import inflector
 import itertools
-import json
 import os
 import re
 
@@ -11,14 +10,6 @@ from tinydb import TinyDB, Query
 import tinydb.operations as tyops
 
 from cartaro.utils.db_helper import DbHelper
-# ------------------------------------------------------------------------------
-# Configure JSONEncoder to look for "serialize" method when serializing classes
-# ------------------------------------------------------------------------------
-def __class_encoder(self, obj):
-    return getattr(obj.__class__, "serialize", __class_encoder.default)(obj)
-
-__class_encoder.default = json.JSONEncoder().default
-json.JSONEncoder.default = __class_encoder
 # ------------------------------------------------------------------------------
 # IMPORTANT NOTES:
 # 1. `id` is not stored in the database as part of the record. It is "external"

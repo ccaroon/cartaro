@@ -37,7 +37,7 @@ class Server {
 
     const env = {}
     env.PYTHONPATH = serverPath
-    env.FLASK_ENV = process.env.NODE_ENV
+    env.FLASK_DEBUG = 0
     env.FLASK_APP = 'cartaro'
     env.CARTARO_DOC_PATH = this.__docPath
     env.CARTARO_ENV = process.env.NODE_ENV === 'development' ? 'dev' : 'prod'

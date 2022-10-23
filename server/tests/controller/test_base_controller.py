@@ -24,6 +24,9 @@ class Snippet(cartaro.model.taggable.Taggable, cartaro.model.base.Base):
 
         return data
 # ------------------------------------------------------------------------------
+snippets = cartaro.controller.base.create_controller("snippets", Snippet)
+cartaro.flask_app.register_blueprint(snippets, url_prefix="/snippets")
+# ------------------------------------------------------------------------------
 class BaseControllerTest(unittest.TestCase):
 
     FAKER = faker.Faker()
@@ -43,8 +46,6 @@ class BaseControllerTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Setup Flask Testing
-        snippets = cartaro.controller.base.create_controller("snippets", Snippet)
-        cartaro.flask_app.register_blueprint(snippets, url_prefix="/snippets")
         cartaro.flask_app.config['TESTING'] = True
 
     def setUp(self):

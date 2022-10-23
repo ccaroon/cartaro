@@ -90,7 +90,7 @@ def create_controller(controller_name, Model):
         except Exception as e:
             status = 500
             resp = {
-                "error": str(e)
+                "error": str(e) or str(type(e))
             }
 
         return jsonify(resp), status
