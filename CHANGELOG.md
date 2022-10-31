@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## UNRELEASED: v2.1.0 - Unknown Depths - 2022-??-??
+...
+
 ## v2.0.0 - Kraken - 2022-10-31
 Release the Kraken!
 

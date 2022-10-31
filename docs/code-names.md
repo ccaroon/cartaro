@@ -7,11 +7,11 @@ In no particular order:
 * Anaximenes      -- v1.3.x
 * Ouroboros       -- v1.4.x
 * Cartographer    -- v1.5.x
-* Kraken          -- v1.6.x
+* Kraken          -- v2.0.x
+* Unknown Depths  -- v2.1.x
 * -------------------------
 * Legendary ...
 * Epic ...
 * Frozen Wilds
 * Unexplored Territory
-* Unknown Depths
 * Safe Harbour
