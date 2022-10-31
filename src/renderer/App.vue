@@ -7,7 +7,11 @@
 
     <v-navigation-drawer v-model="drawer" app dark mini-variant clipped>
       <v-list dense>
-        <v-list-item v-for="(page, index) in menu_main" @click="goTo(page)" :key="index">
+        <v-list-item
+          v-for="(page, index) in menu_main"
+          @click="goTo(page)"
+          :key="index"
+        >
           <v-list-item-action>
             <v-icon>{{ page.icon }}</v-icon>
           </v-list-item-action>
@@ -15,7 +19,11 @@
       </v-list>
       <v-divider></v-divider>
       <v-list dense>
-        <v-list-item v-for="(page, index) in menu_misc" @click="goTo(page)" :key="index">
+        <v-list-item
+          v-for="(page, index) in menu_misc"
+          @click="goTo(page)"
+          :key="index"
+        >
           <v-list-item-action>
             <v-icon>{{ page.icon }}</v-icon>
           </v-list-item-action>
@@ -23,7 +31,12 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-bottom-sheet inset overlay-color="black" overlay-opacity="0.75" v-model="showConsole">
+    <v-bottom-sheet
+      inset
+      overlay-color="black"
+      overlay-opacity="0.75"
+      v-model="showConsole"
+    >
       <!-- <Console></Console> -->
     </v-bottom-sheet>
 
@@ -136,7 +149,8 @@ export default {
       { name: 'ScratchPad', path: '/scratch_pad', icon: 'mdi-square-edit-outline' }
     ],
     menu_misc: [
-      { name: 'TimeOff', path: '/timeoff', icon: 'mdi-timetable' }
+      { name: 'TimeOff', path: '/timeoff', icon: 'mdi-timetable' },
+      { name: 'BlankSlate', path: '/blank_slate', icon: 'mdi-test-tube' }
     ]
   })
 }
