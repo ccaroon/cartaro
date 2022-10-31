@@ -1,20 +1,30 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col cols="2">
-        <v-icon size="128" color="black">fa-chalkboard</v-icon>
-      </v-col>
-      <v-col>
-        <div class="text-h1">Blank Slate</div>
-        A Blank Component. Ready for Your Code!
-      </v-col>
-    </v-row>
+    <div id="editor"></div>
   </v-container>
 </template>
 
 <script>
+import { EditorState } from '@codemirror/state'
+import { EditorView, keymap } from '@codemirror/view'
+import { defaultKeymap } from '@codemirror/commands'
+
 export default {
   name: 'blank-slate',
+
+  mounted () {
+    const startState = EditorState.create({
+      doc: 'Hello World',
+      extensions: [keymap.of(defaultKeymap)]
+    })
+
+    const view = new EditorView({
+      state: startState,
+      parent: document.getElementById('editor')
+    })
+
+    return view
+  },
 
   methods: { },
 
