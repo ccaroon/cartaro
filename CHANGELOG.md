@@ -1,6 +1,8 @@
 # CHANGELOG
 
-## UNRELEASED: v2.0.0 - Kraken - 2022-??-??
+## v2.0.0 - Kraken - 2022-10-31
+Release the Kraken!
+
 ### UI
 * Updated to use vue-cli, electron-builder and friends. Completely re-created
   the app and electron framework & tooling to run and build it. Started from
@@ -24,6 +26,9 @@
 * Made the various screens more responsive to the windows size
   - Stopped hard-coding component heights
   - Stopped hard-coding list page items per page
+
+## v1.6.0 - Defunct
+In progress changes for v1.6 are part of v2.0
 
 ## v1.5.1 - Cartographer - 2022-04-18
 ### Features

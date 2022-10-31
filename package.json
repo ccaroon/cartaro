@@ -1,10 +1,10 @@
 {
   "name": "Cartaro",
-  "version": "2.0.0e",
+  "version": "2.0.0",
   "author": "Craig N. Caroon",
   "codename": "Kraken",
   "icon": "fab fa-gitkraken",
-  "buildDate": "October 23, 2022",
+  "buildDate": "October 31, 2022",
   "description": "Work Journal/Chronicler",
   "private": true,
   "scripts": {
