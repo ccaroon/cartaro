@@ -33,7 +33,6 @@ class Icon {
     { icon: new Icon('Contacts', 'mdi-contacts'), keywords: ['ldap', 'ad', 'active directory'] },
     { icon: new Icon('Credentials', 'mdi-credit-card'), keywords: ['creds'] },
     { icon: new Icon('CSS', 'mdi-language-css3'), keywords: ['css3'] },
-    { icon: new Icon('Data', 'data_object'), keywords: ['json', 'yaml', 'yml'] },
     { icon: new Icon('Databases', 'mdi-database'), keywords: ['DB', 'sql', 'mysql', 'postgresql', 'redis', 'mongodb'] },
     { icon: new Icon('Debian', 'mdi-debian'), keywords: [] },
     { icon: new Icon('Deleted', 'mdi-close-octagon'), keywords: ['removed'] },
@@ -70,6 +69,7 @@ class Icon {
     { icon: new Icon('Java', 'mdi-language-java'), keywords: [] },
     { icon: new Icon('JavaScript', 'mdi-language-javascript'), keywords: ['ecma'] },
     { icon: new Icon('Jira', 'fab fa-jira'), keywords: [] },
+    { icon: new Icon('JSON', 'mdi-code-json'), keywords: ['json'] },
     { icon: new Icon('jQuery', 'mdi-jquery'), keywords: [] },
     { icon: new Icon('Key', 'mdi-key'), keywords: [] },
     { icon: new Icon('King', 'mdi-chess-king'), keywords: ['mlk'] },
@@ -137,7 +137,8 @@ class Icon {
     { icon: new Icon('Workday', 'mdi-calendar'), keywords: [] },
     { icon: new Icon('Workflow', 'mdi-sitemap'), keywords: [] },
     { icon: new Icon('Virus', 'mdi-virus'), keywords: ['covid', 'covid-19'] },
-    { icon: new Icon('XRay', 'mdi-radiology-box'), keywords: [] }
+    { icon: new Icon('XRay', 'mdi-radiology-box'), keywords: [] },
+    { icon: new Icon('YAML', 'mdi-language-xaml'), keywords: ['yaml', 'yml'] }
   ]
 
   name = null

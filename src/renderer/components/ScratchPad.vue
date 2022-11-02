@@ -1,16 +1,27 @@
 <template>
   <v-container fluid class="black">
-    <AppBar v-bind:name="'Scratch Pad'" v-bind:buttons="appBarButtons" v-bind:hideSearch="true"></AppBar>
+    <AppBar
+      v-bind:name="'Scratch Pad'"
+      v-bind:buttons="appBarButtons"
+      v-bind:hideSearch="true"
+    ></AppBar>
     <v-tabs v-model="activePadNum" fixed-tabs dark>
       <v-tab v-for="(pad, idx) in scratchPads" :key="idx">
         <v-icon :color="tabColor(idx)">{{
-        pad.icon(`mdi-numeric-${idx + 1}-box`)
+          pad.icon(`mdi-numeric-${idx + 1}-box`)
         }}</v-icon>
       </v-tab>
       <v-tabs-items v-model="activePadNum">
         <v-tab-item v-for="(pad, idx) in scratchPads" :key="idx">
-          <Markdown :content="pad.content" @update="contentUpdate" v-bind:keyMap="keyMap"
-            :theme="config.get('markdown:scratch-pad')"></Markdown>
+          <Markdown
+            :id="idx"
+            :content="pad.buffer"
+            :keyMap="keyMap"
+            height="90"
+            @update="contentUpdate"
+            @save="saveActiveTab"
+          >
+          </Markdown>
         </v-tab-item>
       </v-tabs-items>
     </v-tabs>
@@ -32,6 +43,11 @@ export default {
   mounted: function () {
     const self = this
 
+    Mousetrap.bind(['ctrl+s', 'command+s'], () => {
+      self.saveActiveTab()
+      return false
+    })
+
     // Load all ScratchPads data from LocalStorage
     const promises = []
     for (let i = 0; i < this.numPads; i++) {
@@ -44,6 +60,12 @@ export default {
 
         for (let i = 0; i < self.numPads; i++) {
           const note = self.contentToNote(values[i])
+          // Can't pass note.content directly to Markdown component as
+          // `content` b/c it's update handler will fire everytime the
+          // CM doc changes which causes the `content` prop to change
+          // which in turn caused the watch on `content` in the MD component
+          // to fire which leads to weird behavior.
+          note.buffer = note.content
           self.scratchPads.push(note)
         }
       })
@@ -163,6 +185,7 @@ export default {
       const pad = this.scratchPads[tabNum]
       pad.title = ''
       pad.content = ''
+      pad.buffer = ''
       // pad.content = null
       // this.$set(pad, 'title', '')
       // this.$set(pad, 'content', null)
@@ -202,10 +225,7 @@ export default {
       scratchPads: [],
       dirty: false,
       config: global.Cartaro.config,
-      keyMap: {
-        'Cmd-S': () => { this.saveActiveTab() },
-        'Ctrl-S': () => { this.saveActiveTab() }
-      },
+      keyMap: [],
       appBarButtons: [
         { name: 'Save', icon: 'mdi-content-save', action: this.saveActiveTab },
         { name: 'Erase', icon: 'mdi-eraser', color: 'pink lighten-3', action: this.erase },
@@ -217,8 +237,13 @@ export default {
 
     for (let i = 0; i < data.numPads; i++) {
       // For when CodeMirror is focused
-      data.keyMap[`Cmd-${i + 1}`] = () => { this.setActiveTab(i) }
-      data.keyMap[`Ctrl-${i + 1}`] = () => { this.setActiveTab(i) }
+      data.keyMap.push({
+        key: `Mod-${i + 1}`,
+        run () {
+          self.setActiveTab(i)
+          return true
+        }
+      })
 
       // For when this component is focused
       Mousetrap.bind([`ctrl+${i + 1}`, `command+${i + 1}`], () => {
@@ -231,9 +256,3 @@ export default {
   }
 }
 </script>
-<style lang="css" scoped>
-:deep(.CodeMirror) {
-    border: 1px solid rgb(0, 0, 0);
-    height: 1100px;
-}
-</style>
