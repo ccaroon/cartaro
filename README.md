@@ -44,6 +44,7 @@ Requires NodeJS v16.16.x and Python 3.10.x
 * [Material Design Icons](https://materialdesignicons.com/)
 * [Font Awesome FREE](https://fontawesome.com/icons)
 * [Electron](https://www.electronjs.org/)
+* [CodeMirror 6](https://codemirror.net/)
 
 ### Tooling
 * [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)

@@ -1,7 +1,13 @@
 # CHANGELOG
 
 ## UNRELEASED: v2.1.0 - Unknown Depths - 2022-??-??
-...
+Periscope Up!
+
+### UI
+* Searched for a better Markdown editor. Landed back on CodeMirror.
+  - So...updated to CodeMirror 6.
+
+-------------------------------------------------------------------------------
 
 ## v2.0.0 - Kraken - 2022-10-31
 Release the Kraken!
@@ -30,13 +36,19 @@ Release the Kraken!
   - Stopped hard-coding component heights
   - Stopped hard-coding list page items per page
 
+-------------------------------------------------------------------------------
+
 ## v1.6.0 - Defunct
 In progress changes for v1.6 are part of v2.0
+
+-------------------------------------------------------------------------------
 
 ## v1.5.1 - Cartographer - 2022-04-18
 ### Features
 * PTO Tracking is now by the hour instead of assuming a Vacation or Sick day
   uses the entire day.
+
+-------------------------------------------------------------------------------
 
 ## v1.5.0 - Cartographer - 2022-03-25
 ### General UI + Frontend
@@ -132,7 +144,7 @@ Can be access by clicking the new TimeOff icon at the bottom of the side bar.
 * Lots of minor module updates
   - electron, vue, vuetify, etc.
 
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 ## v1.4.0 - Ouroboros - 2021-05-21
 ### Added
@@ -174,7 +186,7 @@ Can be access by clicking the new TimeOff icon at the bottom of the side bar.
   - markdown-it
   - etc...
 
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 ## v1.3.0 - Anaximenes - 2021-05-04
 ### Added
@@ -234,7 +246,7 @@ Can be access by clicking the new TimeOff icon at the bottom of the side bar.
 ### Misc
 * Increased server unit test coverage: 98%
 
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 ## v1.2.0 - van Schagen - 2021-03-30
 ### Added
@@ -283,7 +295,7 @@ Can be access by clicking the new TimeOff icon at the bottom of the side bar.
 * `vuetify`: 2.4.8
 * Various `XYZZY-loader` modules
 
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 ## v1.1.0 - Scylax - 2021-02-26
 ### Added
@@ -324,12 +336,12 @@ Can be access by clicking the new TimeOff icon at the bottom of the side bar.
 * Fixed a bug where App would display Home screen on startup **before** server
   was ready causing the Home screen to be blank/have no data.
 
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 ## v1.0.0 - Here Be Dragons - 2021-02-16
 First release.
 
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 ## vM.N.P - Codename - YYYY-MM-DD
 ### Added
