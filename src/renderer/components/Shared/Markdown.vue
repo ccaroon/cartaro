@@ -16,8 +16,12 @@ import { markdown } from '@codemirror/lang-markdown'
 import { python } from '@codemirror/lang-python'
 import { yaml } from '@codemirror/legacy-modes/mode/yaml'
 
-// THEMES
-import { oneDark } from '@codemirror/theme-one-dark'
+// THEMES (In order of how I like them for Markdown)
+import { basicDark } from 'cm6-theme-basic-dark'
+// import { oneDark } from '@codemirror/theme-one-dark'
+// import { materialDark } from 'cm6-theme-material-dark'
+// import { dracula } from '@uiw/codemirror-theme-dracula'
+// -----
 
 export default {
   name: 'shared-markdown',
@@ -29,6 +33,7 @@ export default {
 
     // Tab key indents
     keyMappings.push(indentWithTab)
+
     // Ctl|Cmd-S saves
     keyMappings.push(
       {
@@ -47,7 +52,10 @@ export default {
     }
 
     const fixedHeight = EditorView.theme({
-      '&': { height: '100%' },
+      '&': {
+        height: '100%',
+        'font-size': '16px'
+      },
       '.cm-scroller': { overflow: 'auto' }
     })
 
@@ -71,7 +79,7 @@ export default {
           // Can't get a LanguageDescription of `yaml`
           codeLanguages: this.loadLang
         }),
-        oneDark
+        basicDark
       ],
       parent: document.getElementById(this.editorId)
     })
