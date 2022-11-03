@@ -63,9 +63,9 @@
                 <template v-if="secretType === 'blot'">
                   <span class="text-h6">Content</span>
                   <Markdown
-                    :content="secret.data[fld]"
+                    :content="blotBuffer"
+                    height="25"
                     @update="(newContent) => (secret.data[fld] = newContent)"
-                    :theme="config.get('markdown:secret')"
                   ></Markdown>
                 </template>
                 <template v-else>
@@ -85,9 +85,9 @@
               <v-col>
                 <span class="text-h6">Notes</span>
                 <Markdown
-                  :content="secret.note"
+                  :content="noteBuffer"
+                  height="25"
                   @update="(newContent) => (secret.note = newContent)"
-                  :theme="config.get('markdown:secret')"
                 ></Markdown>
               </v-col>
             </v-row>
@@ -223,12 +223,17 @@ export default {
       if (!this.secret.note) {
         this.secret.note = ''
       }
+
+      this.noteBuffer = this.secret.note
+      this.blotBuffer = this.secret.data.blot || ''
     }
   },
 
   data () {
     return {
       allTags: [],
+      noteBuffer: this.secret.note || '',
+      blotBuffer: '',
       constants: constants,
       config: global.Cartaro.config,
       errorMsg: null,
@@ -248,8 +253,3 @@ export default {
   }
 }
 </script>
-<style lang="css" scoped>
-:deep(.CodeMirror) {
-  height: 200px;
-}
-</style>

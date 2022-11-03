@@ -1,59 +1,153 @@
 <template>
-  <v-sheet outlined>
-    <codemirror :value="content" @input="onContentChange" :options="cmOption" />
-  </v-sheet>
+  <div :id="editorId" :style="'height: ' + height + 'vh'"></div>
 </template>
 
 <script>
-import { codemirror } from 'vue-codemirror'
+// COMPS
+import { minimalSetup } from 'codemirror'
+import { indentWithTab } from '@codemirror/commands'
+import { LanguageDescription, StreamLanguage, bracketMatching } from '@codemirror/language'
+import { EditorView, highlightActiveLine, keymap } from '@codemirror/view'
+import { highlightSelectionMatches } from '@codemirror/search'
 
-// Base CSS
-import 'codemirror/lib/codemirror.css'
+// LANGS
+import { javascript } from '@codemirror/lang-javascript'
+import { json } from '@codemirror/lang-json'
+import { markdown } from '@codemirror/lang-markdown'
+import { python } from '@codemirror/lang-python'
+import { yaml } from '@codemirror/legacy-modes/mode/yaml'
 
-// Languages
-import 'codemirror/mode/clike/clike.js'
-import 'codemirror/mode/go/go.js'
-import 'codemirror/mode/groovy/groovy.js'
-import 'codemirror/mode/javascript/javascript.js'
-import 'codemirror/mode/markdown/markdown.js'
-import 'codemirror/mode/python/python.js'
-import 'codemirror/mode/shell/shell.js'
-import 'codemirror/mode/yaml/yaml.js'
-
-// AddOns
-import 'codemirror/addon/selection/active-line'
-
-// Themes
-import 'codemirror/theme/ayu-dark.css'
-import 'codemirror/theme/lesser-dark.css'
-import 'codemirror/theme/material.css'
-import 'codemirror/theme/material-darker.css'
-import 'codemirror/theme/panda-syntax.css'
-import 'codemirror/theme/the-matrix.css'
-import 'codemirror/theme/yonce.css'
+// THEMES (In order of how I like them for Markdown)
+import { basicDark } from 'cm6-theme-basic-dark'
+// import { oneDark } from '@codemirror/theme-one-dark'
+// import { materialDark } from 'cm6-theme-material-dark'
+// import { dracula } from '@uiw/codemirror-theme-dracula'
+// -----
 
 export default {
   name: 'shared-markdown',
-  components: { codemirror },
-  props: ['content', 'keyMap', 'theme'],
-  mounted () {},
+  props: ['content', 'id', 'keyMap', 'height'],
+
+  mounted () {
+    const self = this
+    const keyMappings = []
+
+    // Tab key indents
+    keyMappings.push(indentWithTab)
+
+    // Ctl|Cmd-S saves
+    keyMappings.push(
+      {
+        key: 'Mod-s',
+        run () {
+          self.contentSave()
+          return true
+        }
+      }
+    )
+    // Custom key mappings
+    if (this.keyMap) {
+      this.keyMap.forEach(map => {
+        keyMappings.push(map)
+      })
+    }
+
+    const fixedHeight = EditorView.theme({
+      '&': {
+        height: '100%',
+        'font-size': '16px'
+      },
+      '.cm-scroller': { overflow: 'auto' }
+    })
+
+    const updateListener = EditorView.updateListener.of(self.contentUpdate)
+
+    this.editor = new EditorView({
+      doc: this.content,
+      extensions: [
+        EditorView.lineWrapping,
+        fixedHeight,
+        updateListener,
+        minimalSetup,
+        highlightActiveLine(),
+        bracketMatching(),
+        highlightSelectionMatches(),
+        keymap.of(keyMappings),
+        markdown({
+          // codeLanguages: [
+          //   LanguageDescription.of({ name: 'javascript', support: javascript() }),
+          //   LanguageDescription.of({ name: 'json', support: json() }),
+          //   LanguageDescription.of({ name: 'python', support: python() })
+          // ]
+          // Have to use as a function b/c of the legacy YAML language.
+          // Can't get a LanguageDescription of `yaml`
+          codeLanguages: this.loadLang
+        }),
+        basicDark
+      ],
+      parent: document.getElementById(this.editorId)
+    })
+    this.editor.focus()
+  },
+
   methods: {
-    onContentChange: function (newContent) {
-      this.$emit('update', newContent)
+    loadLang: function (info) {
+      return this.languages[info]
+    },
+
+    contentUpdate: function (view) {
+      if (view.docChanged) {
+        this.$emit('update', this.editor.state.doc.toString())
+      }
+    },
+
+    contentSave: function () {
+      this.$emit('save', this.editor.state.doc.toString())
     }
   },
-  watch: { },
+
+  watch: {
+    content: function (newContent, oldContent) {
+      if (newContent !== oldContent) {
+        const setContent = this.editor.state.update({
+          changes: {
+            from: 0,
+            to: this.editor.state.doc.length,
+            insert: newContent
+          }
+        })
+
+        this.editor.dispatch(setContent)
+        // Move cursor to end of document
+        // this.editor.dispatch({
+        //   selection: {
+        //     // anchor: this.editor.state.doc.length,
+        //     // head: this.editor.state.doc.length
+        //     anchor: 0,
+        //     head: 0
+        //   }
+        // })
+        this.editor.focus()
+      }
+    }
+
+    // keyMap: function (newMap, oldMap) {
+    //   if (newMap !== oldMap) {
+    //     // Use Compartment.reconfigure()
+    //     return true
+    //   }
+    // }
+  },
+
   data () {
     return {
-      cmOption: {
-        autofocus: true,
-        tabSize: 4,
-        styleActiveLine: true,
-        lineNumbers: false,
-        lineWrapping: true,
-        mode: 'text/x-markdown',
-        theme: this.theme || 'lesser-dark',
-        extraKeys: this.keyMap
+      editor: null,
+      editorId: 'cartaro-md-editor-' + (this.id || 'X'),
+      languages: {
+        javascript: LanguageDescription.of({ name: 'javascript', support: javascript() }).support.language,
+        json: LanguageDescription.of({ name: 'json', support: json() }).support.language,
+        python: LanguageDescription.of({ name: 'python', support: python() }).support.language,
+        yaml: StreamLanguage.define(yaml)
       }
     }
   }

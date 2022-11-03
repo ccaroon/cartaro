@@ -87,9 +87,10 @@
             <v-row>
               <v-col>
                 <Markdown
-                  :content="logEntry.content"
+                  :content="buffer"
+                  height="60"
                   @update="(newContent) => (logEntry.content = newContent)"
-                  :theme="config.get('markdown:log-entry')"
+                  @save="save"
                 ></Markdown>
               </v-col>
             </v-row>
@@ -249,6 +250,7 @@ export default {
       if (!this.logEntry.content) {
         this.logEntry.content = ''
       }
+      this.buffer = this.logEntry.content
     },
     chosenTicket: function (newTicket) {
       if (newTicket) {
@@ -264,6 +266,7 @@ export default {
   data () {
     return {
       showDateMenu: false,
+      buffer: this.logEntry.content || '',
       allTags: [],
       config: global.Cartaro.config,
       jiraTickets: [],
@@ -284,8 +287,3 @@ export default {
   }
 }
 </script>
-<style lang="css" scoped>
-:deep(.CodeMirror) {
-  height: 525px;
-}
-</style>

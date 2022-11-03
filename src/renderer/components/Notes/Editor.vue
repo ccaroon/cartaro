@@ -46,10 +46,10 @@
             <v-row>
               <v-col cols="12">
                 <Markdown
-                  :content="note.content"
+                  :content="buffer"
+                  :height="65"
                   @update="(newContent) => (note.content = newContent)"
-                  :theme="config.get('markdown:note')"
-                  v-bind:keyMap="keyMap"
+                  @save="saveBuffer"
                 ></Markdown>
               </v-col>
             </v-row>
@@ -122,6 +122,10 @@ export default {
       })
     },
 
+    saveBuffer: function () {
+      this.save(false)
+    },
+
     save: function (close = true) {
       const self = this
 
@@ -176,19 +180,17 @@ export default {
       if (!this.note.content) {
         this.note.content = ''
       }
+      this.buffer = this.note.content
     }
   },
 
   data () {
     return {
       allTags: [],
+      buffer: this.note.content || '',
       config: global.Cartaro.config,
       errorMsg: null,
       isFullscreen: false,
-      keyMap: {
-        'Cmd-S': () => { this.save(false) },
-        'Ctrl-S': () => { this.save(false) }
-      },
       rules: {
         title: [
           title => !!title || 'Title is required'
@@ -201,8 +203,3 @@ export default {
   }
 }
 </script>
-<style lang="css" scoped>
-:deep(.CodeMirror) {
-  height: 600px;
-}
-</style>

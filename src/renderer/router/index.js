@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-// import BlankSlate from '../components/BlankSlate'
 import Home from '../components/Home'
 import CountDowns from '../components/CountDowns'
 import LogEntries from '../components/LogEntries'

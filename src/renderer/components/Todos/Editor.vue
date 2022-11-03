@@ -94,9 +94,9 @@
             <v-row>
               <v-col>
                 <Markdown
-                  :content="todo.description"
+                  :content="descBuffer"
+                  height="25"
                   @update="(newContent) => (todo.description = newContent)"
-                  :theme="config.get('markdown:todo')"
                 >
                 </Markdown>
               </v-col>
@@ -359,11 +359,14 @@ export default {
       if (!this.todo.description) {
         this.todo.description = ''
       }
+
+      this.descBuffer = this.todo.description
     }
   },
 
   data () {
     return {
+      descBuffer: this.todo.description || '',
       config: global.Cartaro.config,
       showDateMenu: false,
       showTimeMenu: false,
