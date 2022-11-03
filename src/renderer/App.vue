@@ -149,8 +149,7 @@ export default {
       { name: 'ScratchPad', path: '/scratch_pad', icon: 'mdi-square-edit-outline' }
     ],
     menu_misc: [
-      { name: 'TimeOff', path: '/timeoff', icon: 'mdi-timetable' },
-      { name: 'BlankSlate', path: '/blank_slate', icon: 'mdi-test-tube' }
+      { name: 'TimeOff', path: '/timeoff', icon: 'mdi-timetable' }
     ]
   })
 }
