@@ -4,10 +4,11 @@
 
 <script>
 // COMPS
-import { basicSetup } from 'codemirror'
+import { minimalSetup } from 'codemirror'
 import { indentWithTab } from '@codemirror/commands'
-import { LanguageDescription, StreamLanguage } from '@codemirror/language'
-import { EditorView, keymap } from '@codemirror/view'
+import { LanguageDescription, StreamLanguage, bracketMatching } from '@codemirror/language'
+import { EditorView, highlightActiveLine, keymap } from '@codemirror/view'
+import { highlightSelectionMatches } from '@codemirror/search'
 
 // LANGS
 import { javascript } from '@codemirror/lang-javascript'
@@ -67,7 +68,10 @@ export default {
         EditorView.lineWrapping,
         fixedHeight,
         updateListener,
-        basicSetup,
+        minimalSetup,
+        highlightActiveLine(),
+        bracketMatching(),
+        highlightSelectionMatches(),
         keymap.of(keyMappings),
         markdown({
           // codeLanguages: [
@@ -105,15 +109,24 @@ export default {
   watch: {
     content: function (newContent, oldContent) {
       if (newContent !== oldContent) {
-        const transaction = this.editor.state.update({
+        const setContent = this.editor.state.update({
           changes: {
             from: 0,
             to: this.editor.state.doc.length,
             insert: newContent
           }
         })
-        console.log('...md updating editor...')
-        this.editor.dispatch(transaction)
+
+        this.editor.dispatch(setContent)
+        // Move cursor to end of document
+        // this.editor.dispatch({
+        //   selection: {
+        //     // anchor: this.editor.state.doc.length,
+        //     // head: this.editor.state.doc.length
+        //     anchor: 0,
+        //     head: 0
+        //   }
+        // })
         this.editor.focus()
       }
     }
