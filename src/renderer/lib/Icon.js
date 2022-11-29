@@ -14,6 +14,7 @@ class Icon {
     { icon: new Icon('Ansible', 'mdi-ansible'), keywords: [] },
     { icon: new Icon('Apple', 'mdi-apple'), keywords: [] },
     { icon: new Icon('AWS', 'mdi-aws'), keywords: [] },
+    { icon: new Icon('Banzai', 'mdi-surfing'), keywords: ['surf', 'surfing'] },
     { icon: new Icon('Bash', 'mdi-bash'), keywords: ['shell'] },
     { icon: new Icon('BitBucket', 'mdi-bitbucket'), keywords: ['stash'] },
     { icon: new Icon('Books', 'mdi-book-open-variant'), keywords: ['book'] },

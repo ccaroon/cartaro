@@ -1,10 +1,10 @@
 {
   "name": "Cartaro",
-  "version": "2.1.0a",
+  "version": "2.1.0b",
   "author": "Craig N. Caroon",
   "codename": "Unknown Depths",
   "icon": "mdi-submarine",
-  "buildDate": "November 03, 2022",
+  "buildDate": "November 29, 2022",
   "description": "Work Journal/Chronicler",
   "private": true,
   "scripts": {
