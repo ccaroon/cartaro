@@ -6,7 +6,7 @@
 // COMPS
 import { minimalSetup } from 'codemirror'
 import { indentWithTab } from '@codemirror/commands'
-import { LanguageDescription, StreamLanguage, bracketMatching } from '@codemirror/language'
+import { LanguageDescription, StreamLanguage } from '@codemirror/language'
 import { EditorView, highlightActiveLine, keymap } from '@codemirror/view'
 import { highlightSelectionMatches } from '@codemirror/search'
 
@@ -70,7 +70,7 @@ export default {
         updateListener,
         minimalSetup,
         highlightActiveLine(),
-        bracketMatching(),
+        // bracketMatching(),
         highlightSelectionMatches(),
         keymap.of(keyMappings),
         markdown({
