@@ -2,7 +2,7 @@
   <v-container :fluid="activeView === 'calendar'">
     <AppBar
       v-bind:name="'Log Entries'"
-      v-bind:numPages="Math.ceil(totalEntries / perPage)"
+      v-bind:numPages="getNumPages()"
       v-bind:buttons="appBarButtons"
       @refresh="refresh"
     ></AppBar>
@@ -66,6 +66,14 @@ export default {
         self.newEntry()
         return false
       })
+    },
+
+    getNumPages: function () {
+      let numPages = Math.ceil(this.totalEntries / this.perPage)
+      if (this.activeView === VIEW_CAL) {
+        numPages = 0
+      }
+      return numPages
     },
 
     toggleView: function () {
@@ -195,7 +203,13 @@ export default {
       searchText: null,
       appBarButtons: [
         { name: 'New', icon: 'mdi-newspaper-plus', action: this.newEntry },
-        { name: 'ToggleView', icon: 'mdi-view-dashboard', action: this.toggleView }
+        {
+          name: 'ToggleView',
+          type: 'toggle',
+          state: 0,
+          icons: ['mdi-list-box', 'mdi-calendar-month'],
+          action: this.toggleView
+        }
       ]
     }
   }

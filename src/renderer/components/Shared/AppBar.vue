@@ -19,10 +19,10 @@
               :title="button.name"
               icon
               :key="idx"
-              @click.stop="button.action()"
+              @click.stop="handleButton(button)"
             >
               <v-icon :color="button.color || 'white'">{{
-                button.icon
+                buttonIcon(button)
               }}</v-icon>
             </v-btn>
           </template>
@@ -113,6 +113,27 @@ export default {
         }
         this.refresh()
       })
+    },
+
+    handleButton: function (button) {
+      if (button.type === 'toggle') {
+        button.state++
+        if (button.state >= button.icons.length) {
+          button.state = 0
+        }
+      }
+      button.action()
+    },
+
+    buttonIcon: function (button) {
+      let icon = null
+
+      if (button.type === 'toggle') {
+        icon = button.icons[button.state]
+      } else {
+        icon = button.icon
+      }
+      return icon
     },
 
     showNotice: function () {
