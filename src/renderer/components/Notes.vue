@@ -1,41 +1,69 @@
 <template>
   <v-container>
-    <AppBar v-bind:name="'Notes'" v-bind:numPages="Math.ceil(totalNotes / perPage)" v-bind:refresh="refresh"
-      v-bind:buttons="appBarButtons"></AppBar>
-    <NoteEditor v-model="showEditor" v-bind:note="note" v-on:close="closeEditor" v-on:view="closeAndView"></NoteEditor>
-    <NoteViewer v-model="showViewer" v-bind:note="note" v-on:close="closeViewer" v-on:edit="closeAndEdit"></NoteViewer>
+    <AppBar
+      v-bind:name="'Notes'"
+      v-bind:numPages="Math.ceil(totalNotes / perPage)"
+      @refresh="refresh"
+      v-bind:buttons="appBarButtons"
+    ></AppBar>
+    <NoteEditor
+      v-model="showEditor"
+      v-bind:note="note"
+      v-on:close="closeEditor"
+      v-on:view="closeAndView"
+    ></NoteEditor>
+    <NoteViewer
+      v-model="showViewer"
+      v-bind:note="note"
+      v-on:close="closeViewer"
+      v-on:edit="closeAndEdit"
+    ></NoteViewer>
     <v-list dense>
-      <v-list-item v-for="(note, idx) in notes" :key="note.id" :class="utils.rowColor(idx)" @click.stop>
+      <v-list-item
+        v-for="(note, idx) in notes"
+        :key="note.id"
+        :class="utils.rowColor(idx)"
+        @click.stop
+      >
         <v-list-item-avatar>
           <v-icon :color="note.is_favorite ? 'yellow' : ''">{{
-          note.icon()
+            note.icon()
           }}</v-icon>
         </v-list-item-avatar>
         <v-list-item-content @click="view(note)">
-          <v-list-item-title :class="
-            note.isDeleted()
-              ? 'subtitle-1 text-decoration-line-through'
-              : 'subtitle-1'
-          ">{{ note.title }}</v-list-item-title>
+          <v-list-item-title
+            :class="
+              note.isDeleted()
+                ? 'subtitle-1 text-decoration-line-through'
+                : 'subtitle-1'
+            "
+            >{{ note.title }}</v-list-item-title
+          >
           <v-list-item-subtitle>
             {{
-            note.created_at
-            ? format.formatDateTime(note.created_at * 1000)
-            : "--"
+              note.created_at
+                ? format.formatDateTime(note.created_at * 1000)
+                : "--"
             }}
-            <Tags v-bind:tags="note.tags" v-bind:color="utils.rowColor(idx + 1)"></Tags>
+            <Tags
+              v-bind:tags="note.tags"
+              v-bind:color="utils.rowColor(idx + 1)"
+            ></Tags>
           </v-list-item-subtitle>
         </v-list-item-content>
-        <Actions v-bind:actions="{
-          onEdit: (item) => {
-            edit(item);
-          },
-          onArchiveDelete: (event, item) => {
-            if (event.startsWith('post-')) {
-              refresh();
-            }
-          },
-        }" v-bind:item="note"></Actions>
+        <Actions
+          v-bind:actions="{
+            onEdit: (item) => {
+              edit(item);
+            },
+            onArchiveDelete: (event, item) => {
+              if (event.startsWith('post-')) {
+                refresh();
+              }
+            },
+          }"
+          v-bind:item="note"
+        ></Actions>
       </v-list-item>
     </v-list>
   </v-container>
@@ -74,13 +102,13 @@ export default {
       })
     },
 
-    refresh: function (page = null, searchText = '') {
-      if (page !== null) {
-        this.page = page
+    refresh: function (opts = {}) {
+      if (opts.page) {
+        this.page = opts.page
       }
 
-      if (searchText !== '') {
-        this.searchText = searchText
+      if (opts.searchText !== '') {
+        this.searchText = opts.searchText
       }
 
       this.load()

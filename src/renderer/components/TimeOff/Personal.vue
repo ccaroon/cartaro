@@ -152,13 +152,13 @@ export default {
       return utils.rowColor(index)
     },
 
-    refresh: function (page = null, searchText = '') {
-      if (page !== null) {
-        this.page = page
+    refresh: function (opts = {}) {
+      if (opts.page) {
+        this.page = opts.page
       }
 
-      if (searchText !== '') {
-        this.searchText = searchText
+      if (opts.searchText !== '') {
+        this.searchText = opts.searchText
       }
 
       this.load()

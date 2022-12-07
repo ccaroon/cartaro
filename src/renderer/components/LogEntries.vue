@@ -1,64 +1,58 @@
 <template>
-  <v-container>
-    <AppBar v-bind:name="'Log Entries'" v-bind:numPages="Math.ceil(totalEntries / perPage)" v-bind:refresh="refresh"
-      v-bind:buttons="appBarButtons"></AppBar>
-    <LogEntryEditor v-model="showEditor" v-bind:logEntry="logEntry" v-on:close="closeEditor"></LogEntryEditor>
-    <LogEntryViewer v-model="showViewer" v-bind:logEntry="logEntry" v-on:close="closeViewer"></LogEntryViewer>
-    <v-list dense>
-      <v-list-item v-for="(logEntry, idx) in logEntries" :key="logEntry.id" :class="utils.rowColor(idx)" @click.stop>
-        <v-list-item-avatar>
-          <v-icon>{{ logEntry.icon() }}</v-icon>
-        </v-list-item-avatar>
-        <v-list-item-content @click="view(logEntry)">
-          <v-list-item-title :class="
-            logEntry.isDeleted()
-              ? 'subtitle-1 text-decoration-line-through'
-              : 'subtitle-1'
-          ">{{ logEntry.subject }}</v-list-item-title>
-          <v-list-item-subtitle>
-            {{ logEntry.category }} |
-            {{
-            logEntry.logged_at
-            ? format.formatDate(logEntry.logged_at * 1000)
-            : "--"
-            }}
-            <Tags v-bind:tags="logEntry.tags" v-bind:color="utils.rowColor(idx + 1)"></Tags>
-          </v-list-item-subtitle>
-        </v-list-item-content>
-        <Actions v-bind:actions="{
-          onEdit: (item) => {
-            edit(item);
-          },
-          onArchiveDelete: (event, item) => {
-            if (event.startsWith('post-')) {
-              refresh();
-            }
-          },
-        }" v-bind:item="logEntry"></Actions>
-      </v-list-item>
-    </v-list>
+  <v-container :fluid="activeView === 'calendar'">
+    <AppBar
+      v-bind:name="'Log Entries'"
+      v-bind:numPages="getNumPages()"
+      v-bind:buttons="appBarButtons"
+      @refresh="refresh"
+    ></AppBar>
+    <LogEntryEditor
+      v-model="showEditor"
+      v-bind:logEntry="logEntry"
+      v-on:close="closeEditor"
+    ></LogEntryEditor>
+    <LogEntryViewer
+      v-model="showViewer"
+      v-bind:logEntry="logEntry"
+      v-on:close="closeViewer"
+    ></LogEntryViewer>
+    <LogEntryList
+      v-show="activeView === 'list'"
+      v-bind:logEntries="logEntries"
+      @edit="edit"
+      @view="view"
+      @refresh="refresh"
+    ></LogEntryList>
+    <LogEntryCalendar
+      v-show="activeView === 'calendar'"
+      v-bind:logEntries="logEntries"
+      @edit="edit"
+      @view="view"
+      @new="newEntry"
+      @refresh="refresh"
+    ></LogEntryCalendar>
   </v-container>
 </template>
 <script>
 import Moment from 'moment'
 import Mousetrap from 'mousetrap'
 
-import constants from '../lib/constants'
-import format from '../lib/format'
 import notification from '../lib/notification'
-import utils from '../lib/utils'
 
 import LogEntry from '../models/LogEntry'
 
-import Actions from './Shared/Actions'
 import AppBar from './Shared/AppBar'
+import LogEntryList from './LogEntries/List'
+import LogEntryCalendar from './LogEntries/Calendar'
 import LogEntryEditor from './LogEntries/Editor'
 import LogEntryViewer from './LogEntries/Viewer'
-import Tags from './Shared/Tags'
+
+const VIEW_LIST = 'list'
+const VIEW_CAL = 'calendar'
 
 export default {
   name: 'log-entries-main',
-  components: { Actions, AppBar, LogEntryEditor, LogEntryViewer, Tags },
+  components: { AppBar, LogEntryCalendar, LogEntryList, LogEntryEditor, LogEntryViewer },
   mounted: function () {
     this.bindShortcutKeys()
     this.load()
@@ -74,25 +68,70 @@ export default {
       })
     },
 
-    refresh: function (page = null, searchText = '') {
-      if (page !== null) {
-        this.page = page
+    getNumPages: function () {
+      let numPages = Math.ceil(this.totalEntries / this.perPage)
+      if (this.activeView === VIEW_CAL) {
+        numPages = 0
+      }
+      return numPages
+    },
+
+    toggleView: function () {
+      if (this.activeView === VIEW_LIST) {
+        this.activeView = VIEW_CAL
+      } else if (this.activeView === VIEW_CAL) {
+        this.activeView = VIEW_LIST
+      }
+    },
+
+    refresh: function (opts = {}) {
+      if (opts.page) {
+        this.page = opts.page
       }
 
-      if (searchText !== '') {
-        this.searchText = searchText
+      if (opts.searchText !== '') {
+        this.searchText = opts.searchText
+      }
+
+      if (opts.calDate) {
+        this.calDate = opts.calDate
       }
 
       this.load()
     },
 
+    loadQuery: function () {
+      let date = Moment()
+      let query = null
+
+      if (this.calDate) {
+        date = Moment(this.calDate)
+      }
+
+      switch (this.activeView) {
+        case VIEW_LIST:
+          query = {
+            page: this.page,
+            pp: this.perPage,
+            sort_by: 'logged_at:desc'
+          }
+          break
+        case VIEW_CAL:
+          query = {
+            page: 1,
+            pp: 999,
+            logged_at: `btw:${date.startOf('month').unix()}:${date.endOf('month').unix()}`,
+            sort_by: 'logged_at'
+          }
+          break
+      }
+
+      return query
+    },
+
     load: function () {
       const self = this
-      const query = {
-        page: this.page,
-        pp: this.perPage,
-        sort_by: 'logged_at:desc'
-      }
+      const query = this.loadQuery()
 
       if (this.searchText) {
         const parts = this.searchText.split(':', 2)
@@ -120,9 +159,9 @@ export default {
       this.showViewer = true
     },
 
-    newEntry: function () {
+    newEntry: function (logDate = Moment().unix()) {
       const entry = new LogEntry({
-        logged_at: Moment().unix()
+        logged_at: logDate
       })
       this.edit(entry)
     },
@@ -142,6 +181,12 @@ export default {
     }
   },
 
+  watch: {
+    activeView: function () {
+      this.refresh()
+    }
+  },
+
   data () {
     const itemHeight = 65
 
@@ -150,15 +195,21 @@ export default {
       logEntries: [],
       page: 1,
       perPage: Math.round(window.innerHeight / itemHeight) - 1,
+      calDate: null,
       totalEntries: 0,
+      activeView: VIEW_CAL,
       showEditor: false,
       showViewer: false,
-      constants: constants,
-      format: format,
-      utils: utils,
       searchText: null,
       appBarButtons: [
-        { name: 'New', icon: 'mdi-newspaper-plus', action: this.newEntry }
+        { name: 'New', icon: 'mdi-newspaper-plus', action: this.newEntry },
+        {
+          name: 'ToggleView',
+          type: 'toggle',
+          state: 0,
+          icons: ['mdi-list-box', 'mdi-calendar-month'],
+          action: this.toggleView
+        }
       ]
     }
   }
