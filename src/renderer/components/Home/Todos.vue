@@ -87,7 +87,7 @@ export default {
   },
 
   methods: {
-    refresh: function () {
+    refresh: function (opts = {}) {
       this.load()
     },
 

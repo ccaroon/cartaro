@@ -1,100 +1,173 @@
 <template>
   <v-container fluid>
-    <AppBar v-bind:name="'Work Days'" v-bind:buttons="appBarButtons" v-bind:refresh="refresh"></AppBar>
-    <div>
-      <v-sheet tile class="d-flex">
-        <v-btn icon @click="$refs.calendar.prev()">
-          <v-icon>mdi-chevron-left</v-icon>
-        </v-btn>
-        <v-spacer></v-spacer>
-        <v-btn icon @click="goToToday()">
-          <v-icon>mdi-calendar-today</v-icon>
-        </v-btn>
-        <span class="text-h4">{{
-        format.formatDate(calDate, "MMMM YYYY")
-        }}</span>
-        <v-spacer></v-spacer>
-        <v-btn icon @click="$refs.calendar.next()">
-          <v-icon>mdi-chevron-right</v-icon>
-        </v-btn>
-      </v-sheet>
-      <v-sheet :height="calHeight">
-        <v-calendar ref="calendar" v-model="calDate" color="grey" event-text-color="black" :event-more="false"
-          :events="events" @click:event="showEditor" @click:date="addDay">
-        </v-calendar>
-        <v-menu v-model="editorOpen" :close-on-content-click="false" :activator="eventElement">
-          <v-card>
-            <v-toolbar :color="selectedWorkDay.color('accent')" dense>
-              <v-btn-toggle v-model="selectedWorkDay.type" dense borderless
-                :background-color="selectedWorkDay.color('accent')" mandatory @change="changeType(selectedWorkDay)">
-                <v-btn icon small value="normal">
-                  <v-icon>{{ icons.get("workday") }}</v-icon>
-                </v-btn>
-                <v-btn icon small value="holiday">
-                  <v-icon>{{ icons.get("holiday") }}</v-icon>
-                </v-btn>
-                <v-btn icon small value="vacation">
-                  <v-icon>{{ icons.get("vacation") }}</v-icon>
-                </v-btn>
-                <v-btn icon small value="sick">
-                  <v-icon>{{ icons.get("sick") }}</v-icon>
-                </v-btn>
-              </v-btn-toggle>
-              <v-spacer></v-spacer>
-              <v-toolbar-title>{{
-              format.formatDate(selectedWorkDay.date * 1000)
-              }}</v-toolbar-title>
-              <v-spacer></v-spacer>
+    <AppBar
+      v-bind:name="'Work Days'"
+      v-bind:buttons="appBarButtons"
+      @refresh="refresh"
+    ></AppBar>
 
-              <v-menu ref="timeInPicker" v-model="showTimeInMenu" :close-on-content-click="false"
-                transition="scale-transition" offset-x min-width="290px" max-width="290px">
-                <template v-slot:activator="{ on }">
-                  <v-btn fab x-small color="green" v-on="on">{{
+    <v-sheet tile class="d-flex">
+      <v-row>
+        <v-col offset="4" cols="1" align="end">
+          <v-btn icon @click="$refs.calendar.prev()">
+            <v-icon>mdi-chevron-left</v-icon>
+          </v-btn>
+          <v-btn icon @click="goToToday()">
+            <v-icon>mdi-calendar-today</v-icon>
+          </v-btn>
+          <v-btn icon @click="$refs.calendar.next()">
+            <v-icon>mdi-chevron-right</v-icon>
+          </v-btn>
+        </v-col>
+        <v-col cols="3" align="start">
+          <span class="text-h4">{{
+            format.formatDate(calDate, "MMMM YYYY")
+          }}</span>
+        </v-col>
+      </v-row>
+    </v-sheet>
+    <v-sheet :height="calHeight">
+      <v-calendar
+        ref="calendar"
+        v-model="calDate"
+        color="grey"
+        event-text-color="black"
+        :event-more="false"
+        :events="events"
+        @click:event="showEditor"
+        @click:date="addDay"
+      >
+      </v-calendar>
+      <v-menu
+        v-model="editorOpen"
+        :close-on-content-click="false"
+        :activator="eventElement"
+      >
+        <v-card>
+          <v-toolbar :color="selectedWorkDay.color('accent')" dense>
+            <v-btn-toggle
+              v-model="selectedWorkDay.type"
+              dense
+              borderless
+              :background-color="selectedWorkDay.color('accent')"
+              mandatory
+              @change="changeType(selectedWorkDay)"
+            >
+              <v-btn icon small value="normal">
+                <v-icon>{{ icons.get("workday") }}</v-icon>
+              </v-btn>
+              <v-btn icon small value="holiday">
+                <v-icon>{{ icons.get("holiday") }}</v-icon>
+              </v-btn>
+              <v-btn icon small value="vacation">
+                <v-icon>{{ icons.get("vacation") }}</v-icon>
+              </v-btn>
+              <v-btn icon small value="sick">
+                <v-icon>{{ icons.get("sick") }}</v-icon>
+              </v-btn>
+            </v-btn-toggle>
+            <v-spacer></v-spacer>
+            <v-toolbar-title>{{
+              format.formatDate(selectedWorkDay.date * 1000)
+            }}</v-toolbar-title>
+            <v-spacer></v-spacer>
+
+            <v-menu
+              ref="timeInPicker"
+              v-model="showTimeInMenu"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              offset-x
+              min-width="290px"
+              max-width="290px"
+            >
+              <template v-slot:activator="{ on }">
+                <v-btn fab x-small color="green" v-on="on">{{
                   selectedWorkDay.time_in
-                  }}</v-btn>
-                </template>
-                <v-time-picker v-model="selectedWorkDay.time_in" color="green" ampm-in-title scrollable>
-                  <v-btn color="green" small rounded @click="
+                }}</v-btn>
+              </template>
+              <v-time-picker
+                v-model="selectedWorkDay.time_in"
+                color="green"
+                ampm-in-title
+                scrollable
+              >
+                <v-btn
+                  color="green"
+                  small
+                  rounded
+                  @click="
                     save(selectedWorkDay);
                     showTimeInMenu = false;
-                  ">OK</v-btn>
-                  <v-btn color="red" text @click="showTimeInMenu = false">Cancel</v-btn>
-                </v-time-picker>
-              </v-menu>
-              <v-menu ref="timeOutPicker" v-model="showTimeOutMenu" :close-on-content-click="false"
-                transition="scale-transition" offset-x max-width="290px" min-width="290px">
-                <template v-slot:activator="{ on }">
-                  <v-btn fab x-small color="red" v-on="on">{{
+                  "
+                  >OK</v-btn
+                >
+                <v-btn color="red" text @click="showTimeInMenu = false"
+                  >Cancel</v-btn
+                >
+              </v-time-picker>
+            </v-menu>
+            <v-menu
+              ref="timeOutPicker"
+              v-model="showTimeOutMenu"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              offset-x
+              max-width="290px"
+              min-width="290px"
+            >
+              <template v-slot:activator="{ on }">
+                <v-btn fab x-small color="red" v-on="on">{{
                   selectedWorkDay.time_out
-                  }}</v-btn>
-                </template>
-                <v-time-picker v-model="selectedWorkDay.time_out" color="red" ampm-in-title scrollable>
-                  <v-btn color="green" small rounded @click="
+                }}</v-btn>
+              </template>
+              <v-time-picker
+                v-model="selectedWorkDay.time_out"
+                color="red"
+                ampm-in-title
+                scrollable
+              >
+                <v-btn
+                  color="green"
+                  small
+                  rounded
+                  @click="
                     save(selectedWorkDay);
                     showTimeOutMenu = false;
-                  ">OK</v-btn>
-                  <v-btn color="red" text @click="showTimeOutMenu = false">Cancel</v-btn>
-                </v-time-picker>
-              </v-menu>
-            </v-toolbar>
-            <v-card-text>
-              <v-text-field v-model="selectedWorkDay.note" placeholder="Note" @change="save(selectedWorkDay)">
-              </v-text-field>
-            </v-card-text>
-            <v-card-actions>
-              <v-btn text color="red" @click="
+                  "
+                  >OK</v-btn
+                >
+                <v-btn color="red" text @click="showTimeOutMenu = false"
+                  >Cancel</v-btn
+                >
+              </v-time-picker>
+            </v-menu>
+          </v-toolbar>
+          <v-card-text>
+            <v-text-field
+              v-model="selectedWorkDay.note"
+              placeholder="Note"
+              @change="save(selectedWorkDay)"
+            >
+            </v-text-field>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn
+              text
+              color="red"
+              @click="
                 remove(selectedWorkDay);
                 editorOpen = false;
-              ">
-                Delete
-              </v-btn>
-              <v-spacer></v-spacer>
-              <v-btn color="green" @click="editorOpen = false"> Close </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-menu>
-      </v-sheet>
-    </div>
+              "
+            >
+              Delete
+            </v-btn>
+            <v-spacer></v-spacer>
+            <v-btn color="green" @click="editorOpen = false"> Close </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-menu>
+    </v-sheet>
 
     <v-footer absolute>
       {{ displayWorkDates() }}
@@ -168,7 +241,7 @@ export default {
       return total.toFixed(1)
     },
 
-    refresh: function () {
+    refresh: function (opts = {}) {
       this.load()
     },
 

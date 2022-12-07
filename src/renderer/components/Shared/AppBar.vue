@@ -71,24 +71,22 @@ import notification from '../../lib/notification'
 export default {
   name: 'shared-app-bar',
   components: {},
-  props: ['name', 'numPages', 'refresh', 'hideSearch', 'buttons', 'endSlot'],
-
-  // created() {
-  //   window.addEventListener("scroll", this.handleScroll);
-  // },
-  // destroyed() {
-  //   window.removeEventListener("scroll", this.handleScroll);
-  // },
+  props: ['name', 'numPages', 'hideSearch', 'buttons', 'endSlot'],
 
   mounted: function () {
     this.bindShortcutKeys()
   },
 
   methods: {
+
+    refresh: function () {
+      this.$emit('refresh', { page: this.page, searchText: this.searchText })
+    },
+
     search: function () {
       if (this.searchText) {
         this.page = 1
-        this.refresh(this.page, this.searchText)
+        this.refresh()
       }
     },
 
@@ -105,7 +103,7 @@ export default {
         if (self.page < 1) {
           self.page = 1
         }
-        self.refresh(self.page, self.searchText)
+        this.refresh()
       })
       Mousetrap.bind('right', () => {
         self.page++
@@ -113,7 +111,7 @@ export default {
         if (self.page > self.numPages) {
           self.page = self.numPages
         }
-        self.refresh(self.page, self.searchText)
+        this.refresh()
       })
     },
 
@@ -125,7 +123,7 @@ export default {
       if (this.searchText) {
         this.page = 1
         this.searchText = null
-        this.refresh(this.page, this.searchText)
+        this.refresh()
       }
 
       this.$refs.searchBox.blur()

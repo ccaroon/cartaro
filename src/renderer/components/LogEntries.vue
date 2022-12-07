@@ -1,10 +1,10 @@
 <template>
-  <v-container>
+  <v-container :fluid="activeView === 'calendar'">
     <AppBar
       v-bind:name="'Log Entries'"
       v-bind:numPages="Math.ceil(totalEntries / perPage)"
-      v-bind:refresh="refresh"
       v-bind:buttons="appBarButtons"
+      @refresh="refresh"
     ></AppBar>
     <LogEntryEditor
       v-model="showEditor"
@@ -28,6 +28,7 @@
       v-bind:logEntries="logEntries"
       @edit="edit"
       @view="view"
+      @new="newEntry"
       @refresh="refresh"
     ></LogEntryCalendar>
   </v-container>
@@ -75,25 +76,54 @@ export default {
       }
     },
 
-    refresh: function (page = null, searchText = '') {
-      if (page !== null) {
-        this.page = page
+    refresh: function (opts = {}) {
+      if (opts.page) {
+        this.page = opts.page
       }
 
-      if (searchText !== '') {
-        this.searchText = searchText
+      if (opts.searchText !== '') {
+        this.searchText = opts.searchText
+      }
+
+      if (opts.calDate) {
+        this.calDate = opts.calDate
       }
 
       this.load()
     },
 
+    loadQuery: function () {
+      let date = Moment()
+      let query = null
+
+      if (this.calDate) {
+        date = Moment(this.calDate)
+      }
+
+      switch (this.activeView) {
+        case VIEW_LIST:
+          query = {
+            page: this.page,
+            pp: this.perPage,
+            sort_by: 'logged_at:desc'
+          }
+          break
+        case VIEW_CAL:
+          query = {
+            page: 1,
+            pp: 999,
+            logged_at: `btw:${date.startOf('month').unix()}:${date.endOf('month').unix()}`,
+            sort_by: 'logged_at'
+          }
+          break
+      }
+
+      return query
+    },
+
     load: function () {
       const self = this
-      const query = {
-        page: this.page,
-        pp: this.perPage,
-        sort_by: 'logged_at:desc'
-      }
+      const query = this.loadQuery()
 
       if (this.searchText) {
         const parts = this.searchText.split(':', 2)
@@ -121,9 +151,9 @@ export default {
       this.showViewer = true
     },
 
-    newEntry: function () {
+    newEntry: function (logDate = Moment().unix()) {
       const entry = new LogEntry({
-        logged_at: Moment().unix()
+        logged_at: logDate
       })
       this.edit(entry)
     },
@@ -143,6 +173,12 @@ export default {
     }
   },
 
+  watch: {
+    activeView: function () {
+      this.refresh()
+    }
+  },
+
   data () {
     const itemHeight = 65
 
@@ -151,8 +187,9 @@ export default {
       logEntries: [],
       page: 1,
       perPage: Math.round(window.innerHeight / itemHeight) - 1,
+      calDate: null,
       totalEntries: 0,
-      activeView: VIEW_LIST,
+      activeView: VIEW_CAL,
       showEditor: false,
       showViewer: false,
       searchText: null,

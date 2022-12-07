@@ -1,31 +1,56 @@
 <template>
   <v-container>
-    <AppBar v-bind:name="'Todos'" v-bind:numPages="Math.ceil(totalTodos / perPage)" v-bind:refresh="refresh"
-      v-bind:buttons="appBarButtons"></AppBar>
-    <TodoEditor v-model="showEditor" v-bind:todo="todo" v-on:close="closeEditor"></TodoEditor>
-    <TodoViewer v-model="showViewer" v-bind:todo="todo" v-on:close="closeViewer"></TodoViewer>
+    <AppBar
+      v-bind:name="'Todos'"
+      v-bind:numPages="Math.ceil(totalTodos / perPage)"
+      @refresh="refresh"
+      v-bind:buttons="appBarButtons"
+    ></AppBar>
+    <TodoEditor
+      v-model="showEditor"
+      v-bind:todo="todo"
+      v-on:close="closeEditor"
+    ></TodoEditor>
+    <TodoViewer
+      v-model="showViewer"
+      v-bind:todo="todo"
+      v-on:close="closeViewer"
+    ></TodoViewer>
     <v-list dense>
-      <v-list-item v-for="(todo, idx) in todos" :key="todo.id" :class="todo.color(idx)" @click.stop>
+      <v-list-item
+        v-for="(todo, idx) in todos"
+        :key="todo.id"
+        :class="todo.color(idx)"
+        @click.stop
+      >
         <v-list-item-avatar>
-          <v-icon :color="todo.is_complete ? 'green' : todo.priorityColor()" @click="toggleCompleted(todo)">
+          <v-icon
+            :color="todo.is_complete ? 'green' : todo.priorityColor()"
+            @click="toggleCompleted(todo)"
+          >
             mdi-numeric-{{ todo.priority }}-box{{
-            todo.is_complete ? "" : "-outline"
-            }}</v-icon>
+              todo.is_complete ? "" : "-outline"
+            }}</v-icon
+          >
         </v-list-item-avatar>
         <v-list-item-content @click="view(todo)">
-          <v-list-item-title :class="todo.isDeleted() ? 'text-decoration-line-through' : ''">
+          <v-list-item-title
+            :class="todo.isDeleted() ? 'text-decoration-line-through' : ''"
+          >
             {{ todo.title }}
           </v-list-item-title>
           <v-list-item-subtitle>
             <template v-if="todo.is_complete">
               Completed {{ format.humanizeDate(todo.completed_at * 1000) }} ({{
-              format.formatDateTime(todo.completed_at * 1000)
+                format.formatDateTime(todo.completed_at * 1000)
               }})
             </template>
             <template v-else>
-              <span v-if="todo.due_at">Due {{ format.humanizeDate(todo.due_at * 1000) }} ({{
-              format.formatDateTime(todo.due_at * 1000)
-              }})</span>
+              <span v-if="todo.due_at"
+                >Due {{ format.humanizeDate(todo.due_at * 1000) }} ({{
+                  format.formatDateTime(todo.due_at * 1000)
+                }})</span
+              >
               <span v-else>No Due Date</span>
             </template>
             <v-divider vertical inset></v-divider>
@@ -33,20 +58,26 @@
               <v-icon>mdi-calendar-refresh</v-icon>
               Every {{ format.humanizeDays(todo.repeat) }}
             </template>
-            <Tags v-bind:tags="todo.tags" v-bind:color="utils.rowColor(idx + 1)"></Tags>
+            <Tags
+              v-bind:tags="todo.tags"
+              v-bind:color="utils.rowColor(idx + 1)"
+            ></Tags>
           </v-list-item-subtitle>
         </v-list-item-content>
 
-        <Actions v-bind:actions="{
-          onEdit: (item) => {
-            edit(item);
-          },
-          onArchiveDelete: (event, item) => {
-            if (event.startsWith('post-')) {
-              refresh();
-            }
-          },
-        }" v-bind:item="todo"></Actions>
+        <Actions
+          v-bind:actions="{
+            onEdit: (item) => {
+              edit(item);
+            },
+            onArchiveDelete: (event, item) => {
+              if (event.startsWith('post-')) {
+                refresh();
+              }
+            },
+          }"
+          v-bind:item="todo"
+        ></Actions>
       </v-list-item>
     </v-list>
   </v-container>
@@ -84,13 +115,13 @@ export default {
       })
     },
 
-    refresh: function (page = null, searchText = '') {
-      if (page !== null) {
-        this.page = page
+    refresh: function (opts = {}) {
+      if (opts.page) {
+        this.page = opts.page
       }
 
-      if (searchText !== '') {
-        this.searchText = searchText
+      if (opts.searchText !== '') {
+        this.searchText = opts.searchText
       }
 
       this.load()

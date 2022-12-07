@@ -1,13 +1,21 @@
 <template>
   <v-container>
-    <AppBar v-bind:name="'Countdowns'" v-bind:numPages="Math.ceil(totalCountDowns / perPage)" v-bind:refresh="refresh"
-      v-bind:buttons="appBarButtons"></AppBar>
+    <AppBar
+      v-bind:name="'Countdowns'"
+      v-bind:numPages="Math.ceil(totalCountDowns / perPage)"
+      @refresh="refresh"
+      v-bind:buttons="appBarButtons"
+    ></AppBar>
     <v-list dense>
-      <v-list-item v-for="(countDown, idx) in countDowns" :key="countDown.id" :class="utils.rowColor(idx)">
+      <v-list-item
+        v-for="(countDown, idx) in countDowns"
+        :key="countDown.id"
+        :class="utils.rowColor(idx)"
+      >
         <v-list-item-avatar v-if="!countDown.isDeleted()">
           <v-btn icon @click="toggleFavorite(countDown)">
             <v-icon :color="countDown.is_favorite ? 'yellow' : ''">{{
-            countDown.icon()
+              countDown.icon()
             }}</v-icon>
           </v-btn>
         </v-list-item-avatar>
@@ -15,17 +23,19 @@
           <v-icon color="red">{{ icon.get("deleted") }}</v-icon>
         </v-list-item-avatar>
         <v-list-item-content>
-          <v-list-item-title :class="countDown.isDeleted() ? 'text-decoration-line-through' : ''">{{ countDown.name }}
+          <v-list-item-title
+            :class="countDown.isDeleted() ? 'text-decoration-line-through' : ''"
+            >{{ countDown.name }}
           </v-list-item-title>
           <v-list-item-subtitle>{{
-          countDown.humanize()
+            countDown.humanize()
           }}</v-list-item-subtitle>
         </v-list-item-content>
 
         <v-list-item-content>
           <v-list-item-title> Start </v-list-item-title>
           <v-list-item-subtitle>{{
-          dateDisplay(countDown, "start")
+            dateDisplay(countDown, "start")
           }}</v-list-item-subtitle>
         </v-list-item-content>
 
@@ -38,16 +48,19 @@
           </template>
         </v-list-item-content>
 
-        <Actions v-bind:actions="{
-          onEdit: (item) => {
-            edit(item);
-          },
-          onArchiveDelete: (event, item) => {
-            if (event.startsWith('post-')) {
-              refresh();
-            }
-          },
-        }" v-bind:item="countDown"></Actions>
+        <Actions
+          v-bind:actions="{
+            onEdit: (item) => {
+              edit(item);
+            },
+            onArchiveDelete: (event, item) => {
+              if (event.startsWith('post-')) {
+                refresh();
+              }
+            },
+          }"
+          v-bind:item="countDown"
+        ></Actions>
       </v-list-item>
     </v-list>
     <div class="text-center">
@@ -56,71 +69,150 @@
           <v-form ref="newEditForm">
             <v-row>
               <v-col>
-                <v-text-field v-model="countDown.name" label="Name" autofocus prepend-icon="mdi-label" require
-                  :rules="rules.name"></v-text-field>
+                <v-text-field
+                  v-model="countDown.name"
+                  label="Name"
+                  autofocus
+                  prepend-icon="mdi-label"
+                  require
+                  :rules="rules.name"
+                ></v-text-field>
               </v-col>
               <v-col>
-                <v-menu ref="startDatePicker" v-model="showStartDateMenu" :close-on-content-click="false"
-                  :nudge-right="40" transition="scale-transition" offset-y>
+                <v-menu
+                  ref="startDatePicker"
+                  v-model="showStartDateMenu"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                >
                   <template v-slot:activator="{ on }">
-                    <v-text-field label="Start" prepend-icon="mdi-calendar-clock" readonly
-                      :value="dateDisplay(countDown, 'start')" v-on="on" required :rules="rules.date"></v-text-field>
+                    <v-text-field
+                      label="Start"
+                      prepend-icon="mdi-calendar-clock"
+                      readonly
+                      :value="dateDisplay(countDown, 'start')"
+                      v-on="on"
+                      required
+                      :rules="rules.date"
+                    ></v-text-field>
                   </template>
                   <v-sheet width="100%">
                     <v-row dense align="end">
                       <v-col cols="6">
-                        <v-date-picker v-model="countDown.startDate" color="green" flat scrollable></v-date-picker>
+                        <v-date-picker
+                          v-model="countDown.startDate"
+                          color="green"
+                          flat
+                          scrollable
+                        ></v-date-picker>
                       </v-col>
                       <v-col cols="6">
-                        <v-time-picker v-model="countDown.startTime" color="green" flat scrollable></v-time-picker>
+                        <v-time-picker
+                          v-model="countDown.startTime"
+                          color="green"
+                          flat
+                          scrollable
+                        ></v-time-picker>
                       </v-col>
                     </v-row>
                     <v-row dense align="center" justify="center">
                       <v-col cols="3">
-                        <v-btn rounded color="green" @click="showStartDateMenu = false">OK</v-btn>
+                        <v-btn
+                          rounded
+                          color="green"
+                          @click="showStartDateMenu = false"
+                          >OK</v-btn
+                        >
                       </v-col>
                       <v-col cols="3">
-                        <v-btn rounded color="blue" @click="
-                          countDown.start_at = Date.now() / 1000;
-                          initDate(countDown);
-                        ">Today</v-btn>
+                        <v-btn
+                          rounded
+                          color="blue"
+                          @click="
+                            countDown.start_at = Date.now() / 1000;
+                            initDate(countDown);
+                          "
+                          >Today</v-btn
+                        >
                       </v-col>
                       <v-col cols="3">
-                        <v-btn text color="red" @click="showStartDateMenu = false">Cancel</v-btn>
+                        <v-btn
+                          text
+                          color="red"
+                          @click="showStartDateMenu = false"
+                          >Cancel</v-btn
+                        >
                       </v-col>
                     </v-row>
                   </v-sheet>
                 </v-menu>
               </v-col>
               <v-col>
-                <v-menu ref="endDatePicker" v-model="showEndDateMenu" :close-on-content-click="false" :nudge-right="40"
-                  transition="scale-transition" offset-y>
+                <v-menu
+                  ref="endDatePicker"
+                  v-model="showEndDateMenu"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                >
                   <template v-slot:activator="{ on }">
-                    <v-text-field label="End" prepend-icon="mdi-calendar-clock" readonly clearable
-                      @click:clear="clearEndDate(countDown)" :value="dateDisplay(countDown, 'end')" v-on="on">
+                    <v-text-field
+                      label="End"
+                      prepend-icon="mdi-calendar-clock"
+                      readonly
+                      clearable
+                      @click:clear="clearEndDate(countDown)"
+                      :value="dateDisplay(countDown, 'end')"
+                      v-on="on"
+                    >
                     </v-text-field>
                   </template>
                   <v-sheet width="100%">
                     <v-row dense align="end">
                       <v-col cols="6">
-                        <v-date-picker v-model="countDown.endDate" color="red" flat scrollable></v-date-picker>
+                        <v-date-picker
+                          v-model="countDown.endDate"
+                          color="red"
+                          flat
+                          scrollable
+                        ></v-date-picker>
                       </v-col>
                       <v-col cols="6">
-                        <v-time-picker v-model="countDown.endTime" color="red" flat scrollable></v-time-picker>
+                        <v-time-picker
+                          v-model="countDown.endTime"
+                          color="red"
+                          flat
+                          scrollable
+                        ></v-time-picker>
                       </v-col>
                     </v-row>
                     <v-row dense align="center" justify="center">
                       <v-col cols="3">
-                        <v-btn rounded color="green" @click="showEndDateMenu = false">OK</v-btn>
+                        <v-btn
+                          rounded
+                          color="green"
+                          @click="showEndDateMenu = false"
+                          >OK</v-btn
+                        >
                       </v-col>
                       <v-col cols="3">
-                        <v-btn rounded color="blue" @click="
-                          countDown.end_at = Date.now() / 1000;
-                          initDate(countDown);
-                        ">Today</v-btn>
+                        <v-btn
+                          rounded
+                          color="blue"
+                          @click="
+                            countDown.end_at = Date.now() / 1000;
+                            initDate(countDown);
+                          "
+                          >Today</v-btn
+                        >
                       </v-col>
                       <v-col cols="3">
-                        <v-btn text color="red" @click="showEndDateMenu = false">Cancel</v-btn>
+                        <v-btn text color="red" @click="showEndDateMenu = false"
+                          >Cancel</v-btn
+                        >
                       </v-col>
                     </v-row>
                   </v-sheet>
@@ -171,13 +263,13 @@ export default {
       })
     },
 
-    refresh: function (page = null, searchText = '') {
-      if (page !== null) {
-        this.page = page
+    refresh: function (opts = {}) {
+      if (opts.page) {
+        this.page = opts.page
       }
 
-      if (searchText !== '') {
-        this.searchText = searchText
+      if (opts.searchText !== '') {
+        this.searchText = opts.searchText
       }
 
       this.load()
