@@ -21,14 +21,14 @@
           <v-btn
             icon
             outlined
-            @click="actions['onEdit'](item)"
+            @click.stop="actions['onEdit'](item)"
             :disabled="item.isDeleted()"
           >
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-col>
         <v-col class="mr-1" v-if="actions.hasOwnProperty('onArchiveDelete')">
-          <v-btn icon outlined @click="archiveDelete()">
+          <v-btn icon outlined @click.stop="archiveDelete()">
             <v-icon :color="archiveDeleteColor"
               >mdi-{{ archiveDeleteIcon }}</v-icon
             >

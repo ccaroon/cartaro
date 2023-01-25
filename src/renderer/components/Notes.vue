@@ -18,7 +18,7 @@
       v-on:close="closeViewer"
       v-on:edit="closeAndEdit"
     ></NoteViewer>
-    <v-list dense>
+    <v-list dense v-show="activeView === 'list'">
       <v-list-item
         v-for="(note, idx) in notes"
         :key="note.id"
@@ -66,12 +66,69 @@
         ></Actions>
       </v-list-item>
     </v-list>
+    <v-container v-show="activeView === 'card'">
+      <v-row>
+        <v-col cols="4" v-for="(note, idx) in notes" :key="note.id">
+          <v-card>
+            <v-card-title
+              :class="
+                note.isDeleted()
+                  ? constants.COLORS.DELETED
+                  : utils.rowColor(idx, note.is_favorite)
+              "
+              @click="view(note)"
+            >
+              <v-icon left>{{ note.icon() }}</v-icon>
+              <span
+                :class="note.isDeleted() ? 'text-decoration-line-through' : ''"
+                >{{ utils.truncateString(note.title, 30) }}</span
+              >
+            </v-card-title>
+            <v-card-subtitle>
+              <Tags
+                :tags="note.tags"
+                color="grey lighten-1"
+                :tagClassOverride="'mr-1 pa-1'"
+              ></Tags>
+            </v-card-subtitle>
+            <!-- eslint-disable vue/no-v-text-v-html-on-component -->
+            <v-card-text
+              v-html="$markdown.render(utils.summarizeText(note.content, 5))"
+              class="pt-1 text-truncate"
+              style="height: 150px"
+            ></v-card-text>
+            <v-card-actions>
+              <v-btn icon outlined
+                ><v-icon :color="note.is_favorite ? 'yellow' : ''"
+                  >mdi-star</v-icon
+                ></v-btn
+              >
+              <v-spacer></v-spacer>
+              <Actions
+                v-bind:actions="{
+                  onEdit: (item) => {
+                    edit(item);
+                  },
+                  onArchiveDelete: (event, item) => {
+                    if (event.startsWith('post-')) {
+                      refresh();
+                    }
+                  },
+                }"
+                v-bind:item="note"
+              ></Actions>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
   </v-container>
 </template>
 
 <script>
 import Mousetrap from 'mousetrap'
 
+import constants from '../lib/constants'
 import format from '../lib/format'
 import notification from '../lib/notification'
 import utils from '../lib/utils'
@@ -83,6 +140,18 @@ import AppBar from './Shared/AppBar'
 import NoteEditor from './Notes/Editor'
 import NoteViewer from './Notes/Viewer'
 import Tags from './Shared/Tags'
+
+const LIST_ITEM_HEIGHT = 65
+const VIEW_LIST = 'list'
+
+const CARD_ITEM_HEIGHT = 130
+const VIEW_CARD = 'card'
+
+const COLORS = [
+  constants.COLORS.GREY, constants.COLORS.GREY_ALT,
+  constants.COLORS.ITEM_HIGHLIGHT, constants.COLORS.ITEM_HIGHLIGHT_ALT
+]
+// ['light-green accent-3', 'light-green accent-2', 'yellow accent-2']
 
 export default {
   name: 'notes-main',
@@ -102,6 +171,11 @@ export default {
       })
     },
 
+    randomColor: function () {
+      const index = Math.floor(Math.random() * COLORS.length)
+      return COLORS[index]
+    },
+
     refresh: function (opts = {}) {
       if (opts.page) {
         this.page = opts.page
@@ -119,7 +193,7 @@ export default {
       const query = {
         page: this.page,
         pp: this.perPage,
-        sort_by: 'created_at'
+        sort_by: 'created_at:desc'
       }
 
       if (this.searchText) {
@@ -152,6 +226,17 @@ export default {
       this.edit(new Note({}))
     },
 
+    toggleView: function () {
+      if (this.activeView === VIEW_LIST) {
+        this.perPage = Math.round(window.innerHeight / CARD_ITEM_HEIGHT) - 1
+        this.activeView = VIEW_CARD
+      } else if (this.activeView === VIEW_CARD) {
+        this.perPage = Math.round(window.innerHeight / LIST_ITEM_HEIGHT) - 1
+        this.activeView = VIEW_LIST
+      }
+      this.refresh()
+    },
+
     edit: function (note) {
       this.note = note
       this.showEditor = true
@@ -179,21 +264,28 @@ export default {
   },
 
   data () {
-    const itemHeight = 65
-
     return {
       note: new Note({}),
       notes: [],
+      activeView: VIEW_CARD,
       page: 1,
-      perPage: Math.round(window.innerHeight / itemHeight) - 1,
+      perPage: Math.round(window.innerHeight / CARD_ITEM_HEIGHT) - 1,
       totalNotes: 0,
       showEditor: false,
       showViewer: false,
+      constants: constants,
       format: format,
       utils: utils,
       searchText: null,
       appBarButtons: [
-        { name: 'New', icon: 'mdi-file-plus', action: this.newNote }
+        { name: 'New', icon: 'mdi-file-plus', action: this.newNote },
+        {
+          name: 'ToggleView',
+          type: 'toggle',
+          state: 0,
+          icons: ['mdi-list-box', 'mdi-card-text'],
+          action: this.toggleView
+        }
       ]
     }
   }
