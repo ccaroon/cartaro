@@ -3,23 +3,30 @@
     <v-chip
       x-small
       label
-      class="mr-1 float-right"
+      :class="tagClass"
       :color="color"
-      v-for="(tag,tgIdx) in tags"
+      v-for="(tag, tgIdx) in getTags()"
       :key="tgIdx"
-    >{{ tag }}</v-chip>
+      >{{ tag }}</v-chip
+    >
   </span>
 </template>
 <script>
 export default {
   name: 'shared-tags',
   components: {},
-  props: ['tags', 'color'],
+  props: ['tags', 'color', 'tagClassOverride', 'maxDisplay'],
 
-  methods: {},
+  methods: {
+    getTags: function () {
+      return this.maxDisplay ? this.tags.slice(0, this.maxDisplay) : this.tags
+    }
+  },
 
   data () {
-    return {}
+    return {
+      tagClass: this.tagClassOverride || 'mr-1 float-right'
+    }
   }
 }
 </script>

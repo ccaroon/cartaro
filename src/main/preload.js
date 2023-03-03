@@ -16,3 +16,8 @@ contextBridge.exposeInMainWorld('Config', {
 })
 
 contextBridge.exposeInMainWorld('NodeJS', { process })
+
+// Menu Action Handler Registration
+contextBridge.exposeInMainWorld('Menu', {
+  registerHandler: (menuId, callback) => ipcRenderer.on(menuId, callback)
+})

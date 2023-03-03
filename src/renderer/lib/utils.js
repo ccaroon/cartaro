@@ -21,6 +21,21 @@ export default {
     }
 
     return color
+  },
+
+  summarizeText: function (content, maxLines = 10) {
+    const lines = content.split('\n')
+    return lines.slice(0, maxLines).join('\n')
+  },
+
+  truncateString: function (string, maxLen = 80) {
+    let tStr = string
+
+    if (tStr.length > maxLen) {
+      tStr = string.substring(0, maxLen - 3) + '...'
+    }
+
+    return tStr
   }
 
 }

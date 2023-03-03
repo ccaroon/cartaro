@@ -12,6 +12,8 @@ const constants = {
     GREY: 'grey lighten-2',
     GREY_ALT: 'grey lighten-4',
 
+    DELETED: 'red lighten-1',
+
     // TODO: move to Todo class
     PRIORITY_1: 'red',
     PRIORITY_2: 'orange',
