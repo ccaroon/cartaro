@@ -1,15 +1,21 @@
 // https://www.electronjs.org/docs/latest/api/menu
-import { Menu, MenuItem } from 'electron'
+import { BrowserWindow, Menu, MenuItem } from 'electron'
 import menuActions from './menuActions'
 
+const appName = 'Ĉartaro'
 const isMac = process.platform === 'darwin'
 const mainMetaKey = isMac ? 'Cmd' : 'Ctrl'
 // -----------------------------------------------------------------------------
+const aboutMenu = {
+  label: `About ${appName}`,
+  click: () => BrowserWindow.getFocusedWindow().webContents.send('menu-help-about')
+}
+
 const macApp = [
   {
-    label: 'Ĉartaro',
+    label: appName,
     submenu: [
-      { role: 'about' },
+      aboutMenu,
       { type: 'separator' },
       { role: 'hide' },
       { role: 'hideOthers' },
