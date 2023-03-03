@@ -26,7 +26,8 @@ class Personal(TimeOff):
         if self.accrual_rate and self.accrual_period:
             data['accrual'] = {
                 'rate': self.accrual_rate,
-                'period': self.accrual_period
+                'period': self.accrual_period,
+                'cap': self.accrual_cap
             }
 
         return data
@@ -38,6 +39,10 @@ class Personal(TimeOff):
     @property
     def accrual_period(self):
         return self.accrual.get('period') if self.accrual else None
+
+    @property
+    def accrual_cap(self):
+        return self.accrual.get('cap') if self.accrual else None
 
     @property
     def used(self):
@@ -81,7 +86,12 @@ class Personal(TimeOff):
         return used
 
     def available(self):
-        return self.starting_balance + self.accrued_ytd()
+        available = self.starting_balance + self.accrued_ytd()
+        return available
+    
+    def balance(self):
+        balance = self.available() - self.used
+        return balance
 
     def accrued_ytd(self):
         accrued = 0.0

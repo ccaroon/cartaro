@@ -43,8 +43,27 @@ class PTO extends Resource {
     return accrued
   }
 
-  available () {
+  cap_reached () {
+    let over = false
+    if (this.accrual && this.balance() >= this.accrual.cap) {
+      console.log(`${this.type} is over: ${this.balance()} >= ${this.accrual.cap}`)
+      over = true
+    }
+    return over
+  }
+
+  availableYTD () {
     return parseFloat(this.starting_balance) + this.accruedYTD()
+  }
+
+  available () {
+    let available = this.availableYTD()
+
+    if (this.accrual && available > this.accrual.cap) {
+      available = this.accrual.cap
+    }
+
+    return available
   }
 
   balance () {

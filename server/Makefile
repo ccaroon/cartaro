@@ -8,6 +8,7 @@ help:
 	@echo "* package: Build distribution package"
 	@echo "* test: Run Unit Tests"
 	@echo "* test-module: Run Unit Tests for a single test module"
+	@echo "    - Ex: make test-module MODULE=tests.model.time_off.test_personal"
 
 test:
 	CARTARO_ENV=test \

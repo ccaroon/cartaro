@@ -82,9 +82,13 @@ class TimeOffPersonalTest(unittest.TestCase):
 
     def test_available(self):
         curr_month = arrow.now().month
-        pto = self.__test_instance(accrual={
-            'rate': 10.0, 'period': 1
-        })
+        
+        # No Accrual Cap
+        pto = self.__test_instance(
+            accrual={
+                'rate': 10.0, 'period': 1, 'cap': None
+            }
+        )
 
         used = pto.used
         accrued = curr_month * pto.accrual_rate
