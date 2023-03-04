@@ -1,11 +1,15 @@
 # CHANGELOG
 
-## UNRELEASED: v2.1.0 - Unknown Depths - 2022-??-??
+## UNRELEASED: v2.1.0 - Unknown Depths - 2023-??-??
 Periscope Up!
+
+### Server
+* Added support for PTO Accrual Cap
 
 ### UI
 * Searched for a better Markdown editor. Landed back on CodeMirror.
   - So...updated to CodeMirror 6.
+* PTO that has an accrual cap will show as RED if cap is reached.
 
 -------------------------------------------------------------------------------
 
