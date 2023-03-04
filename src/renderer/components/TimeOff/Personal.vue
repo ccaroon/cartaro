@@ -149,7 +149,14 @@ export default {
     },
 
     rowColor: function (pto, index) {
-      return utils.rowColor(index)
+      let color = null
+      if (pto.cap_reached()) {
+        color = 'red'
+      } else {
+        color = utils.rowColor(index)
+      }
+
+      return color
     },
 
     refresh: function (opts = {}) {
@@ -189,7 +196,7 @@ export default {
       this.currentPTO = new PTO({
         year: Moment().year(),
         starting_balance: 0.0,
-        accrual: { rate: null, period: null }
+        accrual: { rate: null, period: null, cap: null }
       })
       this.showEditor = true
     },

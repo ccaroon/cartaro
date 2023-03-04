@@ -7,6 +7,10 @@ class PTO extends Resource {
   static RESOURCE_NAME = 'time_off/personal'
   static DEFAULT_ICON = 'mdi-timetable'
 
+  startingBalance () {
+    return parseFloat(this.starting_balance)
+  }
+
   icon () {
     let icon = Icon.superSearch(this.type)
 
@@ -39,12 +43,34 @@ class PTO extends Resource {
         availMonths = 0
       }
       accrued = (availMonths / this.accrual.period) * this.accrual.rate
+
+      // Can't accrue more than accrual.cap
+      // Accrual *stops* when reach cap
+      // Adjust for that
+      if (this.accrual.cap) {
+        const totalAvail = (this.startingBalance() + accrued) - this.used
+        if (totalAvail >= this.accrual.cap) {
+          accrued = accrued - (totalAvail - this.accrual.cap)
+        }
+      }
     }
     return accrued
   }
 
+  cap_reached () {
+    let over = false
+
+    if (this.accrual && this.accrual.cap) {
+      if (this.balance() >= this.accrual.cap) {
+        over = true
+      }
+    }
+
+    return over
+  }
+
   available () {
-    return parseFloat(this.starting_balance) + this.accruedYTD()
+    return this.startingBalance() + this.accruedYTD()
   }
 
   balance () {

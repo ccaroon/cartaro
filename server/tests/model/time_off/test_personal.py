@@ -55,7 +55,7 @@ class TimeOffPersonalTest(unittest.TestCase):
 
     def test_accrued_ytd(self):
         now = arrow.now()
-        
+
         # Current Year
         pto = self.__test_instance(accrual={
             'rate': 12.5, 'period': 1
@@ -72,7 +72,7 @@ class TimeOffPersonalTest(unittest.TestCase):
         # All 12 months have been accrued
         accrued = (12 / pto.accrual_period) * pto.accrual_rate
         self.assertEqual(pto.accrued_ytd(), accrued)
-        
+
         # Future Year
         pto = self.__test_instance(year=now.year+1, accrual={
             'rate': 12.5, 'period': 1
@@ -80,11 +80,32 @@ class TimeOffPersonalTest(unittest.TestCase):
         # No hours accrued
         self.assertEqual(pto.accrued_ytd(), 0)
 
+        # Accrual Cap Reached
+        pto = self.__test_instance(
+            starting_balance=90,
+            accrual={
+                'rate': 12.5, 'period': 1, 'cap': 100
+            }
+        )
+        curr_month = now.month
+        accrued = (curr_month / pto.accrual_period) * pto.accrual_rate
+
+        total_avail = (pto.starting_balance + accrued) - pto.used
+        self.assertGreater(
+            total_avail,
+            pto.accrual_cap
+        )
+        adjusted_accrued = accrued - (total_avail - pto.accrual_cap)
+
+        self.assertEqual(pto.accrued_ytd(), adjusted_accrued)
+
     def test_available(self):
         curr_month = arrow.now().month
-        pto = self.__test_instance(accrual={
-            'rate': 10.0, 'period': 1
-        })
+        pto = self.__test_instance(
+            accrual={
+                'rate': 10.0, 'period': 1
+            }
+        )
 
         used = pto.used
         accrued = curr_month * pto.accrual_rate
@@ -130,3 +151,6 @@ class TimeOffPersonalTest(unittest.TestCase):
             day.save()
 
         self.assertEqual(pto.used, WorkDay.HOURS_PER_DAY * numDays)
+
+        # Test Balance
+        self.assertEqual(pto.balance(), pto.available() - pto.used)

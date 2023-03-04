@@ -100,7 +100,7 @@ const template = [
   {
     role: 'help',
     submenu: [
-      ...(isMac ? [] : [{ role: 'about' }]),
+      ...(isMac ? [] : [aboutMenu]),
       {
         label: 'View on GitHub',
         click: () => menuActions.HELP.github()

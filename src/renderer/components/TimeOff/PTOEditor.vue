@@ -68,6 +68,17 @@
                   :rules="rules.accrualPeriod"
                 />
               </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  v-model="pto.accrual.cap"
+                  type="number"
+                  dense
+                  outlined
+                  label="Accrual Cap"
+                  suffix="Hours"
+                  :rules="rules.accrualCap"
+                />
+              </v-col>
             </v-row>
           </v-container>
         </v-form>
