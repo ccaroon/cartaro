@@ -16,6 +16,7 @@ class Icon {
     { icon: new Icon('AWS', 'mdi-aws'), keywords: [] },
     { icon: new Icon('Banzai', 'mdi-surfing'), keywords: ['surf', 'surfing'] },
     { icon: new Icon('Bash', 'mdi-bash'), keywords: ['shell'] },
+    { icon: new Icon('Cake', 'mdi-cake-variant'), keywords: ['birthday'] },
     { icon: new Icon('BitBucket', 'mdi-bitbucket'), keywords: ['stash'] },
     { icon: new Icon('Books', 'mdi-book-open-variant'), keywords: ['book'] },
     { icon: new Icon('Brain', 'mdi-brain'), keywords: ['mindtap', 'think'] },
@@ -25,6 +26,7 @@ class Icon {
     { icon: new Icon('Cake', 'mdi-cake-variant'), keywords: ['birthday'] },
     { icon: new Icon('Cancel', 'mdi-cancel'), keywords: ['blocked'] },
     { icon: new Icon('C++', 'mdi-language-cpp'), keywords: [] },
+    { icon: new Icon('Celebration', 'mdi-party-popper'), keywords: ['celebrate', 'anniversary', 'party'] },
     { icon: new Icon('CentOS', 'mdi-centos'), keywords: ['centos7'] },
     { icon: new Icon('Cloud', 'mdi-cloud'), keywords: [] },
     { icon: new Icon('Code', 'mdi-code-braces'), keywords: ['coding', 'development', 'programming'] },
@@ -69,7 +71,7 @@ class Icon {
     { icon: new Icon('Phone', 'mdi-cellphone'), keywords: ['cellphone', 'iphone'] },
     { icon: new Icon('Java', 'mdi-language-java'), keywords: [] },
     { icon: new Icon('JavaScript', 'mdi-language-javascript'), keywords: ['ecma'] },
-    { icon: new Icon('Jira', 'fab fa-jira'), keywords: [] },
+    { icon: new Icon('Jira', 'mdi-jira'), keywords: [] },
     { icon: new Icon('JSON', 'mdi-code-json'), keywords: ['json'] },
     { icon: new Icon('jQuery', 'mdi-jquery'), keywords: [] },
     { icon: new Icon('Key', 'mdi-key'), keywords: [] },
@@ -90,6 +92,7 @@ class Icon {
     { icon: new Icon('Meeting', 'mdi-calendar-star'), keywords: [] },
     { icon: new Icon('Memory', 'mdi-memory'), keywords: ['mem', 'ram'] },
     { icon: new Icon('Misc', 'mdi-dots-horizontal'), keywords: [] },
+    { icon: new Icon('Moon', 'mdi-moon-waning-crescent'), keywords: [] },
     { icon: new Icon('Monitoring', 'mdi-monitor-dashboard'), keywords: ['logicmonitor', 'dashboard'] },
     { icon: new Icon('Mostly Harmless', 'mdi-earth-off'), keywords: ['mostly harmless'] },
     { icon: new Icon('Mother', 'mdi-mother-heart'), keywords: ['mother', 'mother-s', 'mom', 'mum'] },
@@ -116,6 +119,7 @@ class Icon {
     { icon: new Icon('Sick', 'mdi-emoticon-sick'), keywords: [] },
     { icon: new Icon('Slack', 'mdi-slack'), keywords: [] },
     { icon: new Icon('SSH', 'mdi-ssh'), keywords: ['scp'] },
+    { icon: new Icon('Skull', 'mdi-skull'), keywords: ['friday-the-13th'] },
     { icon: new Icon('Story', 'mdi-bookmark'), keywords: [] },
     { icon: new Icon('Support', 'mdi-face-agent'), keywords: [] },
     { icon: new Icon('Surfing', 'mdi-surfing'), keywords: ['banzai'] },
@@ -132,14 +136,22 @@ class Icon {
     { icon: new Icon('Users', 'mdi-account-box'), keywords: ['user', 'username'] },
     { icon: new Icon('Safe', 'mdi-safe-square-outline'), keywords: ['vault', 'hashicorp-vault'] },
     { icon: new Icon('VPN', 'mdi-vpn'), keywords: [] },
-    { icon: new Icon('Wave', 'mdi-tsunami'), keywords: ['waves', 'tsunami'] },
+    { icon: new Icon('Wave', 'fa-house-tsunami'), keywords: ['waves', 'tsunami'] },
     { icon: new Icon('Weekly', 'mdi-calendar-range'), keywords: ['weeks', 'week'] },
+    {
+      icon: new Icon('Weekday', 'mdi-calendar-range'),
+      keywords: [
+        'monday', 'tuesday', 'wednesday', 'thursday',
+        'friday', 'saturday', 'sunday'
+      ]
+    },
     { icon: new Icon('WiFi', 'mdi-wifi'), keywords: [] },
     { icon: new Icon('Workday', 'mdi-calendar'), keywords: [] },
     { icon: new Icon('Workflow', 'mdi-sitemap'), keywords: [] },
     { icon: new Icon('Virus', 'mdi-virus'), keywords: ['covid', 'covid-19'] },
     { icon: new Icon('XRay', 'mdi-radiology-box'), keywords: [] },
-    { icon: new Icon('YAML', 'mdi-language-xaml'), keywords: ['yaml', 'yml'] }
+    { icon: new Icon('YAML', 'mdi-language-xaml'), keywords: ['yaml', 'yml'] },
+    { icon: new Icon('Year', 'mdi-calendar-multiple'), keywords: ['yearly'] }
   ]
 
   name = null
