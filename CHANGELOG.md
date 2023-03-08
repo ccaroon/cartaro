@@ -7,12 +7,26 @@ Periscope Up!
 * Added support for PTO Accrual Cap
 
 ### UI
-* Searched for a better Markdown editor. Landed back on CodeMirror.
-  - So...updated to CodeMirror 6.
-* Added Calender view for LogEntries
-* Added Sticky Note (Card) view to Notes
-* Updated Notes Viewer and Editor to be more adaptive in width & height
-* PTO that has an accrual cap will show as RED if cap is reached.
+#### General
+* Updated to use CodeMirror 6
+
+#### LogEntries
+* Added Calender view
+* Updated Viewer and Editor to be more adaptive in width & height
+* Added ability to open the editor from the viewer & the viewer from the editor.
+* Meta-S to save no longer closes the dialog.
+
+#### Notes
+* Added Sticky Note (Card) view
+* Updated Viewer and Editor to be more adaptive in width & height
+
+#### ToDos
+* Added "note" indicator to ToDos. Shows in Todos lists if has a description.
+* Updated Viewer and Editor to be more adaptive in width & height
+
+#### PTO
+* Added Accrual Cap. 
+  - PTO that has an accrual cap will show as RED if cap is reached.
 
 -------------------------------------------------------------------------------
 

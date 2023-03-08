@@ -38,6 +38,9 @@
             :class="todo.isDeleted() ? 'text-decoration-line-through' : ''"
           >
             {{ todo.title }}
+            <v-icon size="small" v-if="todo.description"
+              >mdi-note-outline</v-icon
+            >
           </v-list-item-title>
           <v-list-item-subtitle>
             <template v-if="todo.is_complete">

@@ -4,11 +4,13 @@
       v-model="showEditor"
       v-bind:logEntry="logEntry"
       v-on:close="closeEditor"
+      v-on:view="closeAndView"
     ></LogEntryEditor>
     <LogEntryViewer
       v-model="showViewer"
       v-bind:logEntry="logEntry"
       v-on:close="showViewer = false"
+      v-on:edit="closeAndEdit"
     ></LogEntryViewer>
     <v-card>
       <v-card-title :class="constants.COLORS.GREY"
@@ -104,6 +106,16 @@ export default {
     viewEntry: function (entry) {
       this.logEntry = entry
       this.showViewer = true
+    },
+
+    closeAndEdit: function () {
+      this.showViewer = false
+      this.editEntry(this.logEntry)
+    },
+
+    closeAndView: function () {
+      this.showEditor = false
+      this.viewEntry(this.logEntry)
     },
 
     loadEntries: function () {

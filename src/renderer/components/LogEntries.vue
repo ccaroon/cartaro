@@ -10,11 +10,13 @@
       v-model="showEditor"
       v-bind:logEntry="logEntry"
       v-on:close="closeEditor"
+      v-on:view="closeAndView"
     ></LogEntryEditor>
     <LogEntryViewer
       v-model="showViewer"
       v-bind:logEntry="logEntry"
       v-on:close="closeViewer"
+      v-on:edit="closeAndEdit"
     ></LogEntryViewer>
     <LogEntryList
       v-show="activeView === 'list'"
@@ -169,6 +171,16 @@ export default {
     edit: function (logEntry) {
       this.logEntry = logEntry
       this.showEditor = true
+    },
+
+    closeAndEdit: function () {
+      this.showViewer = false
+      this.edit(this.logEntry)
+    },
+
+    closeAndView: function () {
+      this.showEditor = false
+      this.view(this.logEntry)
     },
 
     closeEditor: function () {

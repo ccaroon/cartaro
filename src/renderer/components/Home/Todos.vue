@@ -36,6 +36,9 @@
             <v-list-item-content>
               <v-list-item-title>
                 {{ item.title }}
+                <v-icon size="small" v-if="item.description"
+                  >mdi-note-outline</v-icon
+                >
               </v-list-item-title>
               <v-list-item-subtitle>
                 <span v-if="item.due_at"

@@ -1,6 +1,6 @@
 <template>
   <!-- eslint-disable vue/no-mutating-props -->
-  <v-dialog :value="value" persistent max-width="75%" max-height="90%">
+  <v-dialog :value="value" persistent max-width="65%" max-height="95%">
     <v-card>
       <v-app-bar dense flat>
         <v-toolbar-title>Todo Editor</v-toolbar-title>

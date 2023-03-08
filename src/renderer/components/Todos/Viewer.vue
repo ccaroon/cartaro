@@ -1,8 +1,16 @@
 <template>
-  <v-dialog :value="value" persistent scrollable max-width="75%">
+  <v-dialog
+    :value="value"
+    persistent
+    scrollable
+    max-width="65%"
+    max-height="95%"
+  >
     <v-card>
       <v-app-bar dense flat>
-        <v-icon :color="todo.priorityColor()">mdi-numeric-{{ todo.priority }}-circle</v-icon>
+        <v-icon :color="todo.priorityColor()"
+          >mdi-numeric-{{ todo.priority }}-circle</v-icon
+        >
         <v-toolbar-title>{{ todo.title }}</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn small icon @click="close()">
@@ -10,17 +18,20 @@
         </v-btn>
       </v-app-bar>
       <v-card-subtitle class="pl-4 pb-1">
-        <v-icon :color="todo.is_complete ? 'green' : ''">mdi-checkbox-{{ todo.is_complete ? "marked" : "blank" }}
+        <v-icon :color="todo.is_complete ? 'green' : ''"
+          >mdi-checkbox-{{ todo.is_complete ? "marked" : "blank" }}
         </v-icon>
         <template v-if="todo.is_complete">
           Completed {{ format.humanizeDate(todo.completed_at * 1000) }} ({{
-          format.formatDateTime(todo.completed_at * 1000)
+            format.formatDateTime(todo.completed_at * 1000)
           }})
         </template>
         <template v-else>
-          <span v-if="todo.due_at">Due {{ format.humanizeDate(todo.due_at * 1000) }} ({{
-          format.formatDateTime(todo.due_at * 1000)
-          }})</span>
+          <span v-if="todo.due_at"
+            >Due {{ format.humanizeDate(todo.due_at * 1000) }} ({{
+              format.formatDateTime(todo.due_at * 1000)
+            }})</span
+          >
           <span v-else>No Due Date</span>
         </template>
         <v-divider vertical inset></v-divider>
@@ -31,10 +42,21 @@
       </v-card-subtitle>
       <v-divider></v-divider>
       <!-- eslint-disable vue/no-v-text-v-html-on-component -->
-      <v-card-text v-html="$markdown.render(todo.description || '')" class="pt-3" style="height: 250px"></v-card-text>
+      <v-card-text
+        v-html="$markdown.render(todo.description || '')"
+        class="pt-3"
+        :style="`height: ${window.innerHeight * 0.35}px`"
+      ></v-card-text>
       <v-divider></v-divider>
       <v-card-actions>
-        <v-chip small label class="pa-1 mr-1" v-for="(tag, idx) in todo.tags" :key="idx">{{ tag }}</v-chip>
+        <v-chip
+          small
+          label
+          class="pa-1 mr-1"
+          v-for="(tag, idx) in todo.tags"
+          :key="idx"
+          >{{ tag }}</v-chip
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -56,7 +78,8 @@ export default {
 
   data () {
     return {
-      format: format
+      format: format,
+      window: window
     }
   }
 }

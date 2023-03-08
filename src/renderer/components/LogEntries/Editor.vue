@@ -1,12 +1,16 @@
 <template>
   <!-- eslint-disable vue/no-mutating-props -->
-  <v-dialog :value="value" persistent max-width="75%" max-height="90%">
+  <v-dialog :value="value" persistent max-width="65%" max-height="100%">
     <v-card>
       <v-app-bar dense flat>
         <v-toolbar-title>LogEntry Editor</v-toolbar-title>
         <v-spacer></v-spacer>
+        <v-btn small icon @click="view()">
+          <v-icon color="green" size="20">mdi-eye</v-icon>
+        </v-btn>
+        <v-divider vertical inset></v-divider>
         <v-btn small icon @click="close()">
-          <v-icon>mdi-close</v-icon>
+          <v-icon color="red">mdi-close</v-icon>
         </v-btn>
       </v-app-bar>
       <v-card-text>
@@ -88,9 +92,9 @@
               <v-col>
                 <Markdown
                   :content="buffer"
-                  height="60"
+                  height="55"
                   @update="(newContent) => (logEntry.content = newContent)"
-                  @save="save"
+                  @save="saveBuffer"
                 ></Markdown>
               </v-col>
             </v-row>
@@ -192,13 +196,21 @@ export default {
       })
     },
 
-    save: function () {
+    saveBuffer: function () {
+      this.save(false)
+    },
+
+    save: function (close = true) {
       const self = this
 
       if (this.$refs.logEntryForm.validate()) {
         this.logEntry.save({
           handlers: {
-            onSuccess: () => { self.close() },
+            onSuccess: () => {
+              if (close) {
+                self.close()
+              }
+            },
             onError: (err) => { self.errorMsg = err }
           }
         })
@@ -210,6 +222,12 @@ export default {
     cleanup: function () {
       this.errorMsg = null
       this.$refs.logEntryForm.resetValidation()
+    },
+
+    view: function () {
+      this.save(false)
+      this.cleanup()
+      this.$emit('view')
     },
 
     close: function () {
