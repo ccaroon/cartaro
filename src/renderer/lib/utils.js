@@ -36,6 +36,13 @@ export default {
     }
 
     return tStr
+  },
+
+  windowSize: function () {
+    return {
+      width: window.innerWidth,
+      height: window.innerHeight
+    }
   }
 
 }
