@@ -9,6 +9,9 @@ Periscope Up!
 ### UI
 * Searched for a better Markdown editor. Landed back on CodeMirror.
   - So...updated to CodeMirror 6.
+* Added Calender view for LogEntries
+* Added Sticky Note (Card) view to Notes
+* Updated Notes Viewer and Editor to be more adaptive in width & height
 * PTO that has an accrual cap will show as RED if cap is reached.
 
 -------------------------------------------------------------------------------
