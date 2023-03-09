@@ -10,6 +10,9 @@ Periscope Up!
 #### General
 * Updated to use CodeMirror 6
 
+#### Home
+* Added ability to duplicate a LogEntry
+
 #### LogEntries
 * Added Calender view
 * Updated Viewer and Editor to be more adaptive in width & height

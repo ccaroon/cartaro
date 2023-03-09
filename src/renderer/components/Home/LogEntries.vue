@@ -52,9 +52,14 @@
               </v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-icon>
-              <v-btn x-small icon outlined>
+              <v-btn x-small icon outlined class="ma-1">
                 <v-icon small outline @click.stop="editEntry(item)"
                   >mdi-pencil</v-icon
+                >
+              </v-btn>
+              <v-btn x-small icon outlined class="ma-1">
+                <v-icon small outline @click.stop="dupEntry(item)"
+                  >mdi-content-duplicate</v-icon
                 >
               </v-btn>
             </v-list-item-icon>
@@ -88,6 +93,17 @@ export default {
   methods: {
     newEntry: function () {
       this.logEntry = new LogEntry({
+        logged_at: Moment().unix()
+      })
+      this.showEditor = true
+    },
+
+    dupEntry: function (entry) {
+      this.logEntry = new LogEntry({
+        subject: entry.subject,
+        category: entry.category,
+        ticket_link: entry.ticket_link,
+        tags: entry.tags,
         logged_at: Moment().unix()
       })
       this.showEditor = true
