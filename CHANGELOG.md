@@ -9,6 +9,7 @@ Periscope Up!
 ### UI
 #### General
 * Updated to use CodeMirror 6
+* Added more icons
 
 #### Home
 * Added ability to duplicate a LogEntry
