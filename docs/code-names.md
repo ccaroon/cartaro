@@ -10,6 +10,7 @@ In no particular order:
 * Kraken          -- v2.0.x
 * Unknown Depths  -- v2.1.x
 * -------------------------
+* Mare Incognitus
 * Legendary ...
 * Epic ...
 * Frozen Wilds
