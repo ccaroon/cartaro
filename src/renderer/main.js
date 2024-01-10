@@ -2,7 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 
 import MarkdownIt from 'markdown-it'
-import MDItEmoji from 'markdown-it-emoji'
+import { full as MDItEmoji } from 'markdown-it-emoji'
 import MDItForInline from 'markdown-it-for-inline'
 import MDItTasks from 'markdown-it-task-lists'
 import hljs from 'highlight.js'
