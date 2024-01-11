@@ -1,6 +1,7 @@
 from genericpath import exists
 from flask import Blueprint, request, jsonify
 import os
+import sys
 
 from cartaro import flask_app
 from cartaro.utils.archive import Archive
@@ -12,7 +13,7 @@ def ping():
     resp = None
     status = 200
     try:
-        resp = 'pong'
+        resp = f'pong - {sys.version}'
     except Exception as e:
         status = 500
         resp = {

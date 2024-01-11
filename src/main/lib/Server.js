@@ -79,7 +79,8 @@ class Server {
     const self = this
 
     this.ping()
-      .then(() => {
+      .then((resp) => {
+        console.log(resp.data)
         self.__log('info', `Server Healthy After ${iteration} Tries.`)
         resolve()
       })

@@ -1,3 +1,4 @@
+import sys
 import unittest
 import cartaro
 
@@ -13,7 +14,7 @@ class SystemControllerTest(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
 
         data = r.get_json()
-        self.assertEqual(data, 'pong')
+        self.assertEqual(data, f'pong - {sys.version}')
 
     # def test_backup(self):
     #     r = self.client.post('/sys/backup')
