@@ -23,9 +23,9 @@ class Tag(Base):
     @classmethod
     def normalize(cls, name):
         norm_name = name.lower()
-        norm_name = re.sub('^\W+|\W+$',      '',  norm_name)
-        norm_name = re.sub('[^a-zA-Z0-9_\-.]', ' ', norm_name)
-        norm_name = re.sub('\s+',            '-', norm_name)
+        norm_name = re.sub(r'^\W+|\W+$',      '',  norm_name)
+        norm_name = re.sub(r'[^a-zA-Z0-9_\-.]', ' ', norm_name)
+        norm_name = re.sub(r'\s+',            '-', norm_name)
 
         return norm_name
 

@@ -35,7 +35,7 @@ class ArchiveTest(unittest.TestCase):
         self.archive.add(F'{self.TEST_DIR}/test_config.py')
         files = self.archive.files()
         self.assertEqual(len(files), 1)
-        self.assertRegexpMatches(files[0], 'test_config-\d{8,8}_\d{4,4}\.py')
+        self.assertRegex(files[0], r'test_config-\d{8,8}_\d{4,4}\.py')
 
     def test_add_dir(self):
         files = self.archive.files()
@@ -44,7 +44,7 @@ class ArchiveTest(unittest.TestCase):
         self.archive.add(F'{self.TEST_DIR}/data')
         files = self.archive.files()
         self.assertEqual(len(files), 1)
-        self.assertRegexpMatches(files[0], 'data-\d{8,8}_\d{4,4}\.zip')
+        self.assertRegex(files[0], r'data-\d{8,8}_\d{4,4}\.zip')
 
     def test_add_error(self):
         with self.assertRaisesRegex(ValueError, "Unsupported Src Type or Invalid Path"):

@@ -38,7 +38,7 @@ class BaseTest(unittest.TestCase):
         Ticket.purge()
 
     def test_abstractness(self):
-        with self.assertRaisesRegex(TypeError, "Can't instantiate abstract class Base with abstract methods"):
+        with self.assertRaisesRegex(TypeError, "Can't instantiate abstract class Base without an implementation"):
             obj = Base()
 
         with self.assertRaisesRegex(NotImplementedError, "update is an Abstract Method and must be overridden"):
@@ -140,10 +140,10 @@ class BaseTest(unittest.TestCase):
         self.assertIsNone(obj2.name)
 
         obj2.load()
-        self.assertEquals(obj2.id, obj.id)
-        self.assertEquals(obj2.name, obj.name)
-        self.assertEquals(obj2.desc, obj.desc)
-        self.assertEquals(obj2.active, obj.active)
+        self.assertEqual(obj2.id, obj.id)
+        self.assertEqual(obj2.name, obj.name)
+        self.assertEqual(obj2.desc, obj.desc)
+        self.assertEqual(obj2.active, obj.active)
         self.assertEqual(type(obj2.created_at), arrow.Arrow)
 
         # Fail - Bad ID
@@ -153,7 +153,7 @@ class BaseTest(unittest.TestCase):
 
         # Fail - No record with ID
         obj = Ticket(id=999999999)
-        with self.assertRaisesRegex(ValueError, 'Record Not Found: \[999999999\]'):
+        with self.assertRaisesRegex(ValueError, r'Record Not Found: \[999999999\]'):
             obj.load()
 
     def test_delete_safe(self):
@@ -217,13 +217,13 @@ class BaseTest(unittest.TestCase):
 
         # Should NOT be able to load it
         obj2 = Ticket(id=obj_id)
-        with self.assertRaisesRegex(ValueError, F"Record Not Found: \[{obj_id}\]"):
+        with self.assertRaisesRegex(ValueError, fr"Record Not Found: \[{obj_id}\]"):
             obj2.load()
 
     def test_delete_nonexistent(self):
         obj = Ticket(id=77777, name="No Running", desc="Fix the toilet. It's running.")
 
-        with self.assertRaisesRegex(ValueError, F"Record Not Found: \[{obj.id}\]"):
+        with self.assertRaisesRegex(ValueError, fr"Record Not Found: \[{obj.id}\]"):
             obj.delete()
 
     def test_undelete(self):
@@ -304,14 +304,14 @@ class BaseTest(unittest.TestCase):
 
         # Ascending
         tickets = Ticket.fetch(sort_by="use_count:asc")
-        self.assertEquals(len(tickets), total_count)
+        self.assertEqual(len(tickets), total_count)
 
         for i in range(0,total_count-1):
             self.assertLessEqual(tickets[i].use_count, tickets[i+1].use_count)
 
         # Descending
         tickets = Ticket.fetch(sort_by="use_count:desc")
-        self.assertEquals(len(tickets), total_count)
+        self.assertEqual(len(tickets), total_count)
 
         for i in range(0,total_count-1):
             self.assertGreaterEqual(tickets[i].use_count, tickets[i+1].use_count)
@@ -340,7 +340,7 @@ class BaseTest(unittest.TestCase):
 
         # Find #1 - OR
         things = Ticket.find(name="Xeno|BOB")
-        self.assertEquals(len(things), 3)
+        self.assertEqual(len(things), 3)
 
         self.assertEqual(things[0].id, obj1.id)
         self.assertEqual(things[0].name, obj1.name)
@@ -353,7 +353,7 @@ class BaseTest(unittest.TestCase):
 
         # Find #2 - OR
         things = Ticket.find(name="- 88", desc="Born on Board")
-        self.assertEquals(len(things), 2)
+        self.assertEqual(len(things), 2)
 
         self.assertEqual(things[0].id, obj2.id)
         self.assertEqual(things[0].name, obj2.name)
@@ -363,11 +363,11 @@ class BaseTest(unittest.TestCase):
 
         # Find #3 - AND - 0 hits
         things = Ticket.find("and", name="BOB", desc="Green Suit Scaredie Cats")
-        self.assertEquals(len(things), 0)
+        self.assertEqual(len(things), 0)
 
         # Find #4 - AND
         things = Ticket.find("and", name="Xeno", desc="Specimen #88")
-        self.assertEquals(len(things), 1)
+        self.assertEqual(len(things), 1)
 
         self.assertEqual(things[0].id, obj2.id)
         self.assertEqual(things[0].name, obj2.name)
@@ -388,10 +388,10 @@ class BaseTest(unittest.TestCase):
             d.save()
 
         tickets = Ticket.find(active="true")
-        self.assertEquals(len(tickets), active_count)
+        self.assertEqual(len(tickets), active_count)
 
         tickets = Ticket.find(active="false")
-        self.assertEquals(len(tickets), total_count - active_count)
+        self.assertEqual(len(tickets), total_count - active_count)
 
     def test_find_nulls(self):
         total_count = random.randint(1, 100)
@@ -410,7 +410,7 @@ class BaseTest(unittest.TestCase):
             d.save()
 
         tickets = Ticket.find(desc="null")
-        self.assertEquals(len(tickets), null_count)
+        self.assertEqual(len(tickets), null_count)
 
     def test_find_numerics(self):
         total_count = random.randint(1, 100)
@@ -438,27 +438,27 @@ class BaseTest(unittest.TestCase):
 
         # Equal
         tickets = Ticket.find(use_count="50")
-        self.assertEquals(len(tickets), counts['eq50'])
+        self.assertEqual(len(tickets), counts['eq50'])
 
         # Not Equal
         tickets = Ticket.find(use_count="ne:50")
-        self.assertEquals(len(tickets), total_count - counts['eq50'])
+        self.assertEqual(len(tickets), total_count - counts['eq50'])
 
         # Greater Than
         tickets = Ticket.find(use_count="gt:50")
-        self.assertEquals(len(tickets), counts['gt50'])
+        self.assertEqual(len(tickets), counts['gt50'])
 
         # Greater Than Equal
         tickets = Ticket.find(use_count="gte:50")
-        self.assertEquals(len(tickets), counts['gt50'] + counts['eq50'])
+        self.assertEqual(len(tickets), counts['gt50'] + counts['eq50'])
 
         # Less Than
         tickets = Ticket.find(use_count="lt:50")
-        self.assertEquals(len(tickets), counts['lt50'])
+        self.assertEqual(len(tickets), counts['lt50'])
 
         # Less Than Equal
         tickets = Ticket.find(use_count="lte:50")
-        self.assertEquals(len(tickets), counts['lt50'] + counts['eq50'])
+        self.assertEqual(len(tickets), counts['lt50'] + counts['eq50'])
 
         # Between
         val1 = 15
@@ -479,14 +479,14 @@ class BaseTest(unittest.TestCase):
 
         # Ascending
         tickets = Ticket.find(name="Ticket", sort_by="use_count:asc")
-        self.assertEquals(len(tickets), total_count)
+        self.assertEqual(len(tickets), total_count)
 
         for i in range(0,total_count-1):
             self.assertLessEqual(tickets[i].use_count, tickets[i+1].use_count)
 
         # Descending
         tickets = Ticket.find(name="Ticket", sort_by="use_count:desc")
-        self.assertEquals(len(tickets), total_count)
+        self.assertEqual(len(tickets), total_count)
 
         for i in range(0,total_count-1):
             self.assertGreaterEqual(tickets[i].use_count, tickets[i+1].use_count)

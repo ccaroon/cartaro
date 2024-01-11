@@ -20,4 +20,4 @@ class SystemControllerTest(unittest.TestCase):
     #     self.assertEqual(r.status_code, 201)
 
     #     data = r.get_json()
-    #     self.assertRegexpMatches(data['message'], "Data in")
+    #     self.assertRegex(data['message'], "Data in")

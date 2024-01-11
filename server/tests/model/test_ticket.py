@@ -99,7 +99,7 @@ class TicketTest(unittest.TestCase):
         # Sub-tasks
         self.assertEqual(len(tickets[2].sub_tasks), 2)
         self.assertIsInstance(tickets[2].sub_tasks[0], Ticket)
-        self.assertRegexpMatches(tickets[2].sub_tasks[0].key, 'SUB-')
+        self.assertRegex(tickets[2].sub_tasks[0].key, 'SUB-')
 
 
 

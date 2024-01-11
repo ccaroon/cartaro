@@ -100,7 +100,7 @@ export default {
       builtWith: [
         { name: 'Electron', value: process.versions.electron, icon: 'mdi-atom' },
         { name: 'NodeJS', value: process.versions.node, icon: 'mdi-nodejs' },
-        { name: 'Python', value: '3.10.4', icon: 'mdi-language-python' },
+        { name: 'Python', value: '3.12.0', icon: 'mdi-language-python' },
         { name: 'Chrome', value: process.versions.chrome, icon: 'mdi-google-chrome' },
         { name: 'Vue Version', value: vuePkg.version, icon: 'mdi-vuejs' }
       ],

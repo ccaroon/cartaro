@@ -111,7 +111,7 @@ class BaseControllerTest(unittest.TestCase):
 
         snippet = r.get_json()
         self.assertIsNotNone(snippet.get('error', None))
-        self.assertRegexpMatches(snippet['error'], "Not Found")
+        self.assertRegex(snippet['error'], "Not Found")
 
     def test_find_pagination(self):
         # Create a bunch of snippets
@@ -166,7 +166,7 @@ class BaseControllerTest(unittest.TestCase):
         r = self.client.get('/snippets/?page=one')
         data = r.get_json()
         self.assertEqual(r.status_code, 500)
-        self.assertRegexpMatches(data['error'], "invalid literal for int\(\) with base 10: 'one'")
+        self.assertRegex(data['error'], r"invalid literal for int\(\) with base 10: 'one'")
 
     def test_find_search(self):
         self.__gen_snippets(15)
@@ -283,7 +283,7 @@ class BaseControllerTest(unittest.TestCase):
 
         r_data = r.get_json()
         self.assertIsNotNone(r_data.get('error', None))
-        self.assertRegexpMatches(r_data['error'], "Not Found")
+        self.assertRegex(r_data['error'], "Not Found")
 
     def test_delete(self):
         snippet = Snippet(title=self.FAKER.name(), content=self.FAKER.text())
@@ -310,7 +310,7 @@ class BaseControllerTest(unittest.TestCase):
         self.assertEqual(snippet.id, r_data.get('id', None))
 
         del_note = Snippet(id=snippet.id)
-        with self.assertRaisesRegex(ValueError, F'Record Not Found: \[{snippet.id}\]'):
+        with self.assertRaisesRegex(ValueError, fr'Record Not Found: \[{snippet.id}\]'):
             del_note.load()
 
         # Non-existent
@@ -319,7 +319,7 @@ class BaseControllerTest(unittest.TestCase):
 
         r_data = r.get_json()
         self.assertIsNotNone(r_data.get('error', None))
-        self.assertRegexpMatches(r_data['error'], "Not Found")
+        self.assertRegex(r_data['error'], "Not Found")
 
     def test_undelete(self):
         snippet = Snippet(title=self.FAKER.name(), content=self.FAKER.text())

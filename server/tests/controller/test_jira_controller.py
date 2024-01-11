@@ -28,7 +28,7 @@ class JiraControllerTest(unittest.TestCase):
 
         body = r.get_json()
         self.assertTrue('error' in body)
-        self.assertRegexpMatches(body['error'], 'Jira Connection Not Properly Configured')
+        self.assertRegex(body['error'], 'Jira Connection Not Properly Configured')
 
     def test_cfg_missing_token(self):
         self.__set_cfg_jira('HOST', None)
@@ -40,7 +40,7 @@ class JiraControllerTest(unittest.TestCase):
 
         body = r.get_json()
         self.assertTrue('error' in body)
-        self.assertRegexpMatches(body['error'], 'Jira Connection Not Properly Configured')
+        self.assertRegex(body['error'], 'Jira Connection Not Properly Configured')
 
     @mock.patch('requests.get')
     def test_search(self, mock_get):
@@ -99,7 +99,7 @@ class JiraControllerTest(unittest.TestCase):
 
         data = r.get_json()
         self.assertIn('error', data)
-        self.assertRegexpMatches(data['error'], "Error Querying Jira: 401")
+        self.assertRegex(data['error'], "Error Querying Jira: 401")
 
     def test_search_faker(self):
         self.__set_cfg_jira('http://jira.simulacrum.com', 'TOKEN')

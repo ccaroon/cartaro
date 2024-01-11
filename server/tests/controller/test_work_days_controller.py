@@ -54,7 +54,7 @@ class WorkDaysControllerTest(unittest.TestCase):
 
         data = r.get_json()
         error_msg = data.get('error', None)
-        self.assertRegexpMatches(error_msg, "Requires 'start' and either 'end' or 'days'")
+        self.assertRegex(error_msg, "Requires 'start' and either 'end' or 'days'")
 
         # Missing params - NO end or days
         r = self.client.get('/work_days/range?start=1980-02-01')
@@ -62,7 +62,7 @@ class WorkDaysControllerTest(unittest.TestCase):
 
         data = r.get_json()
         error_msg = data.get('error', None)
-        self.assertRegexpMatches(error_msg, "Requires 'start' and either 'end' or 'days'")
+        self.assertRegex(error_msg, "Requires 'start' and either 'end' or 'days'")
 
 
 

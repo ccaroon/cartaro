@@ -254,7 +254,7 @@ class Base(ABC):
                 if re.match("(true|false)", query_value, flags=re.IGNORECASE):
                     query_value = True if query_value.lower() == 'true' else False
                     query_parts.append(query_builder[field] == query_value)
-                elif query_value.isdecimal() or re.match('\d+:\d+', query_value):
+                elif query_value.isdecimal() or re.match(r'\d+:\d+', query_value):
                     query_parts.append(query_builder[field].test(DbHelper.cmp_integer, test_op, query_value))
                 elif query_value == 'null':
                     query_parts.append(query_builder[field] == None)
