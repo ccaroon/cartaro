@@ -1,15 +1,17 @@
 # CHANGELOG
 
-## UNRELEASED: v2.1.0 - Unknown Depths - 2023-??-??
+## v2.1.0 - Unknown Depths - 2024-01-23
 Periscope Up!
 
 ### Server
 * Added support for PTO Accrual Cap
+* Modules version updates
 
 ### UI
 #### General
 * Updated to use CodeMirror 6
 * Added more icons
+* Module version updates
 
 #### Home
 * Added ability to duplicate a LogEntry
