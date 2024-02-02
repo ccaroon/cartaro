@@ -8,7 +8,7 @@ export default {
   FILE: {
     backup: () => {
       http.post(
-        `http://localhost:${PORT}/sys/backup`,
+        `http://127.0.0.1:${PORT}/sys/backup`,
         {
           path: config.get('backup:path'),
           keep: config.get('backup:keep')

@@ -1,12 +1,17 @@
 # CHANGELOG
 
+## v2.1.2 - Unknown Depths - 2024-02-02
+### UI
+* Backup command failing because of `localhost` issue
+  - Updated to use `127.0.0.1` instead of `localhost`
+
 ## v2.1.1 - Unknown Depths - 2024-02-02
 ### Server
 * Add `sys.path` to `ping` response
 
 ### UI
-* Server.js...
-  - Use 127.0.0.1 instead of localhost - was having issues with DNS lookup?
+* lib/Server.js...
+  - Use `127.0.0.1` instead of `localhost` - was having issues with DNS lookup?
   - Add log details when HC fails
 
 ## v2.1.0 - Unknown Depths - 2024-01-23
