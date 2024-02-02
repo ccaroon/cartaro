@@ -1,3 +1,4 @@
+import re
 import sys
 import unittest
 import cartaro
@@ -14,7 +15,8 @@ class SystemControllerTest(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
 
         data = r.get_json()
-        self.assertEqual(data, f'pong - {sys.version}')
+        sys_ver = re.escape(sys.version)
+        self.assertRegex(data, fr'^pong - {sys_ver}')
 
     # def test_backup(self):
     #     r = self.client.post('/sys/backup')

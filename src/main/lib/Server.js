@@ -84,8 +84,9 @@ class Server {
         self.__log('info', `Server Healthy After ${iteration} Tries.`)
         resolve()
       })
-      .catch(() => {
+      .catch((resp) => {
         self.__log('error', `Health Check Failed: ${iteration}/${self.__healthCheckTries}`)
+        self.__log('error', `    => CODE: ${resp.code} | CAUSE: ${resp.cause}`)
         if (iteration > self.__healthCheckTries) {
           reject(`Server not healthy after ${self.__healthCheckTries} tries.`)
         } else {
@@ -117,7 +118,7 @@ class Server {
   }
 
   ping () {
-    return http.get(`http://localhost:${this.__port}/sys/ping`)
+    return http.get(`http://127.0.0.1:${this.__port}/sys/ping`)
   }
 }
 // -----------------------------------------------------------------------------

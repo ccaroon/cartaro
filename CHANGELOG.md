@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v2.1.1 - Unknown Depths - 2024-02-02
+### Server
+* Add `sys.path` to `ping` response
+
+### UI
+* Server.js...
+  - Use 127.0.0.1 instead of localhost - was having issues with DNS lookup?
+  - Add log details when HC fails
+
 ## v2.1.0 - Unknown Depths - 2024-01-23
 Periscope Up!
 

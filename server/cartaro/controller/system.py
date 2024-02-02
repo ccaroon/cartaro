@@ -13,7 +13,7 @@ def ping():
     resp = None
     status = 200
     try:
-        resp = f'pong - {sys.version}'
+        resp = f'pong - {sys.version} | {sys.path}'
     except Exception as e:
         status = 500
         resp = {
