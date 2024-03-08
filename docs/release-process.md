@@ -1,5 +1,6 @@
 # Release Process
 
+## Create Release
 0. In working branch
 1. Update CHANGELOG.MD entry
    - Version
@@ -18,3 +19,8 @@
 9.  `npm version <patch|minor|fullVersion>` (As appropriate)
 10. `git push origin master`
 11. `git push --tags`
+
+## Build Disg
+1. `npm run build:clean`
+2. `npm run build`
+3. Find distributable in `dist_electron` dir.
