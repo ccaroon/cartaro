@@ -7,6 +7,8 @@
    - Entry Contents
 2. Update package.json
    - codename
+   - icon
+   - buildDate
 3. `git commit -a`
 4. Squash commits, if desired.
 5. GitHub: Create PR from working branch --> `master`

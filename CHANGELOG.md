@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v2.1.3 - Unknown Depths - 2024-03-08
+### UI
+* Added "Copy Link" to Context Menu
+
 ## v2.1.2 - Unknown Depths - 2024-02-02
 ### UI
 * Backup command failing because of `localhost` issue

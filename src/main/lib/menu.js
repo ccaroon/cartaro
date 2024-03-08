@@ -1,5 +1,5 @@
 // https://www.electronjs.org/docs/latest/api/menu
-import { BrowserWindow, Menu, MenuItem } from 'electron'
+import { clipboard, BrowserWindow, Menu, MenuItem } from 'electron'
 import menuActions from './menuActions'
 
 const appName = 'Ĉartaro'
@@ -117,9 +117,17 @@ export default {
   },
   addContext: function (window) {
     const ctxMenu = new Menu()
+    let clickTarget = null
     ctxMenu.append(new MenuItem({
       label: 'Copy',
       role: 'copy'
+    }))
+    ctxMenu.append(new MenuItem({
+      id: 'ctx-copy-link',
+      label: 'Copy Link',
+      click: () => {
+        clipboard.writeText(clickTarget.linkURL)
+      }
     }))
     ctxMenu.append(new MenuItem({
       label: 'Paste',
@@ -134,8 +142,18 @@ export default {
     }))
 
     window.webContents.on('context-menu',
-      (event, click) => {
+      (event, target) => {
+        clickTarget = target
         event.preventDefault()
+
+        // Don't show "Copy Link" if target is not a link
+        const copyLinkItem = ctxMenu.getMenuItemById('ctx-copy-link')
+        if (clickTarget && clickTarget.linkURL.length > 0) {
+          copyLinkItem.visible = true
+        } else {
+          copyLinkItem.visible = false
+        }
+
         ctxMenu.popup(window.webContents)
       },
       false
