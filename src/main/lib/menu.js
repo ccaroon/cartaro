@@ -1,5 +1,5 @@
 // https://www.electronjs.org/docs/latest/api/menu
-import { clipboard, BrowserWindow, Menu, MenuItem } from 'electron'
+import { clipboard, shell, BrowserWindow, Menu, MenuItem } from 'electron'
 import menuActions from './menuActions'
 
 const appName = 'Ĉartaro'
@@ -119,8 +119,11 @@ export default {
     const ctxMenu = new Menu()
     let clickTarget = null
     ctxMenu.append(new MenuItem({
-      label: 'Copy',
-      role: 'copy'
+      id: 'ctx-open-link-ext',
+      label: 'Open In External Browser',
+      click: () => {
+        shell.openExternal(clickTarget.linkURL)
+      }
     }))
     ctxMenu.append(new MenuItem({
       id: 'ctx-copy-link',
@@ -128,6 +131,14 @@ export default {
       click: () => {
         clipboard.writeText(clickTarget.linkURL)
       }
+    }))
+    ctxMenu.append(new MenuItem({
+      id: 'ctx-link-rel-sep',
+      type: 'separator'
+    }))
+    ctxMenu.append(new MenuItem({
+      label: 'Copy',
+      role: 'copy'
     }))
     ctxMenu.append(new MenuItem({
       label: 'Paste',
@@ -146,12 +157,18 @@ export default {
         clickTarget = target
         event.preventDefault()
 
-        // Don't show "Copy Link" if target is not a link
+        // Don't show Link related items if target is not a link
+        const openExtItem = ctxMenu.getMenuItemById('ctx-open-link-ext')
         const copyLinkItem = ctxMenu.getMenuItemById('ctx-copy-link')
+        const linkRelSepItem = ctxMenu.getMenuItemById('ctx-link-rel-sep')
         if (clickTarget && clickTarget.linkURL.length > 0) {
           copyLinkItem.visible = true
+          openExtItem.visible = true
+          linkRelSepItem.visible = true
         } else {
           copyLinkItem.visible = false
+          openExtItem.visible = false
+          linkRelSepItem.visible = false
         }
 
         ctxMenu.popup(window.webContents)

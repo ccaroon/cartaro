@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v2.1.4 - Unknown Depths - 2024-03-08/15:47
+### UI
+* Improved Link Related context menu...
+  - Added "Open in External Browser"
+  - Added Separator between link related actions, if any, and Copy/Paste actions.
+ 
 ## v2.1.3 - Unknown Depths - 2024-03-08
 ### UI
 * Added "Copy Link" to Context Menu
