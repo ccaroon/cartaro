@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v2.1.5 - Unknown Depths - 2024-05-14
+### UI
+* Added several new icons
+
 ## v2.1.4 - Unknown Depths - 2024-03-08/15:47
 ### UI
 * Improved Link Related context menu...

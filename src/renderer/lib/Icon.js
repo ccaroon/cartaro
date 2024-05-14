@@ -7,6 +7,7 @@ class Icon {
 
   static ICONS = [
     { icon: new Icon('Account', 'mdi-credit-card-details'), keywords: [] },
+    { icon: new Icon('Alien', 'mdi-alien'), keywords: [] },
     { icon: new Icon('Artifactory', 'mdi-package'), keywords: [] },
     { icon: new Icon('API', 'mdi-api'), keywords: [] },
     { icon: new Icon('Application', 'mdi-application-outline'), keywords: ['app'] },
@@ -45,6 +46,7 @@ class Icon {
     { icon: new Icon('Dots', 'mdi-dots-horizontal'), keywords: ['other', 'misc'] },
     { icon: new Icon('DST', 'mdi-brightness-6'), keywords: ['daylight-savings-time'] },
     { icon: new Icon('Earth', 'mdi-earth'), keywords: ['world', 'planet'] },
+    { icon: new Icon('Education Book', 'mdi-book-education'), keywords: ['cengage'] },
     { icon: new Icon('Electronics', 'mdi-raspberrypi'), keywords: ['raspi'] },
     { icon: new Icon('Employee', 'mdi-card-account-details'), keywords: [] },
     { icon: new Icon('Errors', 'mdi-alert-octagon'), keywords: [] },
@@ -83,6 +85,7 @@ class Icon {
     { icon: new Icon('Log', 'mdi-math-log'), keywords: ['splunk'] },
     { icon: new Icon('MacIntosh', 'mdi-apple-finder'), keywords: ['macos'] },
     { icon: new Icon('Map', 'mdi-map-legend'), keywords: ['cartaro'] },
+    { icon: new Icon('Magic', 'mdi-magic-staff'), keywords: [] },
     {
       icon: new Icon('Managers', 'mdi-account-tie'), keywords: ['boss', 'cto', 'cfo', 'ceo', 'manager', 'leader']
     },
@@ -116,12 +119,14 @@ class Icon {
     { icon: new Icon('Reports', 'mdi-file-chart'), keywords: ['reporting', 'chart'] },
     { icon: new Icon('Rolling Deployment', 'mdi-rotate-right'), keywords: ['rolling', 'inplace'] },
     { icon: new Icon('Script', 'mdi-script-text-outline'), keywords: ['perl'] },
-    { icon: new Icon('Search', 'mdi-magnify'), keywords: ['find', 'lookup'] },
+    { icon: new Icon('Search', 'mdi-magnify'), keywords: ['find', 'lookup', 'solr'] },
     { icon: new Icon('Secret', 'mdi-eye-off'), keywords: [] },
     { icon: new Icon('Sick', 'mdi-emoticon-sick'), keywords: [] },
     { icon: new Icon('Slack', 'mdi-slack'), keywords: [] },
     { icon: new Icon('SSH', 'mdi-ssh'), keywords: ['scp'] },
     { icon: new Icon('Skull', 'mdi-skull'), keywords: ['friday-the-13th'] },
+    { icon: new Icon('Space Invaders', 'mdi-space-invaders'), keywords: ['space invaders', 'space-invaders', 'spacelift'] },
+    { icon: new Icon('Space Station', 'mdi-space-station'), keywords: ['space station', 'space-station'] },
     { icon: new Icon('Story', 'mdi-bookmark'), keywords: [] },
     { icon: new Icon('Support', 'mdi-face-agent'), keywords: [] },
     { icon: new Icon('Surfing', 'mdi-surfing'), keywords: ['banzai'] },
@@ -137,6 +142,7 @@ class Icon {
     { icon: new Icon('Tree', 'mdi-pine-tree'), keywords: ['christmas'] },
     { icon: new Icon('Tsunami', 'mdi-tsunami'), keywords: [] },
     { icon: new Icon('Ubuntu', 'mdi-ubuntu'), keywords: [] },
+    { icon: new Icon('UFO', 'mdi-ufo-outline'), keywords: ['spaceship'] },
     { icon: new Icon('Users', 'mdi-account-box'), keywords: ['user', 'username'] },
     { icon: new Icon('Safe', 'mdi-safe-square-outline'), keywords: ['vault', 'hashicorp-vault'] },
     { icon: new Icon('Server', 'mdi-server'), keywords: ['instance'] },
@@ -150,6 +156,7 @@ class Icon {
       ]
     },
     { icon: new Icon('WiFi', 'mdi-wifi'), keywords: [] },
+    { icon: new Icon('Wizard', 'mdi-wizard-hat'), keywords: [] },
     { icon: new Icon('Workday', 'mdi-calendar'), keywords: [] },
     { icon: new Icon('Workflow', 'mdi-sitemap'), keywords: [] },
     { icon: new Icon('Virus', 'mdi-virus'), keywords: ['covid', 'covid-19'] },
