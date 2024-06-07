@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v2.1.6 - Unknown Depths - 2024-06-07
+### UI
+* Added `blockquote` CSS Style so that markdown `>` blockquotes look better.
+
 ## v2.1.5 - Unknown Depths - 2024-05-14
 ### UI
 * Added several new icons
