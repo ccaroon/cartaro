@@ -158,7 +158,19 @@ export default {
     ],
     menu_misc: [
       { name: 'TimeOff', path: '/timeoff', icon: 'mdi-timetable' }
+      // { name: 'Debug', path: '/debug', icon: 'mdi-bug' }
     ]
   })
 }
 </script>
+<style>
+blockquote {
+  background: #f9f9f9;
+  border-left: 5px solid #ccc;
+  margin: 0.5em 5px;
+  padding: 2px;
+}
+blockquote p {
+  display: inline;
+}
+</style>

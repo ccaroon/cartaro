@@ -10,6 +10,7 @@ import Secrets from '../components/Secrets'
 import TimeOff from '../components/TimeOff'
 import Todos from '../components/Todos'
 import WorkDays from '../components/WorkDays'
+import Debug from '../components/Debug'
 
 Vue.use(Router)
 
@@ -59,6 +60,11 @@ export default new Router({
       path: '/work_days',
       name: 'work_days',
       component: WorkDays
+    },
+    {
+      path: '/debug',
+      name: 'debug',
+      component: Debug
     },
     {
       path: '*',

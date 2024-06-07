@@ -93,7 +93,8 @@
     },
     "rules": {
       "object-shorthand": "off",
-      "vue/no-mutating-props": "warn"
+      "vue/no-mutating-props": "warn",
+      "vue/multi-word-component-names": "warn"
     }
   },
   "browserslist": [
