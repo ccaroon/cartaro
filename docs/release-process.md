@@ -20,7 +20,9 @@
 10. `git push origin master`
 11. `git push --tags`
 
-## Build Disg
+## Build Dist
+NOTE: Must use NodeJS v16
+
 1. `npm run build:clean`
 2. `npm run build`
 3. Find distributable in `dist_electron` dir.
