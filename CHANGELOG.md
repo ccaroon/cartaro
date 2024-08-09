@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v2.1.7 - Unknown Depths - 2024-08-09
+### UI
+* Added icon for snowflake (snow, winter, unique)
+
 ## v2.1.6 - Unknown Depths - 2024-06-07
 ### UI
 * Added `blockquote` CSS Style so that markdown `>` blockquotes look better.
@@ -13,7 +17,7 @@
 * Improved Link Related context menu...
   - Added "Open in External Browser"
   - Added Separator between link related actions, if any, and Copy/Paste actions.
- 
+
 ## v2.1.3 - Unknown Depths - 2024-03-08
 ### UI
 * Added "Copy Link" to Context Menu
@@ -63,7 +67,7 @@ Periscope Up!
 * Updated Viewer and Editor to be more adaptive in width & height
 
 #### PTO
-* Added Accrual Cap. 
+* Added Accrual Cap.
   - PTO that has an accrual cap will show as RED if cap is reached.
 
 -------------------------------------------------------------------------------

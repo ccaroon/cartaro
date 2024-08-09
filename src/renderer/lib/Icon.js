@@ -146,6 +146,8 @@ class Icon {
     { icon: new Icon('Users', 'mdi-account-box'), keywords: ['user', 'username'] },
     { icon: new Icon('Safe', 'mdi-safe-square-outline'), keywords: ['vault', 'hashicorp-vault'] },
     { icon: new Icon('Server', 'mdi-server'), keywords: ['instance'] },
+    { icon: new Icon('Snowflake', 'mdi-snowflake'), keywords: ['snow', 'winter', 'unique'] },
+
     { icon: new Icon('VPN', 'mdi-vpn'), keywords: [] },
     { icon: new Icon('Weekly', 'mdi-calendar-range'), keywords: ['weeks', 'week'] },
     {
