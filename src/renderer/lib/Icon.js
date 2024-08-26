@@ -131,7 +131,7 @@ class Icon {
     { icon: new Icon('Support', 'mdi-face-agent'), keywords: [] },
     { icon: new Icon('Surfing', 'mdi-surfing'), keywords: ['banzai'] },
     { icon: new Icon('Swap', 'mdi-swap-horizontal-circle-outline'), keywords: ['blue-green'] },
-    { icon: new Icon('Task', 'mdi-checkbox-marked'), keywords: [] },
+    { icon: new Icon('Task', 'mdi-checkbox-marked'), keywords: ['todo'] },
     { icon: new Icon('Teams', 'mdi-account-multiple'), keywords: ['team'] },
     { icon: new Icon('Terraform', 'mdi-terraform'), keywords: ['hashicorp-terraform'] },
     { icon: new Icon('Turkey', 'mdi-turkey'), keywords: ['thanksgiving'] },
