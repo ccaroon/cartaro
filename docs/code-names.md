@@ -9,8 +9,8 @@ In no particular order:
 * Cartographer    -- v1.5.x
 * Kraken          -- v2.0.x
 * Unknown Depths  -- v2.1.x
+* Mare Incognitus -- v2.2.x
 * -------------------------
-* Mare Incognitus
 * Legendary ...
 * Epic ...
 * Frozen Wilds

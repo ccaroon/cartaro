@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v2.2.0 - Mare Incognitus - 2025-01-24
+### UI
+* New icons: spring, summer, linux
+
+### Server
+* Converted `Makefile` to `invoke` tasks
+
+-------------------------------------------------------------------------------
+
 ## v2.1.7 - Unknown Depths - 2024-08-09
 ### UI
 * Added icon for snowflake (snow, winter, unique)
