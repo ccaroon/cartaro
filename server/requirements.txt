@@ -1,8 +1,9 @@
 -r requirements-prod.txt
 
 # Dev
-coverage ~= 7.4.0
+coverage ~= 7.6
 faker ~= 22.2.0
-nose2 ~= 0.14.0
+invoke ~= 2.2
+nose2 ~= 0.15
 # For the data converter
 mysql-connector-python ~= 8.0.22

@@ -8,3 +8,6 @@ server.pid
 htmlcov
 
 __pycache__/
+
+
+*.zip

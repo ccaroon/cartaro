@@ -1,6 +1,6 @@
 <template>
   <!-- eslint-disable vue/no-mutating-props -->
-  <v-dialog :value="value" persistent max-width="65%" max-height="100%">
+  <v-dialog :value="value" persistent max-width="75%" max-height="100%">
     <v-card>
       <v-app-bar dense flat>
         <v-toolbar-title>Note Editor</v-toolbar-title>
@@ -47,7 +47,7 @@
               <v-col cols="12">
                 <Markdown
                   :content="buffer"
-                  :height="this.isFullscreen ? 77 : 65"
+                  :height="this.isFullscreen ? 75 : 65"
                   @update="(newContent) => (note.content = newContent)"
                   @save="saveBuffer"
                 ></Markdown>
