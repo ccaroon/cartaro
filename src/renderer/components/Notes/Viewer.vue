@@ -3,7 +3,7 @@
     :value="value"
     persistent
     scrollable
-    max-width="65%"
+    max-width="75%"
     max-height="100%"
   >
     <v-card>
