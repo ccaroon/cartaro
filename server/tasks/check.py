@@ -8,6 +8,9 @@ TEST_ENV = {
     "CARTARO_CFG_PATH": "../tests/data"
 }
 
+def __deprecated(cmd, new_cmd):
+    print(f"DEPRECATED: '{cmd}' has been deprecated in favor of '{new_cmd}'")
+
 @task(
     help={
         "module": "Specific Test Module to execute. Ex: tests.module.test_note"
@@ -16,13 +19,14 @@ TEST_ENV = {
 def unit_tests(ctx, module=None):
     """ Run Unit Tests """
 
-    cmd = "nose2 -v "
-    if module:
-        cmd += f"{module}"
-    else:
-        cmd += f"-s {util.ROOT_DIR}/tests"
+    # cmd = "nose2 -v "
+    # if module:
+    #     cmd += f"{module}"
+    # else:
+    #     cmd += f"-s {util.ROOT_DIR}/tests"
 
-    ctx.run(cmd, env=TEST_ENV)
+    # ctx.run(cmd, env=TEST_ENV)
+    __deprecated("unit-test", "hatch test")
 
 
 @task(
@@ -32,15 +36,16 @@ def unit_tests(ctx, module=None):
 )
 def coverage(ctx, module=None):
     """ Run Code Coverage """
-    cmd = "coverage run -m nose2 -v "
-    if module:
-        cmd += f"{module}"
-    else:
-        cmd += f"-s {util.ROOT_DIR}/tests"
+    # cmd = "coverage run -m nose2 -v "
+    # if module:
+    #     cmd += f"{module}"
+    # else:
+    #     cmd += f"-s {util.ROOT_DIR}/tests"
 
-    ctx.run(cmd, env=TEST_ENV)
-    ctx.run("coverage report")
-    ctx.run("coverage html")
+    # ctx.run(cmd, env=TEST_ENV)
+    # ctx.run("coverage report")
+    # ctx.run("coverage html")
+    __deprecated("coverage", "hatch test -c")
 
 
 @task
