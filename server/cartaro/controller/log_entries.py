@@ -6,6 +6,9 @@ import cartaro.controller.base as base
 
 log_entries = base.create_controller("log_entries", LogEntry)
 
+# ------------------------------------------------------------------------------
+# CLI Commands
+# ------------------------------------------------------------------------------
 @log_entries.cli.command('weekly-report')
 def weekly_report():
     week_start = arrow.get().to("local").floor("week").int_timestamp
