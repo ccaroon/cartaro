@@ -19,9 +19,12 @@ def weekly_report():
 
     # codex --full-auto workspace-write exec "summarize my weekly report in weekly.txt and save to weekly-report.txt"
     for entry in entries:
+        tags = [str(tag) for tag in entry.tags]
         print("---------------------------------------------------------------")
-        print(f"""{entry.subject}
-{entry.category} | {entry.logged_at.format("MMM DD YYYY")}
+        print(f"""Subject: {entry.subject}
+Category: {entry.category}
+Date: {entry.logged_at.format("MMM DD YYYY")}
+Tags: {','.join(tags)}
 {entry.content}
 """)
         print("---------------------------------------------------------------")
