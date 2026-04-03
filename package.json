@@ -59,7 +59,7 @@
     "@vue/cli-plugin-router": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
     "@vue/eslint-config-standard": "^8.0.1",
-    "electron": "^34.0.1",
+    "electron": "^39.8.4",
     "electron-builder": "^25.1.8",
     "electron-devtools-installer": "^4.0.0",
     "eslint": "^8.57.1",
